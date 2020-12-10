@@ -6,6 +6,8 @@ public interface ToolbarOptions {
 
     public int getLogoResourceId();
 
+    public int getFabTextStringResource();
+
     public boolean isFabEnabled();
 
     public boolean isNewToolbarEnabled();

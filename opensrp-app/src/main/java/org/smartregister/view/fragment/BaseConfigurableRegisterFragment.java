@@ -173,14 +173,16 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         ExtendedFloatingActionButton addClientsFab = view.findViewById(R.id.add_new_client_fab);
         if (addClientsFab != null) {
             if (toolbarOptions.isFabEnabled()) {
-                addClientsFab.setVisibility(View.VISIBLE);
+                String fabText = toolbarOptions.getFabTextStringResource() > 0 ? getString(toolbarOptions.getFabTextStringResource()) : getString(R.string.add_new_client);
+                addClientsFab.setText(fabText);
                 addClientsFab.setOnClickListener(v -> startRegistration());
+                addClientsFab.setVisibility(View.VISIBLE);
             } else {
                 addClientsFab.setVisibility(View.GONE);
             }
         }
 
-        ImageView registerSelect = view.findViewById(R.id.register_icon);
+        LinearLayout registerSelect = view.findViewById(R.id.select_register_layout);
         if (registerSelect != null) {
             registerSelect.setOnClickListener(v -> {
                 if (getActivity() instanceof BaseConfigurableRegisterActivity) {
@@ -188,7 +190,6 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
                 }
             });
         }
-
     }
 
     @Override
@@ -245,6 +246,25 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     }
 
     @Override
+    public void setTotalPatients() {
+        if (toolbarOptions != null && toolbarOptions.isNewToolbarEnabled()) {
+            // We don't show the total in the new layout, we show the register title instead
+            setRegisterTitle();
+        } else {
+            super.setTotalPatients();
+        }
+    }
+
+    @Override
+    public void setRegisterTitle() {
+        if (headerTextDisplay != null) {
+            if (moduleConfiguration != null) {
+                headerTextDisplay.setText(moduleConfiguration.getRegisterTitle());
+            }
+        }
+    }
+
+    @Override
     protected void onViewClicked(View view) {
         // TODO: Abstract
         if (getActivity() == null) {
@@ -272,7 +292,8 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         }
     }
 
-    protected void performPatientAction(@NonNull CommonPersonObjectClient commonPersonObjectClient) {
+    protected void performPatientAction(@NonNull CommonPersonObjectClient
+                                                commonPersonObjectClient) {
         // TODO: FINISH THIS
     }
 
@@ -319,7 +340,8 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         }
     }
 
-    protected void goToClientDetailActivity(@NonNull CommonPersonObjectClient commonPersonObjectClient) {
+    protected void goToClientDetailActivity(@NonNull CommonPersonObjectClient
+                                                    commonPersonObjectClient) {
         FragmentActivity activity = getActivity();
         if (activity instanceof BaseConfigurableRegisterActivity) {
             ConfigurationInstancesHelper.newInstance(
@@ -352,7 +374,8 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         switchViews(dueOnlyLayout, false);
     }
 
-    protected void filter(String filterString, String joinTableString, String mainConditionString) {
+    protected void filter(String filterString, String joinTableString, String
+            mainConditionString) {
         filters = filterString;
         joinTable = joinTableString;
         mainCondition = mainConditionString;

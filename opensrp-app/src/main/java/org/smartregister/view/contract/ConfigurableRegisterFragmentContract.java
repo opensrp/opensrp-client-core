@@ -16,24 +16,39 @@ public interface ConfigurableRegisterFragmentContract {
 
         Presenter presenter();
 
-        default void initializeAdapter() {}
+        default void initializeAdapter() {
+        }
 
         @Nullable
-        default String getDueOnlyText() {return null;}
+        default String getDueOnlyText() {
+            return null;
+        }
+
+        default void setRegisterTitle() {
+        }
 
     }
 
     interface Presenter {
 
-        default void updateSortAndFilter(List<IField> filterList, IField sortField) {}
+        default void updateSortAndFilter(List<IField> filterList, IField sortField) {
+        }
 
-        default String getMainCondition() { return null; }
+        default String getMainCondition() {
+            return null;
+        }
 
-        default String getDefaultSortQuery() { return null; }
+        default String getDefaultSortQuery() {
+            return null;
+        }
 
-        default String getQueryTable()  {return null; }
+        default String getQueryTable() {
+            return null;
+        }
 
-        default String getDueFilterCondition() {return "DUE_ONLY";}
+        default String getDueFilterCondition() {
+            return "DUE_ONLY";
+        }
     }
 
     interface Model {

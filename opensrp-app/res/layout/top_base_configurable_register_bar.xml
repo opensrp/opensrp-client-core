@@ -11,80 +11,103 @@
         android:id="@+id/back_arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:paddingStart="10dp"
-        android:paddingTop="16dp"
         android:src="@drawable/ic_action_goldsmith_menu_arrow" />
 
     <ImageView
         android:id="@+id/top_left_logo"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"    
-        android:layout_gravity="center"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
         android:contentDescription="logo"
         android:visibility="gone" />
 
-    <ImageView
-        android:id="@+id/register_icon"
+    <LinearLayout
+        android:id="@+id/select_register_layout"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_marginStart="15dp"
-        android:contentDescription="@string/register_label"
-        android:paddingStart="5dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:src="@drawable/ic_action_register" />
+        android:paddingBottom="10dp">
 
-    <org.smartregister.view.customcontrols.CustomFontTextView
-        android:id="@+id/register_title_label"
-        style="@style/CustomFontTextViewNewThemeStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:background="@android:color/transparent"
-        android:text="@string/register_label" />
+        <ImageView
+            android:id="@+id/register_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginStart="15dp"
+            android:contentDescription="@string/register_label"
+            android:paddingStart="5dp"
+            android:src="@drawable/ic_action_register" />
 
-    <ImageView
-        android:id="@+id/filters_icon"
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/register_title_label"
+            style="@style/CustomFontTextViewNewThemeStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:text="@string/register_label" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/filter_layout"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_marginStart="15dp"
-        android:contentDescription="@string/filters"
-        android:paddingStart="5dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:src="@drawable/ic_action_filter" />
+        android:paddingBottom="10dp">
 
-    <org.smartregister.view.customcontrols.CustomFontTextView
-        android:id="@+id/filters_title_label"
-        style="@style/CustomFontTextViewNewThemeStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:text="@string/filters"
-        android:visibility="visible" />
+        <ImageView
+            android:id="@+id/filters_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginStart="15dp"
+            android:contentDescription="@string/filters"
+            android:paddingStart="5dp"
+            android:src="@drawable/ic_action_filter" />
 
-    <ImageView
-        android:id="@+id/map_icon"
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/filters_title_label"
+            style="@style/CustomFontTextViewNewThemeStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:text="@string/filters"
+            android:visibility="visible" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/map_layout"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginStart="15dp"
-        android:contentDescription="@string/map"
-        android:paddingStart="5dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:scaleType="center"
-        android:src="@drawable/ic_action_map" />
+        android:paddingBottom="10dp">
 
-    <org.smartregister.view.customcontrols.CustomFontTextView
-        android:id="@+id/txt_title_label"
-        style="@style/CustomFontTextViewNewThemeStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:background="@android:color/transparent"
-        android:text="@string/map"
-        android:visibility="visible" />
+        <ImageView
+            android:id="@+id/map_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="15dp"
+            android:contentDescription="@string/map"
+            android:paddingStart="5dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_action_map" />
+
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/txt_title_label"
+            style="@style/CustomFontTextViewNewThemeStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:text="@string/map"
+            android:visibility="visible" />
+    </LinearLayout>
 
 </LinearLayout>
