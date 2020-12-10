@@ -96,8 +96,8 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
 
     public List<PlanDefinitionSearch> findPlanDefinitionSearchByPlanId(@NonNull String planId) {
         List<PlanDefinitionSearch> planDefinitionSearchSet = new ArrayList<>();
-        String query = String.format("SELECT " + StringUtils.join(COLUMNS, ",") + " FROM %s " +
-                "WHERE %s=? ", PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID);
+        String query = String.format("SELECT %s FROM %s " +
+                "WHERE %s=? ", StringUtils.join(COLUMNS, ","), PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID);
         try (Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{planId})) {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
