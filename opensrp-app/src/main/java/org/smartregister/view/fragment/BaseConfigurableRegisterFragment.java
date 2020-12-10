@@ -257,10 +257,8 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
 
     @Override
     public void setRegisterTitle() {
-        if (headerTextDisplay != null) {
-            if (moduleConfiguration != null) {
-                headerTextDisplay.setText(moduleConfiguration.getRegisterTitle());
-            }
+        if (headerTextDisplay != null && moduleConfiguration != null) {
+            headerTextDisplay.setText(moduleConfiguration.getRegisterTitle());
         }
     }
 
