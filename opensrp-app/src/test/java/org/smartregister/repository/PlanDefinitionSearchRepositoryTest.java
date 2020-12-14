@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.PlanDefinitionSearch;
 
 import java.util.List;
@@ -63,5 +64,24 @@ public class PlanDefinitionSearchRepositoryTest extends BaseUnitTest {
         assertNotNull(planDefinitionSearches);
         assertEquals(1, planDefinitionSearches.size());
         assertEquals(start, planDefinitionSearches.get(0).getStart().toDate().getTime());
+    }
+
+    @Test
+    public void testFindAllPlanDefinitionSearchByStatus() {
+        doReturn(sqLiteDatabase).when(planDefinitionSearchRepository).getReadableDatabase();
+        doReturn(cursor).when(sqLiteDatabase).rawQuery(anyString(), any(String[].class));
+        doAnswer(new Answer() {
+            int count = 0;
+
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                count++;
+                return count == 1;
+            }
+        }).when(cursor).moveToNext();
+        List<PlanDefinitionSearch> planDefinitionSearches = planDefinitionSearchRepository.findPlanDefinitionSearchByPlanStatus(PlanDefinition.PlanStatus.ACTIVE);
+        verify(sqLiteDatabase).rawQuery(anyString(), eq(new String[]{PlanDefinition.PlanStatus.ACTIVE.value()}));
+        assertNotNull(planDefinitionSearches);
+        assertEquals(1, planDefinitionSearches.size());
     }
 }

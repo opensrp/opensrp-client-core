@@ -95,19 +95,35 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
     }
 
     public List<PlanDefinitionSearch> findPlanDefinitionSearchByPlanId(@NonNull String planId) {
-        List<PlanDefinitionSearch> planDefinitionSearchSet = new ArrayList<>();
-        String query = String.format("SELECT %s FROM %s WHERE %s=? ", 
-        StringUtils.join(COLUMNS, ","), PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID);
+        List<PlanDefinitionSearch> planDefinitionSearchList = new ArrayList<>();
+        String query = String.format("SELECT %s FROM %s WHERE %s=? ",
+                StringUtils.join(COLUMNS, ","), PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID);
         try (Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{planId})) {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                    planDefinitionSearchSet.add(readCursor(cursor));
+                    planDefinitionSearchList.add(readCursor(cursor));
                 }
             }
         } catch (SQLiteException e) {
             Timber.e(e);
         }
-        return planDefinitionSearchSet;
+        return planDefinitionSearchList;
+    }
+
+    public List<PlanDefinitionSearch> findPlanDefinitionSearchByPlanStatus(@NonNull PlanDefinition.PlanStatus status) {
+        List<PlanDefinitionSearch> planDefinitionSearchList = new ArrayList<>();
+        String query = String.format("SELECT %s FROM %s WHERE %s=? ",
+                StringUtils.join(COLUMNS, ","), PLAN_DEFINITION_SEARCH_TABLE, STATUS);
+        try (Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{status.value()})) {
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    planDefinitionSearchList.add(readCursor(cursor));
+                }
+            }
+        } catch (SQLiteException e) {
+            Timber.e(e);
+        }
+        return planDefinitionSearchList;
     }
 
     private PlanDefinitionSearch readCursor(@NonNull Cursor cursor) {
