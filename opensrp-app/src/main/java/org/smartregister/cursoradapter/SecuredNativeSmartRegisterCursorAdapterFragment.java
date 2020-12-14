@@ -4,11 +4,11 @@ import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.CursorLoader;
-import androidx.loader.content.Loader;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.AbsoluteSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +18,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
@@ -399,9 +403,14 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     }
 
     public void refresh() {
+        int textSize = getResources().getDimensionPixelSize(R.dimen.pagination_page_info_size);
+        int startIndex = getResources().getString(R.string.str_page_info).indexOf("{");
         pageInfoView.setText(
                 format(getResources().getString(R.string.str_page_info), (getCurrentPageCount()),
                         getTotalcount()));
+        SpannableString span = new SpannableString(pageInfoView.getText());
+        span.setSpan(new AbsoluteSizeSpan(textSize), startIndex, pageInfoView.getText().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        pageInfoView.setText(span);
         nextPageView.setVisibility(hasNextPage() ? VISIBLE : INVISIBLE);
         previousPageView.setVisibility(hasPreviousPage() ? VISIBLE : INVISIBLE);
     }

@@ -5,9 +5,11 @@ import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.VisibleForTesting;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.VisibleForTesting;
 
 import org.joda.time.LocalDate;
 import org.smartregister.R;
@@ -439,8 +443,14 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
         }
 
         public void refresh() {
+            int textSize = getResources().getDimensionPixelSize(R.dimen.pagination_page_info_size);
+            int startIndex = getResources().getString(R.string.str_page_info).indexOf("{");
+
             pageInfoView.setText(format(getResources().getString(R.string.str_page_info),
                     (getCurrentPageCount()), (clientsAdapter.pageCount())));
+            SpannableString span = new SpannableString(pageInfoView.getText());
+            span.setSpan(new AbsoluteSizeSpan(textSize), startIndex, pageInfoView.getText().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            pageInfoView.setText(span);
             nextPageView.setVisibility(clientsAdapter.hasNextPage() ? VISIBLE : INVISIBLE);
             previousPageView.setVisibility(clientsAdapter.hasPreviousPage() ? VISIBLE : INVISIBLE);
         }
