@@ -1,14 +1,19 @@
+
+
+
 package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.gson.reflect.TypeToken;
 
+import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteStatement;
 
@@ -58,10 +63,12 @@ public class EventClientRepository extends BaseRepository {
 
     private static final String _ID = "_id";
 
-    private static final String VARCHAR = "VARCHAR";
+    public static final String VARCHAR = "VARCHAR";
 
     protected Table clientTable;
     protected Table eventTable;
+
+    protected int FORM_SUBMISSION_IDS_PAGE_SIZE = 250;
 
     public EventClientRepository() {
         this.clientTable = Table.client;
@@ -255,11 +262,64 @@ public class EventClientRepository extends BaseRepository {
         return false;
     }
 
-    public Boolean checkIfExistsByFormSubmissionId(Table table, String formSubmissionId) {
-        return checkIfExistsByFormSubmissionId(table, formSubmissionId, getWritableDatabase());
+    private List<String> getFormSubmissionIdsFromJsonArray(JSONArray array) {
+        if (array != null && array.length() != 0) {
+            List<String> stringList = new ArrayList<>();
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.optJSONObject(i);
+                if (jsonObject != null) {
+                    String formSubmissionId = jsonObject.optString(event_column.formSubmissionId.name());
+                    if (StringUtils.isNotBlank(formSubmissionId)) {
+                        stringList.add(formSubmissionId);
+                    }
+                }
+            }
+            return stringList;
+        }
+        return new ArrayList<>();
     }
 
-    public Boolean checkIfExistsByFormSubmissionId(Table table, String formSubmissionId, SQLiteDatabase sqLiteDatabase) {
+    protected void populateFormSubmissionIds(@NonNull List<String> formSubmissionIdsList,
+                                             Set<String> formSubmissionIds) {
+        int tempPageSize = FORM_SUBMISSION_IDS_PAGE_SIZE;
+
+        List<String> tempList;
+
+        boolean shouldEnd = false;
+
+        if (formSubmissionIdsList.size() <= tempPageSize) {
+            tempList = formSubmissionIdsList;
+            shouldEnd = true;
+        } else {
+            tempList = formSubmissionIdsList.subList(0, tempPageSize);
+        }
+
+        String query = "SELECT " + EventClientRepository.event_column.formSubmissionId + " FROM event " +
+                "WHERE " + EventClientRepository.event_column.formSubmissionId + " IN ( " + StringUtils.repeat("?", ", ", tempList.size()) + ")";
+
+        try (Cursor mCursor = getReadableDatabase().rawQuery(query, tempList.toArray(new String[0]))) {
+            if (mCursor != null) {
+                while (mCursor.moveToNext()) {
+                    formSubmissionIds.add(mCursor.getString(0));
+                }
+            }
+        } catch (SQLException e) {
+            Timber.e(e);
+        }
+
+        if (shouldEnd) {
+            return;
+        }
+
+        populateFormSubmissionIds(formSubmissionIdsList.subList(tempPageSize, formSubmissionIdsList.size()), formSubmissionIds);
+    }
+
+    public Boolean checkIfExistsByFormSubmissionId(Table table, String formSubmissionId) {
+        return checkIfExistsByFormSubmissionId(table, formSubmissionId, getReadableDatabase());
+    }
+
+    public Boolean checkIfExistsByFormSubmissionId(Table table, String
+            formSubmissionId, SQLiteDatabase sqLiteDatabase) {
         Cursor mCursor = null;
         try {
             String query = "SELECT "
@@ -284,7 +344,8 @@ public class EventClientRepository extends BaseRepository {
         return false;
     }
 
-    private boolean populateStatement(SQLiteStatement statement, Table table, JSONObject jsonObject, Map<String, Integer> columnOrder) {
+    private boolean populateStatement(SQLiteStatement statement, Table table, JSONObject
+            jsonObject, Map<String, Integer> columnOrder) {
         if (statement == null)
             return false;
         statement.clearBindings();
@@ -292,38 +353,10 @@ public class EventClientRepository extends BaseRepository {
         try {
             if (table.equals(clientTable)) {
                 columns = Arrays.asList(client_column.values());
-                String syncStatus = jsonObject.has(client_column.syncStatus.name()) ? jsonObject.getString(client_column.syncStatus.name()) : BaseRepository.TYPE_Synced;
-                jsonObject.remove(client_column.syncStatus.name());
-                statement.bindString(columnOrder.get(client_column.json.name()), jsonObject.toString());
-                statement.bindString(columnOrder.get(client_column.updatedAt.name()), dateFormat.format(new Date()));
-                statement.bindString(columnOrder.get(client_column.syncStatus.name()), syncStatus);
-                statement.bindString(columnOrder.get(client_column.validationStatus.name()), BaseRepository.TYPE_Valid);
-                statement.bindString(columnOrder.get(client_column.baseEntityId.name()), jsonObject.getString(client_column.baseEntityId.name()));
-
-                bindString(statement, columnOrder.get(client_column.locationId.name()), jsonObject.optString(AllConstants.LOCATION_ID));
-                bindString(statement, columnOrder.get(client_column.clientType.name()), jsonObject.optString(AllConstants.CLIENT_TYPE));
-                JSONObject attributes = jsonObject.optJSONObject(AllConstants.ATTRIBUTES);
-                if (attributes != null) {
-                    bindString(statement, columnOrder.get(client_column.residence.name()), attributes.optString(AllConstants.RESIDENCE));
-                }
+                createClientBindings(statement, jsonObject, columnOrder);
             } else if (table.equals(eventTable)) {
                 columns = Arrays.asList(event_column.values());
-                String syncStatus = jsonObject.has(client_column.syncStatus.name()) ? jsonObject.getString(client_column.syncStatus.name()) : BaseRepository.TYPE_Synced;
-                jsonObject.remove(client_column.syncStatus.name());
-                statement.bindString(columnOrder.get(event_column.json.name()), jsonObject.toString());
-                statement.bindString(columnOrder.get(event_column.updatedAt.name()), dateFormat.format(new Date()));
-                statement.bindString(columnOrder.get(event_column.syncStatus.name()), syncStatus);
-                statement.bindString(columnOrder.get(event_column.validationStatus.name()), BaseRepository.TYPE_Valid);
-                statement.bindString(columnOrder.get(event_column.baseEntityId.name()), jsonObject.getString(event_column.baseEntityId.name()));
-                statement.bindString(columnOrder.get(event_column.locationId.name()), jsonObject.optString(event_column.locationId.name()));
-                if (jsonObject.has(EVENT_ID))
-                    statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(EVENT_ID));
-                else if (jsonObject.has(_ID))
-                    statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(_ID));
-                JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
-                if (details != null) {
-                    bindString(statement, columnOrder.get(event_column.planId.name()), details.optString(AllConstants.PLAN_IDENTIFIER));
-                }
+                createEventBindings(statement, jsonObject, columnOrder);
             } else {
                 return false;
             }
@@ -354,6 +387,42 @@ public class EventClientRepository extends BaseRepository {
         } catch (JSONException e) {
             Timber.e(e);
             return false;
+        }
+    }
+
+    private void createEventBindings(SQLiteStatement statement, JSONObject jsonObject, Map<String, Integer> columnOrder) throws JSONException {
+        String syncStatus = jsonObject.has(client_column.syncStatus.name()) ? jsonObject.getString(client_column.syncStatus.name()) : BaseRepository.TYPE_Synced;
+        jsonObject.remove(client_column.syncStatus.name());
+        statement.bindString(columnOrder.get(event_column.json.name()), jsonObject.toString());
+        statement.bindString(columnOrder.get(event_column.updatedAt.name()), dateFormat.format(new Date()));
+        statement.bindString(columnOrder.get(event_column.syncStatus.name()), syncStatus);
+        statement.bindString(columnOrder.get(event_column.validationStatus.name()), BaseRepository.TYPE_Valid);
+        statement.bindString(columnOrder.get(event_column.baseEntityId.name()), jsonObject.getString(event_column.baseEntityId.name()));
+        statement.bindString(columnOrder.get(event_column.locationId.name()), jsonObject.optString(event_column.locationId.name()));
+        if (jsonObject.has(EVENT_ID))
+            statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(EVENT_ID));
+        else if (jsonObject.has(_ID))
+            statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(_ID));
+        JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
+        if (details != null) {
+            bindString(statement, columnOrder.get(event_column.planId.name()), details.optString(AllConstants.PLAN_IDENTIFIER));
+        }
+    }
+
+    private void createClientBindings(SQLiteStatement statement, JSONObject jsonObject, Map<String, Integer> columnOrder) throws JSONException {
+        String syncStatus = jsonObject.has(client_column.syncStatus.name()) ? jsonObject.getString(client_column.syncStatus.name()) : BaseRepository.TYPE_Synced;
+        jsonObject.remove(client_column.syncStatus.name());
+        statement.bindString(columnOrder.get(client_column.json.name()), jsonObject.toString());
+        statement.bindString(columnOrder.get(client_column.updatedAt.name()), dateFormat.format(new Date()));
+        statement.bindString(columnOrder.get(client_column.syncStatus.name()), syncStatus);
+        statement.bindString(columnOrder.get(client_column.validationStatus.name()), BaseRepository.TYPE_Valid);
+        statement.bindString(columnOrder.get(client_column.baseEntityId.name()), jsonObject.getString(client_column.baseEntityId.name()));
+
+        bindString(statement, columnOrder.get(client_column.locationId.name()), jsonObject.optString(AllConstants.LOCATION_ID));
+        bindString(statement, columnOrder.get(client_column.clientType.name()), jsonObject.optString(AllConstants.CLIENT_TYPE));
+        JSONObject attributes = jsonObject.optJSONObject(AllConstants.ATTRIBUTES);
+        if (attributes != null) {
+            bindString(statement, columnOrder.get(client_column.residence.name()), attributes.optString(AllConstants.RESIDENCE));
         }
     }
 
@@ -532,13 +601,20 @@ public class EventClientRepository extends BaseRepository {
         return batchInsertEvents(array, serverVersion, getWritableDatabase());
     }
 
-    public boolean batchInsertEvents(JSONArray array, long serverVersion, SQLiteDatabase sqLiteDatabase) {
+    public boolean batchInsertEvents(JSONArray array, long serverVersion, SQLiteDatabase
+            sqLiteDatabase) {
         if (array == null || array.length() == 0) {
             return false;
         }
 
         SQLiteStatement insertStatement = null;
         SQLiteStatement updateStatement = null;
+
+        List<String> formSubmissionIdsList = getFormSubmissionIdsFromJsonArray(array);
+
+        Set<String> formSubmissionIds = new HashSet<>();
+
+        populateFormSubmissionIds(formSubmissionIdsList, formSubmissionIds);
 
         try {
 
@@ -564,7 +640,7 @@ public class EventClientRepository extends BaseRepository {
                 }
 
                 maxRowId++;
-                if (checkIfExistsByFormSubmissionId(eventTable, formSubmissionId, sqLiteDatabase)) {
+                if (formSubmissionIds.contains(formSubmissionId)) {
                     if (populateStatement(updateStatement, eventTable, jsonObject, updateQueryWrapper.columnOrder)) {
                         updateStatement.bindLong(updateQueryWrapper.columnOrder.get(ROWID), (long) maxRowId);
                         updateStatement.executeUpdateDelete();
@@ -770,7 +846,8 @@ public class EventClientRepository extends BaseRepository {
                 new String[]{String.valueOf(startServerVersion), String.valueOf(lastServerVersion)});
     }
 
-    public P2pProcessRecordsService.EventClientQueryResult fetchEventClientsByRowId(long lastProcessedRowId) {
+    public P2pProcessRecordsService.EventClientQueryResult fetchEventClientsByRowId(
+            long lastProcessedRowId) {
         List<EventClient> list = new ArrayList<>();
         Cursor cursor = null;
         int maxRowId = 0;

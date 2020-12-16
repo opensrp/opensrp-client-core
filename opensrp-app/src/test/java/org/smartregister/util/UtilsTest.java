@@ -1,9 +1,14 @@
 package org.smartregister.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TableRow;
+
+import androidx.test.core.app.ApplicationProvider;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -11,10 +16,12 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
-import org.smartregister.BaseUnitTest;
+import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -26,6 +33,8 @@ import org.smartregister.domain.jsonmapping.util.Team;
 import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.service.UserService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,18 +44,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.smartregister.TestUtils.getContext;
 import static org.smartregister.util.Utils.getDefaultLocale;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
  */
-public class UtilsTest extends BaseUnitTest {
+public class UtilsTest extends BaseRobolectricUnitTest {
+
+    @Before
+    public void setUp() {
+        AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()));
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", allSharedPreferences);
+    }
 
     @Test
     public void assertConvertDateFormatTestReturnsDate() throws Exception {
@@ -436,6 +462,35 @@ public class UtilsTest extends BaseUnitTest {
     @Test
     public void testGetAppVersionShouldReturnAppVersion() {
         assertNull(Utils.getAppVersion(RuntimeEnvironment.application));
+    }
+
+    @Test
+    public void testLogoutUserShouldInvokeRequiredMethods() {
+        org.smartregister.Context opensrpContext = spy(CoreLibrary.getInstance().context());
+        Context context = spy(opensrpContext.applicationContext());
+        doReturn(context).when(opensrpContext).applicationContext();
+        UserService mockUserService = mock(UserService.class);
+        doReturn(mockUserService).when(opensrpContext).userService();
+        Utils.logoutUser(opensrpContext, "logged out");
+        verify(mockUserService, times(1)).forceRemoteLogin(anyString());
+        verify(mockUserService, times(1)).logoutSession();
+        verify(context, times(1)).startActivity(any(Intent.class));
+    }
+
+    @Test
+    public void testHideKeyboardShouldInvokeRequireMethods() {
+        Activity activity = mock(Activity.class);
+
+        View view = mock(View.class);
+        doReturn(view).when(activity).getCurrentFocus();
+
+        InputMethodManager keyboard = mock(InputMethodManager.class);
+
+        doReturn(keyboard).when(activity).getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        Utils.hideKeyboard(activity);
+
+        verify(keyboard, only()).hideSoftInputFromWindow(isNull(), eq(0));
     }
 }
 

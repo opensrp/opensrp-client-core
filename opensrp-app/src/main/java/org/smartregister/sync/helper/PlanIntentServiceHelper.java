@@ -1,12 +1,14 @@
 package org.smartregister.sync.helper;
 
 import android.content.Context;
+
 import androidx.annotation.VisibleForTesting;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,9 +21,9 @@ import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
 
@@ -36,10 +38,12 @@ import timber.log.Timber;
  */
 public class PlanIntentServiceHelper extends BaseHelper {
 
-    private PlanDefinitionRepository planDefinitionRepository;
-    private LocationRepository locationRepository;
-    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
-    protected static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new DateTypeConverter()).create();
+    private final PlanDefinitionRepository planDefinitionRepository;
+    private final AllSharedPreferences allSharedPreferences;
+    protected static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd"))
+            .registerTypeAdapter(LocalDate.class, new DateTypeConverter())
+            .disableHtmlEscaping()
+            .create();
 
     protected final Context context;
     protected static PlanIntentServiceHelper instance;
@@ -51,16 +55,15 @@ public class PlanIntentServiceHelper extends BaseHelper {
 
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
-            instance = new PlanIntentServiceHelper(CoreLibrary.getInstance().context().getPlanDefinitionRepository(),
-                    CoreLibrary.getInstance().context().getLocationRepository());
+            instance = new PlanIntentServiceHelper(CoreLibrary.getInstance().context().getPlanDefinitionRepository());
         }
         return instance;
     }
 
-    private PlanIntentServiceHelper(PlanDefinitionRepository planRepository, LocationRepository locationRepository) {
+    private PlanIntentServiceHelper(PlanDefinitionRepository planRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.planDefinitionRepository = planRepository;
-        this.locationRepository = locationRepository;
+        this.allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     }
 
     public void syncPlans() {
@@ -164,8 +167,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
         return maxServerVersion;
     }
 
-    @VisibleForTesting
-    protected HTTPAgent getHttpAgent() {
+    private HTTPAgent getHttpAgent() {
         return CoreLibrary.getInstance().context().getHttpAgent();
     }
 }

@@ -189,10 +189,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
     @After
     public void tearDown() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
-        Whitebox.setInternalState(CoreLibrary.getInstance(), "context", context);
-        Whitebox.setInternalState(CoreLibrary.getInstance(), "accountManager", mAccountManager);
-        Whitebox.setInternalState(CoreLibrary.getInstance(), "authenticatorXml", accountAuthenticatorXml);
+        initCoreLibrary();
     }
 
     @Test

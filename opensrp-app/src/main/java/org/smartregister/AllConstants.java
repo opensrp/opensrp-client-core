@@ -528,4 +528,13 @@ public class AllConstants {
         public static String ADVANCED = "Advanced";
         public static String NORMAL = "Normal";
     }
+
+    public static class DataTypes {
+        public static final String INTEGER = "INTEGER";
+    }
+
+    public interface DownloadFileConstants {
+        String FILE_NAME = "FILE_NAME";
+        String FILE_PATH = "FILE_PATH";
+    }
 }
