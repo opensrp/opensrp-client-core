@@ -17,6 +17,7 @@ import androidx.loader.content.Loader;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configuration.ModuleConfiguration;
@@ -187,6 +188,22 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
             registerSelect.setOnClickListener(v -> {
                 if (getActivity() instanceof BaseConfigurableRegisterActivity) {
                     ((BaseConfigurableRegisterActivity) getActivity()).showFragmentDialog(toolbarOptions.getDialogOptionModel());
+                }
+            });
+        }
+
+        LinearLayout mapLayout = view.findViewById(R.id.map_layout);
+        if (mapLayout != null) {
+            mapLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getActivity() instanceof BaseConfigurableRegisterActivity) {
+                        ConfigurationInstancesHelper.newInstance(
+                                ((BaseConfigurableRegisterActivity) getActivity())
+                                        .getModuleConfiguration()
+                                        .getActivityStarter())
+                                .startMapActivity(getActivity());
+                    }
                 }
             });
         }
