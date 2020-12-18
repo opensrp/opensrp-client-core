@@ -319,7 +319,6 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         return getModuleConfiguration(getCurrentModuleName());
     }
 
-    @NonNull
     public void startRegisterActivity(@NonNull android.content.Context context) {
         Intent intent = new Intent(context, BaseConfigurableRegisterActivity.class);
         intent.putExtra(AllConstants.IntentExtra.MODULE_NAME, getCurrentModuleName());

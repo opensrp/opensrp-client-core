@@ -130,8 +130,8 @@ public class ClientProcessorForJava {
                 QuestionnaireResponse questionnaireResponse = EventConverter.convertEventToEncounterResource(eventClient.getEvent());
                 if (eventClient.getClient() != null) {
                     questionnaireResponse = questionnaireResponse.toBuilder().contained(ClientConverter.convertClientToPatientResource(eventClient.getClient())).build();
+                    planEvaluator.evaluatePlan(plan, questionnaireResponse);
                 }
-                planEvaluator.evaluatePlan(plan, questionnaireResponse);
             }
         });
     }
