@@ -368,6 +368,9 @@ public class AllSharedPreferences {
      * Allows migration of older passphrase so that is linked to pioneer user
      **/
     public void migratePassphrase() {
+        if (CoreLibrary.getInstance().getSyncConfiguration() == null) {
+            return;
+        }
         String encryptionParam = CoreLibrary.getInstance().getSyncConfiguration().getEncryptionParam().name();
         String passphrase = preferences.getString(new StringBuffer(ENCRYPTED_PASSPHRASE_KEY).append('_').append(encryptionParam).toString(), null);
         if (passphrase != null) {

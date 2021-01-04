@@ -160,7 +160,11 @@ public class TaskRepository extends BaseRepository {
             contentValues.put(STATUS, task.getStatus().name());
         }
         contentValues.put(BUSINESS_STATUS, task.getBusinessStatus());
-        contentValues.put(PRIORITY, task.getPriority().name());
+        if (task.getPriority() != null) {
+            contentValues.put(PRIORITY, task.getPriority().name());
+        } else {
+            contentValues.put(PRIORITY, Task.TaskPriority.ROUTINE.name());
+        }
         contentValues.put(CODE, task.getCode());
         contentValues.put(DESCRIPTION, task.getDescription());
         contentValues.put(FOCUS, task.getFocus());
@@ -381,7 +385,7 @@ public class TaskRepository extends BaseRepository {
     }
 
     public List<Task> getAllUnsynchedCreatedTasks() {
-        return new ArrayList<>(getTasks(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL", TASK_TABLE, SYNC_STATUS, SERVER_VERSION), new String[]{BaseRepository.TYPE_Created}));
+        return new ArrayList<>(getTasks(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL OR %s = 0", TASK_TABLE, SYNC_STATUS, SERVER_VERSION,SERVER_VERSION), new String[]{BaseRepository.TYPE_Created}));
     }
 
     /**
@@ -673,5 +677,11 @@ public class TaskRepository extends BaseRepository {
         }
 
         return unsyncedRecordsCount;
+    }
+
+    @NonNull
+    public Set<Task> getTasksByJurisdiction(@NonNull String jurisdictionId) {
+        String query = "SELECT * FROM " + TASK_TABLE + " WHERE " + GROUP_ID + " = ?";
+        return getTasks(query, new String[]{jurisdictionId});
     }
 }

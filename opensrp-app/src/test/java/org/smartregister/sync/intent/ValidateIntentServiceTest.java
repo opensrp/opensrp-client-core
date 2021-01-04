@@ -2,6 +2,7 @@ package org.smartregister.sync.intent;
 
 import android.content.Intent;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +23,8 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.TestApplication;
+import org.smartregister.domain.Client;
+import org.smartregister.domain.Event;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.repository.EventClientRepository;
@@ -29,10 +32,13 @@ import org.smartregister.service.HTTPAgent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Vincent Karuri on 22/09/2020
@@ -53,13 +59,20 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
         MockitoAnnotations.initMocks(this);
         mockMethods();
         validateIntentService = Robolectric.buildIntentService(ValidateIntentService.class).get();
+        ReflectionHelpers.setField(validateIntentService, "context", RuntimeEnvironment.application);
+        ReflectionHelpers.setField(validateIntentService, "httpAgent", httpAgent);
+        ReflectionHelpers.setField(validateIntentService, "openSRPContext", openSRPContext);
     }
 
     @Test
     public void testOnHandleIntent() {
-        ReflectionHelpers.setField(validateIntentService, "context", RuntimeEnvironment.application);
-        ReflectionHelpers.setField(validateIntentService, "httpAgent", httpAgent);
-        ReflectionHelpers.setField(validateIntentService, "openSRPContext", openSRPContext);
+
+        Client client = new Client("client_id1");
+        Event event = new Event();
+        event.setEventId("event_id1");
+
+        when(eventClientRepository.fetchClientByBaseEntityIds(any())).thenReturn(Collections.singletonList(client));
+        when(eventClientRepository.getEventsByEventIds(any())).thenReturn(Collections.singletonList(event));
 
         validateIntentService.onHandleIntent(new Intent());
 
@@ -69,6 +82,29 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
         Mockito.verify(eventClientRepository).markEventValidationStatus(getEventIds().get(0), false);
         Mockito.verify(eventClientRepository).markEventValidationStatus(getEventIds().get(1), true);
     }
+
+    @Test
+    public void testOnHandleIntentWithArchivedEventAndClient() {
+
+        Client client = new Client("client_id1");
+        client.setDateVoided(DateTime.now());
+
+        Event event = new Event();
+        event.setEventId("event_id1");
+        event.setDateVoided(DateTime.now());
+
+        when(eventClientRepository.fetchClientByBaseEntityIds(any())).thenReturn(Collections.singletonList(client));
+        when(eventClientRepository.getEventsByEventIds(any())).thenReturn(Collections.singletonList(event));
+
+        validateIntentService.onHandleIntent(new Intent());
+
+        Mockito.verify(eventClientRepository).markClientValidationStatus(getClientIds().get(0), true);
+        Mockito.verify(eventClientRepository).markClientValidationStatus(getClientIds().get(1), true);
+
+        Mockito.verify(eventClientRepository).markEventValidationStatus(getEventIds().get(0), true);
+        Mockito.verify(eventClientRepository).markEventValidationStatus(getEventIds().get(1), true);
+    }
+
 
     @After
     public void tearDown() {
@@ -93,13 +129,13 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
         doReturn(dristhiConfiguration).when(openSRPContext).configuration();
 
         JSONObject results = new JSONObject();
-        JSONArray invalidClients = new JSONArray(Arrays.asList("client_id1"));
+        JSONArray invalidClients = new JSONArray(Collections.singletonList("client_id1"));
         results.put(AllConstants.KEY.CLIENTS, invalidClients);
 
-        JSONArray invalidEvents = new JSONArray(Arrays.asList("event_id1"));
+        JSONArray invalidEvents = new JSONArray(Collections.singletonList("event_id1"));
         results.put(AllConstants.KEY.EVENTS, invalidEvents);
 
-        Response<String> response = new Response(ResponseStatus.success, results.toString());
+        Response<String> response = new Response<>(ResponseStatus.success, results.toString());
         doReturn(response).when(httpAgent).postWithJsonResponse(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
     }
 

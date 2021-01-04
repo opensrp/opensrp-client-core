@@ -1,7 +1,5 @@
 package org.smartregister.sync.helper;
 
-import androidx.test.core.app.ApplicationProvider;
-
 import com.google.gson.reflect.TypeToken;
 
 import org.junit.After;
@@ -15,11 +13,11 @@ import org.powermock.reflect.Whitebox;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
+import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
-import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
@@ -32,7 +30,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.spy;
@@ -61,6 +58,9 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     @Mock
     private HTTPAgent httpAgent;
 
+    @Mock
+    private DristhiConfiguration configuration;
+
     @Captor
     private ArgumentCaptor<String> stringArgumentCaptor;
 
@@ -69,7 +69,6 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
 
     private TaskServiceHelper taskServiceHelper;
 
-    private AllSharedPreferences allSharedPreferences;
 
     private final String taskJSon = "{\"for\": \"154167\", \"code\": \"Bednet Distribution\", \"focus\": \"158b73f5-49d0-50a9-8020-0468c1bbabdd\", \"owner\": \"nifiUser\", \"status\": \"Cancelled\", \"priority\": \"routine\", \"authoredOn\": \"2020-03-26T10:47:03.586+02:00\", \"identifier\": \"c256c9d8-fe9b-4763-b5af-26585dcbe6bf\", \"description\": \"Visit 100% of residential structures in the operational area and provide nets\", \"lastModified\": \"2020-03-26T10:52:09.750+02:00\", \"serverVersion\": 1585212830433, \"businessStatus\": \"Not Visited\", \"planIdentifier\": \"eb3cd7e1-c849-5230-8d49-943218018f9f\", \"groupIdentifier\": \"3952\", \"executionPeriod\":{\"end\": \"2020-04-02T00:00:00.000+02:00\", \"start\": \"2020-03-26T00:00:00.000+02:00\"}}";
 
@@ -77,15 +76,15 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()));
-        Whitebox.setInternalState(getInstance().context(), "allSharedPreferences", allSharedPreferences);
-        taskServiceHelper = new TaskServiceHelper(taskRepository);
-        allSharedPreferences.getPreferences().edit().clear().apply();
-        allSharedPreferences.savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
-        allSharedPreferences.savePreference(ANM_IDENTIFIER_PREFERENCE_KEY, "onatest");
         Whitebox.setInternalState(getInstance().context(), "planDefinitionRepository", planDefinitionRepository);
         Whitebox.setInternalState(getInstance().context(), "locationRepository", locationRepository);
         Whitebox.setInternalState(getInstance().context(), "httpAgent", httpAgent);
+        Whitebox.setInternalState(getInstance().context(), "configuration", configuration);
+        when(configuration.dristhiBaseURL()).thenReturn("https://sample-stage.smartregister.org/opensrp");
+        getInstance().context().allSharedPreferences().getPreferences().edit().clear().apply();
+        getInstance().context().allSharedPreferences().savePreference(ANM_IDENTIFIER_PREFERENCE_KEY, "onatest");
+        taskServiceHelper = new TaskServiceHelper(taskRepository);
+
     }
 
     @After
@@ -113,7 +112,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         when(getInstance().context().getLocationRepository().getAllLocationIds()).thenReturn(locationIdList);
 
         //reset task last sync date to zero since this is updated by other tests
-        allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, "0");
+        getInstance().context().allSharedPreferences().savePreference(TASK_LAST_SYNC_DATE, "0");
 
         Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
         }.getType());
@@ -157,7 +156,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         List<Task> tasks = Collections.singletonList(expectedTask);
 
         //reset task last sync date to zero since this is updated by other tests
-        allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, "0");
+        getInstance().context().allSharedPreferences().savePreference(TASK_LAST_SYNC_DATE, "0");
 
         Mockito.doReturn(new Response<>(ResponseStatus.success,    // returned on first call
                         TaskServiceHelper.taskGson.toJson(tasks)).withTotalRecords(1L),

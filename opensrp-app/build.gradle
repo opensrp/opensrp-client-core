@@ -132,18 +132,11 @@ tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
     testLogging {
         // Enables easier debugging of tests in Github Actions CI
-        events TestLogEvent.FAILED,
-                TestLogEvent.PASSED,
-                TestLogEvent.SKIPPED,
-                TestLogEvent.STANDARD_OUT
+        events TestLogEvent.FAILED
         exceptionFormat TestExceptionFormat.FULL
         showExceptions true
         showCauses true
         showStackTraces true
-
-        error {
-            exceptionFormat = 'full'
-        }
     }
     maxHeapSize = "2g"
 }
@@ -235,7 +228,7 @@ dependencies {
 
     implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:1.0.4-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-plan-evaluator:1.1.0-SNAPSHOT'
 
     implementation 'xerces:xercesImpl:2.12.0'
 

@@ -2,9 +2,11 @@ package org.smartregister.sync.intent;
 
 import android.content.Context;
 import android.content.Intent;
+
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.util.Pair;
 
 import com.google.firebase.perf.FirebasePerformance;
@@ -307,10 +309,11 @@ public class SyncIntentService extends BaseSyncIntentService {
             if (response.isFailure()) {
                 Timber.e("Events sync failed.");
                 isSuccessfulPushSync = false;
+            } else {
+                db.markEventsAsSynced(pendingEvents);
+                Timber.i("Events synced successfully.");
             }
             eventSyncTrace.stop();
-            db.markEventsAsSynced(pendingEvents);
-            Timber.i("Events synced successfully.");
             updateProgress(eventsUploadedCount, totalEventCount);
         }
 

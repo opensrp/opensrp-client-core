@@ -1117,12 +1117,16 @@ public class EventClientRepository extends BaseRepository {
                 }
 
             }
+
+            if (clients.isEmpty() && events.isEmpty()) {
+                clients = getUnSyncedClients(limit);
+            } else if (!events.isEmpty()) {
+                result.put(AllConstants.KEY.EVENTS, events);
+            }
             if (!clients.isEmpty()) {
                 result.put(AllConstants.KEY.CLIENTS, clients);
             }
-            if (!events.isEmpty()) {
-                result.put(AllConstants.KEY.EVENTS, events);
-            }
+
         } catch (Exception e) {
             Timber.e(e);
         } finally {
@@ -1409,6 +1413,14 @@ public class EventClientRepository extends BaseRepository {
         return null;
     }
 
+    public List<Event> getEventsByEventIds(Set<String> eventIds) {
+        return fetchEvents("SELECT json FROM "
+                + eventTable.name()
+                + " WHERE "
+                + event_column.eventId.name()
+                + " IN (" + StringUtils.repeat(",", eventIds.size()) + ")", eventIds.toArray(new String[0]));
+    }
+
     public JSONObject getEventsByFormSubmissionId(String formSubmissionId) {
         if (StringUtils.isBlank(formSubmissionId)) {
             return null;
@@ -1488,6 +1500,17 @@ public class EventClientRepository extends BaseRepository {
         return null;
     }
 
+
+    public List<Client> fetchClientByBaseEntityIds(Set<String> baseEntityIds) {
+        return fetchClients("SELECT "
+                + client_column.json
+                + " FROM "
+                + clientTable.name()
+                + " WHERE "
+                + client_column.baseEntityId.name()
+                + " in  (" + StringUtils.repeat("?", baseEntityIds.size()) + ")", baseEntityIds.toArray(new String[0]));
+    }
+
     public JSONObject getUnSyncedClientByBaseEntityId(String baseEntityId) {
         Cursor cursor = null;
         try {
@@ -1513,6 +1536,29 @@ public class EventClientRepository extends BaseRepository {
             }
         }
         return null;
+    }
+
+
+    public List<JSONObject> getUnSyncedClients(int limit) {
+        List<JSONObject> clients = new ArrayList<>();
+        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT "
+                        + client_column.json
+                        + " FROM "
+                        + clientTable.name()
+                        + " WHERE "
+                        + client_column.syncStatus.name()
+                        + " = ? limit "
+                        + limit
+                , new String[]{BaseRepository.TYPE_Unsynced})) {
+            while (cursor.moveToNext()) {
+                String json = cursor.getString(0);
+                json = json.replaceAll("'", "");
+                clients.add(new JSONObject(json));
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+        return clients;
     }
 
     public JSONObject getEventsByBaseEntityIdAndEventType(String baseEntityId, String eventType) {

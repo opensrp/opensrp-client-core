@@ -1,8 +1,5 @@
 package org.smartregister;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobCreator;
 import com.evernote.android.job.JobManager;
@@ -13,6 +10,9 @@ import org.smartregister.repository.Repository;
 import org.smartregister.sync.P2PClassifier;
 import org.smartregister.sync.intent.SyncIntentService;
 import org.smartregister.view.activity.DrishtiApplication;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import static org.mockito.Mockito.mock;
 
@@ -77,7 +77,6 @@ public class TestApplication extends DrishtiApplication {
             switch (tag) {
                 case SyncServiceJob.TAG:
                     return new SyncServiceJob(SyncIntentService.class);
-
                 default:
                     break;
             }

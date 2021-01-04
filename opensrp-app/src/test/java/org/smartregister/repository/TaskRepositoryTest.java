@@ -366,9 +366,11 @@ public class TaskRepositoryTest extends BaseUnitTest {
     @Test
     public void testGetAllUnSyncedCreatedTasks() {
 
-        when(sqLiteDatabase.rawQuery("SELECT *  FROM task WHERE sync_status =? OR server_version IS NULL", new String[]{BaseRepository.TYPE_Created})).thenReturn(getCursor());
+        String query = "SELECT *  FROM task WHERE sync_status =? OR server_version IS NULL OR server_version = 0";
+        when(sqLiteDatabase.rawQuery(query, new String[]{BaseRepository.TYPE_Created})).thenReturn(getCursor());
 
         List<Task> unsyncedCreatedTasks = taskRepository.getAllUnsynchedCreatedTasks();
+        verify(sqLiteDatabase).rawQuery(query, new String[]{BaseRepository.TYPE_Created});
         assertEquals(1, unsyncedCreatedTasks.size());
 
         Task actualTask = unsyncedCreatedTasks.get(0);
