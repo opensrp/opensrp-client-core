@@ -151,6 +151,7 @@ public class ResetAppHelper {
     protected void clearP2PDb() {
         P2POptions p2POptions = CoreLibrary.getInstance().getP2POptions();
         if (p2POptions != null && p2POptions.isEnableP2PLibrary()) {
+            p2POptions.setAuthorizationService(null);
             AppDatabase roomP2PDb = P2PLibrary.getInstance().getDb();
             roomP2PDb.clearAllTables();
             Utils.deleteRoomDb(application.getApplicationContext(), roomP2PDb.getOpenHelper().getDatabaseName());
