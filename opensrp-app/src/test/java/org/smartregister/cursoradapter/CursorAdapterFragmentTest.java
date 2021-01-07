@@ -2,11 +2,12 @@ package org.smartregister.cursoradapter;
 
 import android.content.Context;
 import android.os.Build;
-import androidx.fragment.app.Fragment;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import net.sqlcipher.MatrixCursor;
 
@@ -131,7 +132,7 @@ public class CursorAdapterFragmentTest extends BaseUnitTest {
         Button previousButton = (Button) mBaseFragment.getView().findViewById(R.id.btn_previous_page);
         TextView info = (TextView) mBaseFragment.getView().findViewById(R.id.txt_page_info);
         nextButton.performClick();
-        assertEquals("Page 1 of 1", info.getText());
+        assertEquals("Page 1 of 1", info.getText().toString());
         previousButton.performClick();
     }
 
