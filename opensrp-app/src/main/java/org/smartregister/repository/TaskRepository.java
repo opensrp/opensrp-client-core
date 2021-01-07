@@ -160,7 +160,11 @@ public class TaskRepository extends BaseRepository {
             contentValues.put(STATUS, task.getStatus().name());
         }
         contentValues.put(BUSINESS_STATUS, task.getBusinessStatus());
-        contentValues.put(PRIORITY, task.getPriority().name());
+        if (task.getPriority() != null) {
+            contentValues.put(PRIORITY, task.getPriority().name());
+        } else {
+            contentValues.put(PRIORITY, Task.TaskPriority.ROUTINE.name());
+        }
         contentValues.put(CODE, task.getCode());
         contentValues.put(DESCRIPTION, task.getDescription());
         contentValues.put(FOCUS, task.getFocus());
