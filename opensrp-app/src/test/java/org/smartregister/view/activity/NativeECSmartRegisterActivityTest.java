@@ -124,7 +124,7 @@ public class NativeECSmartRegisterActivityTest extends BaseUnitTest {
         assertEquals(21, list.getCount());
         assertNotSame(View.VISIBLE, nextButton.getVisibility());
         assertNotSame(View.VISIBLE, previousButton.getVisibility());
-        assertEquals("Page 1 of 1", info.getText());
+        assertEquals("Page 1 of 1", info.getText().toString());
     }
 
     @Test
@@ -140,7 +140,7 @@ public class NativeECSmartRegisterActivityTest extends BaseUnitTest {
         assertEquals(21, list.getAdapter().getCount());
         assertSame(View.VISIBLE, nextButton.getVisibility());
         assertNotSame(View.VISIBLE, previousButton.getVisibility());
-        assertEquals("Page 1 of 2", info.getText());
+        assertEquals("Page 1 of 2", info.getText().toString());
     }
 
     @Test
@@ -156,13 +156,13 @@ public class NativeECSmartRegisterActivityTest extends BaseUnitTest {
         assertEquals(2, tryGetAdapter(list).getCount());
         assertNotSame(View.VISIBLE, nextButton.getVisibility());
         assertSame(View.VISIBLE, previousButton.getVisibility());
-        assertEquals("Page 2 of 2", info.getText());
+        assertEquals("Page 2 of 2", info.getText().toString());
 
         previousButton.performClick();
         assertEquals(21, tryGetAdapter(list).getCount());
         assertSame(View.VISIBLE, nextButton.getVisibility());
         assertNotSame(View.VISIBLE, previousButton.getVisibility());
-        assertEquals("Page 1 of 2", info.getText());
+        assertEquals("Page 1 of 2", info.getText().toString());
     }
 
     @Ignore
