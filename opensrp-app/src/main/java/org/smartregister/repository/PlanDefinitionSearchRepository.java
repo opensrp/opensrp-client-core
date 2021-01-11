@@ -95,8 +95,8 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
 
     public List<PlanDefinitionSearch> findPlanDefinitionSearchByPlanId(@NonNull String planId) {
         List<PlanDefinitionSearch> planDefinitionSearchList = new ArrayList<>();
-        String query = String.format("SELECT %s FROM %s WHERE %s=? ",
-                "*", PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID);
+        String query = String.format("SELECT * FROM %s WHERE %s=? ",
+                PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID);
         try (Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{planId})) {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
@@ -111,8 +111,8 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
 
     public List<PlanDefinitionSearch> findPlanDefinitionSearchByPlanStatus(@NonNull PlanDefinition.PlanStatus status) {
         List<PlanDefinitionSearch> planDefinitionSearchList = new ArrayList<>();
-        String query = String.format("SELECT %s FROM %s WHERE %s=? ",
-                "*", PLAN_DEFINITION_SEARCH_TABLE, STATUS);
+        String query = String.format("SELECT * FROM %s WHERE %s=? ",
+                PLAN_DEFINITION_SEARCH_TABLE, STATUS);
         try (Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{status.value()})) {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
