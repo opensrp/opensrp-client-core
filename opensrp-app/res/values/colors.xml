@@ -68,4 +68,6 @@
 
     <color name="top_section_background_grey">#ecf1f7</color>
 
+    <color name="form_actionbar">#30383C</color>
+
 </resources>

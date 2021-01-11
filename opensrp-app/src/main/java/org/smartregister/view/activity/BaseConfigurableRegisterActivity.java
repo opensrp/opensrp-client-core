@@ -146,6 +146,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
         intent.putExtra(AllConstants.IntentExtra.JsonForm.JSON, jsonForm.toString());
 
         Form form = new Form();
+        form.setActionBarBackground(R.color.form_actionbar);
         form.setWizard(false);
         form.setHideSaveLabel(true);
         form.setNextLabel("");
@@ -221,6 +222,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
         if (moduleMetadata != null) {
             Intent intent = new Intent(this, getModuleConfiguration().getJsonFormActivity());
             Form form = new Form();
+            form.setActionBarBackground(R.color.form_actionbar);
             form.setWizard(false);
             form.setName("");
 

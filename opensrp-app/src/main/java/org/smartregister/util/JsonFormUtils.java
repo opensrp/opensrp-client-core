@@ -82,6 +82,21 @@ public class JsonFormUtils {
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
     public static Client createBaseClient(JSONArray fields, FormTag formTag, String entityId) {
+        return createBaseClient(null, fields, formTag, entityId);
+    }
+
+
+    /**
+     * Create base client from Form fields and the original client
+     * Null values are populated with the original client details
+     *
+     * @param originalClient original client
+     * @param fields         JSON Form fields
+     * @param formTag
+     * @param entityId
+     * @return base Client object
+     */
+    public static Client createBaseClient(Client originalClient, JSONArray fields, FormTag formTag, String entityId) {
 
         String firstName = getFieldValue(fields, FormEntityConstants.Person.first_name);
         String middleName = getFieldValue(fields, FormEntityConstants.Person.middle_name);
@@ -116,6 +131,18 @@ public class JsonFormUtils {
 
         List<Address> addresses = new ArrayList<>(extractAddresses(fields).values());
 
+        if (originalClient != null) {
+            firstName = firstName == null ? originalClient.getFirstName() : firstName;
+            middleName = middleName == null ? originalClient.getMiddleName() : middleName;
+            lastName = lastName == null ? originalClient.getLastName() : lastName;
+            birthdate = birthdate == null ? originalClient.getBirthdate() : birthdate;
+            deathdate = deathdate == null ? originalClient.getDeathdate() : deathdate;
+            birthdateApprox = birthdateApprox ? originalClient.getBirthdateApprox() : false;
+            deathdateApprox = deathdateApprox ? originalClient.getDeathdateApprox() : false;
+            gender = gender == null ? originalClient.getGender() : gender;
+            addresses = (addresses.isEmpty()) ? originalClient.getAddresses() : addresses;
+        }
+
         Client client = (Client) new Client(entityId).withFirstName(firstName).withMiddleName(middleName).withLastName(lastName)
                 .withBirthdate((birthdate), birthdateApprox).withDeathdate(deathdate, deathdateApprox).withGender(gender)
                 .withDateCreated(new Date());
@@ -127,8 +154,18 @@ public class JsonFormUtils {
         client.setClientApplicationVersionName(formTag.appVersionName);
         client.setClientDatabaseVersion(formTag.databaseVersion);
 
-        client.withRelationships(new HashMap<String, List<String>>()).withAddresses(addresses)
+        client.withRelationships(new HashMap<>()).withAddresses(addresses)
                 .withAttributes(extractAttributes(fields)).withIdentifiers(extractIdentifiers(fields));
+
+        // Handle null relationships & attributes
+        if (originalClient != null) {
+            if (client.getRelationships() == null || client.getRelationships().isEmpty()) {
+                client.setRelationships(originalClient.getRelationships());
+            }
+            if (client.getAttributes() == null || client.getAttributes().isEmpty()) {
+                client.setAttributes(originalClient.getAttributes());
+            }
+        }
         return client;
 
     }
@@ -1248,7 +1285,7 @@ public class JsonFormUtils {
         JSONObject updatedClientJson = new JSONObject(JsonFormUtils.gson.toJson(baseClient));
         ECSyncHelper ecSyncHelper = ECSyncHelper.getInstance(CoreLibrary.getInstance().context().applicationContext());
         JSONObject originalClientJsonObject = ecSyncHelper.getClient(baseClient.getBaseEntityId());
-        
+
         if (originalClientJsonObject != null) {
             JSONObject mergedJson = JsonFormUtils.merge(originalClientJsonObject, updatedClientJson);
             ecSyncHelper.addClient(baseClient.getBaseEntityId(), mergedJson);
