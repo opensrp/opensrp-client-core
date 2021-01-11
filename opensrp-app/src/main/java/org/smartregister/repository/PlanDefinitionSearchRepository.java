@@ -8,7 +8,6 @@ import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.smartregister.domain.PlanDefinition;
@@ -97,7 +96,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
     public List<PlanDefinitionSearch> findPlanDefinitionSearchByPlanId(@NonNull String planId) {
         List<PlanDefinitionSearch> planDefinitionSearchList = new ArrayList<>();
         String query = String.format("SELECT %s FROM %s WHERE %s=? ",
-                StringUtils.join(COLUMNS, ","), PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID);
+                "*", PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID);
         try (Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{planId})) {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
@@ -113,7 +112,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
     public List<PlanDefinitionSearch> findPlanDefinitionSearchByPlanStatus(@NonNull PlanDefinition.PlanStatus status) {
         List<PlanDefinitionSearch> planDefinitionSearchList = new ArrayList<>();
         String query = String.format("SELECT %s FROM %s WHERE %s=? ",
-                StringUtils.join(COLUMNS, ","), PLAN_DEFINITION_SEARCH_TABLE, STATUS);
+                "*", PLAN_DEFINITION_SEARCH_TABLE, STATUS);
         try (Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{status.value()})) {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
