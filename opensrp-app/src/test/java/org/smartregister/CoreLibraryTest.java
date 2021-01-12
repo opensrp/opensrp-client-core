@@ -104,7 +104,7 @@ public class CoreLibraryTest extends BaseUnitTest {
 
         CoreLibrary.reset(null, null);
 
-        Assert.assertEquals(coreLibrary, CoreLibrary.getInstance());
+        assertEquals(coreLibrary, CoreLibrary.getInstance());
     }
 
     @Test
@@ -126,7 +126,7 @@ public class CoreLibraryTest extends BaseUnitTest {
         CoreLibrary.getInstance().setEcClientFieldsFile(newValue);
 
         Assert.assertNotEquals(oldValue, newValue);
-        Assert.assertEquals(newValue, ReflectionHelpers.getField(CoreLibrary.getInstance(), "ecClientFieldsFile"));
+        assertEquals(newValue, ReflectionHelpers.getField(CoreLibrary.getInstance(), "ecClientFieldsFile"));
     }
 
     @Test
