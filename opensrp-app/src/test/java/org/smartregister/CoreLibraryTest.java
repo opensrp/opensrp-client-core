@@ -9,11 +9,13 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.authorizer.P2PAuthorizationService;
 import org.smartregister.p2p.model.dao.ReceiverTransferDao;
 import org.smartregister.p2p.model.dao.SenderTransferDao;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.service.UserService;
 import org.smartregister.shadows.ShadowAppDatabase;
 
 import static org.junit.Assert.assertEquals;
@@ -67,4 +69,12 @@ public class CoreLibraryTest extends BaseUnitTest {
 
         assertEquals(expectedUsername, p2PLibrary.getUsername());
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void getInstanceShouldThrowException() {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+
+        CoreLibrary.getInstance();
+    }
+
 }
