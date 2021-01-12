@@ -116,4 +116,15 @@ public class CoreLibraryTest extends BaseUnitTest {
 
         Assert.assertNotEquals(coreLibrary, CoreLibrary.getInstance());
     }
+
+    @Test
+    public void setEcClientFieldsFileShouldUpdateField() {
+        String oldValue = ReflectionHelpers.getField(CoreLibrary.getInstance(), "ecClientFieldsFile");
+
+        String newValue = "ec_client_fields_new.json";
+        CoreLibrary.getInstance().setEcClientFieldsFile(newValue);
+
+        Assert.assertNotEquals(oldValue, newValue);
+        Assert.assertEquals(newValue, ReflectionHelpers.getField(CoreLibrary.getInstance(), "ecClientFieldsFile"));
+    }
 }
