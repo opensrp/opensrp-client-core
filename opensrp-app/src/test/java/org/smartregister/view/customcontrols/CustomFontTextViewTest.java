@@ -5,8 +5,6 @@ import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by Vincent Karuri on 12/01/2021
  */
