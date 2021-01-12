@@ -2,6 +2,7 @@ package org.smartregister;
 
 import android.preference.PreferenceManager;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -94,5 +95,25 @@ public class CoreLibraryTest extends BaseUnitTest {
         Mockito.verify(userService).logoutSession();
         Mockito.verify(userService).forceRemoteLogin(Mockito.nullable(String.class));
         Mockito.verify(allSharedPreferences).migratePassphrase();
+    }
+
+    @Test
+    public void resetShouldDoNothingWhenContextPassedIsNull() {
+        CoreLibrary coreLibrary = CoreLibrary.getInstance();
+
+        CoreLibrary.reset(null, null);
+
+        Assert.assertEquals(coreLibrary, CoreLibrary.getInstance());
+    }
+
+    @Test
+    public void resetShouldCreateNewCoreLibraryInstanceWhenGivenContextAndSyncConfiguration() {
+        CoreLibrary coreLibrary = CoreLibrary.getInstance();
+        Context context = CoreLibrary.getInstance().context();
+        SyncConfiguration syncConfiguration = Mockito.mock(SyncConfiguration.class);
+
+        CoreLibrary.reset(context, syncConfiguration);
+
+        Assert.assertNotEquals(coreLibrary, CoreLibrary.getInstance());
     }
 }
