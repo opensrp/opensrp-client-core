@@ -77,4 +77,22 @@ public class CoreLibraryTest extends BaseUnitTest {
         CoreLibrary.getInstance();
     }
 
+    @Test
+    public void checkPlatformMigrationsShouldLogoutUserWhenUserIsLoggedIn() {
+        UserService userService = Mockito.spy(CoreLibrary.getInstance().context().userService());
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "userService", userService);
+
+        AllSharedPreferences allSharedPreferences = Mockito.spy(CoreLibrary.getInstance().context().userService().getAllSharedPreferences());
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context().userService(), "allSharedPreferences", allSharedPreferences);
+
+        // Mock calls
+        Mockito.doReturn("demo").when(allSharedPreferences).fetchPioneerUser();
+        Mockito.doReturn(0).when(allSharedPreferences).getDBEncryptionVersion();
+
+        ReflectionHelpers.callInstanceMethod(CoreLibrary.getInstance(), "checkPlatformMigrations");
+
+        Mockito.verify(userService).logoutSession();
+        Mockito.verify(userService).forceRemoteLogin(Mockito.nullable(String.class));
+        Mockito.verify(allSharedPreferences).migratePassphrase();
+    }
 }
