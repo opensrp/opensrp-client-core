@@ -229,7 +229,7 @@ public class Context {
     private ClientFormRepository clientFormRepository;
     private ClientRelationshipRepository clientRelationshipRepository;
 
-    private static final String SHARED_PREFERENCES_FILENAME = "sharedpreferences";
+    private static final String SHARED_PREFERENCES_FILENAME = "%s_preferences";
 
     /////////////////////////////////////////////////
 
@@ -618,7 +618,7 @@ public class Context {
             String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
 
             sharedPreferences = EncryptedSharedPreferences.create(
-                    SHARED_PREFERENCES_FILENAME,
+                    String.format(SHARED_PREFERENCES_FILENAME, context.getPackageName()),
                     masterKeyAlias,
                     context,
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
