@@ -56,7 +56,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
 
     private AccountAuthenticatorXml authenticatorXml;
 
-    private static String ENCRYPTED_PREFS_KEY_KEYSET = "androidx_security_crypto_encrypted_prefs_key_keyset";
+    private static String ENCRYPTED_PREFS_KEY_KEYSET = "__androidx_security_crypto_encrypted_prefs_key_keyset__";
     private static String ENCRYPTED_PREFS_VALUE_KEYSET = "__androidx_security_crypto_encrypted_prefs_value_keyset__";
 
     public static void init(Context context) {
@@ -101,7 +101,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         android.content.Context appContext = instance.context().applicationContext();
         SharedPreferences existingPrefs = appContext.getSharedPreferences(appContext.getPackageName() + "_preferences", android.content.Context.MODE_PRIVATE);
         Map<String, ?> entries = existingPrefs.getAll();
-        existingPrefs.edit().clear().commit();
+        existingPrefs.edit().clear().apply();
 
         // check the version of SharedPreferences in place (encrypted vs unencrypted)
         if (instance.getSyncConfiguration() != null
