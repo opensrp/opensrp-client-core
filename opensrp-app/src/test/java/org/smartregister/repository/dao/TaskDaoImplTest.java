@@ -1,5 +1,9 @@
 package org.smartregister.repository.dao;
 
+import android.content.Intent;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.ibm.fhir.model.resource.Task;
 
 import net.sqlcipher.database.SQLiteDatabase;
@@ -7,23 +11,34 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.repository.Repository;
 import org.smartregister.repository.TaskNotesRepository;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.List;
+import java.util.UUID;
 
 import static com.ibm.fhir.model.type.code.TaskStatus.READY;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.smartregister.AllConstants.INTENT_KEY.TASK_GENERATED;
+import static org.smartregister.AllConstants.INTENT_KEY.TASK_GENERATED_EVENT;
 import static org.smartregister.domain.Task.TaskStatus.ARCHIVED;
 import static org.smartregister.domain.Task.TaskStatus.CANCELLED;
 import static org.smartregister.repository.TaskRepositoryTest.getCursor;
@@ -101,5 +116,39 @@ public class TaskDaoImplTest extends BaseUnitTest {
         // Perform verifications and assertions
         verify(taskDao).getTasksByJurisdiction(jurisdictionId);
         assertEquals(1, allTasks.size());
+    }
+
+    @Test
+    public void testUpdateTaskShouldInvokeExpectedMethods() {
+        taskDao = Mockito.spy(taskDao);
+
+        LocalBroadcastManager localBroadcastManager = mock(LocalBroadcastManager.class);
+
+        doReturn(false).when(localBroadcastManager).sendBroadcast(any(Intent.class));
+
+        ReflectionHelpers.setStaticField(LocalBroadcastManager.class, "mInstance", localBroadcastManager);
+
+        org.smartregister.domain.Task task = new org.smartregister.domain.Task();
+        task.setIdentifier(UUID.randomUUID().toString());
+        task.setPriority(org.smartregister.domain.Task.TaskPriority.ROUTINE);
+        task.setStatus(ARCHIVED);
+
+        ArgumentCaptor<Intent> intentArgumentCaptor = ArgumentCaptor.forClass(Intent.class);
+
+        taskDao.updateTask(task);
+
+        verify(taskDao).addOrUpdate(any(org.smartregister.domain.Task.class), eq(true));
+
+        verify(localBroadcastManager).sendBroadcast(intentArgumentCaptor.capture());
+
+        Intent intent = intentArgumentCaptor.getValue();
+
+        assertNotNull(intent);
+
+        assertEquals(intent.getAction(), TASK_GENERATED_EVENT);
+
+        assertTrue(intent.hasExtra(TASK_GENERATED));
+
+        ReflectionHelpers.setStaticField(LocalBroadcastManager.class, "mInstance", null);
     }
 }

@@ -56,6 +56,10 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
         }
         task.setSyncStatus(BaseRepository.TYPE_Created);
         addOrUpdate(task);
+        sendBroadcast(task);
+    }
+
+    private void sendBroadcast(org.smartregister.domain.Task task) {
         Intent taskGeneratedIntent = new Intent(TASK_GENERATED_EVENT);
         taskGeneratedIntent.putExtra(TASK_GENERATED, task);
         LocalBroadcastManager.getInstance(CoreLibrary.getInstance().context().applicationContext()).sendBroadcast(taskGeneratedIntent);
@@ -78,6 +82,7 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
     public org.smartregister.domain.Task updateTask(org.smartregister.domain.Task task) {
         task.setSyncStatus(BaseRepository.TYPE_Created);
         addOrUpdate(task, true);
+        sendBroadcast(task);
         return task;
     }
 
