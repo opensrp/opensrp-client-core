@@ -56,7 +56,7 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
         Mockito.doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                throw new Exception("An exception");
+                throw new IllegalStateException("An exception");
             }
         }).when(spiedContext).getResources();
 
