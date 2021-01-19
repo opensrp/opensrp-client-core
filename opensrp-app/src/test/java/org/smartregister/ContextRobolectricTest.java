@@ -3,6 +3,7 @@ package org.smartregister;
 import android.content.res.Configuration;
 
 import org.junit.Assert;
+import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -14,6 +15,7 @@ import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
 import org.smartregister.repository.DrishtiRepository;
 
 import java.util.ArrayList;
+import java.util.MissingFormatWidthException;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 19-01-2021.
@@ -144,5 +146,19 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
         Assert.assertNull(ReflectionHelpers.getField(Context.getInstance(), "fpClientsCache"));
 
         Assert.assertNotNull(Context.getInstance().fpClientsCache());
+    }
+
+    @Test
+    public void ancClientsCache() {
+        Assert.assertNull(ReflectionHelpers.getField(Context.getInstance(), "ancClientsCache"));
+
+        Assert.assertNotNull(Context.getInstance().ancClientsCache());
+    }
+
+    @Test
+    public void pncClientsCache() {
+        Assert.assertNull(ReflectionHelpers.getField(Context.getInstance(), "pncClientsCache"));
+
+        Assert.assertNotNull(Context.getInstance().pncClientsCache());
     }
 }
