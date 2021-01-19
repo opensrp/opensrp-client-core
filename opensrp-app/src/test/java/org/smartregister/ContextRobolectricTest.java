@@ -124,4 +124,11 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
 
         Context.getInstance().updateCommonFtsObject(null);
     }
+
+    @Test
+    public void smartRegisterClientsCache() {
+        Assert.assertNull(ReflectionHelpers.getField(Context.getInstance(), "smartRegisterClientsCache"));
+
+        Assert.assertNotNull(Context.getInstance().smartRegisterClientsCache());
+    }
 }
