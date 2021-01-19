@@ -8,6 +8,11 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.commonregistry.CommonRepository;
+import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
+import org.smartregister.repository.DrishtiRepository;
+
+import java.util.ArrayList;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 19-01-2021.
@@ -61,6 +66,49 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
 
         // Return the previous context
         Context.getInstance().setApplicationContext(context);
+    }
+
+    @Test
+    public void sharedRepositoriesShouldAddBindTypesAsRepositories() {
+        ArrayList<CommonRepositoryInformationHolder> bindtypes = new ArrayList<CommonRepositoryInformationHolder>();
+        String[] columnNames = new String[]{"base_entity_id", "fname", "lname"};
+        String tableName = "ec_client_test";
+        bindtypes.add(new CommonRepositoryInformationHolder(tableName, columnNames));
+        Context context = Context.getInstance();
+        Context spiedContext = Mockito.spy(context);
+        Context.setInstance(spiedContext);
+
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                ReflectionHelpers.setField(spiedContext, "bindtypes", bindtypes);
+                return null;
+            }
+        }).when(spiedContext).assignbindtypes();
+
+        // Call the actual method
+        ArrayList<DrishtiRepository> repositories = spiedContext.sharedRepositories();
+
+
+        // Verifications & assertions
+        boolean repositoryFoundWithColumns = false;
+        for (DrishtiRepository drishtiRepository: repositories) {
+            if (drishtiRepository instanceof CommonRepository && tableName.equals(((CommonRepository) drishtiRepository).TABLE_NAME)) {
+                CommonRepository commonRepository = ((CommonRepository) drishtiRepository);
+                Assert.assertEquals(7, commonRepository.common_TABLE_COLUMNS.length);
+                Assert.assertEquals("base_entity_id", commonRepository.common_TABLE_COLUMNS[4]);
+                Assert.assertEquals("fname", commonRepository.common_TABLE_COLUMNS[5]);
+                Assert.assertEquals("lname", commonRepository.common_TABLE_COLUMNS[6]);
+                repositoryFoundWithColumns = true;
+            }
+        }
+
+
+        Assert.assertTrue(repositoryFoundWithColumns);
+        Mockito.verify(spiedContext).assignbindtypes();
+
+        // Return context instance
+        Context.setInstance(context);
     }
 
 }
