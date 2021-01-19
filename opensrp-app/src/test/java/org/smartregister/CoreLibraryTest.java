@@ -152,4 +152,28 @@ public class CoreLibraryTest extends BaseUnitTest {
         Mockito.verify(userService).logoutSession();
         Mockito.verify(userService).forceRemoteLogin(Mockito.nullable(String.class));
     }
+
+    @Test
+    public void onAccountsUpdatedShouldDoNothingWhenGivenAccountsContainCurrentLoggedInUser() {
+        Account[] accounts = new Account[1];
+        Account account = new Account("demo", "org.smartregister.core");
+        accounts[0] = account;
+
+        UserService userService = Mockito.spy(CoreLibrary.getInstance().context().userService());
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "userService", userService);
+
+        AllSharedPreferences allSharedPreferences = Mockito.spy(CoreLibrary.getInstance().context().allSharedPreferences());
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", allSharedPreferences);
+
+        // Mock calls to class methods
+        Mockito.doReturn(1).when(allSharedPreferences).getDBEncryptionVersion();
+        Mockito.doReturn("demo").when(allSharedPreferences).fetchRegisteredANM();
+
+        // Call the actual method
+        CoreLibrary.getInstance().onAccountsUpdated(accounts);
+
+        // Verify the logout methods
+        Mockito.verify(userService, Mockito.times(0)).logoutSession();
+        Mockito.verify(userService, Mockito.times(0)).forceRemoteLogin(Mockito.nullable(String.class));
+    }
 }
