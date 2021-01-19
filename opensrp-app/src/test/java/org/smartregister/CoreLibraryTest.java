@@ -16,6 +16,7 @@ import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.authorizer.P2PAuthorizationService;
 import org.smartregister.p2p.model.dao.ReceiverTransferDao;
 import org.smartregister.p2p.model.dao.SenderTransferDao;
+import org.smartregister.pathevaluator.PathEvaluatorLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.shadows.ShadowAppDatabase;
@@ -175,5 +176,20 @@ public class CoreLibraryTest extends BaseUnitTest {
         // Verify the logout methods
         Mockito.verify(userService, Mockito.times(0)).logoutSession();
         Mockito.verify(userService, Mockito.times(0)).forceRemoteLogin(Mockito.nullable(String.class));
+    }
+
+    @Test
+    public void constructorShouldInitialisePathEvaluatorLibrary() {
+        Assert.assertNull(ReflectionHelpers.getStaticField(PathEvaluatorLibrary.class, "instance"));
+
+        TestSyncConfiguration testSyncConfiguration = Mockito.spy(new TestSyncConfiguration());
+        Mockito.doReturn(true).when(testSyncConfiguration).runPlanEvaluationOnClientProcessing();
+        new CoreLibrary(Context.getInstance(), testSyncConfiguration, null);
+
+        Assert.assertNotNull(ReflectionHelpers.getStaticField(PathEvaluatorLibrary.class, "instance"));
+        Assert.assertNotNull(PathEvaluatorLibrary.getInstance().getLocationProvider().getLocationDao());
+        Assert.assertNotNull(PathEvaluatorLibrary.getInstance().getClientProvider().getClientDao());
+        Assert.assertNotNull(PathEvaluatorLibrary.getInstance().getTaskProvider().getTaskDao());
+        Assert.assertNotNull(PathEvaluatorLibrary.getInstance().getEventProvider().getEventDao());
     }
 }
