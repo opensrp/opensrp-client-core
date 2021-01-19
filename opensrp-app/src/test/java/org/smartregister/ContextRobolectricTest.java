@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
 import org.smartregister.repository.DrishtiRepository;
@@ -111,4 +112,16 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
         Context.setInstance(context);
     }
 
+    @Test
+    public void alertServiceShouldGenerateAlertServiceWhenAlertServiceIsNull() {
+        Assert.assertNull(ReflectionHelpers.getField(Context.getInstance(), "alertService"));
+        CommonFtsObject commonFtsObject = new CommonFtsObject(new String[]{"ec_client_test"});
+        Context.getInstance().updateCommonFtsObject(commonFtsObject);
+        Context.getInstance().assignbindtypes();
+
+        // Call the method under test
+        Assert.assertNotNull(Context.getInstance().alertService());
+
+        Context.getInstance().updateCommonFtsObject(null);
+    }
 }
