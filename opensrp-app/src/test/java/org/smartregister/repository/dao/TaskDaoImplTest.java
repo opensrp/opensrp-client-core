@@ -4,7 +4,10 @@ import android.content.Intent;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.ibm.fhir.model.resource.QuestionnaireResponse;
 import com.ibm.fhir.model.resource.Task;
+import com.ibm.fhir.model.type.Uri;
+import com.ibm.fhir.model.type.code.QuestionnaireResponseStatus;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -150,5 +153,51 @@ public class TaskDaoImplTest extends BaseUnitTest {
         assertTrue(intent.hasExtra(TASK_GENERATED));
 
         ReflectionHelpers.setStaticField(LocalBroadcastManager.class, "mInstance", null);
+    }
+
+    @Test
+    public void testSaveTaskShouldInvokeExpectedMethods() {
+        taskDao = Mockito.spy(taskDao);
+
+        LocalBroadcastManager localBroadcastManager = mock(LocalBroadcastManager.class);
+
+        doReturn(false).when(localBroadcastManager).sendBroadcast(any(Intent.class));
+
+        ReflectionHelpers.setStaticField(LocalBroadcastManager.class, "mInstance", localBroadcastManager);
+
+        org.smartregister.domain.Task task = new org.smartregister.domain.Task();
+        task.setIdentifier(UUID.randomUUID().toString());
+        task.setPriority(org.smartregister.domain.Task.TaskPriority.ROUTINE);
+        task.setStatus(ARCHIVED);
+
+        String locationId = "b8a7998c";
+
+        QuestionnaireResponse questionnaireResponse = QuestionnaireResponse.builder()
+                .item(QuestionnaireResponse.Item.builder()
+                        .linkId(com.ibm.fhir.model.type.String.of("location_id"))
+                        .definition(Uri.of("details"))
+                        .answer(QuestionnaireResponse.Item.Answer.builder().value(com.ibm.fhir.model.type.String.of(locationId)).build())
+                        .build())
+                .status(QuestionnaireResponseStatus.COMPLETED)
+                .build();
+
+        ArgumentCaptor<Intent> intentArgumentCaptor = ArgumentCaptor.forClass(Intent.class);
+
+        ArgumentCaptor<org.smartregister.domain.Task> taskArgumentCaptor = ArgumentCaptor.forClass(org.smartregister.domain.Task.class);
+
+        taskDao.saveTask(task, questionnaireResponse);
+
+        verify(taskDao).addOrUpdate(taskArgumentCaptor.capture());
+
+        verify(localBroadcastManager).sendBroadcast(intentArgumentCaptor.capture());
+
+        org.smartregister.domain.Task resultTask = taskArgumentCaptor.getValue();
+
+        assertNotNull(resultTask);
+
+        assertEquals(locationId, resultTask.getStructureId());
+
+        ReflectionHelpers.setStaticField(LocalBroadcastManager.class, "mInstance", null);
+
     }
 }
