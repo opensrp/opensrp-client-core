@@ -4,6 +4,7 @@ import android.content.Intent;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.ibm.fhir.model.resource.QuestionnaireResponse;
 import com.ibm.fhir.model.resource.Task;
 
 import net.sqlcipher.database.SQLiteDatabase;
@@ -19,8 +20,11 @@ import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.converters.EventConverter;
+import org.smartregister.domain.Event;
 import org.smartregister.repository.Repository;
 import org.smartregister.repository.TaskNotesRepository;
+import org.smartregister.util.JsonFormUtils;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.List;
@@ -150,5 +154,45 @@ public class TaskDaoImplTest extends BaseUnitTest {
         assertTrue(intent.hasExtra(TASK_GENERATED));
 
         ReflectionHelpers.setStaticField(LocalBroadcastManager.class, "mInstance", null);
+    }
+
+    @Test
+    public void testSaveTaskShouldInvokeExpectedMethods() {
+        taskDao = Mockito.spy(taskDao);
+
+        LocalBroadcastManager localBroadcastManager = mock(LocalBroadcastManager.class);
+
+        doReturn(false).when(localBroadcastManager).sendBroadcast(any(Intent.class));
+
+        ReflectionHelpers.setStaticField(LocalBroadcastManager.class, "mInstance", localBroadcastManager);
+
+        org.smartregister.domain.Task task = new org.smartregister.domain.Task();
+        task.setIdentifier(UUID.randomUUID().toString());
+        task.setPriority(org.smartregister.domain.Task.TaskPriority.ROUTINE);
+        task.setStatus(ARCHIVED);
+
+        String eventJson = "{\"baseEntityId\":\"69227a92-7979-490c-b149-f28669c6b760\",\"duration\":0,\"entityType\":\"product\",\"eventDate\":\"2021-01-20T00:00:00.000+0300\",\"eventType\":\"flag_problem\",\"formSubmissionId\":\"cfcdfaf1-9e78-49f0-ba68-da412830bf7d\",\"locationId\":\"b8a7998c-5df6-49eb-98e6-f0675db71848\",\"obs\":[{\"fieldCode\":\"flag_problem\",\"fieldDataType\":\"text\",\"fieldType\":\"formsubmissionField\",\"formSubmissionField\":\"flag_problem\",\"humanReadableValues\":[],\"keyValPairs\":{\"not_there\":\"Product is not there\"},\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"Product is not there\"]},{\"fieldCode\":\"not_there\",\"fieldDataType\":\"text\",\"fieldType\":\"formsubmissionField\",\"formSubmissionField\":\"not_there\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"never_received\"]},{\"fieldCode\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"start\",\"fieldType\":\"concept\",\"formSubmissionField\":\"start\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"2021-01-20 10:36:31\"]},{\"fieldCode\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"end\",\"fieldType\":\"concept\",\"formSubmissionField\":\"end\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"2021-01-20 10:36:36\"]},{\"fieldCode\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"deviceid\",\"fieldType\":\"concept\",\"formSubmissionField\":\"deviceid\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"358240051111110\"]},{\"fieldCode\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"subscriberid\",\"fieldType\":\"concept\",\"formSubmissionField\":\"subscriberid\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"310260000000000\"]},{\"fieldCode\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"simserial\",\"fieldType\":\"concept\",\"formSubmissionField\":\"simserial\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"89014103211118510720\"]},{\"fieldCode\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"phonenumber\",\"fieldType\":\"concept\",\"formSubmissionField\":\"phonenumber\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"+15555215554\"]}],\"providerId\":\"demo\",\"team\":\"Commune A Team\",\"teamId\":\"abf1be43-32da-4848-9b50-630fb89ec0ef\",\"version\":1611128196841,\"clientApplicationVersion\":1,\"clientApplicationVersionName\":\"0.0.3-v2-EUSM-SNAPSHOT\",\"dateCreated\":\"2021-01-20T10:36:36.841+0300\",\"type\":\"Event\",\"details\":{\"mission\":\"SS\",\"locationName\":\"Ambatoharanana\",\"productId\":\"2\",\"locationId\":\"b8a7998c-5df6-49eb-98e6-f0675db71848\",\"taskIdentifier\":\"6c303b8b-e47c-45e9-8ab5-3374c8f539a3\",\"location_id\":\"b8a7998c-5df6-49eb-98e6-f0675db71848\",\"productName\":\"Scale\",\"planIdentifier\":\"335ef7a3-7f35-58aa-8263-4419464946d8\",\"appVersionName\":\"2.0.1-SNAPSHOT\",\"formVersion\":\"0.0.1\"}}";
+
+        Event event = JsonFormUtils.gson.fromJson(eventJson, Event.class);
+        QuestionnaireResponse eventQuestionnaire = EventConverter.convertEventToEncounterResource(event);
+
+        ArgumentCaptor<Intent> intentArgumentCaptor = ArgumentCaptor.forClass(Intent.class);
+
+        ArgumentCaptor<org.smartregister.domain.Task> taskArgumentCaptor = ArgumentCaptor.forClass(org.smartregister.domain.Task.class);
+
+        taskDao.saveTask(task, eventQuestionnaire);
+
+        verify(taskDao).addOrUpdate(taskArgumentCaptor.capture());
+
+        verify(localBroadcastManager).sendBroadcast(intentArgumentCaptor.capture());
+
+        org.smartregister.domain.Task resultTask = taskArgumentCaptor.getValue();
+
+        assertNotNull(resultTask);
+
+        assertEquals("b8a7998c-5df6-49eb-98e6-f0675db71848", resultTask.getStructureId());
+
+        ReflectionHelpers.setStaticField(LocalBroadcastManager.class, "mInstance", null);
+
     }
 }
