@@ -8,10 +8,7 @@ import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextWatcher;
-import android.text.style.AbsoluteSizeSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -581,13 +578,8 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         }
 
         public void refresh() {
-            int textSize = getPaginationInfoTextSize();
-            int startIndex = getResources().getString(R.string.str_page_info).indexOf("{");
-            pageInfoView.setText(format(getResources().getString(R.string.str_page_info),
-                    (getCurrentPageCount()), (clientsAdapter.pageCount())));
-            SpannableString span = new SpannableString(pageInfoView.getText());
-            span.setSpan(new AbsoluteSizeSpan(textSize), startIndex, pageInfoView.getText().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            pageInfoView.setText(span);
+
+            pageInfoView.setText(getFormattedPaginationInfoText(getCurrentPageCount(), clientsAdapter.pageCount()));
             nextPageView.setVisibility(clientsAdapter.hasNextPage() ? VISIBLE : INVISIBLE);
             previousPageView.setVisibility(clientsAdapter.hasPreviousPage() ? VISIBLE : INVISIBLE);
         }
@@ -651,7 +643,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         }
     }
 
-    protected int getPaginationInfoTextSize() {
-        return getResources().getDimensionPixelSize(R.dimen.pagination_bar_text_size);
+    protected String getFormattedPaginationInfoText(int currentPage, int pageCount) {
+        return format(getResources().getString(R.string.str_page_info), currentPage, pageCount);
     }
 }
