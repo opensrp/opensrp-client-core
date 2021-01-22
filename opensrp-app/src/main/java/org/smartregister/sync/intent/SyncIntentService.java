@@ -49,7 +49,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
 
-    private ValidateAssignmentHelper validateAssignmentHelper;
+    protected ValidateAssignmentHelper validateAssignmentHelper;
     private long totalRecords;
     private int fetchedRecords = 0;
 
