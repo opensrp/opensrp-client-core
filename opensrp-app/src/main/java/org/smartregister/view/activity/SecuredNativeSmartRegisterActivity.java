@@ -578,7 +578,6 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         }
 
         public void refresh() {
-
             pageInfoView.setText(getFormattedPaginationInfoText(getCurrentPageCount(), clientsAdapter.pageCount()));
             nextPageView.setVisibility(clientsAdapter.hasNextPage() ? VISIBLE : INVISIBLE);
             previousPageView.setVisibility(clientsAdapter.hasPreviousPage() ? VISIBLE : INVISIBLE);
