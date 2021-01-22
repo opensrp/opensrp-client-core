@@ -132,7 +132,7 @@ public class CursorAdapterFragmentTest extends BaseUnitTest {
         Button previousButton = (Button) mBaseFragment.getView().findViewById(R.id.btn_previous_page);
         TextView info = (TextView) mBaseFragment.getView().findViewById(R.id.txt_page_info);
         nextButton.performClick();
-        assertEquals("Page 1 of 1", info.getText().toString());
+        assertEquals("Page 1 of 1", info.getText());
         previousButton.performClick();
     }
 
