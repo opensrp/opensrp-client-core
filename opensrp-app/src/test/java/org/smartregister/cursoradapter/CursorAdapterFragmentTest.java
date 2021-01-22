@@ -2,12 +2,11 @@ package org.smartregister.cursoradapter;
 
 import android.content.Context;
 import android.os.Build;
+import androidx.fragment.app.Fragment;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
-import androidx.fragment.app.Fragment;
 
 import net.sqlcipher.MatrixCursor;
 
