@@ -2,12 +2,11 @@ package org.smartregister.sync.intent;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Pair;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import android.util.Pair;
 
 import com.google.firebase.perf.FirebasePerformance;
 import com.google.firebase.perf.metrics.Trace;
@@ -50,6 +49,10 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.EVENT_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 public class SyncIntentService extends BaseSyncIntentService {
     public static final String SYNC_URL = "/rest/event/sync";
@@ -233,8 +236,8 @@ public class SyncIntentService extends BaseSyncIntentService {
             }
             sendSyncProgressBroadcast(eCount);
             fetchRetry(0, false);
-            eventSyncTrace.putAttribute(COUNT, String.valueOf(eCount));
-            eventSyncTrace.stop();
+            addAttribute(eventSyncTrace, COUNT, String.valueOf(eCount));
+            stopTrace(eventSyncTrace);
         }
     }
 
@@ -313,7 +316,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 db.markEventsAsSynced(pendingEvents);
                 Timber.i("Events synced successfully.");
             }
-            eventSyncTrace.stop();
+            stopTrace(eventSyncTrace);
             updateProgress(eventsUploadedCount, totalEventCount);
         }
 
@@ -321,11 +324,14 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     private void startEventTrace(String action, int count) {
-        eventSyncTrace.getAttributes().clear();
-        eventSyncTrace.putAttribute(TEAM, team);
-        eventSyncTrace.putAttribute(ACTION, action);
-        eventSyncTrace.putAttribute(COUNT, String.valueOf(count));
-        eventSyncTrace.start();
+        SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
+        if (configs.firebasePerformanceMonitoringEnabled()) {
+            clearTraceAttributes(eventSyncTrace);
+            addAttribute(eventSyncTrace, TEAM, team);
+            addAttribute(eventSyncTrace, ACTION, action);
+            addAttribute(eventSyncTrace, COUNT, String.valueOf(count));
+            startTrace(eventSyncTrace);
+        }
     }
 
     private void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus) {
