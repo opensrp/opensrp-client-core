@@ -3,10 +3,10 @@ package org.smartregister.sync.helper;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.google.firebase.perf.FirebasePerformance;
-import com.google.firebase.perf.metrics.Trace;
 import androidx.annotation.Nullable;
 
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -60,8 +60,12 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.LOCATION_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.STRUCTURE;
-import static org.smartregister.AllConstants.TYPE;
 import static org.smartregister.AllConstants.RETURN_COUNT;
+import static org.smartregister.AllConstants.TYPE;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 public class LocationServiceHelper extends BaseHelper {
 
@@ -141,13 +145,13 @@ public class LocationServiceHelper extends BaseHelper {
             } else {
                 startLocationTrace(FETCH, STRUCTURE, 0);
             }
-            locationSyncTrace.start();
+            startTrace(locationSyncTrace);
             String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, TextUtils.join(",", parentIds), returnCount);
             List<Location> locations = locationGson.fromJson(featureResponse, new TypeToken<List<Location>>() {
             }.getType());
 
-            locationSyncTrace.putAttribute(COUNT, String.valueOf(locations.size()));
-            locationSyncTrace.stop();
+            addAttribute(locationSyncTrace, COUNT, String.valueOf(locations.size()));
+            stopTrace(locationSyncTrace);
 
             for (Location location : locations) {
                 try {
@@ -313,7 +317,7 @@ public class LocationServiceHelper extends BaseHelper {
                 Timber.e("Failed to create new locations on server: %s", response.payload());
                 return;
             }
-            locationSyncTrace.stop();
+            stopTrace(locationSyncTrace);
             Set<String> unprocessedIds = new HashSet<>();
             if (StringUtils.isNotBlank(response.payload())) {
                 if (response.payload().startsWith(LOCATIONS_NOT_PROCESSED)) {
@@ -328,12 +332,12 @@ public class LocationServiceHelper extends BaseHelper {
     }
 
     private void startLocationTrace(String action, String type, int count) {
-        locationSyncTrace.getAttributes().clear();
-        locationSyncTrace.putAttribute(AllConstants.PerformanceMonitoring.TEAM, team);
-        locationSyncTrace.putAttribute(ACTION, action);
-        locationSyncTrace.putAttribute(TYPE, type);
-        locationSyncTrace.putAttribute(COUNT, String.valueOf(count));
-        locationSyncTrace.start();
+        clearTraceAttributes(locationSyncTrace);
+        addAttribute(locationSyncTrace, AllConstants.PerformanceMonitoring.TEAM, team);
+        addAttribute(locationSyncTrace, ACTION, action);
+        addAttribute(locationSyncTrace, TYPE, type);
+        addAttribute(locationSyncTrace, COUNT, String.valueOf(count));
+        startTrace(locationSyncTrace);
     }
 
     public void syncUpdatedLocationsToServer() {
