@@ -4,8 +4,6 @@ import android.content.Context;
 
 import com.google.firebase.perf.FirebasePerformance;
 import com.google.firebase.perf.metrics.Trace;
-import androidx.annotation.VisibleForTesting;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -40,6 +38,9 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
 import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.PLAN_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 /**
  * Created by Vincent Karuri on 08/05/2019
@@ -111,8 +112,8 @@ public class PlanIntentServiceHelper extends BaseHelper {
             List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {
             }.getType());
 
-            planSyncTrace.putAttribute(COUNT, String.valueOf(plans.size()));
-            planSyncTrace.stop();
+            addAttribute(planSyncTrace, COUNT, String.valueOf(plans.size()));
+            stopTrace(planSyncTrace);
             for (PlanDefinition plan : plans) {
                 try {
                     planDefinitionRepository.addOrUpdate(plan);
@@ -141,9 +142,9 @@ public class PlanIntentServiceHelper extends BaseHelper {
     private void startPlanTrace(String action) {
         String providerId = allSharedPreferences.fetchRegisteredANM();
         String team = allSharedPreferences.fetchDefaultTeam(providerId);
-        planSyncTrace.putAttribute(TEAM, team);
-        planSyncTrace.putAttribute(ACTION, action);
-        planSyncTrace.start();
+        addAttribute(planSyncTrace, TEAM, team);
+        addAttribute(planSyncTrace, ACTION, action);
+        startTrace(planSyncTrace);
     }
 
     private String fetchPlans(List<String> organizationIds, long serverVersion, boolean returnCount) throws Exception {
