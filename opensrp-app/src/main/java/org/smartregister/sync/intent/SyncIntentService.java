@@ -64,7 +64,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
-    private ValidateAssignmentHelper validateAssignmentHelper;
+    protected ValidateAssignmentHelper validateAssignmentHelper;
     private long totalRecords;
     private int fetchedRecords = 0;
 
