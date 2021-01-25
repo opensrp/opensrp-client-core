@@ -46,6 +46,10 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TASK_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 public class TaskServiceHelper extends BaseHelper {
 
@@ -150,8 +154,8 @@ public class TaskServiceHelper extends BaseHelper {
             List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
             }.getType());
 
-            taskSyncTrace.putAttribute(COUNT, String.valueOf(tasks.size()));
-            taskSyncTrace.stop();
+            addAttribute(taskSyncTrace, COUNT, String.valueOf(tasks.size()));
+            stopTrace(taskSyncTrace);
             if (tasks != null && tasks.size() > 0) {
                 for (Task task : tasks) {
                     try {
@@ -287,7 +291,7 @@ public class TaskServiceHelper extends BaseHelper {
                             baseUrl,
                             ADD_TASK_URL),
                     jsonPayload);
-            taskSyncTrace.stop();
+            stopTrace(taskSyncTrace);
             if (response.isFailure()) {
                 Timber.e("Failed to create new tasks on server.: %s", response.payload());
                 return;
@@ -311,11 +315,11 @@ public class TaskServiceHelper extends BaseHelper {
     }
 
     private void startTaskTrace(String action, int count) {
-        taskSyncTrace.getAttributes().clear();
-        taskSyncTrace.putAttribute(TEAM, team);
-        taskSyncTrace.putAttribute(ACTION, action);
-        taskSyncTrace.putAttribute(COUNT, String.valueOf(count));
-        taskSyncTrace.start();
+        clearTraceAttributes(taskSyncTrace);
+        addAttribute(taskSyncTrace, TEAM, team);
+        addAttribute(taskSyncTrace, ACTION, action);
+        addAttribute(taskSyncTrace, COUNT, String.valueOf(count));
+        startTrace(taskSyncTrace);
     }
 }
 
