@@ -2,7 +2,6 @@ package org.smartregister.sync.helper;
 
 import android.content.Context;
 
-import com.google.firebase.perf.FirebasePerformance;
 import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -39,6 +38,7 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.PLAN_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
@@ -74,7 +74,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
     private PlanIntentServiceHelper(PlanDefinitionRepository planRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.planDefinitionRepository = planRepository;
-        this.planSyncTrace  = FirebasePerformance.getInstance().newTrace(PLAN_SYNC);
+        this.planSyncTrace  = initTrace(PLAN_SYNC);
         this.allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     }
 

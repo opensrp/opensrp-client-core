@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
-import com.google.firebase.perf.FirebasePerformance;
 import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -64,6 +63,7 @@ import static org.smartregister.AllConstants.RETURN_COUNT;
 import static org.smartregister.AllConstants.TYPE;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
@@ -101,7 +101,7 @@ public class LocationServiceHelper extends BaseHelper {
         this.locationRepository = locationRepository;
         this.locationTagRepository = locationTagRepository;
         this.structureRepository = structureRepository;
-        this.locationSyncTrace  = FirebasePerformance.getInstance().newTrace(LOCATION_SYNC);
+        this.locationSyncTrace  = initTrace(LOCATION_SYNC);
         String providerId = allSharedPreferences.fetchRegisteredANM();
         team = allSharedPreferences.fetchDefaultTeam(providerId);
     }

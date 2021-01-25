@@ -5,7 +5,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
-import com.google.firebase.perf.FirebasePerformance;
 import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -48,6 +47,7 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.TASK_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
@@ -104,7 +104,7 @@ public class TaskServiceHelper extends BaseHelper {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.taskRepository = taskRepository;
         this.allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
-        this.taskSyncTrace = FirebasePerformance.getInstance().newTrace(TASK_SYNC);
+        this.taskSyncTrace = initTrace(TASK_SYNC);
         String providerId = allSharedPreferences.fetchRegisteredANM();
         team = allSharedPreferences.fetchDefaultTeam(providerId);
     }

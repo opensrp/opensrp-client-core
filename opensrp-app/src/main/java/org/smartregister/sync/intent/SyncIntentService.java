@@ -8,7 +8,6 @@ import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.google.firebase.perf.FirebasePerformance;
 import com.google.firebase.perf.metrics.Trace;
 
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +50,7 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
@@ -83,7 +83,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         this.context = context;
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         syncUtils = new SyncUtils(getBaseContext());
-        eventSyncTrace = FirebasePerformance.getInstance().newTrace(EVENT_SYNC);
+        eventSyncTrace = initTrace(EVENT_SYNC);
         String providerId = allSharedPreferences.fetchRegisteredANM();
         team = allSharedPreferences.fetchDefaultTeam(providerId);
         validateAssignmentHelper = new ValidateAssignmentHelper(syncUtils);

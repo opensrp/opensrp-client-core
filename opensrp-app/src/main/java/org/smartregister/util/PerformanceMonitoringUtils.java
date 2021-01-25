@@ -1,5 +1,6 @@
 package org.smartregister.util;
 
+import com.google.firebase.perf.FirebasePerformance;
 import com.google.firebase.perf.metrics.Trace;
 
 import org.smartregister.CoreLibrary;
@@ -10,6 +11,14 @@ import org.smartregister.SyncConfiguration;
  */
 
 public class PerformanceMonitoringUtils {
+
+    public static Trace initTrace(String traceName) {
+        SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
+        if (configs.firebasePerformanceMonitoringEnabled()) {
+            return FirebasePerformance.getInstance().newTrace(traceName);
+        }
+        return null;
+    }
 
     public static void startTrace(Trace trace) {
         SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
