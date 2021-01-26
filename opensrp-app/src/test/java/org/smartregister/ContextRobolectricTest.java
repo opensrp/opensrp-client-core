@@ -282,4 +282,31 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
         Assert.assertEquals("entity_type", commonRepository.common_TABLE_COLUMNS[18]);
         Assert.assertFalse(commonRepository.isFts());
     }
+
+    @Test
+    public void commonrepositoryShouldReturnCommonRepositoryWithFtsSupport() {
+        Context context = Mockito.spy(Context.getInstance());
+
+        // Mock ec_client_fields.json file
+        String ecClientFields = "{\"bindobjects\":[{\"name\":\"ec_family\",\"columns\":[{\"column_name\":\"base_entity_id\",\"type\":\"Client\",\"json_mapping\":{\"field\":\"baseEntityId\"}},{\"column_name\":\"unique_id\",\"type\":\"Client\",\"json_mapping\":{\"field\":\"identifiers.opensrp_id\"}},{\"column_name\":\"first_name\",\"type\":\"Client\",\"json_mapping\":{\"field\":\"firstName\"}},{\"column_name\":\"last_name\",\"type\":\"Client\",\"json_mapping\":{\"field\":\"lastName\"}},{\"column_name\":\"village_town\",\"type\":\"Client\",\"json_mapping\":{\"field\":\"addresses.cityVillage\"}},{\"column_name\":\"quarter_clan\",\"type\":\"Client\",\"json_mapping\":{\"field\":\"addresses.commune\"}},{\"column_name\":\"street\",\"type\":\"Client\",\"json_mapping\":{\"field\":\"addresses.street\"}},{\"column_name\":\"landmark\",\"type\":\"Client\",\"json_mapping\":{\"field\":\"addresses.landmark\"}},{\"column_name\":\"gps\",\"type\":\"Event\",\"json_mapping\":{\"field\":\"obs.fieldCode\",\"concept\":\"163277AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}},{\"column_name\":\"fam_source_income\",\"type\":\"Client\",\"json_mapping\":{\"field\":\"attributes.fam_source_income\"}},{\"column_name\":\"family_head\",\"type\":\"Client\",\"json_mapping\":{\"field\":\"relationships.family_head\"}},{\"column_name\":\"primary_caregiver\",\"type\":\"Client\",\"json_mapping\":{\"field\":\"relationships.primary_caregiver\"}},{\"column_name\":\"last_interacted_with\",\"type\":\"Event\",\"json_mapping\":{\"field\":\"version\"}},{\"column_name\":\"date_removed\",\"type\":\"Client\",\"json_mapping\":{\"field\":\"attributes.dateRemoved\"}},{\"column_name\":\"entity_type\",\"type\":\"Event\",\"json_mapping\":{\"field\":\"entityType\"}}]}]}";
+        Mockito.doReturn(ecClientFields).when(context).ReadFromfile(Mockito.eq("ec_client_fields.json"), Mockito.any(android.content.Context.class));
+
+        ReflectionHelpers.setField(context, "bindtypes", new ArrayList<CommonRepositoryInformationHolder>());
+        context.getEcBindtypes();
+
+        CommonFtsObject commonFtsObject = new CommonFtsObject(new String[]{"ec_family"});
+        commonFtsObject.updateSearchFields("ec_family", new String[]{""});
+        context.updateCommonFtsObject(commonFtsObject);
+
+        // Execute the method being tested
+        CommonRepository commonRepository = context.commonrepository("ec_family");
+
+        Assert.assertEquals("ec_family", commonRepository.TABLE_NAME);
+        Assert.assertEquals(19, commonRepository.common_TABLE_COLUMNS.length);
+        Assert.assertEquals("id", commonRepository.common_TABLE_COLUMNS[0]);
+        Assert.assertEquals("details", commonRepository.common_TABLE_COLUMNS[2]);
+        Assert.assertEquals("last_interacted_with", commonRepository.common_TABLE_COLUMNS[16]);
+        Assert.assertEquals("entity_type", commonRepository.common_TABLE_COLUMNS[18]);
+        Assert.assertTrue(commonRepository.isFts());
+    }
 }
