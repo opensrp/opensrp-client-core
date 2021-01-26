@@ -218,6 +218,7 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
     @Test
     public void getEcBindtypesShouldUpdateBindtypesVariable() {
         Context context = Mockito.spy(Context.getInstance());
+        ReflectionHelpers.setField(context, "bindtypes", null);
         Assert.assertNull(ReflectionHelpers.getField(context, "bindtypes"));
 
         // Mock ec_client_fields.json file
@@ -240,6 +241,7 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
     @Test
     public void getEcBindtypesShouldNotUpdateBindtypesWhenEcClientFieldsCouldNotBeRead() {
         Context context = Mockito.spy(Context.getInstance());
+        ReflectionHelpers.setField(context, "bindtypes", null);
         Assert.assertNull(ReflectionHelpers.getField(context, "bindtypes"));
 
         // Execute the method being tested
@@ -252,6 +254,7 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
     @Test
     public void getEcBindtypesShouldNotUpdateBindtypesWhenApplicationContextIsNull() {
         Context context = Mockito.spy(Context.getInstance());
+        ReflectionHelpers.setField(context, "bindtypes", null);
         Assert.assertNull(ReflectionHelpers.getField(context, "bindtypes"));
 
         // Execute the method being tested
