@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.commonregistry.CommonRepository;
@@ -308,5 +310,10 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
         Assert.assertEquals("last_interacted_with", commonRepository.common_TABLE_COLUMNS[16]);
         Assert.assertEquals("entity_type", commonRepository.common_TABLE_COLUMNS[18]);
         Assert.assertTrue(commonRepository.isFts());
+    }
+
+    @Test
+    public void getColorResource() {
+        Assert.assertEquals(RuntimeEnvironment.application.getColor(R.color.alert_complete_green), Context.getInstance().getColorResource(R.color.alert_complete_green));
     }
 }
