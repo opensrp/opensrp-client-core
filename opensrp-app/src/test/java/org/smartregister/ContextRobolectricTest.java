@@ -197,11 +197,21 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
         ReflectionHelpers.setStaticField(Context.class, "context", null);
 
         DetailsRepository detailsRepository = Mockito.mock(DetailsRepository.class);
-
         Assert.assertNull(ReflectionHelpers.getField(Context.getInstance(), "detailsRepository"));
+
+        // Execute the method under test
         Context.getInstance().setDetailsRepository(detailsRepository);
 
         Assert.assertEquals(detailsRepository, Context.getInstance().detailsRepository());
         Context.setInstance(oldContext);
+    }
+
+    @Test
+    public void customHumanReadableConceptResponse() {
+        HashMap<String, String> humanReadableConceptResponse = new HashMap<>();
+        Context.getInstance().updateCustomHumanReadableConceptResponse(humanReadableConceptResponse);
+
+        // Call method under test
+        Assert.assertEquals(humanReadableConceptResponse, Context.getInstance().customHumanReadableConceptResponse());
     }
 }
