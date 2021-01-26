@@ -190,4 +190,18 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
 
         Assert.assertNotNull(Context.getInstance().getClientRelationshipRepository());
     }
+
+    @Test
+    public void setDetailsRepository() {
+        Context oldContext = Context.getInstance();
+        ReflectionHelpers.setStaticField(Context.class, "context", null);
+
+        DetailsRepository detailsRepository = Mockito.mock(DetailsRepository.class);
+
+        Assert.assertNull(ReflectionHelpers.getField(Context.getInstance(), "detailsRepository"));
+        Context.getInstance().setDetailsRepository(detailsRepository);
+
+        Assert.assertEquals(detailsRepository, Context.getInstance().detailsRepository());
+        Context.setInstance(oldContext);
+    }
 }
