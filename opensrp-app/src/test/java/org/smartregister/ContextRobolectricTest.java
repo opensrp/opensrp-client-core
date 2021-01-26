@@ -7,13 +7,16 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.robolectric.Robolectric;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
+import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 19-01-2021.
@@ -179,5 +182,12 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
         Assert.assertNull(ReflectionHelpers.getField(Context.getInstance(), "personObjectClientsCache"));
 
         Assert.assertNotNull(Context.getInstance().personObjectClientsCache());
+    }
+
+    @Test
+    public void getClientRelationshipRepositoryShouldGenerateInstance() {
+        Assert.assertNull(ReflectionHelpers.getField(Context.getInstance(), "clientRelationshipRepository"));
+
+        Assert.assertNotNull(Context.getInstance().getClientRelationshipRepository());
     }
 }
