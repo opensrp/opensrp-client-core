@@ -19,6 +19,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -55,7 +56,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -466,10 +466,13 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testLogoutUserShouldInvokeRequiredMethods() {
-        org.smartregister.Context opensrpContext = spy(CoreLibrary.getInstance().context());
-        Context context = spy(opensrpContext.applicationContext());
+        org.smartregister.Context opensrpContext = Mockito.mock(org.smartregister.Context.class);
+        Context context = spy(RuntimeEnvironment.application);
+        AllSharedPreferences allSharedPreferences = Mockito.mock(AllSharedPreferences.class);
+        Mockito.doReturn("string").when(allSharedPreferences).fetchRegisteredANM();
+        Mockito.doReturn(allSharedPreferences).when(opensrpContext).allSharedPreferences();
         doReturn(context).when(opensrpContext).applicationContext();
-        UserService mockUserService = mock(UserService.class);
+        UserService mockUserService = Mockito.mock(UserService.class);
         doReturn(mockUserService).when(opensrpContext).userService();
         Utils.logoutUser(opensrpContext, "logged out");
         verify(mockUserService, times(1)).forceRemoteLogin(anyString());
@@ -479,12 +482,12 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testHideKeyboardShouldInvokeRequireMethods() {
-        Activity activity = mock(Activity.class);
+        Activity activity = Mockito.mock(Activity.class);
 
-        View view = mock(View.class);
+        View view = Mockito.mock(View.class);
         doReturn(view).when(activity).getCurrentFocus();
 
-        InputMethodManager keyboard = mock(InputMethodManager.class);
+        InputMethodManager keyboard = Mockito.mock(InputMethodManager.class);
 
         doReturn(keyboard).when(activity).getSystemService(Context.INPUT_METHOD_SERVICE);
 
