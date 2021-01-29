@@ -44,6 +44,7 @@ import timber.log.Timber;
 
 import static org.smartregister.AllConstants.COUNT;
 import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.CLIENT_PROCESSING;
 import static org.smartregister.AllConstants.PerformanceMonitoring.EVENT_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
@@ -63,6 +64,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
     private Trace eventSyncTrace;
+    private Trace processClientTrace;
     private String team;
 
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
@@ -84,6 +86,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         syncUtils = new SyncUtils(getBaseContext());
         eventSyncTrace = initTrace(EVENT_SYNC);
+        processClientTrace = initTrace(CLIENT_PROCESSING);
         String providerId = allSharedPreferences.fetchRegisteredANM();
         team = allSharedPreferences.fetchDefaultTeam(providerId);
         validateAssignmentHelper = new ValidateAssignmentHelper(syncUtils);
@@ -228,16 +231,22 @@ public class SyncIntentService extends BaseSyncIntentService {
                 lastServerVersion = serverVersionPair.second;
             }
 
+            addAttribute(eventSyncTrace, COUNT, String.valueOf(eCount));
+            stopTrace(eventSyncTrace);
+
             boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
             //update sync time if all event client is save.
             if (isSaved) {
+                startTrace(processClientTrace);
                 processClient(serverVersionPair);
+                addAttribute(processClientTrace, COUNT, String.valueOf(eCount));
+                addAttribute(processClientTrace,  TEAM, team);
+                stopTrace(processClientTrace);
                 ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
             }
             sendSyncProgressBroadcast(eCount);
             fetchRetry(0, false);
-            addAttribute(eventSyncTrace, COUNT, String.valueOf(eCount));
-            stopTrace(eventSyncTrace);
+
         }
     }
 
