@@ -143,6 +143,9 @@ public class Repository extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        if (CoreLibrary.getInstance().getSyncConfiguration().isMigrationsConfigurationEnabled()) {
+            
+        }
     }
 
     public SQLiteDatabase getReadableDatabase() {
