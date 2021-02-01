@@ -27,15 +27,19 @@ public interface ConfigurableRegisterActivityContract {
     interface Presenter {
 
         default void saveLanguage(String language) {
+            // Empty default
         }
 
         default void startForm(String formName, String entityId, String metadata, String currentLocationId) {
+            // Empty default
         }
 
         default void startForm(String formName, String entityId, String metaData, String locationId, @Nullable HashMap<String, String> injectedFieldValues, @Nullable String entityTable) {
+            // Empty default
         }
 
         default void saveForm(String jsonString, @NonNull RegisterParams registerParams) {
+            // Empty default
         }
 
         default Interactor createInteractor() {

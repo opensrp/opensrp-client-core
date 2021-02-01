@@ -87,7 +87,7 @@ public class SampleAppJsonFormUtils extends JsonFormUtils {
                 }
             }
 
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(entityId)) {
+            if (StringUtils.isNotBlank(entityId)) {
                 entityId = entityId.replace("-", "");
             }
 

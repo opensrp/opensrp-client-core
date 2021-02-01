@@ -25,12 +25,10 @@ public class SampleRepository extends Repository {
     public static String PASSWORD = "Sample_PASS";
     protected SQLiteDatabase readableDatabase;
     protected SQLiteDatabase writableDatabase;
-    private Context context;
 
     public SampleRepository(Context context, org.smartregister.Context openSRPContext) {
         super(context, AllConstants.DATABASE_NAME, 1, openSRPContext.session(),
                 SampleApplication.createCommonFtsObject(), openSRPContext.sharedRepositoriesArray());
-        this.context = context;
     }
 
     @Override

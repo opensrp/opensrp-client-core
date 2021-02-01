@@ -40,8 +40,16 @@ public class ModuleMetadata {
 
     private String lookUpQueryForModuleClient;
 
-    public ModuleMetadata(@NonNull String registrationFormName, @NonNull String tableName, @NonNull String registerEventType, @NonNull String updateEventType, @NonNull LocationTagsConfiguration locationTagsConfiguration,
-                          @NonNull String config, @NonNull Class<? extends FormActivity> formActivity, @Nullable Class<? extends BaseProfileActivity> profileActivity, boolean formWizardValidateRequiredFieldsBefore, @NonNull String lookUpQueryForModuleClient) {
+    public ModuleMetadata(@NonNull String registrationFormName,
+                          @NonNull String tableName,
+                          @NonNull String registerEventType,
+                          @NonNull String updateEventType,
+                          @NonNull LocationTagsConfiguration locationTagsConfiguration,
+                          @NonNull String config,
+                          @NonNull Class<? extends FormActivity> formActivity,
+                          @Nullable Class<? extends BaseProfileActivity> profileActivity,
+                          boolean formWizardValidateRequiredFieldsBefore,
+                          @NonNull String lookUpQueryForModuleClient) {
         this.registrationFormName = registrationFormName;
         this.tableName = tableName;
         this.registerEventType = registerEventType;

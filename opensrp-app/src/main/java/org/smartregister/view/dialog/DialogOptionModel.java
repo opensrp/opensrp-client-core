@@ -6,6 +6,7 @@ public interface DialogOptionModel {
     DialogOption[] getDialogOptions();
 
     default void onDialogOptionSelection(DialogOption option, Object tag) {
+        // Empty default implementation
     }
 
     default void onDialogOptionSelection(Activity activity, DialogOption option, Object tag) {

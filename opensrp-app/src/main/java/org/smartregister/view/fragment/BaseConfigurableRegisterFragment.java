@@ -17,7 +17,6 @@ import androidx.loader.content.Loader;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configuration.ModuleConfiguration;
@@ -51,15 +50,11 @@ import timber.log.Timber;
 public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
 
     private static final String DUE_FILTER_TAG = "PRESSED";
-    private View view;
     private View dueOnlyLayout;
     private boolean dueFilterActive = false;
     private ModuleRegisterQueryProviderContract moduleRegisterQueryProvider;
     private ModuleConfiguration moduleConfiguration;
     private ToolbarOptions toolbarOptions;
-
-    public BaseConfigurableRegisterFragment() {
-    }
 
     public void setModuleConfiguration(@NonNull ModuleConfiguration moduleConfiguration) {
         moduleRegisterQueryProvider = ConfigurationInstancesHelper.newInstance(moduleConfiguration.getRegisterQueryProvider());
@@ -90,7 +85,6 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     @Override
     public void setupViews(View view) {
         super.setupViews(view);
-        this.view = view;
 
         if (toolbarOptions != null && toolbarOptions.isNewToolbarEnabled()) {
             initializeConfigurableLayoutViews(view);

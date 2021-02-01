@@ -11,7 +11,7 @@ import org.smartregister.pojo.InnerJoinObject;
 
 public class SampleAppRegisterQueryBuilder extends SmartRegisterQueryBuilder {
 
-    public String SelectInitiateMainTableCounts(String tableName) {
+    public String selectAndInitiateMainTableCounts(String tableName) {
         String selectQuery = "SELECT COUNT(*) as sub_count";
         selectQuery = selectQuery + " FROM " + tableName;
 
@@ -19,7 +19,7 @@ public class SampleAppRegisterQueryBuilder extends SmartRegisterQueryBuilder {
         return selectQuery;
     }
 
-    public String SelectInitiateMainTable(@NonNull InnerJoinObject tableColsInnerJoin) {
+    public String selectInitiateMainTable(@NonNull InnerJoinObject tableColsInnerJoin) {
         String selectQuery = String.format("Select %s.id as _id", tableColsInnerJoin.getFirstTable().getTableName());
 
         String[] columns = tableColsInnerJoin.getFirstTable().getColNames();

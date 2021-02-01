@@ -36,7 +36,6 @@ public class BaseConfigurableRegisterActivityPresenter implements BaseRegisterCo
     protected WeakReference<BaseRegisterContract.View> viewReference;
     protected ConfigurableRegisterActivityContract.Interactor interactor;
     protected BaseRegisterContract.Model model;
-    private JSONObject form;
 
     public BaseConfigurableRegisterActivityPresenter(@NonNull BaseRegisterContract.View view, @NonNull BaseRegisterContract.Model model) {
         viewReference = new WeakReference<>(view);
@@ -129,7 +128,7 @@ public class BaseConfigurableRegisterActivityPresenter implements BaseRegisterCo
             return;
         }
 
-        form = null;
+        JSONObject form = null;
         try {
             if (injectedFieldValues == null) {
                 injectedFieldValues = getInjectedFields(formName, entityId);

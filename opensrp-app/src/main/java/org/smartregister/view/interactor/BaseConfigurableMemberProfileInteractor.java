@@ -11,7 +11,7 @@ import java.util.List;
 
 public class BaseConfigurableMemberProfileInteractor implements ConfigurableMemberProfileActivityContract.Interactor {
     protected AppExecutors appExecutors;
-    ConfigurableMemberProfileRowDataProvider dataProvider;
+    protected ConfigurableMemberProfileRowDataProvider dataProvider;
 
     BaseConfigurableMemberProfileInteractor(AppExecutors appExecutors) {
         this.appExecutors = appExecutors;

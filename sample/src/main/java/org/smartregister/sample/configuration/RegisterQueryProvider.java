@@ -100,7 +100,7 @@ public class RegisterQueryProvider extends ModuleRegisterQueryProviderContract {
             InnerJoinObject tableColInnerJoin = tableColsInnerJoins[i];
 
             SampleAppRegisterQueryBuilder countQueryBuilder = new SampleAppRegisterQueryBuilder();
-            countQueryBuilder.SelectInitiateMainTable(tableColInnerJoin);
+            countQueryBuilder.selectInitiateMainTable(tableColInnerJoin);
             countQueryBuilder.mainCondition(tableColInnerJoin.getMainCondition());
 
             String idCol = "_id";
@@ -164,7 +164,7 @@ public class RegisterQueryProvider extends ModuleRegisterQueryProviderContract {
             InnerJoinObject tableColInnerJoin = tableColsInnerJoins[i];
 
             SampleAppRegisterQueryBuilder countQueryBuilder = new SampleAppRegisterQueryBuilder();
-            countQueryBuilder.SelectInitiateMainTable(tableColInnerJoin);
+            countQueryBuilder.selectInitiateMainTable(tableColInnerJoin);
             countQueryBuilder.mainCondition(tableColInnerJoin.getMainCondition());
 
             if (i != 0) {

@@ -17,6 +17,7 @@ public interface ConfigurableRegisterFragmentContract {
         Presenter presenter();
 
         default void initializeAdapter() {
+            // Empty default
         }
 
         @Nullable
@@ -25,6 +26,7 @@ public interface ConfigurableRegisterFragmentContract {
         }
 
         default void setRegisterTitle() {
+            // Empty default
         }
 
     }
@@ -32,6 +34,7 @@ public interface ConfigurableRegisterFragmentContract {
     interface Presenter {
 
         default void updateSortAndFilter(List<IField> filterList, IField sortField) {
+            // Empty default
         }
 
         default String getMainCondition() {

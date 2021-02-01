@@ -54,6 +54,7 @@ public class BaseConfigurableRegisterActivityModel implements BaseRegisterContra
 
     @Override
     public void saveLanguage(String language) {
+        // Empty implementation
     }
 
     @Nullable

@@ -1,22 +1,20 @@
 package org.smartregister.view.activity;
 
 import android.app.ProgressDialog;
+import android.view.View;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.View;
-
 import org.smartregister.R;
 import org.smartregister.helper.ImageRenderHelper;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseProfileContract;
-import org.smartregister.view.presenter.BaseConfigurableMemberProfilePresenter;
 
 /**
  * Created by ndegwamartin on 16/07/2018.

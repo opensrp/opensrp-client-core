@@ -7,10 +7,6 @@ public class ConfigurableMemberProfileRowData {
     private String rowDetail;
     private Class<?> rowClickedLaunchedClass;
 
-    public ConfigurableMemberProfileRowData() {
-
-    }
-
     public String getRowTitle() {
         return rowTitle;
     }

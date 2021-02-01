@@ -13,6 +13,8 @@ public interface ActivityStarter {
 
     void startProfileActivity(@NonNull Activity contextActivity, @NonNull CommonPersonObjectClient commonPersonObjectClient);
 
-    default void startMapActivity(@NonNull Activity contextActivity) {}
+    default void startMapActivity(@NonNull Activity contextActivity) {
+        // No default implementation for now
+    }
 
 }

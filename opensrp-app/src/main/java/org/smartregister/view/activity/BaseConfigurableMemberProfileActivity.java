@@ -41,7 +41,6 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
     protected ModuleConfiguration moduleConfiguration;
     protected CommonPersonObjectClient client;
     protected CircleImageView profileImageView;
-    private TextView tvTitle;
     private TextView tvNameAndAge;
     private TextView tvPrimaryCareGiver;
     private TextView tvGender;
@@ -74,7 +73,7 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
         setContentView(R.layout.activity_base_configurable_member_profile);
 
         Toolbar toolbar = findViewById(R.id.collapsing_toolbar);
-        tvTitle = toolbar.findViewById(R.id.toolbar_title);
+        TextView tvTitle = toolbar.findViewById(R.id.toolbar_title);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -201,7 +200,7 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
 
     @Override
     public void goToRowActivity(Class<?> rowClickedLaunchedClass) {
-
+        // TODO Implement
     }
 
     @Override

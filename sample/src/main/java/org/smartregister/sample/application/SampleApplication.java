@@ -48,8 +48,8 @@ public class SampleApplication extends DrishtiApplication {
         if (commonFtsObject == null) {
             commonFtsObject = new CommonFtsObject(getFtsTables());
             for (String ftsTable : commonFtsObject.getTables()) {
-                commonFtsObject.updateSearchFields(ftsTable, getFtsSearchFields(ftsTable));
-                commonFtsObject.updateSortFields(ftsTable, getFtsSortFields(ftsTable));
+                commonFtsObject.updateSearchFields(ftsTable, getFtsSearchFields(/*ftsTable*/));
+                commonFtsObject.updateSortFields(ftsTable, getFtsSortFields(/*ftsTable*/));
             }
         }
         return commonFtsObject;
@@ -61,7 +61,7 @@ public class SampleApplication extends DrishtiApplication {
         return new String[]{"ec_client"};
     }
 
-    private static String[] getFtsSearchFields(String tableName) {
+    private static String[] getFtsSearchFields(/*String tableName*/) {
         /*if (tableName.equals(Constants.Table.CHILD)) {
             return new String[]{Constants.Columns.FIRST_NAME, Constants.Columns.MIDDLE_NAME, Constants.Columns.LAST_NAME, Constants.Columns.DOB, Constants.Columns.LAST_INTERACTED_WITH};
         } else if (tableName.equals(Constants.Table.MOTHER)) {
@@ -74,7 +74,7 @@ public class SampleApplication extends DrishtiApplication {
         return new String[]{"first_name", "last_name", "middle_name", "dob", "last_interacted_with", "date_removed"};
     }
 
-    private static String[] getFtsSortFields(String tableName) {
+    private static String[] getFtsSortFields(/*String tableName*/) {
         /*if (tableName.equals(Constants.Table.CHILD)) {
             List<String> names = new ArrayList<>();
             names.add(Constants.Columns.FIRST_NAME);
@@ -205,12 +205,12 @@ public class SampleApplication extends DrishtiApplication {
 
         @Override
         public void registerViewConfigurations(List<String> viewIdentifiers) {
-
+            // Do nothing for now
         }
 
         @Override
         public void unregisterViewConfigurations(List<String> viewIdentifiers) {
-
+            // Do nothing for now
         }
     }
 
@@ -218,7 +218,7 @@ public class SampleApplication extends DrishtiApplication {
 
         @Override
         public void startProfileActivity(@NonNull Activity contextActivity, @NonNull CommonPersonObjectClient commonPersonObjectClient) {
-
+            // Do nothing for now
         }
     }
 

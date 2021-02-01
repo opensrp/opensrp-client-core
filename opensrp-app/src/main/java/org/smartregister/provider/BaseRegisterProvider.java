@@ -170,7 +170,7 @@ public class BaseRegisterProvider extends ConfigurableComponentImpl implements R
 
             String parentName = context.getResources().getString(R.string.care_giver_initials)
                     + ": "
-                    + org.smartregister.util.Utils.getName(parentFirstName, parentMiddleName + " " + parentLastName);
+                    + Utils.getName(parentFirstName, parentMiddleName + " " + parentLastName);
             fillValue(viewHolder.textViewParentName, WordUtils.capitalize(parentName));
         } else {
             viewHolder.removeGuardianName();
@@ -179,7 +179,7 @@ public class BaseRegisterProvider extends ConfigurableComponentImpl implements R
         String firstName = registerProviderMetadata.getClientFirstName(patientColumnMaps);
         String middleName = registerProviderMetadata.getClientMiddleName(patientColumnMaps);
         String lastName = registerProviderMetadata.getClientLastName(patientColumnMaps);
-        String childName = org.smartregister.util.Utils.getName(firstName, middleName + " " + lastName);
+        String childName = Utils.getName(firstName, middleName + " " + lastName);
 
         String dobString = Utils.getDuration(registerProviderMetadata.getDob(patientColumnMaps));
         String translatedYearInitial = context.getResources().getString(R.string.abbrv_years);

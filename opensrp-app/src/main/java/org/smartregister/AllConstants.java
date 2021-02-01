@@ -481,6 +481,9 @@ public class AllConstants {
     public interface JSON {
         String KEY = "key";
         String VALUE = "value";
+        String COUNT = AllConstants.COUNT;
+        String STEP = AllConstants.STEP;
+        String FIELDS = "fields";
 
         interface Property {
             String IS_NEW = "is_new";
@@ -490,10 +493,6 @@ public class AllConstants {
             String COUNT = JSON.COUNT;
             String STEP = JSON.STEP;
         }
-
-        String COUNT = AllConstants.COUNT;
-        String STEP = AllConstants.STEP;
-        String FIELDS = "fields";
 
         interface FieldKey {
             String LAST_INTERACTED_WITH = "last_interacted_with";

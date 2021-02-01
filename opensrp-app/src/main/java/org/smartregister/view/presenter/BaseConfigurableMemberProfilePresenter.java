@@ -46,19 +46,19 @@ public class BaseConfigurableMemberProfilePresenter implements ConfigurableMembe
     @Override
     public void onDestroy(boolean isChangingConfiguration) {
         viewReference = null;
-        if (!isChangingConfiguration) {
+        /*if (!isChangingConfiguration) {
             // WHAT TODO?
-        }
+        }*/
     }
 
     @Override
     public void processJson(@NotNull Context context, String eventType, @Nullable String tableName, String jsonString) {
-
+        // Empty implementation
     }
 
     @Override
     public void startFormForEdit(String title, CommonPersonObjectClient client) {
-
+        // Empty implementation
     }
 
     @Override

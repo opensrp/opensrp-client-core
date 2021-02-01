@@ -4,12 +4,11 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
 import android.content.Intent;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import android.text.TextUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.account.AccountAuthenticatorXml;
@@ -71,13 +70,13 @@ public class CoreLibrary implements OnAccountsUpdateListener {
 
     public static void init(Context context, SyncConfiguration syncConfiguration) {
         if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, null, -1, -1);
+            instance = new CoreLibrary(context, syncConfiguration, null);
         }
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp) {
         if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, null, -1, -1);
+            instance = new CoreLibrary(context, syncConfiguration, null);
             buildTimeStamp = buildTimestamp;
         }
     }
@@ -89,7 +88,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
 
     public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, @NonNull P2POptions options, int databaseVersion, int applicationVersion) {
         if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, options, databaseVersion, applicationVersion);
+            instance = new CoreLibrary(context, syncConfiguration, options);
             buildTimeStamp = buildTimestamp;
             checkPlatformMigrations();
         }
@@ -114,7 +113,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         return instance;
     }
 
-    protected CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration, @Nullable P2POptions p2POptions, int databaseVersion, int applicationVersion) {
+    protected CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration, @Nullable P2POptions p2POptions) {
         context = contextArg;
         this.syncConfiguration = syncConfiguration;
         this.p2POptions = p2POptions;
@@ -176,13 +175,13 @@ public class CoreLibrary implements OnAccountsUpdateListener {
      */
     public static void reset(Context context) {
         if (context != null) {
-            instance = new CoreLibrary(context, null, null, -1, -1);
+            instance = new CoreLibrary(context, null, null);
         }
     }
 
     public static void reset(Context context, SyncConfiguration syncConfiguration) {
         if (context != null) {
-            instance = new CoreLibrary(context, syncConfiguration, null, -1, -1);
+            instance = new CoreLibrary(context, syncConfiguration, null);
         }
     }
 
