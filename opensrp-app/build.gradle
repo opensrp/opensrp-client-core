@@ -132,7 +132,10 @@ tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
     testLogging {
         // Enables easier debugging of tests in Github Actions CI
-        events TestLogEvent.FAILED
+        events TestLogEvent.FAILED,
+                TestLogEvent.PASSED,
+                TestLogEvent.SKIPPED,
+                TestLogEvent.STANDARD_OUT
         exceptionFormat TestExceptionFormat.FULL
         showExceptions true
         showCauses true
