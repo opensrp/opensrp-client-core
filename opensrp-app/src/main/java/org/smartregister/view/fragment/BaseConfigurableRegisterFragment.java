@@ -155,11 +155,9 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     public void initializeConfigurableLayoutViews(View view) {
         // Update logo
         ImageView logo = view.findViewById(R.id.top_left_logo);
-        if (logo != null) {
-            if (toolbarOptions.getLogoResourceId() > 0) {
-                logo.setImageDrawable(context().getDrawable(toolbarOptions.getLogoResourceId()));
-                logo.setVisibility(View.VISIBLE);
-            }
+        if (logo != null && toolbarOptions.getLogoResourceId() > 0) {
+            logo.setImageDrawable(context().getDrawable(toolbarOptions.getLogoResourceId()));
+            logo.setVisibility(View.VISIBLE);
         }
         ImageView backButton = view.findViewById(R.id.back_arrow);
         if (backButton != null)

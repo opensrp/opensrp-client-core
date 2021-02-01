@@ -3,12 +3,11 @@ package org.smartregister.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -135,6 +134,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
 
     @Override
     public void startFormActivity(String formName, String entityId, Map<String, String> metaData) {
+        // Do nothing for now
     }
 
 
