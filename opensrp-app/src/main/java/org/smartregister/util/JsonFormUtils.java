@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -193,7 +194,6 @@ public class JsonFormUtils {
                 addMultiSelectListObservations(event, jsonObject);
                 continue;
             }
-
             setGlobalCheckBoxProperty(metadata, jsonObject);
             addObservation(event, jsonObject);
         }
@@ -466,9 +466,39 @@ public class JsonFormUtils {
             } catch (JSONException e1) {
                 Timber.e(e1);
             }
+        } else if (AllConstants.GPS.equals(type)) {
+            createGpsObservation(e, jsonObject, value);
         } else {
             createObservation(e, jsonObject, value);
         }
+    }
+
+    private static void createGpsObservation(Event e, JSONObject jsonObject, String value) {
+        createObservation(e, jsonObject, value);
+        if (StringUtils.isNotBlank(value)) {
+            String[] valueArr = value.split(" ");
+            String formSubmissionFieldPrefix = getString(jsonObject, KEY);
+            String[] gpsProperties = new String[]{
+                    AllConstants.GpsConstants.LATITUDE, AllConstants.GpsConstants.LONGITUDE,
+                    AllConstants.GpsConstants.ALTITUDE, AllConstants.GpsConstants.ACCURACY};
+            for (int i = 0; i < valueArr.length; i++) {
+                addGpsObs(e, formSubmissionFieldPrefix, gpsProperties[i], valueArr[i]);
+            }
+        }
+    }
+
+    private static void addGpsObs(Event e, String formSubmissionFieldPrefix, String formSubmissionFieldSuffix, String value) {
+        addObs(e, getGpsFormSubmissionField(formSubmissionFieldPrefix, formSubmissionFieldSuffix), AllConstants.TEXT, Collections.singletonList(value));
+    }
+
+    @NotNull
+    private static String getGpsFormSubmissionField(String formSubmissionFieldPrefix, String suffix) {
+        return formSubmissionFieldPrefix + "_" + suffix;
+    }
+
+    private static void addObs(Event e, String formSubmissionField, String text, List<Object> strings) {
+        e.addObs(new Obs("formsubmissionField", text, formSubmissionField, "",
+                strings, new ArrayList<>(), null, formSubmissionField));
     }
 
     private static void createObservation(Event e, JSONObject jsonObject, String value) {

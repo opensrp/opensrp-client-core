@@ -106,9 +106,6 @@ android {
             resources.srcDir 'resources'
         }
         androidTest.setRoot('src/androidTest')
-        test {
-            res.srcDirs = ['src/test/res']
-        }
     }
 
     aaptOptions {
@@ -128,11 +125,18 @@ android {
     }
 }
 
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
     testLogging {
-        // to see the exceptions of failed tests in Travis-CI console.
-        exceptionFormat = 'full'
+        // Enables easier debugging of tests in Github Actions CI
+        events TestLogEvent.FAILED
+        exceptionFormat TestExceptionFormat.FULL
+        showExceptions true
+        showCauses true
+        showStackTraces true
     }
     maxHeapSize = "2g"
 }
@@ -224,7 +228,7 @@ dependencies {
 
     implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:1.0.0-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-plan-evaluator:1.1.0-SNAPSHOT'
 
     implementation 'xerces:xercesImpl:2.12.0'
 

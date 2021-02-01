@@ -1,4 +1,4 @@
-package org.smartregister.service;
+o package org.smartregister.service;
 
 import android.annotation.TargetApi;
 import android.os.Build;
