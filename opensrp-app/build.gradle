@@ -138,7 +138,7 @@ tasks.withType(Test) {
         showCauses true
         showStackTraces true
     }
-    maxHeapSize = "2g"
+    maxHeapSize = "4g"
 }
 
 def filesToCopy = copySpec {
