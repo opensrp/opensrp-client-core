@@ -599,11 +599,8 @@ public class Context {
     }
 
     private SharedPreferences createSharedPreferences(android.content.Context context) {
-        SyncConfiguration syncConfiguration = CoreLibrary.getInstance().getSyncConfiguration();
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && syncConfiguration != null
-                && syncConfiguration.encryptSharedPreferences()) {
+                && Utils.getBooleanProperty(AllConstants.PROPERTY.ENCRYPT_SHARED_PREFERENCES)) {
 
             return createEncryptedSharedPreferences(context);
         } else {

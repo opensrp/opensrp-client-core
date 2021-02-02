@@ -103,11 +103,10 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         Map<String, ?> entries = existingPrefs.getAll();
         existingPrefs.edit().clear().apply();
 
-        // check the version of SharedPreferences in place (encrypted vs unencrypted)
-        if (instance.getSyncConfiguration() != null
-                && instance.getSyncConfiguration().encryptSharedPreferences()
-                && !existingPrefs.contains(ENCRYPTED_PREFS_KEY_KEYSET)
-                && !existingPrefs.contains(ENCRYPTED_PREFS_VALUE_KEYSET)) {
+        // check the version of SharedPreferences (encrypted vs unencrypted)
+        if (Utils.getBooleanProperty(AllConstants.PROPERTY.ENCRYPT_SHARED_PREFERENCES)
+                && !entries.containsKey(ENCRYPTED_PREFS_KEY_KEYSET)
+                && !entries.containsKey(ENCRYPTED_PREFS_VALUE_KEYSET)) {
 
             // create the new instance
             SharedPreferences newPrefs = instance.context().allSharedPreferences().getPreferences();
