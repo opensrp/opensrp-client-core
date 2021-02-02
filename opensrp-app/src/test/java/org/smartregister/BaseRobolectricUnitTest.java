@@ -2,6 +2,7 @@ package org.smartregister;
 
 import android.os.Build;
 
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnit;
@@ -34,4 +35,9 @@ public abstract class BaseRobolectricUnitTest {
         TestApplication.getInstance().initCoreLibrary();
     }
 
+    @After
+    public void tearDown() throws Exception {
+        Context.destroyInstance();
+        CoreLibrary.destroyInstance();
+    }
 }
