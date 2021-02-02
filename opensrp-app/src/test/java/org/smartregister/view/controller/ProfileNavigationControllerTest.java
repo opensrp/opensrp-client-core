@@ -8,9 +8,8 @@ import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.view.activity.EligibleCoupleDetailActivity;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.robolectric.Shadows.shadowOf;
-import static org.smartregister.AllConstants.CASE_ID;
 
 /**
  * Created by Vincent Karuri on 02/02/2021
