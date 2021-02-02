@@ -607,5 +607,12 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         DateTime actualDob = Utils.dobToDateTime(client);
         Assert.assertEquals(expectedDobTime, actualDob.getMillis());
     }
+
+    @Test
+    public void cleanUpHeader() {
+        Assert.assertEquals("Full name"
+                , ReflectionHelpers.callStaticMethod(Utils.class, "cleanUpHeader"
+                        , ReflectionHelpers.ClassParameter.from(String.class, "\"Full name\"")));
+    }
 }
 
