@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TableRow;
@@ -581,6 +582,16 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
         Assert.assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
                 , contents);
+    }
+
+    @Test
+    public void startAsyncTaskShouldExecuteAsyncTaskOnThreadPoolExecutor() {
+        AsyncTask<String, ?, ?> asyncTask = Mockito.mock(AsyncTask.class);
+
+        Utils.startAsyncTask(asyncTask, null);
+
+        Mockito.verify(asyncTask).executeOnExecutor(Mockito.eq(AsyncTask.THREAD_POOL_EXECUTOR)
+                , Mockito.any(String[].class));
     }
 }
 
