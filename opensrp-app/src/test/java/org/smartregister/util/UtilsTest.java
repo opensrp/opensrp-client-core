@@ -593,5 +593,19 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         Mockito.verify(asyncTask).executeOnExecutor(Mockito.eq(AsyncTask.THREAD_POOL_EXECUTOR)
                 , Mockito.any(String[].class));
     }
+
+    @Test
+    public void dobToDateTime() {
+        long expectedDobTime = System.currentTimeMillis();
+
+        CommonPersonObjectClient client = new CommonPersonObjectClient("case-id", null, "John Doe");
+        HashMap<String, String> columnMaps = new HashMap<>();
+        client.setColumnmaps(columnMaps);
+
+        columnMaps.put("dob", new DateTime(expectedDobTime).toString());
+
+        DateTime actualDob = Utils.dobToDateTime(client);
+        Assert.assertEquals(expectedDobTime, actualDob.getMillis());
+    }
 }
 
