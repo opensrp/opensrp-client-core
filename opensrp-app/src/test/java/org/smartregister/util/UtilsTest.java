@@ -32,6 +32,7 @@ import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
+import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.LoginResponse;
@@ -613,6 +614,25 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         Assert.assertEquals("Full name"
                 , ReflectionHelpers.callStaticMethod(Utils.class, "cleanUpHeader"
                         , ReflectionHelpers.ClassParameter.from(String.class, "\"Full name\"")));
+    }
+
+    @Test
+    public void convert() {
+        String name = "John";
+        String caseId = "case-id-john-doe";
+        String relationId = "relational-id";
+        HashMap<String, String> details = new HashMap<>();
+        details.put("first_name", name);
+
+        CommonPersonObject client = new CommonPersonObject(caseId, relationId, details, null);
+        client.setColumnmaps(details);
+
+        CommonPersonObjectClient actualClient = Utils.convert(client);
+
+        Assert.assertEquals(name, actualClient.getName());
+        Assert.assertEquals(details.size(), actualClient.getDetails().size());
+        Assert.assertEquals(client.getCaseId(), actualClient.getCaseId());
+        Assert.assertEquals(details.size(), actualClient.getColumnmaps().size());
     }
 }
 
