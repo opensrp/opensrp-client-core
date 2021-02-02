@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TableRow;
@@ -526,6 +528,36 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         Utils.addToList(locations, locationMap, locationTag);
 
         Assert.assertEquals("Nairobi", locations.get(locationTag));
+    }
+
+    @Test
+    public void isConnectedToNetworkShouldReturnFalseWhenActiveNetworkInfoIsNotAvailable() {
+        Context context = Mockito.spy(RuntimeEnvironment.application);
+
+        NetworkInfo networkInfo = Mockito.mock(NetworkInfo.class);
+        Mockito.doReturn(false).when(networkInfo).isConnected();
+
+        ConnectivityManager connectivityManager = Mockito.mock(ConnectivityManager.class);
+        Mockito.doReturn(connectivityManager).when(context).getSystemService(Context.CONNECTIVITY_SERVICE);
+        Mockito.doReturn(networkInfo).when(connectivityManager).getActiveNetworkInfo();
+
+        // Call the method under test and assert false
+        Assert.assertFalse(Utils.isConnectedToNetwork(context));
+    }
+
+    @Test
+    public void isConnectedToNetworkShouldReturnTrueWhenActiveNetworkInfoIsNotAvailable() {
+        Context context = Mockito.spy(RuntimeEnvironment.application);
+
+        NetworkInfo networkInfo = Mockito.mock(NetworkInfo.class);
+        Mockito.doReturn(true).when(networkInfo).isConnected();
+
+        ConnectivityManager connectivityManager = Mockito.mock(ConnectivityManager.class);
+        Mockito.doReturn(connectivityManager).when(context).getSystemService(Context.CONNECTIVITY_SERVICE);
+        Mockito.doReturn(networkInfo).when(connectivityManager).getActiveNetworkInfo();
+
+        // Call the method under test and assert false
+        Assert.assertTrue(Utils.isConnectedToNetwork(context));
     }
 }
 
