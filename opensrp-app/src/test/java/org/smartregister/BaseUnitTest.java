@@ -3,7 +3,6 @@ package org.smartregister;
 import android.os.Build;
 import android.view.View;
 
-import org.junit.After;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
