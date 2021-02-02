@@ -28,11 +28,14 @@ import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.LoginResponse;
+import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.domain.jsonmapping.util.Team;
 import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
+import org.smartregister.domain.jsonmapping.util.Tree;
+import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
@@ -42,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -497,6 +501,31 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         Utils.hideKeyboard(activity);
 
         verify(keyboard, only()).hideSoftInputFromWindow(isNull(), eq(0));
+    }
+
+    @Test
+    public void addToList() {
+        String locationTag = "County";
+        HashMap<String, String> locations = new HashMap<>();
+
+        LinkedHashMap<String, TreeNode<String, Location>> locationMap = new LinkedHashMap<>();
+        Location countryLocation = new Location("location-id-1", "Kenya", null, null);
+        countryLocation.addTag("Country");
+
+        Location countyLocation = new Location("location-id-2", "Nairobi", null, countryLocation);
+        countyLocation.addTag(locationTag);
+
+        TreeNode<String, Location> childTreeNode = new TreeNode<String, Location>("the-id-2", "Kk", countyLocation, null);
+        LinkedHashMap<String, TreeNode<String, Location>> childLocationMap = new LinkedHashMap<>();
+        childLocationMap.put(childTreeNode.getId(), childTreeNode);
+
+        TreeNode<String, Location> countryTreeNode = new TreeNode<String, Location>("the-id", "Kenya", countryLocation, null, childLocationMap);
+        locationMap.put(countryTreeNode.getId(), countryTreeNode);
+
+        // call the method being tested
+        Utils.addToList(locations, locationMap, locationTag);
+
+        Assert.assertEquals("Nairobi", locations.get(locationTag));
     }
 }
 
