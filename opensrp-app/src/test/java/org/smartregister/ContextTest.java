@@ -2,7 +2,6 @@ package org.smartregister;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.smartregister.repository.AllAlerts;
 import org.smartregister.repository.AllReports;
