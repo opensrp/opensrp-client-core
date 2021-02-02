@@ -36,6 +36,7 @@ import static org.smartregister.AllConstants.JSON.KEY;
 import static org.smartregister.AllConstants.JSON.VALUE;
 import static org.smartregister.AllConstants.SETTINGS;
 import static org.smartregister.util.Utils.getVersionCode;
+import static org.smartregister.util.Utils.isEmptyCollection;
 
 /**
  * Created by samuelgithengi on 1/28/19.
@@ -77,13 +78,13 @@ public class SyncUtils {
     private Intent getLogoutUserIntent(@StringRes int logoutMessage) {
 
         Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
         intent.setPackage(context.getPackageName());
 
         //retrieve the main/launcher activity defined in the manifest and open it
         List<ResolveInfo> activities = context.getPackageManager().queryIntentActivities(intent, 0);
-        if (activities.size() == 1) {
+        if (!isEmptyCollection(activities)) {
             intent = intent.setClassName(context.getPackageName(), activities.get(0).activityInfo.name);
-            intent.addCategory(Intent.CATEGORY_HOME);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra(ACCOUNT_DISABLED, context.getString(logoutMessage));
