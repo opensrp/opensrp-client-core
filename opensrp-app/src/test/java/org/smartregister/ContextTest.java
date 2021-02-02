@@ -1,13 +1,9 @@
 package org.smartregister;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.repository.AllAlerts;
 import org.smartregister.repository.AllReports;
 import org.smartregister.repository.AllServicesProvided;
@@ -53,12 +49,6 @@ import java.util.ArrayList;
 public class ContextTest extends BaseUnitTest {
 
     private Context context;
-
-    @Mock
-    private CoreLibrary coreLibrary;
-
-    @Mock
-    private SyncConfiguration syncConfiguration;
 
     @Before
     public void setUp() throws Exception {
@@ -317,23 +307,8 @@ public class ContextTest extends BaseUnitTest {
     }
 
     @Test
-    public void testAllSharedPreferencesCreatesUnencryptedSharedPreferencesWhenEncryptSharedPreferencesSyncConfigurationFlagIsFalse() {
+    public void testAllSharedPreferences() {
         AllSharedPreferences allSharedPreferences = context.allSharedPreferences();
         Assert.assertNotNull(allSharedPreferences);
-    }
-
-    @Test
-    public void testAllSharedPreferencesCreatesEncryptedSharedPreferencesWhenEncryptSharedPreferencesSyncConfigurationFlagIsTrue() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
-        Mockito.when(coreLibrary.getSyncConfiguration()).thenReturn(syncConfiguration);
-        Mockito.when(syncConfiguration.encryptSharedPreferences()).thenReturn(true);
-
-        AllSharedPreferences allSharedPreferences = context.allSharedPreferences();
-        Assert.assertNotNull(allSharedPreferences);
-    }
-
-    @After
-    public void tearDown() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 }
