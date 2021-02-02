@@ -65,7 +65,7 @@ public class FormDataRepository extends DrishtiRepository {
                 .put(MotherRepository.MOTHER_TABLE_NAME, MotherRepository.MOTHER_TABLE_COLUMNS);
         TABLE_COLUMN_MAP.put(ChildRepository.CHILD_TABLE_NAME, ChildRepository.CHILD_TABLE_COLUMNS);
 
-        if (StringUtils.isNotBlank(CoreLibrary.getInstance().context().configuration().appName()) && CoreLibrary.getInstance().context().configuration().appName().equals(APP_NAME_INDONESIA)) {
+        if (APP_NAME_INDONESIA.equals(CoreLibrary.getInstance().context().configuration().appName()) {
             return;
         }
 
