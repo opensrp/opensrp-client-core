@@ -13,6 +13,10 @@ import android.widget.TableRow;
 import androidx.test.core.app.ApplicationProvider;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -558,6 +562,17 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
         // Call the method under test and assert false
         Assert.assertTrue(Utils.isConnectedToNetwork(context));
+    }
+
+    @Test
+    public void getLongDateAwareGson() {
+        long timeNow = System.currentTimeMillis();
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("iMillis", new JsonPrimitive(timeNow));
+        Gson gson = Utils.getLongDateAwareGson();
+
+        Assert.assertNotNull(gson);
+        Assert.assertEquals(new DateTime(timeNow), gson.fromJson(jsonObject.toString(), DateTime.class));
     }
 }
 
