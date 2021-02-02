@@ -3,6 +3,7 @@ package org.smartregister;
 import android.os.Build;
 import android.view.View;
 
+import org.junit.After;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.robolectric.RobolectricTestRunner;
@@ -78,4 +79,9 @@ public abstract class BaseUnitTest {
 
     }
 
+    @After
+    public void tearDown() {
+        Context.destroyInstance();
+        CoreLibrary.destroyInstance();
+    }
 }

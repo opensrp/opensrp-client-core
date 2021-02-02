@@ -45,7 +45,6 @@ import org.smartregister.view.controller.ANMLocationController;
 
 import java.util.ArrayList;
 
-@Ignore
 public class ContextTest extends BaseUnitTest {
 
     private Context context;

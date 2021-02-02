@@ -72,6 +72,9 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         }
     }
 
+    public static void destroyInstance() {
+        instance = null;
+    }
 
     private static void checkPlatformMigrations() {
         boolean shouldMigrate = CredentialsHelper.shouldMigrate();
