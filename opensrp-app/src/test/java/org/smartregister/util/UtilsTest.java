@@ -15,7 +15,6 @@ import androidx.test.core.app.ApplicationProvider;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -42,7 +41,6 @@ import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.domain.jsonmapping.util.Team;
 import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
-import org.smartregister.domain.jsonmapping.util.Tree;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
@@ -533,37 +531,37 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         // call the method being tested
         Utils.addToList(locations, locationMap, locationTag);
 
-        Assert.assertEquals("Nairobi", locations.get(locationTag));
+        assertEquals("Nairobi", locations.get(locationTag));
     }
 
     @Test
     public void isConnectedToNetworkShouldReturnFalseWhenActiveNetworkInfoIsNotAvailable() {
-        Context context = Mockito.spy(RuntimeEnvironment.application);
+        Context context = spy(RuntimeEnvironment.application);
 
-        NetworkInfo networkInfo = Mockito.mock(NetworkInfo.class);
-        Mockito.doReturn(false).when(networkInfo).isConnected();
+        NetworkInfo networkInfo = mock(NetworkInfo.class);
+        doReturn(false).when(networkInfo).isConnected();
 
-        ConnectivityManager connectivityManager = Mockito.mock(ConnectivityManager.class);
-        Mockito.doReturn(connectivityManager).when(context).getSystemService(Context.CONNECTIVITY_SERVICE);
-        Mockito.doReturn(networkInfo).when(connectivityManager).getActiveNetworkInfo();
+        ConnectivityManager connectivityManager = mock(ConnectivityManager.class);
+        doReturn(connectivityManager).when(context).getSystemService(Context.CONNECTIVITY_SERVICE);
+        doReturn(networkInfo).when(connectivityManager).getActiveNetworkInfo();
 
         // Call the method under test and assert false
-        Assert.assertFalse(Utils.isConnectedToNetwork(context));
+        assertFalse(Utils.isConnectedToNetwork(context));
     }
 
     @Test
     public void isConnectedToNetworkShouldReturnTrueWhenActiveNetworkInfoIsNotAvailable() {
-        Context context = Mockito.spy(RuntimeEnvironment.application);
+        Context context = spy(RuntimeEnvironment.application);
 
-        NetworkInfo networkInfo = Mockito.mock(NetworkInfo.class);
-        Mockito.doReturn(true).when(networkInfo).isConnected();
+        NetworkInfo networkInfo = mock(NetworkInfo.class);
+        doReturn(true).when(networkInfo).isConnected();
 
-        ConnectivityManager connectivityManager = Mockito.mock(ConnectivityManager.class);
-        Mockito.doReturn(connectivityManager).when(context).getSystemService(Context.CONNECTIVITY_SERVICE);
-        Mockito.doReturn(networkInfo).when(connectivityManager).getActiveNetworkInfo();
+        ConnectivityManager connectivityManager = mock(ConnectivityManager.class);
+        doReturn(connectivityManager).when(context).getSystemService(Context.CONNECTIVITY_SERVICE);
+        doReturn(networkInfo).when(connectivityManager).getActiveNetworkInfo();
 
         // Call the method under test and assert false
-        Assert.assertTrue(Utils.isConnectedToNetwork(context));
+        assertTrue(Utils.isConnectedToNetwork(context));
     }
 
     @Test
@@ -573,8 +571,8 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         jsonObject.add("iMillis", new JsonPrimitive(timeNow));
         Gson gson = Utils.getLongDateAwareGson();
 
-        Assert.assertNotNull(gson);
-        Assert.assertEquals(new DateTime(timeNow), gson.fromJson(jsonObject.toString(), DateTime.class));
+        assertNotNull(gson);
+        assertEquals(new DateTime(timeNow), gson.fromJson(jsonObject.toString(), DateTime.class));
     }
 
     @Test
@@ -587,12 +585,12 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void startAsyncTaskShouldExecuteAsyncTaskOnThreadPoolExecutor() {
-        AsyncTask<String, ?, ?> asyncTask = Mockito.mock(AsyncTask.class);
+        AsyncTask<String, ?, ?> asyncTask = mock(AsyncTask.class);
 
         Utils.startAsyncTask(asyncTask, null);
 
-        Mockito.verify(asyncTask).executeOnExecutor(Mockito.eq(AsyncTask.THREAD_POOL_EXECUTOR)
-                , Mockito.any(String[].class));
+        verify(asyncTask).executeOnExecutor(eq(AsyncTask.THREAD_POOL_EXECUTOR)
+                , any(String[].class));
     }
 
     @Test
@@ -606,12 +604,12 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         columnMaps.put("dob", new DateTime(expectedDobTime).toString());
 
         DateTime actualDob = Utils.dobToDateTime(client);
-        Assert.assertEquals(expectedDobTime, actualDob.getMillis());
+        assertEquals(expectedDobTime, actualDob.getMillis());
     }
 
     @Test
     public void cleanUpHeader() {
-        Assert.assertEquals("Full name"
+        assertEquals("Full name"
                 , ReflectionHelpers.callStaticMethod(Utils.class, "cleanUpHeader"
                         , ReflectionHelpers.ClassParameter.from(String.class, "\"Full name\"")));
     }
@@ -629,10 +627,10 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
         CommonPersonObjectClient actualClient = Utils.convert(client);
 
-        Assert.assertEquals(name, actualClient.getName());
-        Assert.assertEquals(details.size(), actualClient.getDetails().size());
-        Assert.assertEquals(client.getCaseId(), actualClient.getCaseId());
-        Assert.assertEquals(details.size(), actualClient.getColumnmaps().size());
+        assertEquals(name, actualClient.getName());
+        assertEquals(details.size(), actualClient.getDetails().size());
+        assertEquals(client.getCaseId(), actualClient.getCaseId());
+        assertEquals(details.size(), actualClient.getColumnmaps().size());
     }
 }
 
