@@ -55,7 +55,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doReturn;
+
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -471,9 +471,11 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         AllSharedPreferences allSharedPreferences = Mockito.mock(AllSharedPreferences.class);
         Mockito.doReturn("string").when(allSharedPreferences).fetchRegisteredANM();
         Mockito.doReturn(allSharedPreferences).when(opensrpContext).allSharedPreferences();
-        doReturn(context).when(opensrpContext).applicationContext();
+
+        Mockito.doReturn(context).when(opensrpContext).applicationContext();
         UserService mockUserService = Mockito.mock(UserService.class);
-        doReturn(mockUserService).when(opensrpContext).userService();
+        Mockito.doReturn(mockUserService).when(opensrpContext).userService();
+
         Utils.logoutUser(opensrpContext, "logged out");
         verify(mockUserService, times(1)).forceRemoteLogin(anyString());
         verify(mockUserService, times(1)).logoutSession();
@@ -485,11 +487,12 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         Activity activity = Mockito.mock(Activity.class);
 
         View view = Mockito.mock(View.class);
-        doReturn(view).when(activity).getCurrentFocus();
+
+        Mockito.doReturn(view).when(activity).getCurrentFocus();
 
         InputMethodManager keyboard = Mockito.mock(InputMethodManager.class);
 
-        doReturn(keyboard).when(activity).getSystemService(Context.INPUT_METHOD_SERVICE);
+        Mockito.doReturn(keyboard).when(activity).getSystemService(Context.INPUT_METHOD_SERVICE);
 
         Utils.hideKeyboard(activity);
 
