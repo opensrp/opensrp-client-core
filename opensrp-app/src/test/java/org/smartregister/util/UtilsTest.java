@@ -574,5 +574,13 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         Assert.assertNotNull(gson);
         Assert.assertEquals(new DateTime(timeNow), gson.fromJson(jsonObject.toString(), DateTime.class));
     }
+
+    @Test
+    public void readAssetContents() {
+        String contents = Utils.readAssetContents(RuntimeEnvironment.application, "test_file.txt");
+
+        Assert.assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
+                , contents);
+    }
 }
 
