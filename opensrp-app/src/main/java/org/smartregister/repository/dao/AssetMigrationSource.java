@@ -37,7 +37,7 @@ public class AssetMigrationSource implements MigrationSource {
         try {
             String[] migrationFileNames = context.getAssets().list("config/migrations");
 
-            String regex = "(/d)/.(up|down)/.sql";
+            String regex = "(\\d)\\.(up|down)\\.sql";
             Pattern filePattern  = Pattern.compile(regex);
 
             if (migrationFileNames != null) {
@@ -46,7 +46,7 @@ public class AssetMigrationSource implements MigrationSource {
                     Matcher fileNameMatcher = filePattern.matcher(migrationFile);
                     if (fileNameMatcher.matches()) {
                         String versionString = fileNameMatcher.group(1);
-                        String migrationType = fileNameMatcher.group(2);
+                        String migrationType = fileNameMatcher.group(2).toUpperCase();
 
                         int version = Integer.parseInt(versionString);
 
