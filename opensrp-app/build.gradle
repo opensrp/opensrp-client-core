@@ -138,7 +138,7 @@ tasks.withType(Test) {
         showCauses true
         showStackTraces true
     }
-    maxHeapSize = "2g"
+    maxHeapSize = "4g"
 }
 
 def filesToCopy = copySpec {
@@ -253,6 +253,9 @@ dependencies {
     implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'xerces:xercesImpl:2.12.0'
+
+    // Add the dependency for the Performance Monitoring library
+    implementation 'com.google.firebase:firebase-perf:19.0.7'
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
