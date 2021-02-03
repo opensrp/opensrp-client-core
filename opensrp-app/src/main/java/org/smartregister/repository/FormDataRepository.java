@@ -9,7 +9,6 @@ import com.google.gson.reflect.TypeToken;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.apache.commons.lang3.StringUtils;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.SyncStatus;
