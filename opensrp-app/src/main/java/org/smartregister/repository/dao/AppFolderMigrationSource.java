@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 import org.apache.commons.io.FileUtils;
+import org.smartregister.AllConstants;
 import org.smartregister.repository.MigrationImpl;
 import org.smartregister.repository.contract.MigrationSource;
 import org.smartregister.util.Utils;
@@ -41,7 +42,7 @@ public class AppFolderMigrationSource implements MigrationSource {
             File appFolderDirectory = new File(Environment.getDataDirectory(), "/data/" + Utils.getAppId(context) + "/files/migrations");
             String[] migrationFileNames = appFolderDirectory.list();
 
-            String regex = "(/d)/.(up|down)/.sql";
+            String regex = AllConstants.MIGRATION_FILENAME_PATTERN;
             Pattern filePattern  = Pattern.compile(regex);
 
             if (migrationFileNames != null) {

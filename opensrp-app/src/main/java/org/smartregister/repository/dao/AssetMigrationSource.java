@@ -3,6 +3,7 @@ package org.smartregister.repository.dao;
 import android.content.Context;
 import android.text.TextUtils;
 
+import org.smartregister.AllConstants;
 import org.smartregister.repository.MigrationImpl;
 import org.smartregister.repository.contract.MigrationSource;
 import org.smartregister.util.AssetHandler;
@@ -37,7 +38,7 @@ public class AssetMigrationSource implements MigrationSource {
         try {
             String[] migrationFileNames = context.getAssets().list("config/migrations");
 
-            String regex = "(\\d)\\.(up|down)\\.sql";
+            String regex = AllConstants.MIGRATION_FILENAME_PATTERN;
             Pattern filePattern  = Pattern.compile(regex);
 
             if (migrationFileNames != null) {
