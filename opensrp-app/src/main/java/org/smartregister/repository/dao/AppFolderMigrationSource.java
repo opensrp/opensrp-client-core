@@ -7,14 +7,12 @@ import android.text.TextUtils;
 import org.apache.commons.io.FileUtils;
 import org.smartregister.repository.MigrationImpl;
 import org.smartregister.repository.contract.MigrationSource;
-import org.smartregister.util.AssetHandler;
+import org.smartregister.util.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.logging.FileHandler;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,7 +38,7 @@ public class AppFolderMigrationSource implements MigrationSource {
     public HashMap<Integer, ArrayList<Migration>> getMigrations(int fromDbVersion) {
         HashMap<Integer, ArrayList<Migration>> migrationMap = new HashMap<>();
         try {
-            File appFolderDirectory = new File(Environment.getDataDirectory(), "files/migrations");
+            File appFolderDirectory = new File(Environment.getDataDirectory(), "/data/" + Utils.getAppId(context) + "/files/migrations");
             String[] migrationFileNames = appFolderDirectory.list();
 
             String regex = "(/d)/.(up|down)/.sql";
