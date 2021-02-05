@@ -2,12 +2,14 @@ package org.smartregister.sync.helper;
 
 import org.joda.time.DateTime;
 import org.smartregister.CoreLibrary;
+import org.smartregister.domain.Event;
 import org.smartregister.domain.Task;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.TaskRepository;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -35,18 +37,36 @@ public class TaskServiceProcessor {
     }
 
     public void ProcessDuplicateTasks() {
+        List<Event> eventsToProcess = new ArrayList<>();
         List<String> entityIds = taskRepository.getEntityIdsWithDuplicateTasks();
         for (String entityId: entityIds) {
-            processTasks(taskRepository.getDuplicateTasksForEntity(entityId));
+            processTasks(taskRepository.getDuplicateTasksForEntity(entityId), eventsToProcess);
         }
     }
 
-    protected void processTasks(Set<Task> duplicateTasks) {
-        Task localTask = null;
-        Task serverTask = null;
+    protected void processTasks(Set<Task> duplicateTasks, List<Event> eventsToProcess) {
+        if ((duplicateTasks == null) || (duplicateTasks.size()<2)) {
+            return;
+        }
+        Task localTask;
+        Task serverTask;
+        List<Task> duplicateTaskList = new ArrayList<>(duplicateTasks);
 
+        if (duplicateTaskList.get(0).getServerVersion() > duplicateTaskList.get(1).getServerVersion()){
+            serverTask = duplicateTaskList.get(0);
+            localTask = duplicateTaskList.get(1);
+        } else {
+            serverTask = duplicateTaskList.get(1);
+            localTask = duplicateTaskList.get(0);
+        }
 
         populateTaskDetails(serverTask, localTask);
+
+        // TODO fetch event & update taskidentifier value
+        //TODO trigger client processing for updated events
+
+        // delete local task
+        taskRepository.deleteTasksByIds(Collections.singletonList(localTask.getIdentifier()));
 
     }
 

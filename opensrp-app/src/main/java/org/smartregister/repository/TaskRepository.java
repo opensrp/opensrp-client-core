@@ -723,4 +723,9 @@ public class TaskRepository extends BaseRepository {
                 "ORDER BY t1.for";
         return getTasks(query, new String[]{entityId});
     }
+
+    public void deleteTasksByIds(List<String> taskIds) {
+        String joinedTaskIds = String.format("('%s')", StringUtils.join(taskIds, "', '"));
+        getWritableDatabase().delete(TASK_TABLE, String.format("_id in (%s)", joinedTaskIds),null);
+    }
 }
