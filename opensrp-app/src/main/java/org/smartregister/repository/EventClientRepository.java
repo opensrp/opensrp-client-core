@@ -2271,4 +2271,12 @@ public class EventClientRepository extends BaseRepository {
         public String sqlQuery;
         public Map<String, Integer> columnOrder;
     }
+
+    public List<Event> getEventsByTaskIds(Set<String> taskIds) {
+        return fetchEvents("SELECT json FROM "
+                + eventTable.name()
+                + " WHERE "
+                + event_column.taskId.name()
+                + " IN (" + StringUtils.repeat(",", taskIds.size()) + ")", taskIds.toArray(new String[0]));
+    }
 }

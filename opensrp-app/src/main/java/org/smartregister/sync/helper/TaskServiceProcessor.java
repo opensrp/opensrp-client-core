@@ -1,6 +1,10 @@
 package org.smartregister.sync.helper;
 
+import com.ibm.fhir.model.type.code.TaskStatus;
+
 import org.joda.time.DateTime;
+import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Task;
@@ -42,6 +46,7 @@ public class TaskServiceProcessor {
         for (String entityId: entityIds) {
             processTasks(taskRepository.getDuplicateTasksForEntity(entityId), eventsToProcess);
         }
+        //TODO trigger client processing for updated events
     }
 
     protected void processTasks(Set<Task> duplicateTasks, List<Event> eventsToProcess) {
@@ -60,10 +65,21 @@ public class TaskServiceProcessor {
             localTask = duplicateTaskList.get(0);
         }
 
+        if (TaskStatus.READY.equals(localTask.getStatus())){
+            return;
+        }
+
         populateTaskDetails(serverTask, localTask);
 
-        // TODO fetch event & update taskidentifier value
-        //TODO trigger client processing for updated events
+        // Fetch event & update taskidentifier value
+        List<Event> localEvents = eventClientRepository.getEventsByTaskIds(Collections.singleton(localTask.getIdentifier()));
+        if (localEvents != null && !localEvents.isEmpty()) {
+            Event localEvent = localEvents.get(0);
+            localEvent.getDetails().put(AllConstants.TASK_IDENTIFIER, serverTask.getIdentifier());
+            JSONObject localEventJSON = eventClientRepository.convertToJson(localEvent);
+            eventClientRepository.addEvent(localEvent.getBaseEntityId(), localEventJSON,BaseRepository.TYPE_Unsynced);
+            eventsToProcess.add(localEvent);
+        }
 
         // delete local task
         taskRepository.deleteTasksByIds(Collections.singletonList(localTask.getIdentifier()));
