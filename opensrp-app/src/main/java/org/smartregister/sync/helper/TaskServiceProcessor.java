@@ -8,14 +8,18 @@ import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Task;
+import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.TaskRepository;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import timber.log.Timber;
 
 /**
  * Created by Richard Kareko on 2/5/21.
@@ -41,15 +45,20 @@ public class TaskServiceProcessor {
     }
 
     public void ProcessDuplicateTasks() {
-        List<Event> eventsToProcess = new ArrayList<>();
+        List<EventClient> eventsToProcess = new ArrayList<>();
         List<String> entityIds = taskRepository.getEntityIdsWithDuplicateTasks();
         for (String entityId: entityIds) {
             processTasks(taskRepository.getDuplicateTasksForEntity(entityId), eventsToProcess);
         }
-        //TODO trigger client processing for updated events
+        //trigger client processing for updated events
+        try {
+            DrishtiApplication.getInstance().getClientProcessor().processClient(eventsToProcess);
+        } catch (Exception e) {
+            Timber.e(e);
+        }
     }
 
-    protected void processTasks(Set<Task> duplicateTasks, List<Event> eventsToProcess) {
+    protected void processTasks(Set<Task> duplicateTasks, List<EventClient> eventsToProcess) {
         if ((duplicateTasks == null) || (duplicateTasks.size()<2)) {
             return;
         }
@@ -71,14 +80,14 @@ public class TaskServiceProcessor {
 
         populateTaskDetails(serverTask, localTask);
 
-        // Fetch event & update taskidentifier value
+        // Fetch event & update taskIdentifier value
         List<Event> localEvents = eventClientRepository.getEventsByTaskIds(Collections.singleton(localTask.getIdentifier()));
         if (localEvents != null && !localEvents.isEmpty()) {
             Event localEvent = localEvents.get(0);
             localEvent.getDetails().put(AllConstants.TASK_IDENTIFIER, serverTask.getIdentifier());
             JSONObject localEventJSON = eventClientRepository.convertToJson(localEvent);
             eventClientRepository.addEvent(localEvent.getBaseEntityId(), localEventJSON,BaseRepository.TYPE_Unsynced);
-            eventsToProcess.add(localEvent);
+            eventsToProcess.add(new EventClient(localEvent));
         }
 
         // delete local task
