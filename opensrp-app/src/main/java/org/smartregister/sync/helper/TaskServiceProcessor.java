@@ -44,7 +44,7 @@ public class TaskServiceProcessor {
         this.eventClientRepository = eventClientRepository;
     }
 
-    public void ProcessDuplicateTasks() {
+    public void processDuplicateTasks() {
         List<EventClient> eventsToProcess = new ArrayList<>();
         List<String> entityIds = taskRepository.getEntityIdsWithDuplicateTasks();
         for (String entityId: entityIds) {
