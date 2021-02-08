@@ -114,7 +114,7 @@ public class TaskServiceHelper extends BaseHelper {
 
     public List<Task> syncTasks() {
         List<Task> fetchedTasks = fetchTasksFromServer();
-        taskServiceProcessor.ProcessDuplicateTasks();
+        taskServiceProcessor.processDuplicateTasks();
         syncCreatedTaskToServer();
         syncTaskStatusToServer();
         return fetchedTasks;
