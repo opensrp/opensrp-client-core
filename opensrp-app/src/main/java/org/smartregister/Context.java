@@ -12,6 +12,7 @@ import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.commonregistry.CommonPersonObjectClients;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
+import org.smartregister.domain.ColumnDetails;
 import org.smartregister.repository.AlertRepository;
 import org.smartregister.repository.AllAlerts;
 import org.smartregister.repository.AllBeneficiaries;
@@ -111,7 +112,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import timber.log.Timber;
@@ -234,16 +235,16 @@ public class Context {
         return context;
     }
 
-    public static void destroyInstance() {
-       context = null;
-    }
-
     public static Context setInstance(Context mContext) {
         if (mContext != null) {
             context = mContext;
             return context;
         }
         return null;
+    }
+
+    public static void destroyInstance() {
+        context = null;
     }
 
     public android.content.Context applicationContext() {
@@ -967,11 +968,18 @@ public class Context {
 
             for (int i = 0; i < bindtypeObjects.length(); i++) {
                 String bindname = bindtypeObjects.getJSONObject(i).getString("name");
-                String[] columNames = new String[bindtypeObjects.getJSONObject(i)
+                ColumnDetails[] columNames = new ColumnDetails[bindtypeObjects.getJSONObject(i)
                         .getJSONArray("columns").length()];
+
                 for (int j = 0; j < columNames.length; j++) {
-                    columNames[j] = bindtypeObjects.getJSONObject(i).getJSONArray("columns")
-                            .getJSONObject(j).getString("name");
+                    JSONObject columnObject = bindtypeObjects.getJSONObject(i).getJSONArray("columns")
+                            .getJSONObject(j);
+
+                    String name = columnObject.getString("name");
+                    String dataType = columnObject.has("data_type") ? columnObject.getString("data_type") : "VARCHAR";
+                    columNames[j] =
+                            ColumnDetails.builder().name(name).dataType(StringUtils.isBlank(dataType) ? "VARCHAR" : dataType).build();
+
                 }
                 bindtypes.add(new CommonRepositoryInformationHolder(bindname, columNames));
                 Timber.v("bind type logs %s", bindtypeObjects.getJSONObject(i).getString("name"));
@@ -997,22 +1005,24 @@ public class Context {
                 JSONObject columnDefinitionObject = bindtypeObjects.getJSONObject(i);
                 String bindname = columnDefinitionObject.getString("name");
                 JSONArray columnsJsonArray = columnDefinitionObject.getJSONArray("columns");
-                ArrayList<String> columnNames = new ArrayList<>();
+                List<ColumnDetails> columnNames = new ArrayList<>();
 
                 // This adds the ability to have multiple mappings for one column and at the same time
                 // Prevents the app from crashing when creating the common repository
-                HashSet<String> uniqueColumnNames = new HashSet<>();
+                HashMap<String, ColumnDetails> uniqueColumnNames = new HashMap<>();
 
                 for (int j = 0; j < columnsJsonArray.length(); j++) {
                     JSONObject columnObject = columnsJsonArray.getJSONObject(j);
                     String colName = columnObject.getString("column_name");
+                    String colType = columnObject.has("data_type") ? columnObject.getString("data_type") : "VARCHAR";
 
-                    if (!uniqueColumnNames.contains(colName)) {
-                        uniqueColumnNames.add(colName);
-                        columnNames.add(colName);
+                    if (!uniqueColumnNames.containsKey(colName)) {
+                        ColumnDetails details = ColumnDetails.builder().name(colName).dataType(StringUtils.isBlank(colType) ? "VARCHAR" : colType).build();
+                        uniqueColumnNames.put(colName, details);
+                        columnNames.add(details);
                     }
                 }
-                bindtypes.add(new CommonRepositoryInformationHolder(bindname, columnNames.toArray(new String[0])));
+                bindtypes.add(new CommonRepositoryInformationHolder(bindname, columnNames.toArray(new ColumnDetails[0])));
                 Timber.v("bind type logs %s", bindname);
             }
         } catch (Exception e) {
@@ -1141,7 +1151,7 @@ public class Context {
         return foreignEventClientRepository;
     }
 
-    public boolean hasForeignEvents(){
+    public boolean hasForeignEvents() {
         return DrishtiApplication.getInstance().getP2PClassifier() != null;
     }
 
