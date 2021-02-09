@@ -687,5 +687,16 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     public void dobStringToDateTimeShouldHandleInvalidDateTimeStrings() {
         Assert.assertNull(Utils.dobStringToDateTime("opensrp"));
     }
+
+    @Test
+    public void getPropertiesShouldLoadPropertiesInPropertiesFile() {
+        AppProperties appProperties = Utils.getProperties(RuntimeEnvironment.application);
+
+        Assert.assertEquals(5, appProperties.size());
+        Assert.assertEquals("", appProperties.getProperty("DRISHTI_BASE_URL"));
+        Assert.assertEquals("false", appProperties.getProperty("SHOULD_VERIFY_CERTIFICATE"));
+        Assert.assertEquals("false", appProperties.getProperty("system.toaster.centered"));
+        Assert.assertEquals("10", appProperties.getProperty("SYNC_DOWNLOAD_BATCH_SIZE"));
+    }
 }
 
