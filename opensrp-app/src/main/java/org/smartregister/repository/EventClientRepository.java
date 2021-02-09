@@ -2277,6 +2277,6 @@ public class EventClientRepository extends BaseRepository {
                 + eventTable.name()
                 + " WHERE "
                 + event_column.taskId.name()
-                + " IN (" + StringUtils.repeat(",", taskIds.size()) + ")", taskIds.toArray(new String[0]));
+                + " IN (" + StringUtils.repeat("?",",", taskIds.size()) + ")", taskIds.toArray(new String[0]));
     }
 }
