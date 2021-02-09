@@ -117,7 +117,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     @Test
     public void assertConvertDateTimeFormatReturnsDate() throws Exception {
         assertEquals("24-07-1985 00:00:00", Utils.convertDateTimeFormat("1985-07-24T00:00:00.000Z", true));
-//        org.junit.Assert.assertEquals("", Utils.convertDateTimeFormat("19850724", true));
+//      assertEquals("", Utils.convertDateTimeFormat("19850724", true));
     }
 
     @Test(expected = RuntimeException.class)
@@ -637,19 +637,13 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void getUserDefaultTeamIdShouldReturnNullWhenUserInfoDetailsAreNull() {
-        Assert.assertNull(getUserDefaultTeamId(null));
+        assertNull(getUserDefaultTeamId(null));
 
         LoginResponseData loginData = new LoginResponseData();
-        Assert.assertNull(getUserDefaultTeamId(loginData));
+        assertNull(getUserDefaultTeamId(loginData));
 
         loginData.team =  new TeamMember();
-        Assert.assertNull(getUserDefaultTeamId(loginData));
-    }
-
-    @Ignore
-    @Test
-    public void getPreferredNameShouldHandleNull() {
-
+        assertNull(getUserDefaultTeamId(loginData));
     }
 
     @Ignore
@@ -660,13 +654,13 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         Calendar calendar = Calendar.getInstance();
         calendar.add(1, Calendar.DAY_OF_MONTH);
 
-        Assert.assertEquals("1d", Utils.getDuration(dateFormat.format(calendar.getTime())));
+        assertEquals("1d", Utils.getDuration(dateFormat.format(calendar.getTime())));
 
         calendar.add(5, Calendar.WEEK_OF_YEAR);
-        Assert.assertEquals("5w 1d", Utils.getDuration(calendar.getTime().toString()));
+        assertEquals("5w 1d", Utils.getDuration(calendar.getTime().toString()));
 
         calendar.add(-1, Calendar.DAY_OF_MONTH);
-        Assert.assertEquals("5w", Utils.getDuration(calendar.getTime().toString()));
+        assertEquals("5w", Utils.getDuration(calendar.getTime().toString()));
     }
 
 
@@ -675,34 +669,33 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         Calendar calendar = Calendar.getInstance();
         calendar.add(1, Calendar.DAY_OF_MONTH);
 
-        Assert.assertEquals("", Utils.getDuration(""));
+        assertEquals("", Utils.getDuration(""));
     }
 
     @Test
     public void dobStringToDateTimeShouldHandleNull() {
-        Assert.assertNull(Utils.dobStringToDateTime(null));
+        assertNull(Utils.dobStringToDateTime(null));
     }
 
     @Test
     public void dobStringToDateTimeShouldHandleInvalidDateTimeStrings() {
-        Assert.assertNull(Utils.dobStringToDateTime("opensrp"));
+        assertNull(Utils.dobStringToDateTime("opensrp"));
     }
 
     @Test
     public void getPropertiesShouldLoadPropertiesInPropertiesFile() {
         AppProperties appProperties = Utils.getProperties(RuntimeEnvironment.application);
 
-        Assert.assertEquals(5, appProperties.size());
-        Assert.assertEquals("", appProperties.getProperty("DRISHTI_BASE_URL"));
-        Assert.assertEquals("false", appProperties.getProperty("SHOULD_VERIFY_CERTIFICATE"));
-        Assert.assertEquals("false", appProperties.getProperty("system.toaster.centered"));
-        Assert.assertEquals("10", appProperties.getProperty("SYNC_DOWNLOAD_BATCH_SIZE"));
+        assertEquals(5, appProperties.size());
+        assertEquals("", appProperties.getProperty("DRISHTI_BASE_URL"));
+        assertEquals("false", appProperties.getProperty("SHOULD_VERIFY_CERTIFICATE"));
+        assertEquals("false", appProperties.getProperty("system.toaster.centered"));
+        assertEquals("10", appProperties.getProperty("SYNC_DOWNLOAD_BATCH_SIZE"));
     }
 
     @Test
     public void safeArrayToString() {
-        Assert.assertEquals("OpenSRP", Utils.safeArrayToString(new char[]{'O', 'p', 'e', 'n', 'S', 'R', 'P'}));
-
+        assertEquals("OpenSRP", Utils.safeArrayToString(new char[]{'O', 'p', 'e', 'n', 'S', 'R', 'P'}));
     }
 }
 
