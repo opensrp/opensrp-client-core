@@ -2,6 +2,7 @@ package org.smartregister;
 
 import android.preference.PreferenceManager;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -9,12 +10,17 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.smartregister.configuration.ActivityStarter;
+import org.smartregister.configuration.ModuleConfiguration;
+import org.smartregister.configuration.ModuleMetadata;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.authorizer.P2PAuthorizationService;
 import org.smartregister.p2p.model.dao.ReceiverTransferDao;
 import org.smartregister.p2p.model.dao.SenderTransferDao;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.shadows.ShadowAppDatabase;
+import org.smartregister.view.activity.BaseProfileActivity;
+import org.smartregister.view.activity.FormActivity;
 
 import static org.junit.Assert.assertEquals;
 
@@ -67,4 +73,27 @@ public class CoreLibraryTest extends BaseUnitTest {
 
         assertEquals(expectedUsername, p2PLibrary.getUsername());
     }
+
+    @Test
+    public void canGetCurrentDefaultModuleConfiguration() {
+        Context context = Context.getInstance();
+        CoreLibrary.init(context);
+        ModuleConfiguration customLibraryConfiguration = new ModuleConfiguration.Builder("ONA Library",
+                null, null, ActivityStarter.class) // Null values since we're not really interested in setting the actual values/classes
+                .setModuleMetadata(new ModuleMetadata("opd_registration"
+                        , "ec_client"
+                        , "Opd Registration"
+                        , "UPDATE OPD REGISTRATION",
+                        null,
+                        "custom-family",
+                        FormActivity.class, BaseProfileActivity.class, false, ""
+                ))
+                .build();
+
+        CoreLibrary.getInstance()
+                .addModuleConfiguration(true, "custom-family", customLibraryConfiguration);
+        Assert.assertEquals("custom-family", CoreLibrary.getInstance().getCurrentModuleName());
+        Assert.assertEquals("ONA Library", CoreLibrary.getInstance().getCurrentModuleConfiguration().getRegisterTitle());
+    }
+
 }
