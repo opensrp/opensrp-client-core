@@ -698,5 +698,11 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         Assert.assertEquals("false", appProperties.getProperty("system.toaster.centered"));
         Assert.assertEquals("10", appProperties.getProperty("SYNC_DOWNLOAD_BATCH_SIZE"));
     }
+
+    @Test
+    public void safeArrayToString() {
+        Assert.assertEquals("OpenSRP", Utils.safeArrayToString(new char[]{'O', 'p', 'e', 'n', 'S', 'R', 'P'}));
+
+    }
 }
 
