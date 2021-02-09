@@ -107,6 +107,7 @@ import static org.smartregister.util.Log.logError;
  * Class containing some static utility methods.
  */
 public class Utils {
+
     private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Utils.getDefaultLocale());
     private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Utils.getDefaultLocale());
 
