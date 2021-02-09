@@ -69,24 +69,14 @@ public class CoreLibrary implements OnAccountsUpdateListener {
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration) {
-        if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, null);
-        }
+        init(context, syncConfiguration, BuildConfig.BUILD_TIMESTAMP);
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp) {
-        if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, null);
-            buildTimeStamp = buildTimestamp;
-        }
+        init(context, syncConfiguration, buildTimestamp, null);
     }
 
-    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, @NonNull P2POptions options) {
-        init(context, syncConfiguration, buildTimestamp, options, -1, -1);
-    }
-
-
-    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, @NonNull P2POptions options, int databaseVersion, int applicationVersion) {
+    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, @Nullable P2POptions options) {
         if (instance == null) {
             instance = new CoreLibrary(context, syncConfiguration, options);
             buildTimeStamp = buildTimestamp;
@@ -94,6 +84,9 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         }
     }
 
+    public static void destroyInstance() {
+        instance = null;
+    }
 
     private static void checkPlatformMigrations() {
         boolean shouldMigrate = CredentialsHelper.shouldMigrate();
@@ -185,13 +178,8 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         }
     }
 
+    @Nullable
     public SyncConfiguration getSyncConfiguration() {
-        if (syncConfiguration == null) {
-            throw new IllegalStateException(" Instance does not exist!!! Call "
-                    + CoreLibrary.class.getName()
-                    + ".init method in the onCreate method of "
-                    + "your Application class ");
-        }
         return syncConfiguration;
     }
 

@@ -13,6 +13,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 /**
  * Created by Vincent Karuri on 06/10/2020
  */
-public class LocationPickerViewTest extends BaseUnitTest {
+public class LocationPickerViewTest extends BaseRobolectricUnitTest {
 
     private final String defaultLocation = "default_location";
     private final String advancedLocation = "advanced_location";
@@ -42,8 +43,12 @@ public class LocationPickerViewTest extends BaseUnitTest {
         }
         LocationPickerView.OnLocationChangeListener onLocationChangeListener = Mockito.mock(LocationPickerView.OnLocationChangeListener.class);
         CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentLocality(defaultLocation);
-        LocationHelper.init(new ArrayList<String>(){{ add(defaultLocation); }}, defaultLocation,
-                new ArrayList<String>(){{ add(advancedLocation); }});
+        LocationHelper.init(new ArrayList<String>() {{
+                                add(defaultLocation);
+                            }}, defaultLocation,
+                new ArrayList<String>() {{
+                    add(advancedLocation);
+                }});
         ReflectionHelpers.setField(LocationHelper.getInstance(), "defaultLocation", defaultLocation);
 
         locationPickerView.init();

@@ -138,6 +138,8 @@ public class AllConstants {
     public static final String RETURN_COUNT = "return_count";
     public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
 
+    public static final String GPS = "gps";
+
 
     public static class Immunizations {
         public static final String BCG = "bcg";
@@ -547,6 +549,36 @@ public class AllConstants {
     public static class DATA_CAPTURE_STRATEGY {
         public static String ADVANCED = "Advanced";
         public static String NORMAL = "Normal";
+    }
+
+    public static class DataTypes {
+        public static final String INTEGER = "INTEGER";
+    }
+
+    public interface DownloadFileConstants {
+        String FILE_NAME = "FILE_NAME";
+        String FILE_PATH = "FILE_PATH";
+    }
+
+    public interface GpsConstants {
+        String ALTITUDE = "altitude";
+        String ACCURACY = "accuracy";
+        String LATITUDE = "latitude";
+        String LONGITUDE = "longitude";
+    }
+
+    public interface PerformanceMonitoring {
+        String TEAM = "team";
+        String PUSH = "push";
+        String FETCH = "fetch";
+        String ACTION = "action";
+        String STRUCTURE = "structure";
+        String LOCATION = "location";
+        String TASK_SYNC = "task_sync";
+        String PLAN_SYNC = "plan_sync";
+        String EVENT_SYNC = "event_sync";
+        String LOCATION_SYNC = "location_sync";
+        String CLIENT_PROCESSING = "client_processing";
     }
 
     public interface RequestCode {

@@ -234,6 +234,10 @@ public class Context {
         return context;
     }
 
+    public static void destroyInstance() {
+       context = null;
+    }
+
     public static Context setInstance(Context mContext) {
         if (mContext != null) {
             context = mContext;

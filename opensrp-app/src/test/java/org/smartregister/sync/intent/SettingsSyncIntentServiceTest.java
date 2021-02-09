@@ -3,6 +3,7 @@ package org.smartregister.sync.intent;
 import android.content.Intent;
 
 import com.evernote.android.job.JobRequest;
+import com.evernote.android.job.ShadowJobManager;
 
 import org.json.JSONException;
 import org.junit.After;
@@ -11,12 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.Context;
-
-import com.evernote.android.job.ShadowJobManager;
 
 
 /**
@@ -28,6 +25,11 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() throws Exception {
+        // Clear the following
+        ShadowJobManager.jobStorage = null;
+        ShadowJobManager.mockJobManager = null;
+        ShadowJobManager.createMockJobManager();
+
         settingsSyncIntentService = Robolectric.buildIntentService(SettingsSyncIntentService.class)
                 .create()
                 .get();
@@ -35,7 +37,7 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     @After
     public void tearDown() throws Exception {
-        ReflectionHelpers.setStaticField(Context.class, "context", null);
+        initCoreLibrary();
     }
 
     @Test

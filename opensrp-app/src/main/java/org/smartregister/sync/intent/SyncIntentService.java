@@ -2,10 +2,13 @@ package org.smartregister.sync.intent;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Pair;
+
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import android.util.Pair;
+
+import com.google.firebase.perf.metrics.Trace;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -22,6 +25,7 @@ import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.ECSyncHelper;
@@ -38,6 +42,19 @@ import java.util.Map;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.CLIENT_PROCESSING;
+import static org.smartregister.AllConstants.PerformanceMonitoring.EVENT_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
+
 public class SyncIntentService extends BaseSyncIntentService {
     public static final String SYNC_URL = "/rest/event/sync";
     protected static final int EVENT_PULL_LIMIT = 250;
@@ -46,8 +63,13 @@ public class SyncIntentService extends BaseSyncIntentService {
     private Context context;
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
+    private Trace eventSyncTrace;
+    private Trace processClientTrace;
+    private String team;
 
-    private ValidateAssignmentHelper validateAssignmentHelper;
+    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+
+    protected ValidateAssignmentHelper validateAssignmentHelper;
     private long totalRecords;
     private int fetchedRecords = 0;
 
@@ -63,6 +85,10 @@ public class SyncIntentService extends BaseSyncIntentService {
         this.context = context;
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         syncUtils = new SyncUtils(getBaseContext());
+        eventSyncTrace = initTrace(EVENT_SYNC);
+        processClientTrace = initTrace(CLIENT_PROCESSING);
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        team = allSharedPreferences.fetchDefaultTeam(providerId);
         validateAssignmentHelper = new ValidateAssignmentHelper(syncUtils);
     }
 
@@ -137,6 +163,8 @@ public class SyncIntentService extends BaseSyncIntentService {
                 return;
             }
 
+            startEventTrace(FETCH, 0);
+
             String url = baseUrl + SYNC_URL;
             Response resp;
             if (configs.isSyncUsingPost()) {
@@ -203,14 +231,22 @@ public class SyncIntentService extends BaseSyncIntentService {
                 lastServerVersion = serverVersionPair.second;
             }
 
+            addAttribute(eventSyncTrace, COUNT, String.valueOf(eCount));
+            stopTrace(eventSyncTrace);
+
             boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
             //update sync time if all event client is save.
             if (isSaved) {
+                startTrace(processClientTrace);
                 processClient(serverVersionPair);
+                addAttribute(processClientTrace, COUNT, String.valueOf(eCount));
+                addAttribute(processClientTrace,  TEAM, team);
+                stopTrace(processClientTrace);
                 ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
             }
             sendSyncProgressBroadcast(eCount);
             fetchRetry(0, false);
+
         }
     }
 
@@ -276,6 +312,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 Timber.e(e);
             }
             String jsonPayload = request.toString();
+            startEventTrace(PUSH, eventsUploadedCount);
             Response<String> response = httpAgent.post(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
@@ -284,13 +321,26 @@ public class SyncIntentService extends BaseSyncIntentService {
             if (response.isFailure()) {
                 Timber.e("Events sync failed.");
                 isSuccessfulPushSync = false;
+            } else {
+                db.markEventsAsSynced(pendingEvents);
+                Timber.i("Events synced successfully.");
             }
-            db.markEventsAsSynced(pendingEvents);
-            Timber.i("Events synced successfully.");
+            stopTrace(eventSyncTrace);
             updateProgress(eventsUploadedCount, totalEventCount);
         }
 
         return isSuccessfulPushSync;
+    }
+
+    private void startEventTrace(String action, int count) {
+        SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
+        if (configs.firebasePerformanceMonitoringEnabled()) {
+            clearTraceAttributes(eventSyncTrace);
+            addAttribute(eventSyncTrace, TEAM, team);
+            addAttribute(eventSyncTrace, ACTION, action);
+            addAttribute(eventSyncTrace, COUNT, String.valueOf(count));
+            startTrace(eventSyncTrace);
+        }
     }
 
     private void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus) {

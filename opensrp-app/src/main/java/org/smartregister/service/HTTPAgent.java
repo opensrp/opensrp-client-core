@@ -2,6 +2,7 @@ package org.smartregister.service;
 
 import android.content.Context;
 import android.util.Base64;
+import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -57,6 +58,8 @@ import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -742,21 +745,30 @@ public class HTTPAgent {
      * @return Response<DownloadStatus> This returns whether the download succeeded or failed.
      */
     public Response<DownloadStatus> downloadFromURL(String downloadURL_, String fileName) {
+        return downloadFromURL(downloadURL_, fileName, new HashMap<>());
+    }
+
+    /**
+     * @param downloadURL_ This is the url of the image
+     * @param fileName     This is how the image should be name after it has been downloaded.
+     * @param detailsMap   store values that might be needed after save of file
+     * @return Response<DownloadStatus> This returns whether the download succeeded or failed.
+     */
+    public Response<DownloadStatus> downloadFromURL(String downloadURL_, String fileName, Map<String, String> detailsMap) {
 
         HttpURLConnection httpUrlConnection = null;
         try {
-            File dir = getSDCardDownloadPath();
 
+            File dir = getSDCardDownloadPath();
+            String tempFileName = fileName;
             if (!dir.exists()) {
                 dir.mkdirs();
             }
 
-            File file = getFile(fileName, dir);
-
             long startTime = System.currentTimeMillis();
             Timber.d("DownloadFormService %s", "download begin");
             Timber.d("DownloadFormService %s %s", "download url: ", downloadURL_);
-            Timber.d("DownloadFormService %s %s", "download file name: ", fileName);
+            Timber.d("DownloadFormService %s %s", "download file name: ", tempFileName);
 
 
             String downloadURL = downloadURL_.replaceAll("\\s+", "");
@@ -766,15 +778,25 @@ public class HTTPAgent {
             int status = httpUrlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
 
+                if (StringUtils.isBlank(httpUrlConnection.getContentType()))
+                    return new Response<DownloadStatus>(ResponseStatus.success,
+                            DownloadStatus.nothingDownloaded);
+
+                int periodIndex = tempFileName.lastIndexOf(".");
+                if (periodIndex == -1) {
+                    String mimeType = httpUrlConnection.getContentType().split(";")[0];
+                    tempFileName = String.format("%s.%s", tempFileName, MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType));
+                }
+
+                File file = getFile(tempFileName, dir);
+
+                detailsMap.put(AllConstants.DownloadFileConstants.FILE_NAME, tempFileName);
+                detailsMap.put(AllConstants.DownloadFileConstants.FILE_PATH, file.getPath());
+
                 InputStream inputStream = httpUrlConnection.getInputStream();
                 BufferedInputStream bufferedInputStream = getBufferedInputStream(inputStream);
 
-                long fileLength = bufferedInputStream.available();
-                if (fileLength == 0) {
-                    return new Response<DownloadStatus>(ResponseStatus.success,
-                            DownloadStatus.nothingDownloaded);
-                }
-                Timber.d("DownloadFormService %s %d", "file length : ", fileLength);
+                Timber.d("DownloadFormService file content type : %s", httpUrlConnection.getContentType());
 
                 ByteArrayBuffer baf = new ByteArrayBuffer(9999);
                 int current = 0;
