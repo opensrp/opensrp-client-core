@@ -688,13 +688,13 @@ public class TaskRepository extends BaseRepository {
     public List<String> getEntityIdsWithDuplicateTasks() {
         List<String> entityIds = new ArrayList<>();
         android.database.Cursor cursor = null;
-        String query = "SELECT\n" +
-                "    DISTINCT(for)\n" +
-                "FROM\n" +
-                "    task\n" +
-                "GROUP BY\n" +
-                "    plan_id, for, code\n" +
-                "HAVING \n" +
+        String query = "SELECT " +
+                "    DISTINCT(for) " +
+                "FROM " +
+                "    task " +
+                "GROUP BY " +
+                "    plan_id, for, code " +
+                "HAVING " +
                 "    COUNT(*) > 1";
 
         cursor = getReadableDatabase().rawQuery(query, new String[]{});
@@ -706,20 +706,20 @@ public class TaskRepository extends BaseRepository {
     }
 
     public Set<Task> getDuplicateTasksForEntity(String entityId) {
-        String query = "SELECT t1.*\n" +
-                "FROM task t1\n" +
-                "JOIN (SELECT\n" +
-                "    _id, plan_id, for, code, COUNT(*) as count\n" +
-                "FROM\n" +
-                "    task\n" +
-                "GROUP BY\n" +
-                "    plan_id, for, code\n" +
-                "HAVING \n" +
-                "    COUNT(*) > 1) t2\n" +
-                "ON t1.plan_id = t2.plan_id\n" +
-                "AND t1.for = t2.for\n" +
-                "AND t1.code = t2.code\n" +
-                "AND t1.for = ? \n" +
+        String query = "SELECT t1.* " +
+                "FROM task t1 " +
+                "JOIN (SELECT " +
+                "    _id, plan_id, for, code, COUNT(*) as count " +
+                "FROM " +
+                "    task " +
+                "GROUP BY " +
+                "    plan_id, for, code " +
+                "HAVING  " +
+                "    COUNT(*) > 1) t2 " +
+                "ON t1.plan_id = t2.plan_id " +
+                "AND t1.for = t2.for " +
+                "AND t1.code = t2.code " +
+                "AND t1.for = ? " +
                 "ORDER BY t1.for";
         return getTasks(query, new String[]{entityId});
     }
