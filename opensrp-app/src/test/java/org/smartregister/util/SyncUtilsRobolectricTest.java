@@ -27,13 +27,12 @@ import java.io.IOException;
 public class SyncUtilsRobolectricTest extends BaseRobolectricUnitTest {
 
     private SyncUtils syncUtils;
-    private Context opensrpContext;
     private android.content.Context context;
     private UserService userService;
 
     @Before
     public void setUp() {
-        opensrpContext = Mockito.spy(CoreLibrary.getInstance().context());
+        Context opensrpContext = Mockito.spy(CoreLibrary.getInstance().context());
         userService = Mockito.spy(opensrpContext.userService());
         Mockito.doReturn(userService).when(opensrpContext).userService();
 
