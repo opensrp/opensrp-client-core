@@ -5,9 +5,7 @@ buildscript {
         google()
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
-        maven{  url "https://plugins.gradle.org/m2/" }
     }
-
     dependencies {
         classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
         classpath 'org.apache.commons:commons-lang3:3.10'
@@ -91,8 +89,8 @@ android {
         //applicationId "org.smartregister"
         minSdkVersion androidMinSdkVersion
         targetSdkVersion androidTargetSdkVersion
-        versionCode 12
-        versionName "12"
+        versionCode Integer.parseInt(project.VERSION_CODE)
+        versionName project.VERSION_NAME
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
         buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
@@ -119,6 +117,7 @@ android {
         exclude 'LICENSE.txt'
         exclude 'META-INF/*'
     }
+
     testOptions {
         unitTests {
             includeAndroidResources = true
@@ -126,13 +125,20 @@ android {
     }
 }
 
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
     testLogging {
-        // to see the exceptions of failed tests in Travis-CI console.
-        exceptionFormat = 'full'
+        // Enables easier debugging of tests in Github Actions CI
+        events TestLogEvent.FAILED
+        exceptionFormat TestExceptionFormat.FULL
+        showExceptions true
+        showCauses true
+        showStackTraces true
     }
-    maxHeapSize = "2g"
+    maxHeapSize = "4g"
 }
 
 def filesToCopy = copySpec {
@@ -162,7 +168,7 @@ dependencies {
     implementation 'net.zetetic:android-database-sqlcipher:4.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'org.codehaus.jackson:jackson-core-asl:1.9.13'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "org.apache.httpcomponents:httpmime:4.5.6"
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.10'
@@ -224,9 +230,7 @@ dependencies {
         transitive = true
     }
 
-    api ('org.smartregister:opensrp-plan-evaluator:0.1.6.4-GS-SNAPSHOT'){
-        transitive = true
-    }
+    implementation 'org.smartregister:opensrp-plan-evaluator:1.2.3-SNAPSHOT'
 
     implementation 'xerces:xercesImpl:2.12.0'
 
@@ -235,6 +239,9 @@ dependencies {
     implementation('com.android.support:design:28.0.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
+
+    // Add the dependency for the Performance Monitoring library
+    implementation 'com.google.firebase:firebase-perf:19.0.7'
 
     androidTestImplementation 'junit:junit:4.13'
 

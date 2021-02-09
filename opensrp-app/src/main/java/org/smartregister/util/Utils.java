@@ -549,7 +549,7 @@ public class Utils {
                 inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         } catch (Exception e) {
-            logError("Error encountered while hiding keyboard " + e);
+            Timber.e(e, "Error encountered while hiding keyboard");
         }
     }
 

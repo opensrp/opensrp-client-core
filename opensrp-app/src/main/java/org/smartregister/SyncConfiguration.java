@@ -184,4 +184,8 @@ public abstract class SyncConfiguration {
 
     public abstract Class<? extends BaseLoginActivity> getAuthenticationActivity();
 
+    public boolean firebasePerformanceMonitoringEnabled() {
+        return false;
+    }
+
 }

@@ -3,6 +3,7 @@ package org.smartregister.view.activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
@@ -32,8 +33,13 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     @Override
     protected void attachBaseContext(android.content.Context base) {
         // get language from prefs
+
         String lang = LangUtils.getLanguage(base.getApplicationContext());
-        super.attachBaseContext(LangUtils.setAppLocale(base, lang));
+        Configuration newConfiguration = LangUtils.setAppLocale(base, lang);
+
+        super.attachBaseContext(base);
+
+        applyOverrideConfiguration(newConfiguration);
     }
 
     @Override
