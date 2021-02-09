@@ -65,16 +65,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.smartregister.TestUtils.getContext;
 import static org.smartregister.util.Utils.getDefaultLocale;
-
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
+import static org.smartregister.util.Utils.getUserDefaultTeamId;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
@@ -634,6 +633,59 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         assertEquals(details.size(), actualClient.getDetails().size());
         assertEquals(client.getCaseId(), actualClient.getCaseId());
         assertEquals(details.size(), actualClient.getColumnmaps().size());
+    }
+
+    @Test
+    public void getUserDefaultTeamIdShouldReturnNullWhenUserInfoDetailsAreNull() {
+        Assert.assertNull(getUserDefaultTeamId(null));
+
+        LoginResponseData loginData = new LoginResponseData();
+        Assert.assertNull(getUserDefaultTeamId(loginData));
+
+        loginData.team =  new TeamMember();
+        Assert.assertNull(getUserDefaultTeamId(loginData));
+    }
+
+    @Ignore
+    @Test
+    public void getPreferredNameShouldHandleNull() {
+
+    }
+
+    @Ignore
+    @Test
+    public void getDurationShouldReturnValidDurationString() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(1, Calendar.DAY_OF_MONTH);
+
+        Assert.assertEquals("1d", Utils.getDuration(dateFormat.format(calendar.getTime())));
+
+        calendar.add(5, Calendar.WEEK_OF_YEAR);
+        Assert.assertEquals("5w 1d", Utils.getDuration(calendar.getTime().toString()));
+
+        calendar.add(-1, Calendar.DAY_OF_MONTH);
+        Assert.assertEquals("5w", Utils.getDuration(calendar.getTime().toString()));
+    }
+
+
+    @Test
+    public void getDurationShouldReturnEmptyString() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(1, Calendar.DAY_OF_MONTH);
+
+        Assert.assertEquals("", Utils.getDuration(""));
+    }
+
+    @Test
+    public void dobStringToDateTimeShouldHandleNull() {
+        Assert.assertNull(Utils.dobStringToDateTime(null));
+    }
+
+    @Test
+    public void dobStringToDateTimeShouldHandleInvalidDateTimeStrings() {
+        Assert.assertNull(Utils.dobStringToDateTime("opensrp"));
     }
 }
 
