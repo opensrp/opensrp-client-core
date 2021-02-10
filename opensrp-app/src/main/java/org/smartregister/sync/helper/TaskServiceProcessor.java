@@ -107,7 +107,6 @@ public class TaskServiceProcessor {
         serverTask.setForEntity(localTask.getForEntity());
         serverTask.setGroupIdentifier(localTask.getIdentifier());
         serverTask.setLocation(localTask.getLocation());
-        serverTask.setIdentifier(localTask.getIdentifier());
         serverTask.setNotes(localTask.getNotes());
         serverTask.setOwner(localTask.getOwner());
         serverTask.setPlanIdentifier(localTask.getPlanIdentifier());
