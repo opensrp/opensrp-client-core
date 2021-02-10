@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -31,9 +32,12 @@ import org.smartregister.view.activity.BaseConfigurableRegisterActivity;
 
 import java.util.HashMap;
 
+import java.util.Map;
+import java.util.Set;
+
 import timber.log.Timber;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Created by keyman on 31/07/17.
@@ -56,6 +60,9 @@ public class CoreLibrary implements OnAccountsUpdateListener {
     private AccountManager accountManager;
 
     private AccountAuthenticatorXml authenticatorXml;
+
+    private static String ENCRYPTED_PREFS_KEY_KEYSET = "__androidx_security_crypto_encrypted_prefs_key_keyset__";
+    private static String ENCRYPTED_PREFS_VALUE_KEYSET = "__androidx_security_crypto_encrypted_prefs_value_keyset__";
 
     private HashMap<String, ModuleConfiguration> moduleConfigurations = new HashMap<>();
     private String defaultModule;
@@ -80,6 +87,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         if (instance == null) {
             instance = new CoreLibrary(context, syncConfiguration, options);
             buildTimeStamp = buildTimestamp;
+            upgradeSharedPreferences();
             checkPlatformMigrations();
         }
     }
@@ -94,6 +102,51 @@ public class CoreLibrary implements OnAccountsUpdateListener {
             Utils.logoutUser(instance.context(), instance.context().applicationContext().getString(R.string.new_db_encryption_version_migration));
         }
         instance.context().userService().getAllSharedPreferences().migratePassphrase();
+    }
+
+    /**
+     * Check encrypted prefs sync configuration
+     * If configured to encrypt and there are previously saved shared prefs, recreate them encrypted
+     * If configured not to encrypt but previous version encrypted, clear the prefs
+     */
+    private static void upgradeSharedPreferences() {
+        android.content.Context appContext = instance.context().applicationContext();
+        SharedPreferences existingPrefs = appContext.getSharedPreferences(appContext.getPackageName() + "_preferences", android.content.Context.MODE_PRIVATE);
+        Map<String, ?> entries = existingPrefs.getAll();
+        existingPrefs.edit().clear().apply();
+
+        // check the version of SharedPreferences (encrypted vs unencrypted)
+        if (Utils.getBooleanProperty(AllConstants.PROPERTY.ENCRYPT_SHARED_PREFERENCES)
+                && !entries.containsKey(ENCRYPTED_PREFS_KEY_KEYSET)
+                && !entries.containsKey(ENCRYPTED_PREFS_VALUE_KEYSET)) {
+
+            // create the new instance
+            SharedPreferences newPrefs = instance.context().allSharedPreferences().getPreferences();
+
+            copySharedPreferences(entries, newPrefs);
+        }
+    }
+
+    private static void copySharedPreferences(Map<String, ?> entries, SharedPreferences preferences) {
+        try {
+            for (Map.Entry<String, ?> entry : entries.entrySet()) {
+                if (entry.getValue() instanceof Boolean) {
+                    preferences.edit().putBoolean(entry.getKey(), (Boolean) entry.getValue()).apply();
+                } else if (entry.getValue() instanceof Float) {
+                    preferences.edit().putFloat(entry.getKey(), (Float) entry.getValue()).apply();
+                } else if (entry.getValue() instanceof Integer) {
+                    preferences.edit().putInt(entry.getKey(), (Integer) entry.getValue()).apply();
+                } else if (entry.getValue() instanceof Long) {
+                    preferences.edit().putLong(entry.getKey(), (Long) entry.getValue()).apply();
+                } else if (entry.getValue() instanceof String) {
+                    preferences.edit().putString(entry.getKey(), (String) entry.getValue()).apply();
+                } else if (entry.getValue() instanceof Set) {
+                    preferences.edit().putStringSet(entry.getKey(), (Set) entry.getValue()).apply();
+                }
+            }
+        } catch (Exception e) {
+            Timber.e(e, "Failed to save SharedPreference");
+        }
     }
 
     public static CoreLibrary getInstance() {

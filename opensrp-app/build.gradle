@@ -178,11 +178,11 @@ dependencies {
     implementation 'org.mozilla:rhino:1.7R4'
     implementation 'com.ocpsoft:ocpsoft-pretty-time:1.0.7'
     api 'joda-time:joda-time:2.10.5'
-    implementation ('com.github.bmelnychuk:atv:1.2.9'){
+    implementation('com.github.bmelnychuk:atv:1.2.9') {
         exclude group: 'com.google.android', module: 'android'
     }
 
-    implementation ('com.github.johnkil.print:print:1.3.1'){
+    implementation('com.github.johnkil.print:print:1.3.1') {
         exclude group: 'com.google.android', module: 'android'
     }
 
@@ -202,17 +202,19 @@ dependencies {
 
     implementation 'com.cloudant:cloudant-http:2.7.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.security:security-crypto:1.0.0-rc03'
 
     implementation('com.google.android.material:material:1.1.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 
-    implementation ('com.evernote:android-job:1.2.6'){
+    implementation('com.evernote:android-job:1.2.6') {
         exclude group: 'com.google.android', module: 'android'
     }
 
     implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
-    implementation ('de.hdodenhof:circleimageview:3.1.0'){
+    implementation('de.hdodenhof:circleimageview:3.1.0') {
         exclude group: 'com.google.android', module: 'android'
     }
 

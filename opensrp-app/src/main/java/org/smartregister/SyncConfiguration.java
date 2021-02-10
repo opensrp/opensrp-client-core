@@ -94,7 +94,6 @@ public abstract class SyncConfiguration {
         this.readTimeout = readTimeout;
     }
 
-
     /**
      * This method control if POST of GET HTTP method is used to sync clients and events
      *
@@ -187,5 +186,4 @@ public abstract class SyncConfiguration {
     public boolean firebasePerformanceMonitoringEnabled() {
         return false;
     }
-
 }

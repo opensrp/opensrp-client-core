@@ -32,14 +32,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -102,7 +99,6 @@ import java.util.Map;
 import timber.log.Timber;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
-import static org.smartregister.util.Log.logError;
 
 
 /**
@@ -518,7 +514,6 @@ public class Utils {
     }
 
     public static boolean getBooleanProperty(String key) {
-
         return CoreLibrary.getInstance().context().getAppProperties().isTrue(key);
     }
 
