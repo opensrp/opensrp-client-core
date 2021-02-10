@@ -1,6 +1,5 @@
 package org.smartregister.sync.helper;
 
-import org.joda.time.DateTime;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
@@ -95,26 +94,13 @@ public class TaskServiceProcessor {
     }
 
     protected void populateTaskDetails(Task serverTask, Task localTask) {
-        serverTask.setAuthoredOn(localTask.getAuthoredOn());
-        serverTask.setSyncStatus(BaseRepository.TYPE_Unsynced);
+
         serverTask.setStatus(localTask.getStatus());
-        serverTask.setLastModified(new DateTime());
         serverTask.setBusinessStatus(localTask.getBusinessStatus());
-        serverTask.setCode(localTask.getCode());
-        serverTask.setDescription(localTask.getDescription());
-        serverTask.setExecutionPeriod(localTask.getExecutionPeriod());
-        serverTask.setFocus(localTask.getFocus());
-        serverTask.setForEntity(localTask.getForEntity());
-        serverTask.setGroupIdentifier(localTask.getIdentifier());
-        serverTask.setLocation(localTask.getLocation());
-        serverTask.setNotes(localTask.getNotes());
         serverTask.setOwner(localTask.getOwner());
-        serverTask.setPlanIdentifier(localTask.getPlanIdentifier());
-        serverTask.setPriority(localTask.getPriority());
-        serverTask.setReasonReference(localTask.getReasonReference());
-        serverTask.setRequester(localTask.getRequester());
         serverTask.setRestriction(localTask.getRestriction());
-        serverTask.setStructureId(localTask.getStructureId());
+        serverTask.setNotes(localTask.getNotes());
+
     }
 
 }
