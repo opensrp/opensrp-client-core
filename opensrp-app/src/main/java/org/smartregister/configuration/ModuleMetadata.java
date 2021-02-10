@@ -39,6 +39,7 @@ public class ModuleMetadata {
             @Nullable Class<? extends BaseProfileActivity> profileActivity,
             boolean formWizardValidateRequiredFieldsBefore,
             @NonNull String lookUpQueryForModuleClient) {
+        this.moduleRegister = moduleRegister;
         this.formActivity = formActivity;
         this.profileActivity = profileActivity;
         this.formWizardValidateRequiredFieldsBefore = formWizardValidateRequiredFieldsBefore;

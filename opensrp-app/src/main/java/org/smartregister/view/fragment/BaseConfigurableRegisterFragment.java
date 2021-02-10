@@ -250,7 +250,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         ModuleMetadata moduleMetadata = getModuleConfiguration().getModuleMetadata();
         // TODO: ADD RxJava for entityId
         if (getActivity() instanceof BaseConfigurableRegisterActivity && moduleMetadata != null) {
-            ((BaseConfigurableRegisterActivity) getActivity()).startFormActivity(moduleMetadata.getRegistrationFormName(), null, (String) null);
+            ((BaseConfigurableRegisterActivity) getActivity()).startFormActivity(moduleMetadata.getModuleRegister().getRegistrationFormName(), null, (String) null);
         }
     }
 

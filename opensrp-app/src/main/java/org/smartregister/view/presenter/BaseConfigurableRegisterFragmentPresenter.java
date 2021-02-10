@@ -31,7 +31,7 @@ public class BaseConfigurableRegisterFragmentPresenter implements BaseRegisterFr
     @Override
     public void initializeQueries(String mainCondition) {
 
-        getView().initializeQueryParams(moduleConfiguration.getModuleMetadata().getTableName(), null, null);
+        getView().initializeQueryParams(moduleConfiguration.getModuleMetadata().getModuleRegister().getTableName(), null, null);
         getView().initializeAdapter();
 
         getView().countExecute();

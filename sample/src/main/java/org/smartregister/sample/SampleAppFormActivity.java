@@ -1,5 +1,6 @@
 package org.smartregister.sample;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,9 +19,12 @@ public class SampleAppFormActivity extends JsonWizardFormActivity {
 
     @Override
     protected void attachBaseContext(android.content.Context base) {
-
         String language = LangUtils.getLanguage(base);
-        super.attachBaseContext(LangUtils.setAppLocale(base, language));
+        Configuration newConfiguration = LangUtils.setAppLocale(base, language);
+
+        super.attachBaseContext(base);
+
+        applyOverrideConfiguration(newConfiguration);
     }
 
     @Override

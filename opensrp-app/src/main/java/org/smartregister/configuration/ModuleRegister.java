@@ -21,7 +21,11 @@ public class ModuleRegister {
             @NonNull String registerEventType,
             @NonNull String updateEventType,
             @NonNull String config) {
-
+        this.registrationFormName = registrationFormName;
+        this.tableName = tableName;
+        this.registerEventType = registerEventType;
+        this.updateEventType = updateEventType;
+        this.config = config;
     }
 
     public String getRegistrationFormName() {

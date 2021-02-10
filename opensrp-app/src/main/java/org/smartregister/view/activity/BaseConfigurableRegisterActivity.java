@@ -78,7 +78,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
                 String baseEntityId = getIntent().getStringExtra(AllConstants.IntentExtra.JsonForm.BASE_ENTITY_ID);
                 String table = getIntent().getStringExtra(AllConstants.IntentExtra.JsonForm.ENTITY_TABLE);
 
-                startFormActivity(moduleMetadata.getRegistrationFormName(), baseEntityId, null, presenter().getInjectedFieldValues(client), table);
+                startFormActivity(moduleMetadata.getModuleRegister().getRegistrationFormName(), baseEntityId, null, presenter().getInjectedFieldValues(client), table);
             }
         }
     }
@@ -163,7 +163,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
                 Timber.d("JSONResult : %s", jsonString);
 
                 JSONObject form = new JSONObject(jsonString);
-                if (form.getString(AllConstants.JSON.Property.ENCOUNTER_TYPE).equals(getModuleConfiguration().getModuleMetadata().getRegisterEventType())) {
+                if (form.getString(AllConstants.JSON.Property.ENCOUNTER_TYPE).equals(getModuleConfiguration().getModuleMetadata().getModuleRegister().getRegisterEventType())) {
                     RegisterParams registerParam = new RegisterParams();
                     registerParam.setEditMode(false);
                     registerParam.setFormTag(JsonFormUtils.formTag(CoreLibrary.getInstance().context().allSharedPreferences()));

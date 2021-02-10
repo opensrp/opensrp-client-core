@@ -12,6 +12,7 @@ import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.configuration.ModuleMetadata;
+import org.smartregister.configuration.ModuleRegister;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.domain.jsonmapping.util.Team;
@@ -175,14 +176,14 @@ public class SampleApplication extends DrishtiApplication {
 
     private void createCustomLibrary() {
         ModuleConfiguration customLibraryConfiguration = new ModuleConfiguration.Builder("ONA Library", RegisterQueryProvider.class, new ConfigViewsLib(), ActivityStarter.class)
-                .setModuleMetadata(new ModuleMetadata("opd_registration"
-                        , "ec_client"
-                        , "Opd Registration"
-                        , "UPDATE OPD REGISTRATION",
+                .setModuleMetadata(new ModuleMetadata(
+                        new ModuleRegister("opd_registration"
+                                , "ec_client"
+                                , "Opd Registration"
+                                , "UPDATE OPD REGISTRATION",
+                                "custom-family"),
                         new LocationTagsConfiguration(),
-                        "custom-family",
-                        FormActivity.class, BaseProfileActivity.class, false, ""
-                        ))
+                        FormActivity.class, BaseProfileActivity.class, false, ""))
                 .setModuleFormProcessorClass(FormProcessor.class)
                 .setJsonFormActivity(SampleAppFormActivity.class)
                 .build();
@@ -227,7 +228,7 @@ public class SampleApplication extends DrishtiApplication {
         @NonNull
         @Override
         public ArrayList<String> getAllowedLevels() {
-            return new ArrayList<String>(Arrays.asList("Country","County", "Town","Region","District","Ward" , "Health Facility", "Village", "Village Sublocations"));
+            return new ArrayList<String>(Arrays.asList("Country", "County", "Town", "Region", "District", "Ward", "Health Facility", "Village", "Village Sublocations"));
         }
 
         @NonNull
@@ -239,7 +240,7 @@ public class SampleApplication extends DrishtiApplication {
         @NonNull
         @Override
         public ArrayList<String> getLocationLevels() {
-            return new ArrayList<>(Arrays.asList("Country","County", "Town","Region","District","Ward" , "Health Facility", "Village", "Village Sublocations"));
+            return new ArrayList<>(Arrays.asList("Country", "County", "Town", "Region", "District", "Ward", "Health Facility", "Village", "Village Sublocations"));
         }
 
         @NonNull
@@ -248,6 +249,7 @@ public class SampleApplication extends DrishtiApplication {
             return new ArrayList<String>(Arrays.asList("County", "Town", "MOH Jhpiego Facility Name", "Village"));
         }
     }
+
     @Override
     public Repository getRepository() {
         try {
@@ -259,7 +261,6 @@ public class SampleApplication extends DrishtiApplication {
         }
         return repository;
     }
-
 
 
 }
