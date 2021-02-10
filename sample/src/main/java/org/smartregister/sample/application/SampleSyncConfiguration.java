@@ -78,9 +78,4 @@ public class SampleSyncConfiguration extends SyncConfiguration {
     public Class<? extends BaseLoginActivity> getAuthenticationActivity() {
         return null;
     }
-
-    @Override
-    public boolean encryptSharedPreferences() {
-        return true;
-    }
 }
