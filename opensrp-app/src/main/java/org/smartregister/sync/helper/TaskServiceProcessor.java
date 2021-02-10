@@ -100,6 +100,7 @@ public class TaskServiceProcessor {
         serverTask.setOwner(localTask.getOwner());
         serverTask.setRestriction(localTask.getRestriction());
         serverTask.setNotes(localTask.getNotes());
+        serverTask.setSyncStatus(BaseRepository.TYPE_Unsynced);
 
     }
 
