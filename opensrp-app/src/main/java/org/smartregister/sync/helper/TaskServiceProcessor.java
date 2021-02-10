@@ -1,7 +1,5 @@
 package org.smartregister.sync.helper;
 
-import com.ibm.fhir.model.type.code.TaskStatus;
-
 import org.joda.time.DateTime;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
@@ -74,7 +72,7 @@ public class TaskServiceProcessor {
             localTask = duplicateTaskList.get(0);
         }
 
-        if (TaskStatus.READY.equals(localTask.getStatus())){
+        if (Task.TaskStatus.READY.equals(localTask.getStatus())){
             return;
         }
 
@@ -92,6 +90,7 @@ public class TaskServiceProcessor {
 
         // delete local task
         taskRepository.deleteTasksByIds(Collections.singletonList(localTask.getIdentifier()));
+        taskRepository.addOrUpdate(serverTask,true);
 
     }
 
@@ -99,7 +98,6 @@ public class TaskServiceProcessor {
         serverTask.setAuthoredOn(localTask.getAuthoredOn());
         serverTask.setSyncStatus(BaseRepository.TYPE_Unsynced);
         serverTask.setStatus(localTask.getStatus());
-        serverTask.setSyncStatus(localTask.getSyncStatus());
         serverTask.setLastModified(new DateTime());
         serverTask.setBusinessStatus(localTask.getBusinessStatus());
         serverTask.setCode(localTask.getCode());
