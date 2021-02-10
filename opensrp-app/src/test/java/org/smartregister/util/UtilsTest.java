@@ -65,16 +65,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.smartregister.TestUtils.getContext;
 import static org.smartregister.util.Utils.getDefaultLocale;
-
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
+import static org.smartregister.util.Utils.getUserDefaultTeamId;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
@@ -118,7 +117,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     @Test
     public void assertConvertDateTimeFormatReturnsDate() throws Exception {
         assertEquals("24-07-1985 00:00:00", Utils.convertDateTimeFormat("1985-07-24T00:00:00.000Z", true));
-//        org.junit.Assert.assertEquals("", Utils.convertDateTimeFormat("19850724", true));
+//      assertEquals("", Utils.convertDateTimeFormat("19850724", true));
     }
 
     @Test(expected = RuntimeException.class)
@@ -634,6 +633,69 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         assertEquals(details.size(), actualClient.getDetails().size());
         assertEquals(client.getCaseId(), actualClient.getCaseId());
         assertEquals(details.size(), actualClient.getColumnmaps().size());
+    }
+
+    @Test
+    public void getUserDefaultTeamIdShouldReturnNullWhenUserInfoDetailsAreNull() {
+        assertNull(getUserDefaultTeamId(null));
+
+        LoginResponseData loginData = new LoginResponseData();
+        assertNull(getUserDefaultTeamId(loginData));
+
+        loginData.team =  new TeamMember();
+        assertNull(getUserDefaultTeamId(loginData));
+    }
+
+    @Ignore
+    @Test
+    public void getDurationShouldReturnValidDurationString() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(1, Calendar.DAY_OF_MONTH);
+
+        assertEquals("1d", Utils.getDuration(dateFormat.format(calendar.getTime())));
+
+        calendar.add(5, Calendar.WEEK_OF_YEAR);
+        assertEquals("5w 1d", Utils.getDuration(calendar.getTime().toString()));
+
+        calendar.add(-1, Calendar.DAY_OF_MONTH);
+        assertEquals("5w", Utils.getDuration(calendar.getTime().toString()));
+    }
+
+
+    @Test
+    public void getDurationShouldReturnEmptyString() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(1, Calendar.DAY_OF_MONTH);
+
+        assertEquals("", Utils.getDuration(""));
+    }
+
+    @Test
+    public void dobStringToDateTimeShouldHandleNull() {
+        assertNull(Utils.dobStringToDateTime(null));
+    }
+
+    @Test
+    public void dobStringToDateTimeShouldHandleInvalidDateTimeStrings() {
+        assertNull(Utils.dobStringToDateTime("opensrp"));
+    }
+
+    @Test
+    public void getPropertiesShouldLoadPropertiesInPropertiesFile() {
+        AppProperties appProperties = Utils.getProperties(RuntimeEnvironment.application);
+
+        assertEquals(5, appProperties.size());
+        assertEquals("", appProperties.getProperty("DRISHTI_BASE_URL"));
+        assertEquals("false", appProperties.getProperty("SHOULD_VERIFY_CERTIFICATE"));
+        assertEquals("false", appProperties.getProperty("system.toaster.centered"));
+        assertEquals("10", appProperties.getProperty("SYNC_DOWNLOAD_BATCH_SIZE"));
+    }
+
+    @Test
+    public void safeArrayToString() {
+        assertEquals("OpenSRP", Utils.safeArrayToString(new char[]{'O', 'p', 'e', 'n', 'S', 'R', 'P'}));
     }
 }
 
