@@ -1936,9 +1936,10 @@ public class EventClientRepository extends BaseRepository {
             values.put(event_column.syncStatus.name(), syncStatus);
             values.put(event_column.locationId.name(), jsonObject.optString(event_column.locationId.name()));
             JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
-            if (details != null)
+            if (details != null) {
                 values.put(event_column.planId.name(), details.optString(AllConstants.PLAN_IDENTIFIER));
                 values.put(event_column.taskId.name(), details.optString(AllConstants.TASK_IDENTIFIER));
+            }
             if (jsonObject.has(EVENT_ID)) {
                 values.put(event_column.eventId.name(), jsonObject.getString(EVENT_ID));
             } else if (jsonObject.has(_ID)) {
