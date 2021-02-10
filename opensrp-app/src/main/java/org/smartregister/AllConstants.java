@@ -619,7 +619,7 @@ public class AllConstants {
         String ENTITY_ID = "openmrs_entity_id";
     }
 
-    public interface BOOLEAN_INT {
+    public interface BooleanInt {
         int TRUE = 1;
         int FALSE = 0;
     }

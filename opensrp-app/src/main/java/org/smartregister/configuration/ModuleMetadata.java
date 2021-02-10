@@ -14,15 +14,7 @@ import java.util.Set;
  */
 public class ModuleMetadata {
 
-    private String registrationFormName;
-
-    private String tableName;
-
-    private String registerEventType;
-
-    private String updateEventType;
-
-    private String config;
+    private ModuleRegister moduleRegister;
 
     private Class<? extends FormActivity> formActivity;
 
@@ -40,21 +32,13 @@ public class ModuleMetadata {
 
     private String lookUpQueryForModuleClient;
 
-    public ModuleMetadata(@NonNull String registrationFormName,
-                          @NonNull String tableName,
-                          @NonNull String registerEventType,
-                          @NonNull String updateEventType,
-                          @NonNull LocationTagsConfiguration locationTagsConfiguration,
-                          @NonNull String config,
-                          @NonNull Class<? extends FormActivity> formActivity,
-                          @Nullable Class<? extends BaseProfileActivity> profileActivity,
-                          boolean formWizardValidateRequiredFieldsBefore,
-                          @NonNull String lookUpQueryForModuleClient) {
-        this.registrationFormName = registrationFormName;
-        this.tableName = tableName;
-        this.registerEventType = registerEventType;
-        this.updateEventType = updateEventType;
-        this.config = config;
+    public ModuleMetadata(
+            @NonNull ModuleRegister moduleRegister,
+            @NonNull LocationTagsConfiguration locationTagsConfiguration,
+            @NonNull Class<? extends FormActivity> formActivity,
+            @Nullable Class<? extends BaseProfileActivity> profileActivity,
+            boolean formWizardValidateRequiredFieldsBefore,
+            @NonNull String lookUpQueryForModuleClient) {
         this.formActivity = formActivity;
         this.profileActivity = profileActivity;
         this.formWizardValidateRequiredFieldsBefore = formWizardValidateRequiredFieldsBefore;
@@ -62,44 +46,20 @@ public class ModuleMetadata {
         this.lookUpQueryForModuleClient = lookUpQueryForModuleClient;
     }
 
-    public String getRegistrationFormName() {
-        return registrationFormName;
+    public ModuleRegister getModuleRegister() {
+        return moduleRegister;
     }
 
-    public void setRegistrationFormName(String registrationFormName) {
-        this.registrationFormName = registrationFormName;
+    public void setModuleRegister(ModuleRegister moduleRegister) {
+        this.moduleRegister = moduleRegister;
     }
 
-    public String getTableName() {
-        return tableName;
+    public LocationTagsConfiguration getLocationTagsConfiguration() {
+        return locationTagsConfiguration;
     }
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-
-    public String getRegisterEventType() {
-        return registerEventType;
-    }
-
-    public void setRegisterEventType(String registerEventType) {
-        this.registerEventType = registerEventType;
-    }
-
-    public String getUpdateEventType() {
-        return updateEventType;
-    }
-
-    public void setUpdateEventType(String updateEventType) {
-        this.updateEventType = updateEventType;
-    }
-
-    public String getConfig() {
-        return config;
-    }
-
-    public void setConfig(String config) {
-        this.config = config;
+    public void setLocationTagsConfiguration(LocationTagsConfiguration locationTagsConfiguration) {
+        this.locationTagsConfiguration = locationTagsConfiguration;
     }
 
     public Class<? extends FormActivity> getFormActivity() {

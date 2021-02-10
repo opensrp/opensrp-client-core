@@ -77,7 +77,7 @@ public class SampleAppJsonFormUtils extends JsonFormUtils {
             populateInjectedFields(form, injectedFieldValues);
         }
 
-        if (CoreLibrary.getInstance().getModuleConfiguration(CoreLibrary.getInstance().getCurrentModuleName()).getModuleMetadata().getRegistrationFormName().equals(formName)) {
+        if (CoreLibrary.getInstance().getModuleConfiguration(CoreLibrary.getInstance().getCurrentModuleName()).getModuleMetadata().getModuleRegister().getRegistrationFormName().equals(formName)) {
             if (StringUtils.isBlank(entityId)) {
                 UniqueIdRepository uniqueIdRepo = CoreLibrary.getInstance().context().getUniqueIdRepository();
                 entityId = uniqueIdRepo.getNextUniqueId() != null ? uniqueIdRepo.getNextUniqueId().getOpenmrsId() : "";
@@ -325,7 +325,7 @@ public class SampleAppJsonFormUtils extends JsonFormUtils {
                     //Mark the birth date as an approximation
                     JSONObject isBirthdateApproximate = new JSONObject();
                     isBirthdateApproximate.put(AllConstants.JSON.KEY, FormEntityConstants.Person.birthdate_estimated);
-                    isBirthdateApproximate.put(AllConstants.JSON.VALUE, AllConstants.BOOLEAN_INT.TRUE);
+                    isBirthdateApproximate.put(AllConstants.JSON.VALUE, AllConstants.BooleanInt.TRUE);
                     isBirthdateApproximate
                             .put(AllConstants.OPENMRS.ENTITY, AllConstants.ENTITY.PERSON);//Required for value to be processed
                     isBirthdateApproximate.put(AllConstants.OPENMRS.ENTITY_ID, FormEntityConstants.Person.birthdate_estimated);
@@ -461,8 +461,8 @@ public class SampleAppJsonFormUtils extends JsonFormUtils {
             Client baseClient = JsonFormUtils.createBaseClient(fields, formTag, entityId);
 
             Event baseEvent = JsonFormUtils.createEvent(fields, getJSONObject(jsonForm, METADATA),
-                    formTag, entityId, CoreLibrary.getInstance().getCurrentModuleConfiguration().getModuleMetadata().getRegisterEventType(),
-                    CoreLibrary.getInstance().getCurrentModuleConfiguration().getModuleMetadata().getTableName());
+                    formTag, entityId, CoreLibrary.getInstance().getCurrentModuleConfiguration().getModuleMetadata().getModuleRegister().getRegisterEventType(),
+                    CoreLibrary.getInstance().getCurrentModuleConfiguration().getModuleMetadata().getModuleRegister().getTableName());
 
             tagSyncMetadata(baseEvent);
 
