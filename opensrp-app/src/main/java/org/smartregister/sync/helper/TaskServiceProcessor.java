@@ -72,6 +72,8 @@ public class TaskServiceProcessor {
         }
 
         if (Task.TaskStatus.READY.equals(localTask.getStatus())){
+            // delete local task
+            taskRepository.deleteTasksByIds(Collections.singletonList(localTask.getIdentifier()));
             return;
         }
 
