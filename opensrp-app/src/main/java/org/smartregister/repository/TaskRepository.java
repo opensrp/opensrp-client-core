@@ -697,10 +697,17 @@ public class TaskRepository extends BaseRepository {
                 "HAVING " +
                 "    COUNT(*) > 1";
 
-        cursor = getReadableDatabase().rawQuery(query, new String[]{});
+        try {
+            cursor = getReadableDatabase().rawQuery(query, new String[]{});
 
-        while (cursor.moveToNext()) {
-            entityIds.add(cursor.getString(0));
+            while (cursor.moveToNext()) {
+                entityIds.add(cursor.getString(0));
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
         }
         return entityIds;
     }
