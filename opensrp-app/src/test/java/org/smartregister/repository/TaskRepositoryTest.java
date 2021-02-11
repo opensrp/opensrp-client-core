@@ -546,12 +546,13 @@ public class TaskRepositoryTest extends BaseUnitTest {
                 "    DISTINCT(for) " +
                 "FROM " +
                 "    task " +
+                "WHERE status IN ('?', '?') " +
                 "GROUP BY " +
                 "    plan_id, for, code " +
                 "HAVING " +
                 "    COUNT(*) > 1";
 
-        when(sqLiteDatabase.rawQuery(query, new String[]{})).thenReturn(cursor);
+        when(sqLiteDatabase.rawQuery(query, new String[]{Task.TaskStatus.READY.name(), Task.TaskStatus.COMPLETED.name()})).thenReturn(cursor);
 
         List<String> entities = taskRepository.getEntityIdsWithDuplicateTasks();
         assertEquals(1, entities.size());

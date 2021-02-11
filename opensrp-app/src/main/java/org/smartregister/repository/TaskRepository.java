@@ -692,13 +692,14 @@ public class TaskRepository extends BaseRepository {
                 "    DISTINCT(for) " +
                 "FROM " +
                 "    task " +
+                "WHERE status IN ('?', '?') " +
                 "GROUP BY " +
                 "    plan_id, for, code " +
                 "HAVING " +
                 "    COUNT(*) > 1";
 
         try {
-            cursor = getReadableDatabase().rawQuery(query, new String[]{});
+            cursor = getReadableDatabase().rawQuery(query, new String[]{TaskStatus.READY.name(), TaskStatus.COMPLETED.name()});
 
             while (cursor.moveToNext()) {
                 entityIds.add(cursor.getString(0));
