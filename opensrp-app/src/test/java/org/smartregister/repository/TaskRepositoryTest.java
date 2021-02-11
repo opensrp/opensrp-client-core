@@ -579,9 +579,10 @@ public class TaskRepositoryTest extends BaseUnitTest {
         String query = "SELECT t1.* " +
                 "FROM task t1 " +
                 "JOIN (SELECT " +
-                "    _id, plan_id, for, code, COUNT(*) as count " +
+                "plan_id, for, code, COUNT(*) as count " +
                 "FROM " +
                 "    task " +
+                "WHERE for = ? " +
                 "GROUP BY " +
                 "    plan_id, for, code " +
                 "HAVING  " +
