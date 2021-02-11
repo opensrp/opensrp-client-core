@@ -595,7 +595,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
                 "ORDER BY t1.for";
         when(sqLiteDatabase.rawQuery(query, new String[]{entityId})).thenReturn(cursor);
 
-        Set<Task> duplicateTasks = taskRepository.getDuplicateTasksForEntity(entityId);
+        Set<Task> duplicateTasks = taskRepository.getDuplicateTasksForEntity(entityId,entityId);
         assertEquals(2, duplicateTasks.size());
         for (Task taskEntity : duplicateTasks) {
                 assertTrue(taskIds.contains(taskEntity.getIdentifier()));

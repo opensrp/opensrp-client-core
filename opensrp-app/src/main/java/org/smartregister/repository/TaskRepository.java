@@ -730,7 +730,7 @@ public class TaskRepository extends BaseRepository {
                 "AND t1.code = t2.code " +
                 "AND t1.for = ? " +
                 "ORDER BY t1.for";
-        return getTasks(query, new String[]{entityId});
+        return getTasks(query, new String[]{entityId,entityId});
     }
 
     public void deleteTasksByIds(List<String> taskIds) {
