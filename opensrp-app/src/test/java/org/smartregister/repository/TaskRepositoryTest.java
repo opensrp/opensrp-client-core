@@ -546,7 +546,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
                 "    DISTINCT(for) " +
                 "FROM " +
                 "    task " +
-                "WHERE status IN ('?', '?') " +
+                "WHERE status IN (?, ?) " +
                 "GROUP BY " +
                 "    plan_id, for, code " +
                 "HAVING " +
