@@ -610,8 +610,9 @@ public class TaskRepositoryTest extends BaseUnitTest {
         taskRepository.deleteTasksByIds(taskIds);
         verify(sqLiteDatabase).delete(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), argsCaptor.capture());
         assertEquals("task", stringArgumentCaptor.getAllValues().get(0));
-        assertEquals("_id in ('taskId-1', 'taskId-2')", stringArgumentCaptor.getAllValues().get(1));
-        assertNull(argsCaptor.getValue());
+        assertEquals("_id in (? , ? )", stringArgumentCaptor.getAllValues().get(1));
+        assertEquals("taskId-1", argsCaptor.getAllValues().get(0)[0]);
+        assertEquals("taskId-2", argsCaptor.getAllValues().get(0)[1]);
     }
 
 }
