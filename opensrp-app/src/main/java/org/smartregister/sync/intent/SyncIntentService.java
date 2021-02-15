@@ -34,16 +34,15 @@ import java.util.Map;
 import timber.log.Timber;
 
 public class SyncIntentService extends BaseSyncIntentService {
-    private static final String ADD_URL = "/rest/event/add";
+    public static final String ADD_URL = "/rest/event/add";
     public static final String SYNC_URL = "/rest/event/sync";
 
-    private Context context;
-    private HTTPAgent httpAgent;
-    private SyncUtils syncUtils;
+    protected Context context;
+    protected HTTPAgent httpAgent;
+    protected SyncUtils syncUtils;
 
     protected static final int EVENT_PULL_LIMIT = 250;
     protected static final int EVENT_PUSH_LIMIT = 50;
-    private boolean isEmptyToAdd = false;
 
     public SyncIntentService() {
         super("SyncIntentService");
@@ -97,7 +96,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         fetchRetry(0);
     }
 
-    private synchronized void fetchRetry(final int count) {
+    protected synchronized void fetchRetry(final int count) {
         try {
             SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
             if (configs.getSyncFilterParam() == null || StringUtils.isBlank(configs.getSyncFilterValue())) {
@@ -126,11 +125,10 @@ public class SyncIntentService extends BaseSyncIntentService {
                 syncParams.put(configs.getSyncFilterParam().value(), configs.getSyncFilterValue());
                 syncParams.put("serverVersion", lastSyncDatetime);
                 syncParams.put("limit",  getEventPullLimit());
-                syncParams.put("isFromAdd",  isEmptyToAdd);
                 resp = httpAgent.postWithJsonResponse(url,syncParams.toString());
             } else {
-                url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit()+"&isEmptyToAdd="+isEmptyToAdd;
-                Log.i("URL: %s", url);
+                url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit();
+                Timber.i("URL: %s", url);
                 resp = httpAgent.fetch(url);
             }
 
@@ -188,7 +186,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
     }
 
-    private void processClient(Pair<Long, Long> serverVersionPair) {
+    protected void processClient(Pair<Long, Long> serverVersionPair) {
         try {
             ECSyncHelper ecUpdater = ECSyncHelper.getInstance(context);
             List<EventClient> events = ecUpdater.allEventClients(serverVersionPair.first - 1, serverVersionPair.second);
@@ -204,10 +202,9 @@ public class SyncIntentService extends BaseSyncIntentService {
         pushECToServer();
     }
 
-    private void pushECToServer() {
+    protected void pushECToServer() {
         EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
         boolean keepSyncing = true;
-        isEmptyToAdd = true;
 
         while (keepSyncing) {
             try {
@@ -229,14 +226,11 @@ public class SyncIntentService extends BaseSyncIntentService {
                 if (pendingEvents.containsKey(AllConstants.KEY.EVENTS)) {
                     request.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
                 }
-                isEmptyToAdd = false;
                 String jsonPayload = request.toString();
-                String add_url =  MessageFormat.format("{0}/{1}",
-                        baseUrl,
-                        ADD_URL);
-                Log.i("URL: %s", add_url);
-                Response<String> response = httpAgent.post(add_url
-                       ,
+                Response<String> response = httpAgent.post(
+                        MessageFormat.format("{0}/{1}",
+                                baseUrl,
+                                ADD_URL),
                         jsonPayload);
                 if (response.isFailure()) {
                     Timber.e("Events sync failed.");
@@ -250,14 +244,14 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
     }
 
-    private void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus) {
+    protected void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus) {
         Intent intent = new Intent();
         intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
         sendBroadcast(intent);
     }
 
-    private void complete(FetchStatus fetchStatus) {
+    protected void complete(FetchStatus fetchStatus) {
         Intent intent = new Intent();
         intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
@@ -272,7 +266,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     }
 
-    private Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
+    protected Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
         final String EVENTS = "events";
         final String SERVER_VERSION = "serverVersion";
         try {
@@ -306,7 +300,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         return Pair.create(0L, 0L);
     }
 
-    private int fetchNumberOfEvents(JSONObject jsonObject) {
+    protected int fetchNumberOfEvents(JSONObject jsonObject) {
         int count = -1;
         final String NO_OF_EVENTS = "no_of_events";
         try {

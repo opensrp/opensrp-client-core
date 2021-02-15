@@ -25,6 +25,7 @@ import static org.smartregister.util.Log.logInfo;
 
 public class AllSharedPreferences {
     public static final String ANM_IDENTIFIER_PREFERENCE_KEY = "anmIdentifier";
+    public static final String ANM_IDENTIFIER_ROLE = "anm_role";
     private static final String HOST = "HOST";
     private static final String PORT = "PORT";
     private static final String LAST_SYNC_DATE = "LAST_SYNC_DATE";
@@ -48,6 +49,13 @@ public class AllSharedPreferences {
 
     public String fetchRegisteredANM() {
         return preferences.getString(ANM_IDENTIFIER_PREFERENCE_KEY, "").trim();
+    }
+    public void updateANMRole(String role) {
+        preferences.edit().putString(ANM_IDENTIFIER_ROLE, role).commit();
+    }
+
+    public String fetchRegisteredRole() {
+        return preferences.getString(ANM_IDENTIFIER_ROLE, "").trim();
     }
 
     public boolean fetchForceRemoteLogin() {
