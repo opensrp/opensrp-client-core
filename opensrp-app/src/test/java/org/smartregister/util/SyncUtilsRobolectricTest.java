@@ -6,6 +6,9 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 
 import org.junit.Assert;
@@ -15,6 +18,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -23,6 +27,8 @@ import org.smartregister.account.AccountHelper;
 import org.smartregister.service.UserService;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -97,6 +103,37 @@ public class SyncUtilsRobolectricTest extends BaseRobolectricUnitTest {
         Assert.assertEquals(Intent.ACTION_MAIN, intent.getAction());
         Assert.assertTrue(intent.getCategories().contains(Intent.CATEGORY_LAUNCHER));
         Assert.assertEquals("org.smartregister.test", intent.getPackage());
+        Assert.assertNull(intent.getComponent());
+    }
 
+    @Test
+    public void getLogoutUserIntentShouldProvideLaunchActivityIntentWhenLauncherActivityIsAvailable() {
+
+        ArgumentCaptor<Intent> intentArgumentCaptor = ArgumentCaptor.forClass(Intent.class);
+        Mockito.doNothing().when(context).startActivity(intentArgumentCaptor.capture());
+
+        List<ResolveInfo> activities = new ArrayList<>();
+        ResolveInfo resolveInfo = new ResolveInfo();
+        String activityName = "activity.sample_activity";
+        resolveInfo.activityInfo =  new ActivityInfo();
+        resolveInfo.activityInfo.name = activityName;
+        activities.add(resolveInfo);
+
+        PackageManager packageManager = Mockito.spy(context.getPackageManager());
+        Mockito.doReturn(packageManager).when(context).getPackageManager();
+        Mockito.doReturn(activities).when(packageManager).queryIntentActivities(Mockito.any(Intent.class), Mockito.eq(0));
+
+        // Call the method under test
+        Intent intent = syncUtils.getLogoutUserIntent(R.string.logout_text);
+
+        Assert.assertEquals(Intent.ACTION_MAIN, intent.getAction());
+        Assert.assertTrue(intent.getCategories().contains(Intent.CATEGORY_LAUNCHER));
+        Assert.assertEquals("org.smartregister.test", intent.getPackage());
+        Assert.assertEquals(activityName, intent.getComponent().getClassName());
+        Assert.assertEquals("org.smartregister.test", intent.getComponent().getPackageName());
+        int flags = Intent.FLAG_ACTIVITY_NEW_TASK;
+        flags |= Intent.FLAG_ACTIVITY_CLEAR_TOP;
+        Assert.assertEquals(flags, intent.getFlags());
+        Assert.assertEquals(context.getString(R.string.logout_text), intent.getStringExtra(AllConstants.ACCOUNT_DISABLED));
     }
 }
