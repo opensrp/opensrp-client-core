@@ -1,5 +1,7 @@
 package org.smartregister.view.activity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
@@ -7,13 +9,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatDelegate;
 
-import org.junit.After;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
@@ -24,11 +27,17 @@ import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
+import org.smartregister.R;
+import org.smartregister.client.utils.contract.ClientFormContract;
+import org.smartregister.client.utils.domain.Form;
 import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.configuration.ModuleRegisterQueryProviderContract;
 import org.smartregister.pojo.InnerJoinObject;
 import org.smartregister.pojo.QueryTable;
 import org.smartregister.service.ZiggyService;
+
+import java.io.BufferedReader;
+import java.io.IOException;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 16-02-2021.
@@ -114,12 +123,40 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
 
     @Test
     public void startFormActivity() {
-        //
+        setupModuleConfiguration();
+        createStartAndResumeActivity();
+
+        JSONObject jsonObject = new JSONObject();
+
+        ArgumentCaptor<Intent> intentArgumentCaptor = ArgumentCaptor.forClass(Intent.class);
+        Mockito.doNothing().when(baseConfigurableRegisterActivity).startActivityForResult(intentArgumentCaptor.capture()
+                , Mockito.eq(AllConstants.RequestCode.START_JSON_FORM));
+
+        // Call the method under test
+        baseConfigurableRegisterActivity.startFormActivity(jsonObject);
+
+        // Perform assertions
+        Intent intent = intentArgumentCaptor.getValue();
+        Form form = (Form) intent.getSerializableExtra(AllConstants.IntentExtra.JsonForm.FORM);
+
+        Assert.assertEquals("{}", intent.getStringExtra(AllConstants.IntentExtra.JsonForm.JSON));
+        Assert.assertEquals(R.color.form_actionbar, form.getActionBarBackground());
+        Assert.assertFalse(form.isWizard());
+        Assert.assertTrue(form.isHideSaveLabel());
+        Assert.assertEquals("", form.getNextLabel());
     }
 
     @Test
     public void testStartFormActivity() {
         //
+    }
+
+    private void setupModuleConfiguration() {
+        String moduleName = "PNC";
+        ModuleConfiguration moduleConfiguration = Mockito.mock(ModuleConfiguration.class);
+        Mockito.doReturn(MyRegisterQueryConfiguration.class).when(moduleConfiguration).getRegisterQueryProvider();
+        Mockito.doReturn(MyJsonFormActivity.class).when(moduleConfiguration).getJsonFormActivity();
+        CoreLibrary.getInstance().addModuleConfiguration(moduleName, moduleConfiguration);
     }
 
     public static class MyRegisterQueryConfiguration extends ModuleRegisterQueryProviderContract {
@@ -150,6 +187,36 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
         @Override
         public String mainSelect(@NonNull InnerJoinObject[] tableColsInnerJoins, @NonNull QueryTable[] tableCols) {
             return null;
+        }
+    }
+
+    public static class MyJsonFormActivity extends Activity implements ClientFormContract.View {
+
+        @Nullable
+        @Override
+        public JSONObject getSubForm(String s, String s1, Context context, boolean b) throws Exception {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public BufferedReader getRules(@NonNull Context context, @NonNull String s) throws IOException {
+            return null;
+        }
+
+        @Override
+        public void handleFormError(boolean b, @NonNull String s) {
+
+        }
+
+        @Override
+        public void setVisibleFormErrorAndRollbackDialog(boolean b) {
+
+        }
+
+        @Override
+        public boolean isVisibleFormErrorAndRollbackDialog() {
+            return false;
         }
     }
 

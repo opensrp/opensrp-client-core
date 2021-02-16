@@ -137,7 +137,6 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
         // Do nothing for now
     }
 
-
     @Override
     public void startFormActivity(JSONObject jsonForm) {
         Intent intent = new Intent(this, getModuleConfiguration().getJsonFormActivity());
