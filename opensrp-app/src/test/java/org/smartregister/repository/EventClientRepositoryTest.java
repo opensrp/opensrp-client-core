@@ -23,6 +23,7 @@ import org.powermock.reflect.Whitebox;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.db.Column;
+import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.ClientData;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
@@ -474,4 +475,20 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
         Assert.assertEquals(3, formSubmissionIds.size());
     }
+
+    @Test
+    public void getSqliteTypeShouldReturnVarcharForListType() {
+        Assert.assertEquals("varchar", EventClientRepository.getSqliteType(ColumnAttribute.Type.list));
+    }
+
+    @Test
+    public void getSqliteTypeShouldReturnVarcharForMapType() {
+        Assert.assertEquals("varchar", EventClientRepository.getSqliteType(ColumnAttribute.Type.map));
+    }
+
+    @Test
+    public void getSqliteTypeShouldReturnIntegerForLongnumType() {
+        Assert.assertEquals("integer", EventClientRepository.getSqliteType(ColumnAttribute.Type.longnum));
+    }
+
 }
