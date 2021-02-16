@@ -24,14 +24,13 @@ import org.smartregister.view.activity.FormActivity;
 public class BaseRegisterProviderTest extends BaseUnitTest {
 
     private BaseRegisterProvider registerProvider;
-    private Context context;
     private RegisterActionHandlerMock registerActionHandler = new RegisterActionHandlerMock();
     private PaginationViewHandlerMock paginationViewHandler = new PaginationViewHandlerMock();
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        context = RuntimeEnvironment.application;
+        Context context = RuntimeEnvironment.application;
         initializeModuleConfiguration();
         registerProvider = new BaseRegisterProvider(context, registerActionHandler, paginationViewHandler);
     }

@@ -146,11 +146,11 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
         Assert.assertEquals("", form.getNextLabel());
     }
 
-    @Test
+    /*@Test
     public void testStartFormActivity() {
         //
     }
-
+    */
     private void setupModuleConfiguration() {
         String moduleName = "PNC";
         ModuleConfiguration moduleConfiguration = Mockito.mock(ModuleConfiguration.class);
@@ -206,12 +206,12 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
 
         @Override
         public void handleFormError(boolean b, @NonNull String s) {
-
+            // TODO -> Do nothing
         }
 
         @Override
         public void setVisibleFormErrorAndRollbackDialog(boolean b) {
-
+            // TODO -> Do nothing
         }
 
         @Override

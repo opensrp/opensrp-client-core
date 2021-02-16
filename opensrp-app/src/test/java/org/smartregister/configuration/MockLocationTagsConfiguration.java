@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class MockLocationTagsConfiguration implements org.smartregister.configuration.LocationTagsConfiguration {
+public class MockLocationTagsConfiguration implements LocationTagsConfiguration {
     @NonNull
     @Override
     public ArrayList<String> getAllowedLevels() {

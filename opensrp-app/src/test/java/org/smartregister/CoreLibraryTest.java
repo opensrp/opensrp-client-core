@@ -220,8 +220,8 @@ public class CoreLibraryTest extends BaseUnitTest {
 
         CoreLibrary.getInstance()
                 .addModuleConfiguration(true, "custom-family", customLibraryConfiguration);
-        Assert.assertEquals("custom-family", CoreLibrary.getInstance().getCurrentModuleName());
-        Assert.assertEquals("ONA Library", CoreLibrary.getInstance().getCurrentModuleConfiguration().getRegisterTitle());
+        assertEquals("custom-family", CoreLibrary.getInstance().getCurrentModuleName());
+        assertEquals("ONA Library", CoreLibrary.getInstance().getCurrentModuleConfiguration().getRegisterTitle());
     }
 
 }
