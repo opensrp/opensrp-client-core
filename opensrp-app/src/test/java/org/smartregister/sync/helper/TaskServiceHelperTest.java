@@ -10,9 +10,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
-import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
@@ -61,6 +59,9 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     @Mock
     private DristhiConfiguration configuration;
 
+    @Mock
+    private TaskServiceProcessor taskServiceProcessor;
+
     @Captor
     private ArgumentCaptor<String> stringArgumentCaptor;
 
@@ -95,7 +96,9 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     @Test
     public void testSyncTasks() {
         taskServiceHelper = spy(taskServiceHelper);
+        Whitebox.setInternalState(taskServiceHelper, "taskServiceProcessor", taskServiceProcessor);
         taskServiceHelper.syncTasks();
+        verify(taskServiceProcessor).processDuplicateTasks();
         verify(taskServiceHelper).syncCreatedTaskToServer();
         verify(taskServiceHelper).syncTaskStatusToServer();
     }

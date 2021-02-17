@@ -22,6 +22,7 @@ import org.mockito.stubbing.Answer;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.Event;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.p2p.sync.data.JsonData;
@@ -38,6 +39,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by onaio on 29/08/2017.
@@ -474,6 +478,21 @@ public class EventClientRepositoryTest extends BaseUnitTest {
                 .populateFormSubmissionIds(Mockito.anyList(), Mockito.anySet());
 
         Assert.assertEquals(3, formSubmissionIds.size());
+    }
+
+    @Test
+    public void testGetEventsByTaskIds() throws Exception {
+        String query = "SELECT json FROM event WHERE taskId IN (?)";
+        String[] params = new String[]{"taskId-1"};
+        when(sqliteDatabase.rawQuery(query, params)).thenReturn(getEventCursor());
+
+        Set<String> taskIds = new HashSet<>();
+        taskIds.add("taskId-1");
+
+        List<Event> events = eventClientRepository.getEventsByTaskIds(taskIds);
+        verify(sqliteDatabase).rawQuery(query, params);
+        Assert.assertNotNull(events.size());
+
     }
 
     @Test
