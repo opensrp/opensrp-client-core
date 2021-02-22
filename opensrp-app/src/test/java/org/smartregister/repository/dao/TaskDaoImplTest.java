@@ -109,16 +109,17 @@ public class TaskDaoImplTest extends BaseUnitTest {
     @Test
     public void testFindTasksByJurisdiction() {
         String jurisdictionId = "jurisdiction-id";
+        String planId = "plan-id";
 
-        String query = "SELECT * FROM task WHERE group_id = ?";
+        String query = "SELECT * FROM task WHERE group_id = ? AND plan_id = ?";
         when(sqLiteDatabase.rawQuery(query, new String[]{jurisdictionId})).thenReturn(getCursor());
         taskDao = Mockito.spy(taskDao);
 
         // Call the method under test
-        List<Task> allTasks = taskDao.findTasksByJurisdiction(jurisdictionId);
+        List<Task> allTasks = taskDao.findTasksByJurisdiction(jurisdictionId,planId);
 
         // Perform verifications and assertions
-        verify(taskDao).getTasksByJurisdiction(jurisdictionId);
+        verify(taskDao).getTasksByJurisdictionAndPlan(jurisdictionId, planId);
         assertEquals(1, allTasks.size());
     }
 
