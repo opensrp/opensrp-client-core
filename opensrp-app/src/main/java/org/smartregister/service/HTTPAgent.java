@@ -325,8 +325,9 @@ public class HTTPAgent {
     private Response<String> processResponse(HttpURLConnection urlConnection) {
         String responseString;
         String totalRecords;
+        int statusCode = -1;
         try {
-            int statusCode = urlConnection.getResponseCode();
+            statusCode = urlConnection.getResponseCode();
 
             InputStream inputStream = null;
 
@@ -355,7 +356,8 @@ public class HTTPAgent {
         } finally {
             closeConnection(urlConnection);
         }
-        return new Response<>(ResponseStatus.success, responseString).withTotalRecords(Utils.tryParseLong(totalRecords, 0));
+        return new Response<>(statusCode >= HttpStatus.SC_BAD_REQUEST ? ResponseStatus.failure : ResponseStatus.success, responseString)
+                .withTotalRecords(Utils.tryParseLong(totalRecords, 0));
     }
 
 
