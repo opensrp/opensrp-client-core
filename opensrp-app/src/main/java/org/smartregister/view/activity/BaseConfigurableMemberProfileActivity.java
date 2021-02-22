@@ -73,7 +73,6 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
         setContentView(R.layout.activity_base_configurable_member_profile);
 
         Toolbar toolbar = findViewById(R.id.collapsing_toolbar);
-        TextView tvTitle = toolbar.findViewById(R.id.toolbar_title);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();

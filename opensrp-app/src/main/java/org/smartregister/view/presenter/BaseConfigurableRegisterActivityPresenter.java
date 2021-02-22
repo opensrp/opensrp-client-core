@@ -15,6 +15,7 @@ import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.exception.JsonFormException;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.view.contract.BaseRegisterContract;
 import org.smartregister.view.contract.ConfigurableRegisterActivityContract;
@@ -129,11 +130,12 @@ public class BaseConfigurableRegisterActivityPresenter implements BaseRegisterCo
         }
 
         JSONObject form = null;
+        HashMap<String, String> updatedInjectedFieldValues = injectedFieldValues;
         try {
-            if (injectedFieldValues == null) {
-                injectedFieldValues = getInjectedFields(formName, entityId);
+            if (updatedInjectedFieldValues == null) {
+                updatedInjectedFieldValues = getInjectedFields(formName, entityId);
             }
-            form = model.getFormAsJson(formName, entityId, locationId, injectedFieldValues);
+            form = model.getFormAsJson(formName, entityId, locationId, updatedInjectedFieldValues);
             // TODO: FIX THIS
             /*if (formName.equals(OpdConstants.Form.OPD_DIAGNOSIS_AND_TREAT)) {
                 interactor.fetchSavedDiagnosisAndTreatmentForm(entityId, entityTable, this);
@@ -192,7 +194,9 @@ public class BaseConfigurableRegisterActivityPresenter implements BaseRegisterCo
         HashMap<Client, List<Event>> clientListHashMap = model.processRegistration(jsonString, registerParams.getFormTag());
         if (clientListHashMap == null || clientListHashMap.isEmpty()) {
             Timber.i(jsonString);
-            throw new RuntimeException("The form above could not be processed to generate Events and Clients");
+            // We are throwing this RuntimeException because it's not recoverable and leads to data loss when ignored
+            // eg. A patient is assumed registered OR records assumed saved when nothing was saved/updated
+            throw new JsonFormException("The form above could not be processed to generate Events and Clients");
         }
 
         registerParams.setEditMode(false);

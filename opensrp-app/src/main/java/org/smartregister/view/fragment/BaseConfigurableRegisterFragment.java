@@ -165,14 +165,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
 
         ExtendedFloatingActionButton addClientsFab = view.findViewById(R.id.add_new_client_fab);
         if (addClientsFab != null) {
-            if (toolbarOptions.isFabEnabled()) {
-                String fabText = toolbarOptions.getFabTextStringResource() > 0 ? getString(toolbarOptions.getFabTextStringResource()) : getString(R.string.add_new_client);
-                addClientsFab.setText(fabText);
-                addClientsFab.setOnClickListener(v -> startRegistration());
-                addClientsFab.setVisibility(View.VISIBLE);
-            } else {
-                addClientsFab.setVisibility(View.GONE);
-            }
+            setupAddClientFab(addClientsFab);
         }
 
         LinearLayout registerSelect = view.findViewById(R.id.select_register_layout);
@@ -198,6 +191,17 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
                     }
                 }
             });
+        }
+    }
+
+    private void setupAddClientFab(@NonNull ExtendedFloatingActionButton addClientsFab) {
+        if (toolbarOptions.isFabEnabled()) {
+            String fabText = toolbarOptions.getFabTextStringResource() > 0 ? getString(toolbarOptions.getFabTextStringResource()) : getString(R.string.add_new_client);
+            addClientsFab.setText(fabText);
+            addClientsFab.setOnClickListener(v -> startRegistration());
+            addClientsFab.setVisibility(View.VISIBLE);
+        } else {
+            addClientsFab.setVisibility(View.GONE);
         }
     }
 
