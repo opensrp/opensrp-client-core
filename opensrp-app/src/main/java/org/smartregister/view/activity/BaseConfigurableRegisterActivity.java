@@ -95,7 +95,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
             }
         } catch (NoSuchFieldError e) {
             // This error occurs because the ID cannot be found on some client applications because the layout
-            // has been overriden
+            // has been overridden
             Timber.e(e);
         }
     }
@@ -217,8 +217,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
 
     @Override
     public void startFormActivity(@NonNull JSONObject jsonForm, @Nullable HashMap<String, String> parcelableData) {
-        ModuleMetadata moduleMetadata = getModuleConfiguration().getModuleMetadata();
-        if (moduleMetadata != null) {
+        if (getModuleConfiguration().getJsonFormActivity() != null) {
             Intent intent = new Intent(this, getModuleConfiguration().getJsonFormActivity());
             Form form = new Form();
             form.setActionBarBackground(R.color.form_actionbar);

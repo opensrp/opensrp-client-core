@@ -372,7 +372,9 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Override
     public ConfigurableRegisterActivityContract.Presenter presenter() {
-        initializePresenter();
+        if (presenter == null) {
+            initializePresenter();
+        }
         return presenter;
     }
 }
