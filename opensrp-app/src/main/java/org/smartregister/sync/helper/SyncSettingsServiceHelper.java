@@ -167,6 +167,11 @@ public class SyncSettingsServiceHelper {
         return getInstance().getSyncConfiguration().getSettingsSyncFilterParam();
     }
 
+    @VisibleForTesting
+    protected String getGlobalSettingsQueryParams() {
+        return getInstance().getSyncConfiguration().getGlobalSettingsQueryParams();
+    }
+
     /**
      * Gets settings that are not tied to team,teamid,location,provider
      *
@@ -174,7 +179,7 @@ public class SyncSettingsServiceHelper {
      * @throws JSONException
      */
     public JSONArray pullGlobalSettingsFromServer(String accessToken) throws JSONException {
-        String url = SettingsSyncIntentService.SETTINGS_URL + "?" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp();
+        String url = SettingsSyncIntentService.SETTINGS_URL + "?" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp() + getGlobalSettingsQueryParams();
         return pullSettings(url, accessToken);
     }
 

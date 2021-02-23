@@ -186,4 +186,6 @@ public abstract class SyncConfiguration {
     public boolean firebasePerformanceMonitoringEnabled() {
         return false;
     }
+
+    public String getGlobalSettingsQueryParams() {return "";}
 }
