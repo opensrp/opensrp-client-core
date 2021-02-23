@@ -30,11 +30,15 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.client.utils.contract.ClientFormContract;
 import org.smartregister.client.utils.domain.Form;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configuration.ModuleConfiguration;
+import org.smartregister.configuration.ModuleMetadata;
+import org.smartregister.configuration.ModuleRegister;
 import org.smartregister.configuration.ModuleRegisterQueryProviderContract;
 import org.smartregister.pojo.InnerJoinObject;
 import org.smartregister.pojo.QueryTable;
 import org.smartregister.service.ZiggyService;
+import org.smartregister.view.contract.BaseRegisterContract;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -53,6 +57,8 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
+
+    private BaseRegisterContract.Presenter presenter;
 
     @BeforeClass
     public static void resetCoreLibrary() {
@@ -86,6 +92,9 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
                 .start()
                 .resume();
         baseConfigurableRegisterActivity = Mockito.spy(controller.get());
+
+        presenter = Mockito.spy(baseConfigurableRegisterActivity.presenter);
+        baseConfigurableRegisterActivity.presenter = presenter;
     }
 
     @Test
@@ -144,6 +153,48 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
         Assert.assertFalse(form.isWizard());
         Assert.assertTrue(form.isHideSaveLabel());
         Assert.assertEquals("", form.getNextLabel());
+    }
+
+    @Test
+    public void onStartActivityWithActionShouldCallStartFormActivity() {
+        setupModuleConfiguration();
+        createStartAndResumeActivity();
+
+        // Add the intent extra for the action-registration
+        String moduleName = "PNC";
+        Intent intent = new Intent();
+        intent.putExtra(AllConstants.IntentExtra.MODULE_NAME, moduleName);
+        intent.putExtra(AllConstants.IntentExtra.JsonForm.ACTION, AllConstants.IntentExtra.JsonForm.ACTION_REGISTRATION);
+
+        String formName = "registration";
+        String baseEntityId = "base-entity-id";
+        String table = "ec_client";
+
+        intent.putExtra(AllConstants.IntentExtra.JsonForm.BASE_ENTITY_ID, baseEntityId);
+        intent.putExtra(AllConstants.IntentExtra.JsonForm.ENTITY_TABLE, table);
+
+        Mockito.doReturn(intent).when(baseConfigurableRegisterActivity).getIntent();
+
+        Mockito.doNothing().when(baseConfigurableRegisterActivity).startFormActivity(formName, baseEntityId, null, null, table);
+
+        // Add the module metadata
+        ModuleConfiguration moduleConfiguration = Mockito.mock(ModuleConfiguration.class);
+        ModuleMetadata moduleMetadata = Mockito.mock(ModuleMetadata.class);
+        ModuleRegister moduleRegister = Mockito.mock(ModuleRegister.class);
+
+        Mockito.doReturn(formName).when(moduleRegister).getRegistrationFormName();
+        Mockito.doReturn(moduleRegister).when(moduleMetadata).getModuleRegister();
+        Mockito.doReturn(moduleMetadata).when(moduleConfiguration).getModuleMetadata();
+        Mockito.doReturn(MyRegisterQueryConfiguration.class).when(moduleConfiguration).getRegisterQueryProvider();
+
+        Mockito.doReturn(moduleConfiguration).when(baseConfigurableRegisterActivity).getModuleConfiguration();
+        Mockito.doReturn(null).when(presenter).getInjectedFieldValues(Mockito.nullable(CommonPersonObjectClient.class));
+
+        // Call the method under test
+        baseConfigurableRegisterActivity.onStartActivityWithAction();
+
+        // Perform verifications
+        Mockito.verify(baseConfigurableRegisterActivity).startFormActivity(formName, baseEntityId, null, null, table);
     }
 
     /*@Test
