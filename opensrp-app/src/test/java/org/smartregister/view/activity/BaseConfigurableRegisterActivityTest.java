@@ -42,6 +42,7 @@ import org.smartregister.view.contract.BaseRegisterContract;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 16-02-2021.
@@ -195,6 +196,50 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
 
         // Perform verifications
         Mockito.verify(baseConfigurableRegisterActivity).startFormActivity(formName, baseEntityId, null, null, table);
+    }
+
+    @Test
+    public void startFormActivityWithParcelableDataShouldCallStartActivityForResult() {
+        setupModuleConfiguration();
+        createStartAndResumeActivity();
+
+        // Add Module metadata to module configuration
+        ModuleConfiguration moduleConfiguration = baseConfigurableRegisterActivity.getModuleConfiguration();
+        Mockito.doReturn(MyJsonFormActivity.class).when(moduleConfiguration).getJsonFormActivity();
+
+
+        JSONObject jsonObject = new JSONObject();
+
+        ArgumentCaptor<Intent> intentArgumentCaptor = ArgumentCaptor.forClass(Intent.class);
+        Mockito.doNothing().when(baseConfigurableRegisterActivity).startActivityForResult(intentArgumentCaptor.capture()
+                , Mockito.eq(AllConstants.RequestCode.START_JSON_FORM));
+
+        HashMap<String, String> parcelableData =  new HashMap<>();
+        parcelableData.put("gender", "male");
+        parcelableData.put("health_status", "ok");
+
+        // Call the method under test
+        baseConfigurableRegisterActivity.startFormActivity(jsonObject, parcelableData);
+
+
+        // Perform assertions
+        Intent intent = intentArgumentCaptor.getValue();
+        Form form = (Form) intent.getSerializableExtra(AllConstants.IntentExtra.JsonForm.FORM);
+
+        Assert.assertEquals("{}", intent.getStringExtra(AllConstants.IntentExtra.JsonForm.JSON));
+        Assert.assertEquals(R.color.form_actionbar, form.getActionBarBackground());
+        Assert.assertFalse(form.isWizard());
+        Assert.assertTrue(form.isHideSaveLabel());
+        Assert.assertEquals("", form.getPreviousLabel());
+        Assert.assertEquals("", form.getNextLabel());
+        Assert.assertEquals("", form.getName());
+        Assert.assertFalse(form.isHideNextButton());
+        Assert.assertFalse(form.isHidePreviousButton());
+        Assert.assertEquals("PNC", intent.getStringExtra(AllConstants.IntentExtra.MODULE_NAME));
+        Assert.assertEquals("ok", intent.getStringExtra("health_status"));
+        Assert.assertEquals("male", intent.getStringExtra("gender"));
+
+        Assert.assertEquals(MyJsonFormActivity.class.getName(), intent.getComponent().getClassName());
     }
 
     /*@Test
