@@ -4,6 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.smartregister.domain.Address;
 import org.smartregister.domain.db.mock.BaseEntityMock;
 
 import java.util.ArrayList;

@@ -1,6 +1,5 @@
 package org.smartregister.sync.intent;
 
-import android.app.IntentService;
 import android.content.Intent;
 
 import com.google.gson.Gson;

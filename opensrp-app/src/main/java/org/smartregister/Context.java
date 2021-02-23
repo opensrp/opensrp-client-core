@@ -1,9 +1,13 @@
 package org.smartregister;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
+import android.os.Build;
+
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -24,6 +28,8 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.AllTimelineEvents;
 import org.smartregister.repository.CampaignRepository;
 import org.smartregister.repository.ChildRepository;
+import org.smartregister.repository.ClientFormRepository;
+import org.smartregister.repository.ClientRelationshipRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.EligibleCoupleRepository;
@@ -32,10 +38,11 @@ import org.smartregister.repository.FormDataRepository;
 import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.repository.ImageRepository;
 import org.smartregister.repository.LocationRepository;
+import org.smartregister.repository.LocationTagRepository;
+import org.smartregister.repository.ManifestRepository;
 import org.smartregister.repository.MotherRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.repository.ReportRepository;
-import org.smartregister.repository.Repository;
 import org.smartregister.repository.ServiceProvidedRepository;
 import org.smartregister.repository.SettingsRepository;
 import org.smartregister.repository.StructureRepository;
@@ -112,16 +119,18 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import timber.log.Timber;
+
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class Context {
-    private static final String TAG = "Context";
+
     ///////////////////common bindtypes///////////////
+
     public static ArrayList<CommonRepositoryInformationHolder> bindtypes;
     private static Context context = new Context();
     protected DristhiConfiguration configuration;
     private android.content.Context applicationContext;
-    private Repository repository;
     private EligibleCoupleRepository eligibleCoupleRepository;
     private AlertRepository alertRepository;
     private SettingsRepository settingsRepository;
@@ -206,6 +215,7 @@ public class Context {
     private Map<String, String> customHumanReadableConceptResponse;
     private HashMap<String, CommonRepository> MapOfCommonRepository;
     private EventClientRepository eventClientRepository;
+    private EventClientRepository foreignEventClientRepository;
     private UniqueIdRepository uniqueIdRepository;
     private CampaignRepository campaignRepository;
     private TaskRepository taskRepository;
@@ -214,8 +224,15 @@ public class Context {
     private StructureRepository structureRepository;
     private PlanDefinitionRepository planDefinitionRepository;
     private AppProperties appProperties;
+    private LocationTagRepository locationTagRepository;
+    private ManifestRepository manifestRepository;
+    private ClientFormRepository clientFormRepository;
+    private ClientRelationshipRepository clientRelationshipRepository;
+
+    private static final String SHARED_PREFERENCES_FILENAME = "%s_preferences";
 
     /////////////////////////////////////////////////
+
     protected Context() {
     }
 
@@ -224,6 +241,10 @@ public class Context {
             context = new Context();
         }
         return context;
+    }
+
+    public static void destroyInstance() {
+       context = null;
     }
 
     public static Context setInstance(Context mContext) {
@@ -276,7 +297,6 @@ public class Context {
     }
 
     public FormSubmissionService formSubmissionService() {
-        initRepository();
         if (formSubmissionService == null) {
             if (commonFtsObject != null) {
                 formSubmissionService = new FormSubmissionService(ziggyService(),
@@ -298,7 +318,6 @@ public class Context {
     }
 
     public FormSubmissionRouter formSubmissionRouter() {
-        initRepository();
         if (formSubmissionRouter == null) {
             formSubmissionRouter = new FormSubmissionRouter(formDataRepository(),
                     ecRegistrationHandler(), fpComplicationsHandler(), fpChangeHandler(),
@@ -490,7 +509,6 @@ public class Context {
     }
 
     public ZiggyService ziggyService() {
-        initRepository();
         if (ziggyService == null) {
             ziggyService = new ZiggyService(ziggyFileLoader(), formDataRepository(),
                     formSubmissionRouter());
@@ -517,53 +535,41 @@ public class Context {
 
     public HTTPAgent httpAgent() {
         if (httpAgent == null) {
-            httpAgent = new HTTPAgent(applicationContext, allSettings(), allSharedPreferences(),
-                    configuration());
+            httpAgent = new HTTPAgent(applicationContext, allSharedPreferences(), configuration());
         }
         return httpAgent;
     }
 
-    public Repository initRepository() {
-        if (configuration().appName().equals(AllConstants.APP_NAME_INDONESIA)) {
-            return null;
-        }
-        if (repository == null) {
-            repository = DrishtiApplication.getInstance().getRepository();
-        }
-        return repository;
-    }
-
     public ArrayList<DrishtiRepository> sharedRepositories() {
         assignbindtypes();
-        ArrayList<DrishtiRepository> drishtireposotorylist = new ArrayList<DrishtiRepository>();
-        drishtireposotorylist.add(settingsRepository());
-        drishtireposotorylist.add(alertRepository());
-        drishtireposotorylist.add(eligibleCoupleRepository());
-        drishtireposotorylist.add(childRepository());
-        drishtireposotorylist.add(timelineEventRepository());
-        drishtireposotorylist.add(motherRepository());
-        drishtireposotorylist.add(reportRepository());
-        drishtireposotorylist.add(formDataRepository());
-        drishtireposotorylist.add(serviceProvidedRepository());
-        drishtireposotorylist.add(formsVersionRepository());
-        drishtireposotorylist.add(imageRepository());
-        drishtireposotorylist.add(detailsRepository());
+        ArrayList<DrishtiRepository> drishtiRepositoryList = new ArrayList<DrishtiRepository>();
+        drishtiRepositoryList.add(settingsRepository());
+        drishtiRepositoryList.add(alertRepository());
+        drishtiRepositoryList.add(eligibleCoupleRepository());
+        drishtiRepositoryList.add(childRepository());
+        drishtiRepositoryList.add(timelineEventRepository());
+        drishtiRepositoryList.add(motherRepository());
+        drishtiRepositoryList.add(reportRepository());
+        drishtiRepositoryList.add(formDataRepository());
+        drishtiRepositoryList.add(serviceProvidedRepository());
+        drishtiRepositoryList.add(formsVersionRepository());
+        drishtiRepositoryList.add(imageRepository());
+        drishtiRepositoryList.add(detailsRepository());
         for (int i = 0; i < bindtypes.size(); i++) {
-            drishtireposotorylist.add(commonrepository(bindtypes.get(i).getBindtypename()));
+            drishtiRepositoryList.add(commonrepository(bindtypes.get(i).getBindtypename()));
         }
-        return drishtireposotorylist;
+        return drishtiRepositoryList;
 
     }
 
     public DrishtiRepository[] sharedRepositoriesArray() {
         ArrayList<DrishtiRepository> drishtiRepositories = sharedRepositories();
-        DrishtiRepository[] drishtireposotoryarray = drishtiRepositories
+        DrishtiRepository[] drishtiRepositoryArray = drishtiRepositories
                 .toArray(new DrishtiRepository[drishtiRepositories.size()]);
-        return drishtireposotoryarray;
+        return drishtiRepositoryArray;
     }
 
     public AllEligibleCouples allEligibleCouples() {
-        initRepository();
         if (allEligibleCouples == null) {
             allEligibleCouples = new AllEligibleCouples(eligibleCoupleRepository(),
                     alertRepository(), timelineEventRepository());
@@ -572,7 +578,6 @@ public class Context {
     }
 
     public AllAlerts allAlerts() {
-        initRepository();
         if (allAlerts == null) {
             allAlerts = new AllAlerts(alertRepository());
         }
@@ -580,7 +585,6 @@ public class Context {
     }
 
     public AllSettings allSettings() {
-        initRepository();
         if (allSettings == null) {
             allSettings = new AllSettings(allSharedPreferences(), settingsRepository());
         }
@@ -589,14 +593,45 @@ public class Context {
 
     public AllSharedPreferences allSharedPreferences() {
         if (allSharedPreferences == null) {
-            allSharedPreferences = new AllSharedPreferences(
-                    getDefaultSharedPreferences(this.applicationContext));
+            allSharedPreferences = new AllSharedPreferences(createSharedPreferences(this.applicationContext));
         }
         return allSharedPreferences;
     }
 
+    private SharedPreferences createSharedPreferences(android.content.Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && Utils.getBooleanProperty(AllConstants.PROPERTY.ENCRYPT_SHARED_PREFERENCES)) {
+
+            return createEncryptedSharedPreferences(context);
+        } else {
+            return getDefaultSharedPreferences(context);
+        }
+    }
+
+    private SharedPreferences createEncryptedSharedPreferences(android.content.Context context) {
+        SharedPreferences sharedPreferences = null;
+
+        try {
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+
+            sharedPreferences = EncryptedSharedPreferences.create(
+                    String.format(SHARED_PREFERENCES_FILENAME, context.getPackageName()),
+                    masterKeyAlias,
+                    context,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (Exception e) {
+            Timber.e(e, "Error creating encrypted SharedPreferences");
+
+            // fall back to unencrypted SharedPreferences
+            sharedPreferences = getDefaultSharedPreferences(context);
+        }
+
+        return sharedPreferences;
+    }
+
     public AllBeneficiaries allBeneficiaries() {
-        initRepository();
         if (allBeneficiaries == null) {
             allBeneficiaries = new AllBeneficiaries(motherRepository(), childRepository(),
                     alertRepository(), timelineEventRepository());
@@ -605,7 +640,6 @@ public class Context {
     }
 
     public AllTimelineEvents allTimelineEvents() {
-        initRepository();
         if (allTimelineEvents == null) {
             allTimelineEvents = new AllTimelineEvents(timelineEventRepository());
         }
@@ -613,7 +647,6 @@ public class Context {
     }
 
     public AllReports allReports() {
-        initRepository();
         if (allReports == null) {
             allReports = new AllReports(reportRepository());
         }
@@ -621,7 +654,6 @@ public class Context {
     }
 
     public AllServicesProvided allServicesProvided() {
-        initRepository();
         if (allServicesProvided == null) {
             allServicesProvided = new AllServicesProvided(serviceProvidedRepository());
         }
@@ -714,8 +746,7 @@ public class Context {
 
     public UserService userService() {
         if (userService == null) {
-            repository = initRepository();
-            userService = new UserService(repository, allSettings(), allSharedPreferences(),
+            userService = new UserService(allSettings(), allSharedPreferences(),
                     httpAgent(), session(), configuration(), saveANMLocationTask(),
                     saveUserInfoTask(), saveANMTeamTask());
         }
@@ -926,7 +957,6 @@ public class Context {
     }
 
     public AllCommonsRepository allCommonsRepositoryobjects(String tablename) {
-        initRepository();
         allCommonPersonObjectsRepository = new AllCommonsRepository(commonrepository(tablename),
                 alertRepository(), timelineEventRepository());
         return allCommonPersonObjectsRepository;
@@ -985,10 +1015,10 @@ public class Context {
                             .getJSONObject(j).getString("name");
                 }
                 bindtypes.add(new CommonRepositoryInformationHolder(bindname, columNames));
-                Log.v("bind type logs", bindtypeObjects.getJSONObject(i).getString("name"));
+                Timber.v("bind type logs %s", bindtypeObjects.getJSONObject(i).getString("name"));
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -1024,10 +1054,10 @@ public class Context {
                     }
                 }
                 bindtypes.add(new CommonRepositoryInformationHolder(bindname, columnNames.toArray(new String[0])));
-                Log.v("bind type logs", bindname);
+                Timber.v("bind type logs %s", bindname);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
     }
@@ -1047,7 +1077,7 @@ public class Context {
                 returnString.append(line);
             }
         } catch (Exception e) {
-            e.getMessage();
+            Timber.e(e);
         } finally {
             try {
                 if (isr != null) {
@@ -1060,7 +1090,7 @@ public class Context {
                     input.close();
                 }
             } catch (Exception e2) {
-                e2.getMessage();
+                Timber.e(e2);
             }
         }
         return returnString.toString();
@@ -1070,25 +1100,12 @@ public class Context {
         this.applicationContext = applicationContext;
     }
 
-    protected Repository getRepository() {
-        return repository;
-    }
-
-    protected void setRepository(Repository repository) {
-        this.repository = repository;
-    }
-
     public HTTPAgent getHttpAgent() {
-        return httpAgent;
+        return httpAgent();
     }
 
     public Context updateCommonFtsObject(CommonFtsObject commonFtsObject) {
         this.commonFtsObject = commonFtsObject;
-        return this;
-    }
-
-    public Context updateRepository(Repository repository) {
-        this.repository = repository;
         return this;
     }
 
@@ -1131,50 +1148,68 @@ public class Context {
 
     public EventClientRepository getEventClientRepository() {
         if (eventClientRepository == null) {
-            eventClientRepository = new EventClientRepository(getRepository());
+            eventClientRepository = new EventClientRepository();
         }
         return eventClientRepository;
     }
 
     public UniqueIdRepository getUniqueIdRepository() {
         if (uniqueIdRepository == null) {
-            uniqueIdRepository = new UniqueIdRepository(getRepository());
+            uniqueIdRepository = new UniqueIdRepository();
         }
         return uniqueIdRepository;
     }
 
     public CampaignRepository getCampaignRepository() {
         if (campaignRepository == null) {
-            campaignRepository = new CampaignRepository(getRepository());
+            campaignRepository = new CampaignRepository();
         }
         return campaignRepository;
     }
 
     public TaskRepository getTaskRepository() {
         if (taskRepository == null) {
-            taskNotesRepository = new TaskNotesRepository(getRepository());
-            taskRepository = new TaskRepository(getRepository(), taskNotesRepository);
+            taskNotesRepository = new TaskNotesRepository();
+            taskRepository = new TaskRepository(taskNotesRepository);
         }
         return taskRepository;
     }
 
+    public EventClientRepository getForeignEventClientRepository() {
+        if (foreignEventClientRepository == null) {
+            foreignEventClientRepository = new EventClientRepository(EventClientRepository.Table.foreignClient, EventClientRepository.Table.foreignEvent);
+        }
+        return foreignEventClientRepository;
+    }
+
+    public boolean hasForeignEvents() {
+        return DrishtiApplication.getInstance().getP2PClassifier() != null;
+    }
+
     public LocationRepository getLocationRepository() {
         if (locationRepository == null) {
-            locationRepository = new LocationRepository(getRepository());
+            locationRepository = new LocationRepository();
         }
         return locationRepository;
     }
 
+    public LocationTagRepository getLocationTagRepository() {
+        if (locationTagRepository == null) {
+            locationTagRepository = new LocationTagRepository();
+        }
+        return locationTagRepository;
+    }
+
     public StructureRepository getStructureRepository() {
         if (structureRepository == null) {
-            structureRepository = new StructureRepository(getRepository());
+            structureRepository = new StructureRepository();
         }
         return structureRepository;
     }
 
     public PlanDefinitionRepository getPlanDefinitionRepository() {
         if (planDefinitionRepository == null) {
-            planDefinitionRepository = new PlanDefinitionRepository(getRepository());
+            planDefinitionRepository = new PlanDefinitionRepository();
         }
         return planDefinitionRepository;
     }
@@ -1186,5 +1221,26 @@ public class Context {
         return appProperties;
     }
 
-///////////////////////////////////////////////////////////////////////////////
+    public ManifestRepository getManifestRepository() {
+        if (manifestRepository == null) {
+            manifestRepository = new ManifestRepository();
+        }
+        return manifestRepository;
+    }
+
+    public ClientFormRepository getClientFormRepository() {
+        if (clientFormRepository == null) {
+            clientFormRepository = new ClientFormRepository();
+        }
+        return clientFormRepository;
+    }
+
+    public ClientRelationshipRepository getClientRelationshipRepository() {
+        if (clientRelationshipRepository == null) {
+            clientRelationshipRepository = new ClientRelationshipRepository();
+        }
+        return clientRelationshipRepository;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
 }

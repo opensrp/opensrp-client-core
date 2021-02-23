@@ -5,6 +5,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Obs {
 
@@ -18,13 +19,16 @@ public class Obs {
     private String parentCode;
     @JsonProperty
     private List<Object> values;
-
+    @JsonProperty
+    private Map<String, Object> keyValPairs;
     @JsonProperty
     private List<Object> humanReadableValues;
     @JsonProperty
     private String comments;
     @JsonProperty
     private String formSubmissionField;
+    @JsonProperty
+    private boolean saveObsAsArray;
 
     public Obs() {
     }
@@ -40,6 +44,13 @@ public class Obs {
         this.humanReadableValues = humanReadableValues;
         this.comments = comments;
         this.formSubmissionField = formSubmissionField;
+    }
+
+    public Obs(String fieldType, String fieldDataType, String fieldCode, String parentCode,
+               List<Object> values, List<Object> humanReadableValues, String comments,
+               String formSubmissionField, boolean saveObsAsArray) {
+        this(fieldType, fieldDataType, fieldCode, parentCode, values, humanReadableValues, comments, formSubmissionField);
+        setSaveObsAsArray(saveObsAsArray);
     }
 
     public String getFieldType() {
@@ -74,6 +85,14 @@ public class Obs {
         this.parentCode = parentCode;
     }
 
+    public boolean isSaveObsAsArray() {
+        return saveObsAsArray;
+    }
+
+    public void setSaveObsAsArray(boolean saveObsAsArray) {
+        this.saveObsAsArray = saveObsAsArray;
+    }
+
     @JsonIgnore
     public Object getValue() {
         if (values.size() > 1) {
@@ -99,6 +118,14 @@ public class Obs {
 
     public void setHumanReadableValues(List<Object> humanReadableValues) {
         this.humanReadableValues = humanReadableValues;
+    }
+
+    public Map<String, Object>  getKeyValPairs() {
+        return keyValPairs;
+    }
+
+    public void setKeyValPairs(Map<String, Object> keyValPairs) {
+        this.keyValPairs = keyValPairs;
     }
 
     public List<Object> getValues() {
@@ -153,6 +180,10 @@ public class Obs {
         this.values = values;
         return this;
     }
+    public Obs withKeyValPairs(Map<String, Object> keyValPairs) {
+        setKeyValPairs(keyValPairs);
+        return this;
+    }
 
     public Obs addToValueList(Object value) {
         if (values == null) {
@@ -174,6 +205,11 @@ public class Obs {
 
     public Obs withHumanReadableValues(List<Object> humanReadableValues) {
         this.humanReadableValues = humanReadableValues;
+        return this;
+    }
+
+    public Obs withsaveObsAsArray(boolean saveObsAsArray) {
+        setSaveObsAsArray(saveObsAsArray);
         return this;
     }
 }

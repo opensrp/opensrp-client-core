@@ -9,11 +9,9 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -34,6 +32,8 @@ import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.domain.ReportMonth;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.util.PaginationHolder;
+import org.smartregister.util.ViewHelper;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.customcontrols.CustomFontTextView;
 import org.smartregister.view.customcontrols.FontVariant;
@@ -52,6 +52,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -69,7 +71,6 @@ import static org.smartregister.util.EasyMap.create;
 
 public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity {
 
-    public static final String TAG = "SecuredNativeSmartRegisterActivity";
     public static final String DIALOG_TAG = "dialog";
     public static final List<? extends DialogOption> DEFAULT_FILTER_OPTIONS = asList(
             new AllClientsFilter());
@@ -175,8 +176,8 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         setupNavBarViews();
         populateClientListHeaderView(defaultOptionProvider.serviceMode().getHeaderProvider());
 
-        clientsProgressView = (ProgressBar) findViewById(R.id.client_list_progress);
-        clientsView = (ListView) findViewById(R.id.list);
+        clientsProgressView = findViewById(R.id.client_list_progress);
+        clientsView = findViewById(R.id.list);
 
         setupStatusBarViews();
         paginationViewHandler.addPagination(clientsView);
@@ -185,8 +186,8 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     }
 
     private void setupStatusBarViews() {
-        appliedSortView = (TextView) findViewById(R.id.sorted_by);
-        appliedVillageFilterView = (TextView) findViewById(R.id.village);
+        appliedSortView = findViewById(R.id.sorted_by);
+        appliedVillageFilterView = findViewById(R.id.village);
     }
 
     private void setupNavBarViews() {
@@ -200,7 +201,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         View sortView = findViewById(R.id.sort_selection);
         sortView.setOnClickListener(navBarActionsHandler);
 
-        serviceModeView = (TextView) findViewById(R.id.service_mode_selection);
+        serviceModeView = findViewById(R.id.service_mode_selection);
         serviceModeView.setOnClickListener(navBarActionsHandler);
 
         findViewById(R.id.register_client).setOnClickListener(navBarActionsHandler);
@@ -213,17 +214,17 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     }
 
     private void setupTitleView() {
-        ViewGroup titleLayout = (ViewGroup) findViewById(R.id.title_layout);
+        ViewGroup titleLayout = findViewById(R.id.title_layout);
         titleLayout.setOnClickListener(navBarActionsHandler);
 
-        titleLabelView = (TextView) findViewById(R.id.txt_title_label);
+        titleLabelView = findViewById(R.id.txt_title_label);
 
-        TextView reportMonthStartView = (TextView) findViewById(R.id.btn_report_month);
+        TextView reportMonthStartView = findViewById(R.id.btn_report_month);
         setReportDates(reportMonthStartView);
     }
 
     private void setupSearchView() {
-        searchView = (EditText) findViewById(R.id.edt_search);
+        searchView = findViewById(R.id.edt_search);
         searchView.setHint(navBarOptionsProvider.searchHint());
         searchView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -268,7 +269,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     }
 
     private void populateClientListHeaderView(ClientsHeaderProvider headerProvider) {
-        LinearLayout clientsHeaderLayout = (LinearLayout) findViewById(R.id.clients_header_layout);
+        LinearLayout clientsHeaderLayout = findViewById(R.id.clients_header_layout);
         clientsHeaderLayout.removeAllViewsInLayout();
         int columnCount = headerProvider.count();
         int[] weights = headerProvider.weights();
@@ -378,7 +379,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
 
     public void saveFormSubmission(String formSubmision, String id, String formName, JSONObject
             fieldOverrides) {
-        Log.e("saveFormSubmission()", "Override this method in child class");
+        Timber.i("Override this method in child class");
     }
 
     protected String getParams(FormSubmission submission) {
@@ -407,7 +408,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
 
             editor.commit();
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -448,7 +449,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return null;
     }
@@ -482,7 +483,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
             return JSONML.toString(parentJson);
 
         } catch (JSONException e) {
-            Log.e(getClass().getName(), "", e);
+            Timber.e(e);
 
         }
         return savedDataStr;
@@ -564,24 +565,11 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         private TextView pageInfoView;
 
         private void addPagination(ListView clientsView) {
-            ViewGroup footerView = getPaginationView();
-            nextPageView = (Button) footerView.findViewById(R.id.btn_next_page);
-            previousPageView = (Button) footerView.findViewById(R.id.btn_previous_page);
-            pageInfoView = (TextView) footerView.findViewById(R.id.txt_page_info);
 
-            nextPageView.setOnClickListener(this);
-            previousPageView.setOnClickListener(this);
-
-            footerView.setLayoutParams(
-                    new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
-                            (int) getResources().getDimension(R.dimen.pagination_bar_height)));
-
-            clientsView.addFooterView(footerView);
-        }
-
-        private ViewGroup getPaginationView() {
-            return (ViewGroup) getLayoutInflater()
-                    .inflate(R.layout.smart_register_pagination, null);
+            PaginationHolder paginationHolder = ViewHelper.addPaginationCore(this, clientsView);
+            nextPageView = paginationHolder.getNextPageView();
+            previousPageView = paginationHolder.getPreviousPageView();
+            pageInfoView = paginationHolder.getPageInfoView();
         }
 
         private int getCurrentPageCount() {
@@ -590,8 +578,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         }
 
         public void refresh() {
-            pageInfoView.setText(format(getResources().getString(R.string.str_page_info),
-                    (getCurrentPageCount()), (clientsAdapter.pageCount())));
+            pageInfoView.setText(getFormattedPaginationInfoText(getCurrentPageCount(), clientsAdapter.pageCount()));
             nextPageView.setVisibility(clientsAdapter.hasNextPage() ? VISIBLE : INVISIBLE);
             previousPageView.setVisibility(clientsAdapter.hasPreviousPage() ? VISIBLE : INVISIBLE);
         }
@@ -655,4 +642,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         }
     }
 
+    protected String getFormattedPaginationInfoText(int currentPage, int pageCount) {
+        return format(getResources().getString(R.string.str_page_info), currentPage, pageCount);
+    }
 }

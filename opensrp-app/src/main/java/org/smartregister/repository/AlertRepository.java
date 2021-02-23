@@ -67,17 +67,31 @@ public class AlertRepository extends DrishtiRepository {
 
     public List<Alert> allAlerts() {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database
-                .query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, null, null, null, null, null, null);
-        return readAllAlerts(cursor);
+        Cursor cursor = null;
+        try {
+            cursor = database
+                    .query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, null, null, null, null, null, null);
+            return readAllAlerts(cursor);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     public List<Alert> allActiveAlertsForCase(String caseId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS,
-                ALERTS_CASEID_COLUMN + " = ?  " + "COLLATE NOCASE ", new String[]{caseId}, null,
-                null, null, null);
-        return filterActiveAlerts(readAllAlerts(cursor));
+        Cursor cursor = null;
+        try {
+            cursor = database.query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS,
+                    ALERTS_CASEID_COLUMN + " = ?  " + "COLLATE NOCASE ", new String[]{caseId}, null,
+                    null, null, null);
+            return filterActiveAlerts(readAllAlerts(cursor));
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     public void createAlert(Alert alert) {
@@ -87,13 +101,21 @@ public class AlertRepository extends DrishtiRepository {
         String caseAndScheduleNameColumnSelections =
                 ALERTS_CASEID_COLUMN + " = ?  COLLATE " + "NOCASE" + " AND "
                         + ALERTS_SCHEDULE_NAME_COLUMN + " = ?";
-        Cursor cursor = database
-                .query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, caseAndScheduleNameColumnSelections,
-                        caseAndScheduleNameColumnValues, null, null, null, null);
-        List<Alert> existingAlerts = readAllAlerts(cursor);
+        Cursor cursor = null;
+        List<Alert> existingAlerts;
+        try {
+            cursor = database
+                    .query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, caseAndScheduleNameColumnSelections,
+                            caseAndScheduleNameColumnValues, null, null, null, null);
+            existingAlerts = readAllAlerts(cursor);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
 
         ContentValues values = createValuesFor(alert);
-        if (existingAlerts.isEmpty()) {
+        if (existingAlerts == null || existingAlerts.isEmpty()) {
             database.insert(ALERTS_TABLE_NAME, null, values);
         } else {
             database.update(ALERTS_TABLE_NAME, values, caseAndScheduleNameColumnSelections,
@@ -159,7 +181,6 @@ public class AlertRepository extends DrishtiRepository {
                             cursor.getString(cursor.getColumnIndex(ALERTS_COMPLETIONDATE_COLUMN))));
             cursor.moveToNext();
         }
-        cursor.close();
         return alerts;
     }
 
@@ -191,32 +212,53 @@ public class AlertRepository extends DrishtiRepository {
 
     public List<Alert> findByEntityId(String entityId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery(
-                format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "ORDER BY " + "DATE"
-                        + "(%s)", ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN, ALERTS_STARTDATE_COLUMN),
-                new String[]{entityId});
-        return readAllAlerts(cursor);
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(
+                    format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "ORDER BY " + "DATE"
+                            + "(%s)", ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN, ALERTS_STARTDATE_COLUMN),
+                    new String[]{entityId});
+            return readAllAlerts(cursor);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     public List<Alert> findByEntityIdAndAlertNames(String entityId, String... names) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery(
-                format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "AND %s IN "
-                                + "(%s) ORDER BY DATE(%s)", ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN,
-                        ALERTS_VISIT_CODE_COLUMN, insertPlaceholdersForInClause(names.length),
-                        ALERTS_STARTDATE_COLUMN), addAll(new String[]{entityId}, names));
-        return readAllAlerts(cursor);
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(
+                    format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "AND %s IN "
+                                    + "(%s) ORDER BY DATE(%s)", ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN,
+                            ALERTS_VISIT_CODE_COLUMN, insertPlaceholdersForInClause(names.length),
+                            ALERTS_STARTDATE_COLUMN), addAll(new String[]{entityId}, names));
+            return readAllAlerts(cursor);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     public List<Alert> findOfflineByEntityIdAndName(String entityId, String... names) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery(
-                format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "AND %s = 1 "
-                                + "AND %s IN (%s) ORDER BY DATE(%s)", ALERTS_TABLE_NAME,
-                        ALERTS_CASEID_COLUMN, ALERTS_OFFLINE_COLUMN, ALERTS_VISIT_CODE_COLUMN,
-                        insertPlaceholdersForInClause(names.length), ALERTS_STARTDATE_COLUMN),
-                addAll(new String[]{entityId}, names));
-        return readAllAlerts(cursor);
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(
+                    format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "AND %s = 1 "
+                                    + "AND %s IN (%s) ORDER BY DATE(%s)", ALERTS_TABLE_NAME,
+                            ALERTS_CASEID_COLUMN, ALERTS_OFFLINE_COLUMN, ALERTS_VISIT_CODE_COLUMN,
+                            insertPlaceholdersForInClause(names.length), ALERTS_STARTDATE_COLUMN),
+                    addAll(new String[]{entityId}, names));
+            return readAllAlerts(cursor);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     public Alert findByEntityIdAndScheduleName(String entityId, String scheduleName) {
@@ -227,13 +269,21 @@ public class AlertRepository extends DrishtiRepository {
                 ALERTS_CASEID_COLUMN + " = ? COLLATE NOCASE " + "" + "" + "AND "
                         + ALERTS_SCHEDULE_NAME_COLUMN + " = ? ";
 
-        Cursor cursor = database
-                .query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, caseAndScheduleNameColumnSelections,
-                        caseAndScheduleNameColumnValues, null, null, null, null);
-        List<Alert> alertList = readAllAlerts(cursor);
-        if (!alertList.isEmpty()) {
-            return alertList.get(0);
+        Cursor cursor = null;
+        try {
+            cursor = database
+                    .query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, caseAndScheduleNameColumnSelections,
+                            caseAndScheduleNameColumnValues, null, null, null, null);
+            List<Alert> alertList = readAllAlerts(cursor);
+            if (!alertList.isEmpty()) {
+                return alertList.get(0);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
+
         return null;
     }
 

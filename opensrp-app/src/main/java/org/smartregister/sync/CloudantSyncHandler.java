@@ -6,9 +6,8 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Base64;
-import android.util.Log;
 
 import com.cloudant.http.interceptors.BasicAuthInterceptor;
 import com.cloudant.sync.datastore.Datastore;
@@ -47,12 +46,13 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
+import timber.log.Timber;
+
 /**
  * Handles cloundant replication/sync processes.
  * Created by koros on 3/16/16.
  */
 public class CloudantSyncHandler {
-    private static final String LOG_TAG = "CloudantSyncHandler";
     private static CloudantSyncHandler instance;
     private final Context mContext;
     private final Handler mHandler;
@@ -96,9 +96,9 @@ public class CloudantSyncHandler {
             this.reloadReplicationSettings(pullFilter);
 
         } catch (URISyntaxException e) {
-            Log.e(LOG_TAG, "Unable to construct remote URI from configuration", e);
+            Timber.e(e, "Unable to construct remote URI from configuration");
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Exception While setting up datastore", e);
+            Timber.e(e, "Exception While setting up datastore");
         }
 
     }
@@ -200,7 +200,7 @@ public class CloudantSyncHandler {
         mPushReplicator.getEventBus().register(this);
         mPullReplicator.getEventBus().register(this);
 
-        Log.d(LOG_TAG, "Set up replicators for URI:" + uri.toString());
+        Timber.d("Set up replicators for URI:" + uri.toString());
     }
 
     /**
@@ -232,7 +232,7 @@ public class CloudantSyncHandler {
                 ClientProcessor.getInstance(mContext.getApplicationContext()).processClient();
             }
         } catch (Exception e) {
-            Log.e(LOG_TAG, e.toString(), e);
+            Timber.e(e);
         }
         mHandler.post(new Runnable() {
             @Override
@@ -267,7 +267,7 @@ public class CloudantSyncHandler {
      */
     @Subscribe
     public void error(final ReplicationErrored re) {
-        Log.e(LOG_TAG, "Replication error:", re.errorInfo.getException());
+        Timber.e(re.errorInfo.getException(), "Replication error:");
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -333,7 +333,7 @@ public class CloudantSyncHandler {
             }
 
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Exception While getting sync filters json", e);
+            Timber.e(e, "Exception While getting sync filters json");
             return null;
         }
 
@@ -358,8 +358,8 @@ public class CloudantSyncHandler {
 
             String authEncoded = getAuthorization();
             if (authEncoded != null) {
-                String basicAuth = "Basic " + authEncoded;
-                conn.setRequestProperty("Authorization", basicAuth);
+                String basicAuth = AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + authEncoded;
+                conn.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, basicAuth);
             }
 
             OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
@@ -379,7 +379,7 @@ public class CloudantSyncHandler {
             return false;
 
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Exception While setting replication filter", e);
+            Timber.e(e, "Exception While setting replication filter");
             return null;
         }
     }
@@ -392,8 +392,8 @@ public class CloudantSyncHandler {
 
             String authEncoded = getAuthorization();
             if (authEncoded != null) {
-                String basicAuth = "Basic " + authEncoded;
-                get.setHeader("Authorization", basicAuth);
+                String basicAuth = AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + authEncoded;
+                get.setHeader(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, basicAuth);
             }
 
             HttpResponse response = httpclient.execute(get);
@@ -405,7 +405,7 @@ public class CloudantSyncHandler {
 
             return root.getAsJsonObject();
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Exception While getting replication filter", e);
+            Timber.e(e, "Exception While getting replication filter");
             return null;
         }
     }

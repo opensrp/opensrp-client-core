@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
@@ -53,6 +54,8 @@ import java.util.UUID;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import timber.log.Timber;
+
 /**
  * Created by koros on 9/28/15.
  */
@@ -82,9 +85,11 @@ public class FormUtils {
     }
 
     public static FormUtils getInstance(Context ctx) throws Exception {
-        if (instance == null) {
+        if (instance == null)
             instance = new FormUtils(ctx);
-        }
+
+        if (ctx != null && instance.mContext != ctx)
+            instance.mContext = ctx;
 
         return instance;
     }
@@ -139,7 +144,7 @@ public class FormUtils {
             }
 
         } catch (Exception e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return false;
@@ -291,20 +296,20 @@ public class FormUtils {
     }
 
     private void printClient(Client client) {
-        Log.logDebug("============== CLIENT ================");
+        Timber.d("============== CLIENT ================");
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
         String clientJson = gson.toJson(client);
-        Log.logDebug(clientJson);
-        Log.logDebug("====================================");
+        Timber.d(clientJson);
+        Timber.d("====================================");
 
     }
 
     private void printEvent(Event event) {
-        Log.logDebug("============== EVENT ================");
+        Timber.d("============== EVENT ================");
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
         String eventJson = gson.toJson(event);
-        Log.logDebug(eventJson);
-        Log.logDebug("====================================");
+        Timber.d(eventJson);
+        Timber.d("====================================");
     }
 
     /**
@@ -444,7 +449,7 @@ public class FormUtils {
             return xml;
 
         } catch (Exception e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return "";
     }
@@ -569,7 +574,7 @@ public class FormUtils {
                 }
             }
         } catch (Exception e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return entityJson;
     }
@@ -578,23 +583,23 @@ public class FormUtils {
      * Iterate through the provided array and retrieve a json object whose name attribute matches
      * the name supplied
      *
-     * @param fieldName
+     * @param nameValue
      * @param array
      * @return
      */
-    private JSONObject getJsonFieldFromArray(String fieldName, JSONArray array) {
+    private JSONObject getJsonFieldFromArray(String nameValue, JSONArray array) {
         try {
             if (array != null) {
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject field = array.getJSONObject(i);
                     String name = field.has("name") ? field.getString("name") : null;
-                    if (name.equals(fieldName)) {
+                    if (nameValue.equals(name)) {
                         return field;
                     }
                 }
             }
         } catch (Exception e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return null;
     }
@@ -644,7 +649,7 @@ public class FormUtils {
                 }
             }
         } catch (Exception e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return "";
@@ -848,7 +853,7 @@ public class FormUtils {
 
                     item.put("value", val);
                 } catch (Exception e) {
-                    android.util.Log.e(TAG, e.toString(), e);
+                    Timber.e(e);
                 }
             }
         }
@@ -863,9 +868,9 @@ public class FormUtils {
     public String retrieveValueForLinkedRecord(String link, JSONObject entityJson) {
         try {
             String entityRelationships = readFileFromAssetsFolder(
-                    "www/form/entity_relationship" + ".json");
+                    "www/form/entity_relationship" + AllConstants.JSON_FILE_EXTENSION);
             JSONArray json = new JSONArray(entityRelationships);
-            Log.logInfo(json.toString());
+            Timber.i(json.toString());
 
             JSONObject rJson;
 
@@ -887,7 +892,7 @@ public class FormUtils {
                                 : rJson.getString("from");
                 String sql =
                         "select * from " + childTable + " where " + joinField + "=?";
-                Log.logInfo(sql);
+                Timber.d(sql);
                 String dbEntity = theAppContext.formDataRepository().queryUniqueResult(sql, new String[]{val});
                 JSONObject linkedEntityJson = new JSONObject();
 
@@ -905,7 +910,7 @@ public class FormUtils {
             }
 
         } catch (Exception e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return null;
     }
@@ -1020,7 +1025,7 @@ public class FormUtils {
             }
 
         } catch (JSONException e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -1067,7 +1072,7 @@ public class FormUtils {
             is.close();
             fileContents = new String(buffer, CharEncoding.UTF_8);
         } catch (IOException ex) {
-            android.util.Log.e(TAG, ex.toString(), ex);
+            Timber.e(ex);
 
             return null;
         }
@@ -1081,16 +1086,16 @@ public class FormUtils {
         if (mContext != null) {
             try {
                 String locale = mContext.getResources().getConfiguration().locale.getLanguage();
-                locale = locale.equalsIgnoreCase("en") ? "" : "-" + locale;
+                locale = locale.equalsIgnoreCase(Locale.ENGLISH.getLanguage()) ? "" : "-" + locale;
 
                 InputStream inputStream;
                 try {
                     inputStream = mContext.getApplicationContext().getAssets()
-                            .open("json.form" + locale + "/" + formIdentity + ".json");
+                            .open("json.form" + locale + "/" + formIdentity + AllConstants.JSON_FILE_EXTENSION);
                 } catch (FileNotFoundException e) {
                     // file for the language not found, defaulting to english language
                     inputStream = mContext.getApplicationContext().getAssets()
-                            .open("json.form/" + formIdentity + ".json");
+                            .open("json.form/" + formIdentity + AllConstants.JSON_FILE_EXTENSION);
                 }
                 BufferedReader reader = new BufferedReader(
                         new InputStreamReader(inputStream, CharEncoding.UTF_8));
@@ -1104,7 +1109,7 @@ public class FormUtils {
 
                 return new JSONObject(stringBuilder.toString());
             } catch (IOException | JSONException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
         return null;
@@ -1117,4 +1122,5 @@ public class FormUtils {
     private void createNewClientDocument(org.smartregister.cloudant.models.Client client) {
         mCloudantDataHandler.createClientDocument(client);
     }
+
 }

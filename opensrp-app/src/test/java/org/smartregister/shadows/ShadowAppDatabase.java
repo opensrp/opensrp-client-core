@@ -1,7 +1,7 @@
 package org.smartregister.shadows;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
@@ -14,10 +14,15 @@ import org.smartregister.p2p.model.AppDatabase;
 @Implements(AppDatabase.class)
 public class ShadowAppDatabase {
 
+    private static AppDatabase appDatabase;
 
     @Implementation
     public static AppDatabase getInstance(@NonNull Context context, @NonNull String passphrase) {
         // Do nothing
-        return null;
+        return appDatabase;
+    }
+
+    public static void setDb(@NonNull AppDatabase appDatabase) {
+        ShadowAppDatabase.appDatabase = appDatabase;
     }
 }

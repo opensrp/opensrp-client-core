@@ -1,7 +1,6 @@
 package org.smartregister.util;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -10,12 +9,12 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import timber.log.Timber;
+
 /**
  * Created by koros on 3/24/16.
  */
 public class AssetHandler {
-
-    public static final String TAG = "AssetHandler";
 
     public static String readFileFromAssetsFolder(String fileName, Context context) {
         String fileContents = null;
@@ -27,7 +26,7 @@ public class AssetHandler {
             is.close();
             fileContents = new String(buffer, "UTF-8");
         } catch (IOException ex) {
-            android.util.Log.e(TAG, ex.toString(), ex);
+            Timber.e(ex);
             return null;
         }
         //Log.d("File", fileContents);
@@ -68,7 +67,7 @@ public class AssetHandler {
             }
             return t;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
             return null;
         }
     }
@@ -81,7 +80,7 @@ public class AssetHandler {
         try {
             return JsonFormUtils.gson.fromJson(jsonString, clazz);
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
             return null;
         }
     }
@@ -90,7 +89,7 @@ public class AssetHandler {
         try {
             return JsonFormUtils.gson.fromJson(jsonString, type);
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
             return null;
         }
     }
@@ -108,7 +107,7 @@ public class AssetHandler {
                 s = JsonFormUtils.gson.toJson(t, type);
             return s;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
             return null;
         }
     }

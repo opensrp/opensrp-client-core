@@ -3,6 +3,7 @@ package org.smartregister.domain;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.util.Utils;
 import org.smartregister.view.contract.ChildClient;
 
 import java.util.Locale;
@@ -278,7 +279,7 @@ public enum ChildServiceType {
                 return ChildServiceType.valueOf("OPV_BOOSTER");
             } else {
                 return StringUtils.isBlank(type) ? defaultType
-                        : ChildServiceType.valueOf(type.toUpperCase(Locale.getDefault()));
+                        : ChildServiceType.valueOf(type.toUpperCase(Utils.getDefaultLocale()));
             }
         } catch (IllegalArgumentException e) {
             logWarn("Unknown current Service Type : " + type + " Exception : " + e);

@@ -1,9 +1,12 @@
 package org.smartregister.location.helper;
 
-import android.util.Log;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.form.FormLocation;
 import org.smartregister.domain.jsonmapping.Location;
@@ -23,8 +26,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.smartregister.AllConstants.CAMPAIGNS;
-import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+import timber.log.Timber;
 
 
 /**
@@ -32,34 +34,51 @@ import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
  */
 
 public class LocationHelper {
-    private static final String TAG = LocationHelper.class.getCanonicalName();
 
     private static LocationHelper instance;
     private String childLocationId;
     private String parentLocationId;
     private List<String> locationIds;
-    private ArrayList<String> locationNames;
+    private List<String> locationNames;
     private List<String> locationNameHierarchy;
-    private HashMap<String, Pair<String, String>> childAndParentLocationIds;
+    private Map<String, Pair<String, String>> childAndParentLocationIds;
     private String defaultLocation;
 
-    private ArrayList<String> ALLOWED_LEVELS;
+    private List<String> ALLOWED_LEVELS;
+    private List<String> ADVANCED_DATA_CAPTURE_LEVELS;
+
     private String DEFAULT_LOCATION_LEVEL;
-    private List<String> allCampaigns = new ArrayList<>();
-    private List<String> allOperationalArea = new ArrayList<>();
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
-    private LocationHelper(ArrayList<String> allowedLevels, String defaultLocationLevel) {
+    private LocationHelper(List<String> allowedLevels, String defaultLocationLevel) {
 
+        locationHelperCore(allowedLevels, defaultLocationLevel);
+    }
+
+    private LocationHelper(List<String> allowedLevels, String defaultLocationLevel, List<String> advancedDataCaptureStrategies) {
+
+        locationHelperCore(allowedLevels, defaultLocationLevel);
+        this.ADVANCED_DATA_CAPTURE_LEVELS = advancedDataCaptureStrategies;
+    }
+
+    private void locationHelperCore(List<String> allowedLevels, String defaultLocationLevel) {
         childAndParentLocationIds = new HashMap<>();
         setParentAndChildLocationIds(getDefaultLocation());
         this.ALLOWED_LEVELS = allowedLevels;
         this.DEFAULT_LOCATION_LEVEL = defaultLocationLevel;
     }
 
-    public static void init(ArrayList<String> allowedLevels, String defaultLocationLevel) {
+    public static void init(List<String> allowedLevels, String defaultLocationLevel) {
         if (instance == null && StringUtils.isNotEmpty(defaultLocationLevel) && allowedLevels != null && allowedLevels.contains(defaultLocationLevel)) {
             instance = new LocationHelper(allowedLevels, defaultLocationLevel);
+
+        }
+    }
+
+    public static void init(List<String> allowedLevels, String defaultLocationLevel, List<String> advancedDataCaptureStrategies) {
+        if (instance == null && StringUtils.isNotEmpty(defaultLocationLevel) && allowedLevels != null && allowedLevels.contains(defaultLocationLevel)) {
+            instance = new LocationHelper(allowedLevels, defaultLocationLevel, advancedDataCaptureStrategies);
+
         }
     }
 
@@ -78,15 +97,15 @@ public class LocationHelper {
         return null;
     }
 
-    public ArrayList<String> locationNamesFromHierarchy(String defaultLocation) {
+    public List<String> locationNamesFromHierarchy(String defaultLocation) {
         if (Utils.isEmptyCollection(locationNames)) {
             locationNames = locationsFromHierarchy(false, defaultLocation);
         }
         return locationNames;
     }
 
-    public ArrayList<String> locationsFromHierarchy(boolean fetchLocationIds, String defaultLocation) {
-        ArrayList<String> locations = new ArrayList<>();
+    public List<String> locationsFromHierarchy(boolean fetchLocationIds, String defaultLocation) {
+        List<String> locations = new ArrayList<>();
         try {
             LinkedHashMap<String, TreeNode<String, Location>> map = map();
             if (!Utils.isEmptyMap(map)) {
@@ -97,18 +116,9 @@ public class LocationHelper {
                         locations.addAll(foundLocations);
                     }
                 }
-
-                if (ALLOWED_LEVELS.contains("reveal")) {
-                    if (allCampaigns != null && !allCampaigns.isEmpty()) {
-                        allSharedPreferences.savePreference(CAMPAIGNS, android.text.TextUtils.join(",", allCampaigns));
-                    }
-                    if (allOperationalArea != null && !allOperationalArea.isEmpty()) {
-                        allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", allOperationalArea));
-                    }
-                }
             }
         } catch (Exception e) {
-            Log.e(Utils.class.getCanonicalName(), Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return locations;
     }
@@ -125,7 +135,7 @@ public class LocationHelper {
         return defaultLocation;
     }
 
-    public String getOpenMrsLocationId(String locationName) {
+    public String getOpenMrsLocationId(@NonNull String locationName) {
         if (StringUtils.isBlank(locationName)) {
             return null;
         }
@@ -143,14 +153,14 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return response;
     }
 
     public String getOpenMrsLocationName(String locationId) {
         if (StringUtils.isBlank(locationId)) {
-            Log.e(TAG, "Location id is null");
+            Timber.e("Location id is null");
             return null;
         }
 
@@ -166,10 +176,10 @@ public class LocationHelper {
                     }
                 }
             } else {
-                Log.e(TAG, "locationData doesn't have locationHierarchy");
+                Timber.e("locationData doesn't have locationHierarchy");
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
 
         return response;
@@ -184,7 +194,7 @@ public class LocationHelper {
      */
     public List<String> getOpenMrsLocationHierarchy(String locationId, boolean onlyAllowedLevels) {
         if (StringUtils.isBlank(locationId)) {
-            Log.e(TAG, "Location id is null");
+            Timber.e("Location id is null");
             return new ArrayList<>();
         }
         List<String> response = null;
@@ -193,23 +203,23 @@ public class LocationHelper {
             LinkedHashMap<String, TreeNode<String, Location>> map = map();
             if (!Utils.isEmptyMap(map)) {
                 for (Map.Entry<String, TreeNode<String, Location>> entry : map.entrySet()) {
-                    List<String> curResult = getOpenMrsLocationHierarchy(locationId, entry.getValue(), new ArrayList<String>(), onlyAllowedLevels);
+                    List<String> curResult = getOpenMrsLocationHierarchy(locationId, entry.getValue(), new ArrayList<>(), onlyAllowedLevels);
                     if (!Utils.isEmptyCollection(curResult)) {
                         response = curResult;
                         break;
                     }
                 }
             } else {
-                Log.e(TAG, "locationData doesn't have locationHierarchy");
+                Timber.e("locationData doesn't have locationHierarchy");
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return response;
     }
 
 
-    public List<String> generateDefaultLocationHierarchy(ArrayList<String> allowedLevels) {
+    public List<String> generateDefaultLocationHierarchy(List<String> allowedLevels) {
         if (Utils.isEmptyCollection(allowedLevels)) {
             return new ArrayList<>();
         }
@@ -220,27 +230,30 @@ public class LocationHelper {
             LinkedHashMap<String, TreeNode<String, Location>> map = map();
             if (!Utils.isEmptyMap(map)) {
                 for (Map.Entry<String, TreeNode<String, Location>> entry : map.entrySet()) {
-                    List<String> curResult = getDefaultLocationHierarchy(defaultLocationUuid, entry.getValue(), new ArrayList<String>(), allowedLevels);
+                    List<String> curResult = getDefaultLocationHierarchy(defaultLocationUuid, entry.getValue(), new ArrayList<>(), allowedLevels);
                     if (!Utils.isEmptyCollection(curResult)) {
                         return curResult;
                     }
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return null;
     }
 
+    public List<FormLocation> generateLocationHierarchyTree(boolean withOtherOption, List<String> allowedLevels) {
+        LinkedHashMap<String, TreeNode<String, Location>> map = map();
+        return generateLocationHierarchyTree(withOtherOption, allowedLevels, map);
+    }
 
-    public List<FormLocation> generateLocationHierarchyTree(boolean withOtherOption, ArrayList<String> allowedLevels) {
+    public List<FormLocation> generateLocationHierarchyTree(boolean withOtherOption, List<String> allowedLevels, Map<String, TreeNode<String, Location>> map) {
         if (Utils.isEmptyCollection(allowedLevels)) {
             return new ArrayList<>();
         }
 
         List<FormLocation> formLocationList = new ArrayList<>();
         try {
-            LinkedHashMap<String, TreeNode<String, Location>> map = map();
             if (!Utils.isEmptyMap(map)) {
                 for (Map.Entry<String, TreeNode<String, Location>> entry : map.entrySet()) {
                     List<FormLocation> foundLocationList = getFormJsonData(entry.getValue(), allowedLevels);
@@ -252,7 +265,7 @@ public class LocationHelper {
 
             formLocationList = sortTreeViewQuestionOptions(formLocationList);
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
 
         if (withOtherOption) {
@@ -285,15 +298,15 @@ public class LocationHelper {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return readableName;
     }
 
     // Private methods
-    private ArrayList<String> extractLocations(TreeNode<String, Location> rawLocationData, boolean fetchLocationIds, String defaultLocation) {
+    private List<String> extractLocations(TreeNode<String, Location> rawLocationData, boolean fetchLocationIds, String defaultLocation) {
 
-        ArrayList<String> locationList = new ArrayList<>();
+        List<String> locationList = new ArrayList<>();
         try {
             if (rawLocationData == null) {
                 return null;
@@ -306,17 +319,9 @@ public class LocationHelper {
             Set<String> levels = node.getTags();
 
             if (!Utils.isEmptyCollection(levels)) {
-                String teamUID = allSharedPreferences.fetchDefaultTeamId(allSharedPreferences.fetchRegisteredANM());
                 for (String level : levels) {
                     if (ALLOWED_LEVELS.contains(level)) {
 
-                        if (node.getAttribute("campaign_id") != null) {
-
-                            allCampaigns.add(node.getAttribute("campaign_id").toString());
-                        }
-                        if (node.getAttribute("team_id") != null && node.getAttribute("team_id").toString().equals(teamUID)) {
-                            allOperationalArea.add(node.getName());
-                        }
                         if (!fetchLocationIds && DEFAULT_LOCATION_LEVEL.equals(level) && defaultLocation != null && !defaultLocation.equals(value)) {
                             return locationList;
                         }
@@ -330,14 +335,14 @@ public class LocationHelper {
             LinkedHashMap<String, TreeNode<String, Location>> childMap = childMap(rawLocationData);
             if (!Utils.isEmptyMap(childMap)) {
                 for (Map.Entry<String, TreeNode<String, Location>> childEntry : childMap.entrySet()) {
-                    ArrayList<String> childLocations = extractLocations(childEntry.getValue(), fetchLocationIds, defaultLocation);
+                    List<String> childLocations = extractLocations(childEntry.getValue(), fetchLocationIds, defaultLocation);
                     if (!Utils.isEmptyCollection(childLocations)) {
                         locationList.addAll(childLocations);
                     }
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
 
         return locationList;
@@ -368,7 +373,7 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return null;
     }
@@ -384,7 +389,7 @@ public class LocationHelper {
                 return null;
             }
             String id = node.getLocationId();
-            Log.d(TAG, "Current location id is " + id);
+            Timber.d("Current location id is %s", id);
             if (locationId.equals(id)) {
                 return node.getName();
             }
@@ -398,19 +403,19 @@ public class LocationHelper {
                     }
                 }
             } else {
-                Log.d(TAG, id + " does not have children");
+                Timber.d(id + " does not have children");
             }
 
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return null;
     }
 
     public List<String> getDefaultLocationHierarchy(String defaultLocationUuid, TreeNode<String,
-            Location> openMrsLocationData, List<String> parents, ArrayList<String> allowedLevels) {
+            Location> openMrsLocationData, List<String> parents, List<String> allowedLevels) {
         try {
-            List<String> heirachy = new ArrayList<>(parents);
+            List<String> hierarchy = new ArrayList<>(parents);
             if (openMrsLocationData == null) {
                 return null;
             }
@@ -424,32 +429,32 @@ public class LocationHelper {
             if (!Utils.isEmptyCollection(levels)) {
                 for (String level : levels) {
                     if (allowedLevels.contains(level)) {
-                        heirachy.add(node.getName());
+                        hierarchy.add(node.getName());
                     }
                 }
             }
 
             if (defaultLocationUuid.equals(node.getLocationId())) {
-                return heirachy;
+                return hierarchy;
             }
 
             LinkedHashMap<String, TreeNode<String, Location>> childMap = childMap(openMrsLocationData);
             if (!Utils.isEmptyMap(childMap)) {
                 for (Map.Entry<String, TreeNode<String, Location>> childEntry : childMap.entrySet()) {
-                    List<String> curResult = getDefaultLocationHierarchy(defaultLocationUuid, childEntry.getValue(), heirachy, allowedLevels);
+                    List<String> curResult = getDefaultLocationHierarchy(defaultLocationUuid, childEntry.getValue(), hierarchy, allowedLevels);
                     if (!Utils.isEmptyCollection(curResult)) {
                         return curResult;
                     }
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return null;
     }
 
     private List<FormLocation> getFormJsonData(TreeNode<String, Location> openMrsLocationData,
-                                               ArrayList<String> allowedLevels) {
+                                               List<String> allowedLevels) {
         List<FormLocation> allLocationData = new ArrayList<>();
         try {
             FormLocation formLocation = new FormLocation();
@@ -468,7 +473,7 @@ public class LocationHelper {
             formLocation.key = name;
 
             Set<String> levels = node.getTags();
-            formLocation.level = "";
+            formLocation.level = isLocationTagsShownEnabled() && levels != null && !levels.isEmpty() ? levels.iterator().next() : "";
 
 
             LinkedHashMap<String, TreeNode<String, Location>> childMap = childMap(openMrsLocationData);
@@ -502,10 +507,15 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
 
         return allLocationData;
+    }
+
+    @VisibleForTesting
+    protected boolean isLocationTagsShownEnabled() {
+        return Utils.getBooleanProperty(AllConstants.PROPERTY.LOCATION_PICKER_TAG_SHOWN);
     }
 
     /**
@@ -526,7 +536,7 @@ public class LocationHelper {
             sortMap.put(formLocation.name, formLocation);
         }
 
-        ArrayList<String> sortedKeys = new ArrayList<>(sortMap.keySet());
+        List<String> sortedKeys = new ArrayList<>(sortMap.keySet());
         Collections.sort(sortedKeys);
 
         for (String curOptionName : sortedKeys) {
@@ -631,7 +641,7 @@ public class LocationHelper {
         }
 
         String id = node.getLocationId();
-        Log.d(TAG, "Current location id is " + id);
+        Timber.d("Current location id is %s", id);
         if (locationId.equals(id)) {
             return hierarchy;
         }
@@ -645,14 +655,14 @@ public class LocationHelper {
                 }
             }
         } else {
-            Log.d(TAG, id + " does not have children");
+            Timber.d(id + " does not have children");
         }
 
         return null;
     }
 
 
-    private LinkedHashMap<String, TreeNode<String, Location>> map() {
+    public LinkedHashMap<String, TreeNode<String, Location>> map() {
         String locationData = CoreLibrary.getInstance().context().anmLocationController().get();
         LocationTree locationTree = AssetHandler.jsonStringToJava(locationData, LocationTree.class);
         if (locationTree != null) {
@@ -662,7 +672,6 @@ public class LocationHelper {
         return null;
     }
 
-
     private LinkedHashMap<String, TreeNode<String, Location>> childMap
             (TreeNode<String, Location> treeNode) {
         if (treeNode.getChildren() != null) {
@@ -671,4 +680,18 @@ public class LocationHelper {
         return null;
     }
 
+    public List<String> getAllowedLevels() {
+        return ALLOWED_LEVELS;
+    }
+
+    public String getDefaultLocationLevel() {
+        return DEFAULT_LOCATION_LEVEL;
+    }
+
+    /**
+     * Gets list of values for display in the service locations helper for alternative data capture strategies
+     */
+    public List<String> getAdvancedDataCaptureStrategies() {
+        return ADVANCED_DATA_CAPTURE_LEVELS;
+    }
 }

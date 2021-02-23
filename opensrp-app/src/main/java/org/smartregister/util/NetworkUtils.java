@@ -3,16 +3,16 @@ package org.smartregister.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import org.smartregister.CoreLibrary;
+
+import timber.log.Timber;
 
 /**
  * Created by ndegwamartin on 15/03/2018.
  */
 
 public class NetworkUtils {
-    private static final String TAG = NetworkUtils.class.getName();
 
     public static boolean isNetworkAvailable() {
         try {
@@ -22,7 +22,8 @@ public class NetworkUtils {
             return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
+
         }
 
         return false;

@@ -37,6 +37,15 @@ public class Client extends BaseEntity {
     @JsonProperty
     private String clientType;
 
+    @JsonProperty
+    private String locationId;
+
+    @JsonProperty
+    private String teamId;
+
+    @JsonProperty
+    private String syncStatus;
+
     protected Client() {
 
     }
@@ -194,6 +203,22 @@ public class Client extends BaseEntity {
         this.relationships = relationships;
     }
 
+    public String getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(String locationId) {
+        this.locationId = locationId;
+    }
+
+    public String getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
+    }
+
     public String getClientType() {
         return clientType;
     }
@@ -290,14 +315,28 @@ public class Client extends BaseEntity {
         return relations;
     }
 
+
+    public String getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(String syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
+    public Client withSyncStatus(String syncStatus) {
+        setSyncStatus(syncStatus);
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
-        return EqualsBuilder.reflectionEquals(this, o, "id", "revision");
+        return EqualsBuilder.reflectionEquals(this, o, "_id", "_rev");
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this, "id", "revision");
+        return HashCodeBuilder.reflectionHashCode(this, "_id", "_rev");
     }
 
     @Override

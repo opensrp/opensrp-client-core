@@ -9,6 +9,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.smartregister.domain.FPMethod;
 import org.smartregister.util.DateUtil;
+import org.smartregister.util.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -321,7 +322,7 @@ public class ECClient implements ECSmartRegisterClient {
     }
 
     public boolean satisfiesFilter(String filter) {
-        return name.toLowerCase(Locale.getDefault()).startsWith(filter.toLowerCase()) || String
+        return name.toLowerCase(Utils.getDefaultLocale()).startsWith(filter.toLowerCase()) || String
                 .valueOf(ecNumber).startsWith(filter);
     }
 

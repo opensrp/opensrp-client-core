@@ -5,8 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
-import android.support.annotation.RequiresApi;
-import android.util.Log;
+import androidx.annotation.RequiresApi;
 
 import java.security.Key;
 
@@ -14,6 +13,8 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
+
+import timber.log.Timber;
 
 /**
  * Created by ndegwamartin on 26/04/2019.
@@ -40,7 +41,7 @@ public class AndroidMCryptography extends BaseCryptography implements ICryptogra
             byte[] encodedBytes = c.doFinal(input);
             return encodedBytes;
         } catch (Exception e) {
-            Log.e(AndroidMCryptography.class.getCanonicalName(), e.getMessage());
+            Timber.e(e);
             return null;
         }
     }
@@ -60,7 +61,7 @@ public class AndroidMCryptography extends BaseCryptography implements ICryptogra
             INITIALIZATION_VECTOR = ivParams.getIV();
 
         } catch (Exception e) {
-            Log.e(AndroidMCryptography.class.getCanonicalName(), e.getMessage());
+            Timber.e(e);
         }
 
     }
@@ -76,7 +77,7 @@ public class AndroidMCryptography extends BaseCryptography implements ICryptogra
             return decodedBytes;
         } catch (Exception e) {
 
-            Log.e(AndroidMCryptography.class.getCanonicalName(), e.getMessage());
+            Timber.e(e);
             return null;
         }
     }
@@ -86,7 +87,7 @@ public class AndroidMCryptography extends BaseCryptography implements ICryptogra
         try {
             return getKeyStore().getKey(keyAlias, null);
         } catch (Exception e) {
-            Log.e(AndroidMCryptography.class.getCanonicalName(), e.getMessage());
+            Timber.e(e);
             return null;
         }
     }
@@ -111,7 +112,7 @@ public class AndroidMCryptography extends BaseCryptography implements ICryptogra
 
             } catch (Exception e) {
 
-                Log.e(AndroidMCryptography.class.getCanonicalName(), e.getMessage());
+                Timber.e(e);
             }
         }
     }

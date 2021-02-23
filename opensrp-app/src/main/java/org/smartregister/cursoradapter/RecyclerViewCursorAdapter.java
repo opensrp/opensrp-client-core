@@ -19,7 +19,7 @@ package org.smartregister.cursoradapter;
 
 import android.database.Cursor;
 import android.database.DataSetObserver;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by skyfishjy on 10/31/14.
@@ -116,7 +116,7 @@ public abstract class RecyclerViewCursorAdapter extends RecyclerView.Adapter<Rec
      * closed.
      */
     public Cursor swapCursor(Cursor newCursor) {
-        if (newCursor.equals(mCursor)) {
+        if (newCursor == null || newCursor.equals(mCursor)) {
             return null;
         }
         final Cursor oldCursor = mCursor;
@@ -124,23 +124,16 @@ public abstract class RecyclerViewCursorAdapter extends RecyclerView.Adapter<Rec
             oldCursor.unregisterDataSetObserver(mDataSetObserver);
         }
         mCursor = newCursor;
-        if (mCursor != null) {
-            if (mDataSetObserver != null) {
-                mCursor.registerDataSetObserver(mDataSetObserver);
-            }
-            mRowIdColumn = newCursor.getColumnIndexOrThrow("_id");
-            mDataValid = true;
-            notifyDataSetChanged();
-        } else {
-            mRowIdColumn = -1;
-            mDataValid = false;
-            notifyDataSetChanged();
-            //There is no notifyDataSetInvalidated() method in RecyclerView.Adapter
+        if (mDataSetObserver != null) {
+            mCursor.registerDataSetObserver(mDataSetObserver);
         }
+        mRowIdColumn = newCursor.getColumnIndexOrThrow("_id");
+        mDataValid = true;
+        notifyDataSetChanged();
         return oldCursor;
     }
 
-    private class NotifyingDataSetObserver extends DataSetObserver {
+    protected class NotifyingDataSetObserver extends DataSetObserver {
         @Override
         public void onChanged() {
             super.onChanged();

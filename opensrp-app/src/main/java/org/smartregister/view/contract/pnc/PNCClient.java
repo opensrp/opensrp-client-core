@@ -12,6 +12,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.smartregister.domain.ANCServiceType;
 import org.smartregister.domain.FPMethod;
 import org.smartregister.util.IntegerUtil;
+import org.smartregister.util.Utils;
 import org.smartregister.view.contract.AlertDTO;
 import org.smartregister.view.contract.ChildClient;
 import org.smartregister.view.contract.ServiceProvidedDTO;
@@ -181,7 +182,7 @@ public class PNCClient implements PNCSmartRegisterClient {
 
     @Override
     public boolean satisfiesFilter(String filter) {
-        return name.toLowerCase(Locale.getDefault()).startsWith(filter.toLowerCase()) || String
+        return name.toLowerCase(Utils.getDefaultLocale()).startsWith(filter.toLowerCase()) || String
                 .valueOf(ec_number).startsWith(filter) || String.valueOf(thayi).startsWith(filter);
     }
 

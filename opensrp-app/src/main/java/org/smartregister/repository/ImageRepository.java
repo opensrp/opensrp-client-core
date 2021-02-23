@@ -2,8 +2,7 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.support.annotation.Nullable;
-import android.util.Log;
+import androidx.annotation.Nullable;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -13,6 +12,8 @@ import org.smartregister.domain.ProfileImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class ImageRepository extends DrishtiRepository {
     public static final String Image_TABLE_NAME = "ImageList";
@@ -24,7 +25,6 @@ public class ImageRepository extends DrishtiRepository {
     public static final String filecategory_COLUMN = "filecategory";
     public static final String TYPE_ANC = "ANC";
     public static final String TYPE_PNC = "PNC";
-    private static final String TAG = ImageRepository.class.getCanonicalName();
     private static final String Image_SQL =
             "CREATE TABLE ImageList(imageid VARCHAR PRIMARY KEY, " + "" + ""
                     + "anmId VARCHAR, entityID VARCHAR, contenttype VARCHAR, filepath VARCHAR, "
@@ -66,8 +66,8 @@ public class ImageRepository extends DrishtiRepository {
         Cursor cursor = database
                 .query(Image_TABLE_NAME, new String[]{"rowid", filepath_COLUMN, syncStatus_COLUMN, entityID_COLUMN, anm_ID_COLUMN
                                 , filecategory_COLUMN}
-                , AllConstants.ROWID + " > ?", new String[]{String.valueOf(lastRowId)}
-                , null, null, AllConstants.ROWID + " ASC", "1");
+                        , AllConstants.ROWID + " > ?", new String[]{String.valueOf(lastRowId)}
+                        , null, null, AllConstants.ROWID + " ASC", "1");
         try {
             if (cursor != null && cursor.moveToFirst()) {
                 long rowId = cursor.getLong(0);
@@ -83,8 +83,8 @@ public class ImageRepository extends DrishtiRepository {
 
                 return details;
             }
-        } catch(Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+        } catch (Exception e) {
+            Timber.e(e);
 
         } finally {
             if (cursor != null) {
@@ -147,7 +147,7 @@ public class ImageRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();

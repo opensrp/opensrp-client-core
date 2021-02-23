@@ -1,24 +1,30 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.util.Pair;
 
+import net.sqlcipher.Cursor;
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.reflect.Whitebox;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.Event;
 import org.smartregister.domain.db.Column;
+import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.ClientData;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -28,12 +34,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by onaio on 29/08/2017.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({DrishtiApplication.class})
 public class EventClientRepositoryTest extends BaseUnitTest {
 
     @InjectMocks
@@ -50,14 +61,15 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
+        eventClientRepository = new EventClientRepository();
     }
 
     @Test
     public void instantiatesSuccessfullyOnConstructorCall() {
-        Assert.assertNotNull(new EventClientRepository(repository));
+        Assert.assertNotNull(new EventClientRepository());
     }
 
     @Test
@@ -121,16 +133,23 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     @Test
     public void getEventsByBaseEntityIdReturnsNotNull() throws Exception {
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
-        Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityId(baseEntityId));
+        JSONObject events = eventClientRepository.getEventsByBaseEntityId(baseEntityId);
+        Assert.assertNotNull(events);
+        Assert.assertTrue(events.has("events"));
 
     }
 
     @Test
-    public void getEventsByEventIdReturnsNotNull() throws Exception {
+    public void getEventsByBaseEntityIdReturnsNotNullIfIdIsNull() {
+        Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityId(null));
+        Mockito.verifyNoMoreInteractions(sqliteDatabase);
 
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
-        Assert.assertNotNull(eventClientRepository.getEventsByEventId("EventId"));
+    }
 
+    @Test
+    public void getEventsByBaseEntityIdReturnsNotNullOnError() {
+        Mockito.doThrow(new RuntimeException()).when(sqliteDatabase).rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
+        Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityId(null));
     }
 
     @Test
@@ -148,7 +167,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     }
 
-    public MatrixCursor getEventCursor() throws Exception {
+    public static MatrixCursor getEventCursor() throws Exception {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json", "timestamp"});
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         for (int i = 0; i < eventArray.length(); i++) {
@@ -323,12 +342,155 @@ public class EventClientRepositoryTest extends BaseUnitTest {
      */
     @Test
     public void testAddEventDefaultStatus() {
-        EventClientRepository eventClientRepository = Mockito.spy(new EventClientRepository(repository));
+        EventClientRepository eventClientRepository = Mockito.spy(new EventClientRepository());
         String baseEntityId = "12345";
         JSONObject jsonObject = Mockito.mock(JSONObject.class);
 
         eventClientRepository.addEvent(baseEntityId, jsonObject);
 
         Mockito.verify(eventClientRepository).addEvent(baseEntityId, jsonObject, BaseRepository.TYPE_Unprocessed);
+    }
+
+    @Test
+    public void getMinMaxServerVersionsShouldReturnMaxAndMinServerVersionFromEvents() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        jsonObject.put("events", jsonArray);
+
+        for (int i = 0; i < 5; i++) {
+            JSONObject jsonObject1 = new JSONObject();
+            jsonObject1.put("serverVersion", (i + 1) * 1000L);
+
+            jsonArray.put(jsonObject1);
+        }
+
+        Pair<Long, Long> minMaxServerVersions = eventClientRepository.getMinMaxServerVersions(jsonObject);
+        Assert.assertEquals(5000L, minMaxServerVersions.second, 0L);
+        Assert.assertEquals(1000L, minMaxServerVersions.first, 0L);
+    }
+
+    @Test
+    public void getMinMaxServerVersionsShouldReturnDefaultMinMaxWhenEventsArrayIsEmpty() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        jsonObject.put("events", jsonArray);
+
+        Pair<Long, Long> minMaxServerVersions = eventClientRepository.getMinMaxServerVersions(jsonObject);
+        Assert.assertEquals(Long.MIN_VALUE, minMaxServerVersions.second, 0L);
+        Assert.assertEquals(Long.MAX_VALUE, minMaxServerVersions.first, 0L);
+    }
+
+    @Test
+    public void getEventsShouldReturnGenerateMaxRowIdAndIncludeRowIdAndSyncStatusInJson() throws JSONException {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json", EventClientRepository.event_column.syncStatus.name(), AllConstants.ROWID}, 0);
+
+        for (int i = 0; i < 30; i++) {
+            matrixCursor.addRow(new Object[]{"{\"eventId\": \"d89sd\"}", BaseRepository.TYPE_Synced, (i + 1L)});
+        }
+        Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq("SELECT json,syncStatus,rowid FROM event WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?"), Mockito.any(Object[].class));
+
+        JsonData jsonData = eventClientRepository.getEvents(0, 20, null);
+
+        Assert.assertEquals(30L, jsonData.getHighestRecordId());
+        JSONObject jsonObject = jsonData.getJsonArray().getJSONObject(0);
+        Assert.assertTrue(jsonObject.has(EventClientRepository.event_column.syncStatus.name()));
+        Assert.assertTrue(jsonObject.has(AllConstants.ROWID));
+    }
+
+    @Test
+    public void getClientShouldReturnGenerateMaxRowIdAndIncludeRowIdAndSyncStatusInJson() throws JSONException {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json", EventClientRepository.event_column.syncStatus.name(), AllConstants.ROWID}, 0);
+
+        for (int i = 0; i < 30; i++) {
+            matrixCursor.addRow(new Object[]{"{\"gender\": \"male\"}", BaseRepository.TYPE_Synced, (i + 1L)});
+        }
+
+        Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq("SELECT json,syncStatus,rowid FROM client WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?"), Mockito.any(Object[].class));
+
+        JsonData jsonData = eventClientRepository.getClients(0, 20, null);
+
+        Assert.assertEquals(30L, jsonData.getHighestRecordId());
+        JSONObject jsonObject = jsonData.getJsonArray().getJSONObject(0);
+        Assert.assertTrue(jsonObject.has(EventClientRepository.event_column.syncStatus.name()));
+        Assert.assertTrue(jsonObject.has(AllConstants.ROWID));
+    }
+
+    @Test
+    public void getClientsWithLastLocationIDShouldReturnGenerateMaxRowIdAndIncludeRowIdAndSyncStatusInJson() throws JSONException {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json", EventClientRepository.event_column.syncStatus.name(), AllConstants.ROWID, "eventJson"}, 0);
+
+        for (int i = 0; i < 30; i++) {
+            matrixCursor.addRow(new Object[]{"{\"gender\": \"male\"}", BaseRepository.TYPE_Synced, (i + 1L), "{\"baseEntityId\":\"a423f801-8f6e-421d-ac9b-a3e4a24a0d61\",\"locationId\":\"d5ff0ea1-bbc5-424d-84c2-5b084e10ef90\"}"});
+        }
+
+        Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq("SELECT json,syncStatus,rowid,(select event.json from event where event.baseEntityId = client.baseEntityId \n" +
+                " ORDER by event.eventDate desc , event.updatedAt desc , event.dateEdited desc , event.serverVersion desc limit 1) eventJson FROM client WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?"), Mockito.any(Object[].class));
+
+        JsonData jsonData = eventClientRepository.getClientsWithLastLocationID(0, 20);
+
+        Assert.assertEquals(30L, jsonData.getHighestRecordId());
+        JSONObject jsonObject = jsonData.getJsonArray().getJSONObject(0);
+        Assert.assertTrue(jsonObject.has(EventClientRepository.event_column.syncStatus.name()));
+        Assert.assertTrue(jsonObject.has(AllConstants.ROWID));
+    }
+
+
+    @Test
+    public void testPopulateFormSubmissionIdsShouldPartitionListWithPageSize() {
+        EventClientRepository spyEventClientRepository = Mockito.spy(eventClientRepository);
+        spyEventClientRepository.FORM_SUBMISSION_IDS_PAGE_SIZE = 2;
+        Set<String> formSubmissionIds = new HashSet<>();
+        List<String> formSubmissionIdsList = new ArrayList<>();
+        formSubmissionIdsList.add("erwr");
+        formSubmissionIdsList.add("trytry");
+        formSubmissionIdsList.add("poll;");
+        formSubmissionIdsList.add("wer");
+        formSubmissionIdsList.add("qasdcwe");
+
+        Cursor mockCursor = Mockito.mock(Cursor.class);
+
+        Mockito.doReturn(sqliteDatabase).when(spyEventClientRepository).getReadableDatabase();
+
+        Mockito.doReturn(mockCursor).when(sqliteDatabase).rawQuery(Mockito.anyString(), Mockito.any());
+
+        Mockito.doAnswer(new Answer() {
+            int count = 0;
+
+            @Override
+            public Object answer(InvocationOnMock invocation) {
+                ++count;
+                if (count <= 1)
+                    return true;
+                else {
+                    count = 0;
+                    return false;
+                }
+            }
+        }).when(mockCursor).moveToNext();
+
+        Mockito.doAnswer(invocation -> UUID.randomUUID().toString()).when(mockCursor).getString(Mockito.eq(0));
+
+        spyEventClientRepository
+                .populateFormSubmissionIds(formSubmissionIdsList, formSubmissionIds);
+
+        Mockito.verify(spyEventClientRepository, Mockito.times(3))
+                .populateFormSubmissionIds(Mockito.anyList(), Mockito.anySet());
+
+        Assert.assertEquals(3, formSubmissionIds.size());
+    }
+
+    @Test
+    public void testGetEventsByTaskIds() throws Exception {
+        String query = "SELECT json FROM event WHERE taskId IN (?)";
+        String[] params = new String[]{"taskId-1"};
+        when(sqliteDatabase.rawQuery(query, params)).thenReturn(getEventCursor());
+
+        Set<String> taskIds = new HashSet<>();
+        taskIds.add("taskId-1");
+
+        List<Event> events = eventClientRepository.getEventsByTaskIds(taskIds);
+        verify(sqliteDatabase).rawQuery(query, params);
+        Assert.assertNotNull(events.size());
+
     }
 }

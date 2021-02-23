@@ -1,13 +1,17 @@
 package org.smartregister.view.contract;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import android.widget.EditText;
 
 import java.lang.ref.WeakReference;
 
 public interface BaseLoginContract {
     interface Presenter {
 
-        void attemptLogin(String username, String password);
+        void attemptLogin(String username, char[] password);
 
         View getLoginView();
 
@@ -24,6 +28,8 @@ public interface BaseLoginContract {
         org.smartregister.Context getOpenSRPContext();
 
         boolean isServerSettingsSet();
+
+        char[] getPassword();
     }
 
     interface View {
@@ -49,20 +55,33 @@ public interface BaseLoginContract {
         void goToHome(boolean isRemote);
 
         Activity getActivityContext();
+
+        @NonNull
+        AppCompatActivity getAppCompatActivity();
+
+        boolean isAppVersionAllowed();
+
+        void showClearDataDialog(@NonNull DialogInterface.OnClickListener onClickListener);
+
+        String getAuthTokenType();
+
+        boolean isNewAccount();
+
+        EditText getPasswordEditText();
     }
 
     interface Interactor {
 
         void onDestroy(boolean isChangingConfiguration);
 
-        void login(WeakReference<View> view, String userName, String password);
+        void login(WeakReference<View> view, String userName, char[] password);
     }
 
     interface Model {
 
         boolean isEmptyUsername(String username);
 
-        boolean isPasswordValid(String password);
+        boolean isPasswordValid(char[] password);
 
         org.smartregister.Context getOpenSRPContext();
 

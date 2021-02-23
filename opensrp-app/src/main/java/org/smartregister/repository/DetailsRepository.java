@@ -2,7 +2,6 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.util.Log;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -12,12 +11,13 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import java.util.HashMap;
 import java.util.Map;
 
+import timber.log.Timber;
+
 /**
  * Created by koros on 4/19/16.
  */
 public class DetailsRepository extends DrishtiRepository {
 
-    private static final String TAG = "DetailsRepository";
     private static final String SQL =
             "CREATE virtual table ec_details using fts4 " + "" + "(base_entity_id"
                     + " VARCHAR, key VARCHAR, value VARCHAR, event_date datetime)";
@@ -73,7 +73,7 @@ public class DetailsRepository extends DrishtiRepository {
                 return true;
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         } finally {
             if (mCursor != null) {
                 mCursor.close();
@@ -99,7 +99,7 @@ public class DetailsRepository extends DrishtiRepository {
             }
             return clientDetails;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -141,7 +141,7 @@ public class DetailsRepository extends DrishtiRepository {
                 return true;
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return false;
     }

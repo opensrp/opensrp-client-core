@@ -35,7 +35,7 @@
                 openmrs_entity_id="EPI Card Number" />
             <first_name openmrs_entity="person" openmrs_entity_id="first_name" />
             <last_name openmrs_entity="person" openmrs_entity_id="last_name" />
-            <birth_date_known>yes</birth_date_known>
+            <birth_date_known openmrs_entity="encounter" openmrs_entity_id="bdk">yes</birth_date_known>
             <birth_date />
             <age />
             <calc_age openmrs_entity="concept"
