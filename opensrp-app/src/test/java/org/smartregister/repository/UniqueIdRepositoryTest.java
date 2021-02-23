@@ -66,10 +66,8 @@ public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
 
     private static final String testUsername = "testUser1";
 
-
     @Before
     public void setUp() {
-
         MockitoAnnotations.initMocks(this);
 
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()));
@@ -80,12 +78,11 @@ public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
 
         uniqueIdRepository = new UniqueIdRepository();
-
     }
 
     @After
     public void tearDown() {
-        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository",(Repository) null);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", (Repository) null);
     }
 
     @Test
@@ -106,7 +103,6 @@ public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testUpdateOpenMRSIdentifierStatusInvokesDatabaseUpdateMethodOnceIfRowUpdated() {
-
         CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName(testUsername);
         String openMrsId = "3298938-2";
 
@@ -121,13 +117,10 @@ public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
 
         ContentValues values = contentValuesArgumentCaptor.getValue();
         assertEquals(testUsername, values.getAsString("used_by"));
-
-
     }
 
     @Test
     public void testBulkInsertOpenMrsIds() {
-
         CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName(testUsername);
         String openMrsId = "3298938-2";
         List<String> openMrsIds = Collections.singletonList(openMrsId);
@@ -145,22 +138,18 @@ public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
         assertEquals("not_used", values.getAsString("status"));
         assertEquals(testUsername, values.getAsString("synced_by"));
         assertNotNull(values.getAsString("created_at"));
-
     }
 
     @Test
     public void testBulkInsertOpenMrsIdsWithEmptyParamList() {
-
         CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName(testUsername);
         uniqueIdRepository.bulkInsertOpenmrsIds(null);
 
         verifyNoMoreInteractions(sqLiteDatabase);
-
     }
 
     @Test
     public void testBulkInsertOpenMrsIdsWithExceptionThrown() {
-
         CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName(testUsername);
         String openMrsId = "3298938-2";
         List<String> openMrsIds = Collections.singletonList(openMrsId);
@@ -184,7 +173,6 @@ public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testCountUnusedIds() {
-
         when(sqLiteDatabase.rawQuery(anyString(), any())).thenReturn(getCountCursor());
         long actualCount = uniqueIdRepository.countUnUsedIds();
 
@@ -261,5 +249,4 @@ public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
         cursor.addRow(new Object[]{"12", "openrs-id1", "not-used", "test-owner", 1583830167});
         return cursor;
     }
-
 }

@@ -78,6 +78,8 @@ public class TaskServiceHelper extends BaseHelper {
 
     private SyncProgress syncProgress;
 
+    private TaskServiceProcessor taskServiceProcessor;
+
     /**
      * If set to false tasks will sync by owner otherwise defaults to sync by group identifier
      *
@@ -107,12 +109,15 @@ public class TaskServiceHelper extends BaseHelper {
         this.taskSyncTrace = initTrace(TASK_SYNC);
         String providerId = allSharedPreferences.fetchRegisteredANM();
         team = allSharedPreferences.fetchDefaultTeam(providerId);
+        this.taskServiceProcessor = TaskServiceProcessor.getInstance();
     }
 
     public List<Task> syncTasks() {
+        List<Task> fetchedTasks = fetchTasksFromServer();
+        taskServiceProcessor.processDuplicateTasks();
         syncCreatedTaskToServer();
         syncTaskStatusToServer();
-        return fetchTasksFromServer();
+        return fetchedTasks;
     }
 
     protected List<String> getLocationIds() {

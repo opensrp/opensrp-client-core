@@ -684,4 +684,57 @@ public class TaskRepository extends BaseRepository {
         String query = "SELECT * FROM " + TASK_TABLE + " WHERE " + GROUP_ID + " = ?";
         return getTasks(query, new String[]{jurisdictionId});
     }
+
+    public List<String> getEntityIdsWithDuplicateTasks() {
+        List<String> entityIds = new ArrayList<>();
+        android.database.Cursor cursor = null;
+        String query = "SELECT " +
+                "    DISTINCT(for) " +
+                "FROM " +
+                "    task " +
+                "WHERE status IN (?, ?) " +
+                "GROUP BY " +
+                "    plan_id, for, code " +
+                "HAVING " +
+                "    COUNT(*) > 1";
+
+        try {
+            cursor = getReadableDatabase().rawQuery(query, new String[]{TaskStatus.READY.name(), TaskStatus.COMPLETED.name()});
+
+            while (cursor.moveToNext()) {
+                entityIds.add(cursor.getString(0));
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return entityIds;
+    }
+
+    public Set<Task> getDuplicateTasksForEntity(String entityId) {
+        String query = "SELECT t1.* " +
+                "FROM task t1 " +
+                "JOIN (SELECT " +
+                "plan_id, for, code, COUNT(*) as count " +
+                "FROM " +
+                "    task " +
+                "WHERE for = ? " +
+                "GROUP BY " +
+                "    plan_id, for, code " +
+                "HAVING  " +
+                "    COUNT(*) > 1) t2 " +
+                "ON t1.plan_id = t2.plan_id " +
+                "AND t1.for = t2.for " +
+                "AND t1.code = t2.code " +
+                "AND t1.for = ? " +
+                "ORDER BY t1.for";
+        return getTasks(query, new String[]{entityId,entityId});
+    }
+
+    public void deleteTasksByIds(List<String> taskIds) {
+        String taskIdsBinding = StringUtils.repeat("? ", ", ", taskIds.size());
+        getWritableDatabase().delete(TASK_TABLE, String.format("_id in (%s)", taskIdsBinding), taskIds.toArray(new String[0]));
+    }
 }

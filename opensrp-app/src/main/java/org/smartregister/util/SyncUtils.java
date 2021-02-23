@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.annotation.VisibleForTesting;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -43,7 +44,7 @@ import static org.smartregister.util.Utils.isEmptyCollection;
  */
 public class SyncUtils {
 
-    private org.smartregister.Context opensrpContent = CoreLibrary.getInstance().context();
+    private org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
 
     private Context context;
 
@@ -61,21 +62,22 @@ public class SyncUtils {
 
     public void logoutUser(@StringRes int logoutMessage) throws AuthenticatorException, OperationCanceledException, IOException {
         //force remote login
-        opensrpContent.userService().forceRemoteLogin(opensrpContent.allSharedPreferences().fetchRegisteredANM());
+        opensrpContext.userService().forceRemoteLogin(opensrpContext.allSharedPreferences().fetchRegisteredANM());
 
         Intent logoutUserIntent = getLogoutUserIntent(logoutMessage);
 
-        AccountManagerFuture<Bundle> reAuthenticateFuture = AccountHelper.reAuthenticateUserAfterSessionExpired(opensrpContent.allSharedPreferences().fetchRegisteredANM(), CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+        AccountManagerFuture<Bundle> reAuthenticateFuture = AccountHelper.reAuthenticateUserAfterSessionExpired(opensrpContext.allSharedPreferences().fetchRegisteredANM(), CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
         Intent accountAuthenticatorIntent = reAuthenticateFuture.getResult().getParcelable(AccountManager.KEY_INTENT);
         accountAuthenticatorIntent.putExtras(logoutUserIntent);
         context.startActivity(logoutUserIntent);
 
         //logoff opensrp session
-        opensrpContent.userService().logoutSession();
+        opensrpContext.userService().logoutSession();
     }
 
+    @VisibleForTesting
     @NonNull
-    private Intent getLogoutUserIntent(@StringRes int logoutMessage) {
+    protected Intent getLogoutUserIntent(@StringRes int logoutMessage) {
 
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -98,7 +100,7 @@ public class SyncUtils {
         try {
 
             // see if setting was synced
-            AllSettings settingsRepository = opensrpContent.allSettings();
+            AllSettings settingsRepository = opensrpContext.allSettings();
             Setting rawMinAllowedAppVersionSetting;
             try {
                 rawMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION_SETTING);

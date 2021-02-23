@@ -27,6 +27,7 @@ public class AllConstants {
     public static final String ATTRIBUTES = "attributes";
     public static final String FAMILY = "Family";
     public static final String RELATIONSHIPS = "relationships";
+    public static final String TASK_IDENTIFIER = "taskIdentifier";
 
 
     // Maximum time difference between server and client time in milliseconds
@@ -471,7 +472,7 @@ public class AllConstants {
         public static final String SYSTEM_TOASTER_CENTERED = "system.toaster.centered";
         public static final String DISABLE_LOCATION_PICKER_VIEW = "disable.location.picker.view";
         public static final String LOCATION_PICKER_TAG_SHOWN = "location.picker.tag.shown";
-
+        public static final String ENCRYPT_SHARED_PREFERENCES = "encrypt.shared.preferences";
     }
 
     public interface FORCED_LOGOUT {

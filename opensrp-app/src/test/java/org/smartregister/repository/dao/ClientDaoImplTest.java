@@ -67,9 +67,7 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     @Test
     public void testFindFamilyByJurisdiction() throws Exception {
@@ -83,9 +81,7 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     @Test
     public void testFindFamilyByResidence() throws Exception {
@@ -99,9 +95,7 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     @Test
     public void testFindFamilyMemberByJurisdiction() throws Exception {
@@ -115,9 +109,7 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     @Test
     public void testFindFamilyMemberByResidence() throws Exception {
@@ -131,17 +123,17 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
 
     @Test
     public void testFindClientByRelationship() throws Exception {
-
         ClientRelationshipRepository clientRelationshipRepository = new ClientRelationshipRepository();
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "clientRelationshipRepository", clientRelationshipRepository);
+
         String query = "SELECT json FROM client_relationship JOIN  client  ON base_entity_id=baseEntityId WHERE relationship=? AND relational_id =?";
         String[] params = new String[]{"41587456-b7c8-4c4e-b433-23a786f742fc", "Family"};
         when(sqLiteDatabase.rawQuery(anyString(), any())).thenReturn(getCursor(2));
+
         List<Patient> patients = clientDao.findClientByRelationship(params[0], params[1]);
         verify(sqLiteDatabase).rawQuery(query, params);
 
@@ -149,9 +141,7 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     public static MatrixCursor getCursor() throws Exception {
         return getCursor(Integer.MAX_VALUE);
@@ -165,6 +155,4 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         }
         return matrixCursor;
     }
-
-
 }
