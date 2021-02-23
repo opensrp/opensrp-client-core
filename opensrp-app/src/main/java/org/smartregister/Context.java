@@ -967,22 +967,22 @@ public class Context {
             JSONArray bindtypeObjects = jsonObject.getJSONArray("bindobjects");
 
             for (int i = 0; i < bindtypeObjects.length(); i++) {
-                String bindname = bindtypeObjects.getJSONObject(i).getString("name");
+                String bindname = bindtypeObjects.getJSONObject(i).getString(AllConstants.ClientProcessing.NAME);
                 ColumnDetails[] columNames = new ColumnDetails[bindtypeObjects.getJSONObject(i)
-                        .getJSONArray("columns").length()];
+                        .getJSONArray(AllConstants.ClientProcessing.COLUMNS).length()];
 
                 for (int j = 0; j < columNames.length; j++) {
-                    JSONObject columnObject = bindtypeObjects.getJSONObject(i).getJSONArray("columns")
+                    JSONObject columnObject = bindtypeObjects.getJSONObject(i).getJSONArray(AllConstants.ClientProcessing.COLUMNS)
                             .getJSONObject(j);
 
-                    String name = columnObject.getString("name");
-                    String dataType = columnObject.has("data_type") ? columnObject.getString("data_type") : "VARCHAR";
+                    String name = columnObject.getString(AllConstants.ClientProcessing.NAME);
+                    String dataType = columnObject.has(AllConstants.ClientProcessing.DATA_TYPES) ? columnObject.getString(AllConstants.ClientProcessing.DATA_TYPES) : AllConstants.ClientProcessing.VARCHAR;
                     columNames[j] =
-                            ColumnDetails.builder().name(name).dataType(StringUtils.isBlank(dataType) ? "VARCHAR" : dataType).build();
+                            ColumnDetails.builder().name(name).dataType(StringUtils.isBlank(dataType) ? AllConstants.ClientProcessing.VARCHAR : dataType).build();
 
                 }
                 bindtypes.add(new CommonRepositoryInformationHolder(bindname, columNames));
-                Timber.v("bind type logs %s", bindtypeObjects.getJSONObject(i).getString("name"));
+                Timber.v("bind type logs %s", bindtypeObjects.getJSONObject(i).getString(AllConstants.ClientProcessing.NAME));
             }
         } catch (Exception e) {
             Timber.e(e);

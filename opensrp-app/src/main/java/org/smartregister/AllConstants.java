@@ -560,4 +560,15 @@ public class AllConstants {
         String LOCATION_SYNC = "location_sync";
         String CLIENT_PROCESSING = "client_processing";
     }
+
+
+    public interface ClientProcessing {
+        String VARCHAR = "VARCHAR";
+        String NAME = "name";
+        String DATA_TYPES = "data_type";
+        String COLUMNS = "columns";
+
+    }
+
+
 }
