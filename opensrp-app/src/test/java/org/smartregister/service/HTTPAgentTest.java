@@ -575,7 +575,7 @@ public class HTTPAgentTest {
 
         Response<String> response = httpAgentSpy.fetch(SECURE_RESOURCE_ENDPOINT);
         Assert.assertNotNull(response);
-        Assert.assertEquals(ResponseStatus.valueOf("success"), response.status());
+        Assert.assertEquals(ResponseStatus.failure, response.status());
         Assert.assertEquals(FETCH_DATA_REQUEST_SERVER_RESPONSE, response.payload());
 
         PowerMockito.verifyStatic(AccountHelper.class);
