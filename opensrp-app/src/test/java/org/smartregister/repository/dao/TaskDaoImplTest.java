@@ -112,7 +112,7 @@ public class TaskDaoImplTest extends BaseUnitTest {
         String planId = "plan-id";
 
         String query = "SELECT * FROM task WHERE group_id = ? AND plan_id = ?";
-        when(sqLiteDatabase.rawQuery(query, new String[]{jurisdictionId})).thenReturn(getCursor());
+        when(sqLiteDatabase.rawQuery(query, new String[]{jurisdictionId,planId})).thenReturn(getCursor());
         taskDao = Mockito.spy(taskDao);
 
         // Call the method under test
