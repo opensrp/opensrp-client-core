@@ -60,6 +60,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -145,7 +147,7 @@ public class HTTPAgent {
 
     @VisibleForTesting
     protected HttpURLConnection getHttpURLConnection(String requestURLPath) throws IOException, URISyntaxException {
-        URI inputURI = new URI(requestURLPath);
+        URI inputURI = new URI(URLEncoder.encode(requestURLPath, StandardCharsets.UTF_8.toString()));
         URL url = inputURI.normalize().toURL();
         return (HttpURLConnection) url.openConnection();
     }
