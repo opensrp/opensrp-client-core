@@ -189,5 +189,14 @@ public abstract class SyncConfiguration {
         return false;
     }
 
+    /**
+     * This method is used to specify a list of pairs containing API call parameters and their values
+     *
+     * that can be appended to the call for fetching global configs
+     *
+     * an example would be Collections.singletonList(Pair.create("identifier", "global_configs"))
+     *
+      * @return list of pairs containing API call parameters and their values
+     */
     public List <Pair<String,String>> getGlobalSettingsQueryParams() {return null;}
 }
