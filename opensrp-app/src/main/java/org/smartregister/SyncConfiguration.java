@@ -1,5 +1,7 @@
 package org.smartregister;
 
+import android.util.Pair;
+
 import org.smartregister.account.AccountHelper;
 import org.smartregister.view.activity.BaseLoginActivity;
 
@@ -187,5 +189,5 @@ public abstract class SyncConfiguration {
         return false;
     }
 
-    public String getGlobalSettingsQueryParams() {return "";}
+    public List <Pair<String,String>> getGlobalSettingsQueryParams() {return null;}
 }

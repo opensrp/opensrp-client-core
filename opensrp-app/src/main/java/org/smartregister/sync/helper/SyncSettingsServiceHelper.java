@@ -17,6 +17,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.intent.SettingsSyncIntentService;
 import org.smartregister.util.JsonFormUtils;
+import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -169,7 +170,7 @@ public class SyncSettingsServiceHelper {
 
     @VisibleForTesting
     protected String getGlobalSettingsQueryParams() {
-        return getInstance().getSyncConfiguration().getGlobalSettingsQueryParams();
+        return Utils.composeApiCallParamsString(getInstance().getSyncConfiguration().getGlobalSettingsQueryParams());
     }
 
     /**
