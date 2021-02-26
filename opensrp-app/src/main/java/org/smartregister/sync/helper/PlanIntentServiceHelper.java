@@ -2,8 +2,7 @@ package org.smartregister.sync.helper;
 
 import android.content.Context;
 
-import androidx.annotation.VisibleForTesting;
-
+import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -33,6 +32,16 @@ import java.util.List;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PLAN_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
+
 /**
  * Created by Vincent Karuri on 08/05/2019
  */
@@ -53,6 +62,8 @@ public class PlanIntentServiceHelper extends BaseHelper {
     private long totalRecords;
     private SyncProgress syncProgress;
 
+    private Trace planSyncTrace;
+
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
             instance = new PlanIntentServiceHelper(CoreLibrary.getInstance().context().getPlanDefinitionRepository());
@@ -63,6 +74,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
     private PlanIntentServiceHelper(PlanDefinitionRepository planRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.planDefinitionRepository = planRepository;
+        this.planSyncTrace  = initTrace(PLAN_SYNC);
         this.allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     }
 
@@ -93,9 +105,15 @@ public class PlanIntentServiceHelper extends BaseHelper {
             Long maxServerVersion = 0l;
 
             String organizationIds = allSharedPreferences.getPreference(AllConstants.ORGANIZATION_IDS);
+
+            startPlanTrace(FETCH);
+
             String plansResponse = fetchPlans(Arrays.asList(organizationIds.split(",")), serverVersion, returnCount);
             List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {
             }.getType());
+
+            addAttribute(planSyncTrace, COUNT, String.valueOf(plans.size()));
+            stopTrace(planSyncTrace);
             for (PlanDefinition plan : plans) {
                 try {
                     planDefinitionRepository.addOrUpdate(plan);
@@ -119,6 +137,14 @@ public class PlanIntentServiceHelper extends BaseHelper {
         }
 
         return batchFetchCount;
+    }
+
+    private void startPlanTrace(String action) {
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        String team = allSharedPreferences.fetchDefaultTeam(providerId);
+        addAttribute(planSyncTrace, TEAM, team);
+        addAttribute(planSyncTrace, ACTION, action);
+        startTrace(planSyncTrace);
     }
 
     private String fetchPlans(List<String> organizationIds, long serverVersion, boolean returnCount) throws Exception {

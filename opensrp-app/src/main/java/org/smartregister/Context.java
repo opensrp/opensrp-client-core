@@ -1,8 +1,13 @@
 package org.smartregister;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -116,11 +121,12 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class Context {
 
     ///////////////////common bindtypes///////////////
+
     public static ArrayList<CommonRepositoryInformationHolder> bindtypes;
     private static Context context = new Context();
     protected DristhiConfiguration configuration;
@@ -223,7 +229,10 @@ public class Context {
     private ClientFormRepository clientFormRepository;
     private ClientRelationshipRepository clientRelationshipRepository;
 
+    private static final String SHARED_PREFERENCES_FILENAME = "%s_preferences";
+
     /////////////////////////////////////////////////
+
     protected Context() {
     }
 
@@ -232,6 +241,10 @@ public class Context {
             context = new Context();
         }
         return context;
+    }
+
+    public static void destroyInstance() {
+       context = null;
     }
 
     public static Context setInstance(Context mContext) {
@@ -529,31 +542,31 @@ public class Context {
 
     public ArrayList<DrishtiRepository> sharedRepositories() {
         assignbindtypes();
-        ArrayList<DrishtiRepository> drishtireposotorylist = new ArrayList<DrishtiRepository>();
-        drishtireposotorylist.add(settingsRepository());
-        drishtireposotorylist.add(alertRepository());
-        drishtireposotorylist.add(eligibleCoupleRepository());
-        drishtireposotorylist.add(childRepository());
-        drishtireposotorylist.add(timelineEventRepository());
-        drishtireposotorylist.add(motherRepository());
-        drishtireposotorylist.add(reportRepository());
-        drishtireposotorylist.add(formDataRepository());
-        drishtireposotorylist.add(serviceProvidedRepository());
-        drishtireposotorylist.add(formsVersionRepository());
-        drishtireposotorylist.add(imageRepository());
-        drishtireposotorylist.add(detailsRepository());
+        ArrayList<DrishtiRepository> drishtiRepositoryList = new ArrayList<DrishtiRepository>();
+        drishtiRepositoryList.add(settingsRepository());
+        drishtiRepositoryList.add(alertRepository());
+        drishtiRepositoryList.add(eligibleCoupleRepository());
+        drishtiRepositoryList.add(childRepository());
+        drishtiRepositoryList.add(timelineEventRepository());
+        drishtiRepositoryList.add(motherRepository());
+        drishtiRepositoryList.add(reportRepository());
+        drishtiRepositoryList.add(formDataRepository());
+        drishtiRepositoryList.add(serviceProvidedRepository());
+        drishtiRepositoryList.add(formsVersionRepository());
+        drishtiRepositoryList.add(imageRepository());
+        drishtiRepositoryList.add(detailsRepository());
         for (int i = 0; i < bindtypes.size(); i++) {
-            drishtireposotorylist.add(commonrepository(bindtypes.get(i).getBindtypename()));
+            drishtiRepositoryList.add(commonrepository(bindtypes.get(i).getBindtypename()));
         }
-        return drishtireposotorylist;
+        return drishtiRepositoryList;
 
     }
 
     public DrishtiRepository[] sharedRepositoriesArray() {
         ArrayList<DrishtiRepository> drishtiRepositories = sharedRepositories();
-        DrishtiRepository[] drishtireposotoryarray = drishtiRepositories
+        DrishtiRepository[] drishtiRepositoryArray = drishtiRepositories
                 .toArray(new DrishtiRepository[drishtiRepositories.size()]);
-        return drishtireposotoryarray;
+        return drishtiRepositoryArray;
     }
 
     public AllEligibleCouples allEligibleCouples() {
@@ -580,10 +593,42 @@ public class Context {
 
     public AllSharedPreferences allSharedPreferences() {
         if (allSharedPreferences == null) {
-            allSharedPreferences = new AllSharedPreferences(
-                    getDefaultSharedPreferences(this.applicationContext));
+            allSharedPreferences = new AllSharedPreferences(createSharedPreferences(this.applicationContext));
         }
         return allSharedPreferences;
+    }
+
+    private SharedPreferences createSharedPreferences(android.content.Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && Utils.getBooleanProperty(AllConstants.PROPERTY.ENCRYPT_SHARED_PREFERENCES)) {
+
+            return createEncryptedSharedPreferences(context);
+        } else {
+            return getDefaultSharedPreferences(context);
+        }
+    }
+
+    private SharedPreferences createEncryptedSharedPreferences(android.content.Context context) {
+        SharedPreferences sharedPreferences = null;
+
+        try {
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+
+            sharedPreferences = EncryptedSharedPreferences.create(
+                    String.format(SHARED_PREFERENCES_FILENAME, context.getPackageName()),
+                    masterKeyAlias,
+                    context,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (Exception e) {
+            Timber.e(e, "Error creating encrypted SharedPreferences");
+
+            // fall back to unencrypted SharedPreferences
+            sharedPreferences = getDefaultSharedPreferences(context);
+        }
+
+        return sharedPreferences;
     }
 
     public AllBeneficiaries allBeneficiaries() {
@@ -1137,7 +1182,7 @@ public class Context {
         return foreignEventClientRepository;
     }
 
-    public boolean hasForeignEvents(){
+    public boolean hasForeignEvents() {
         return DrishtiApplication.getInstance().getP2PClassifier() != null;
     }
 
