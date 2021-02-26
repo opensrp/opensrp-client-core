@@ -471,7 +471,7 @@ public class AllConstants {
         public static final String SYSTEM_TOASTER_CENTERED = "system.toaster.centered";
         public static final String DISABLE_LOCATION_PICKER_VIEW = "disable.location.picker.view";
         public static final String LOCATION_PICKER_TAG_SHOWN = "location.picker.tag.shown";
-
+        public static final String ENCRYPT_SHARED_PREFERENCES = "encrypt.shared.preferences";
     }
 
     public interface FORCED_LOGOUT {
@@ -545,5 +545,19 @@ public class AllConstants {
         String ACCURACY = "accuracy";
         String LATITUDE = "latitude";
         String LONGITUDE = "longitude";
+    }
+
+    public interface PerformanceMonitoring {
+        String TEAM = "team";
+        String PUSH = "push";
+        String FETCH = "fetch";
+        String ACTION = "action";
+        String STRUCTURE = "structure";
+        String LOCATION = "location";
+        String TASK_SYNC = "task_sync";
+        String PLAN_SYNC = "plan_sync";
+        String EVENT_SYNC = "event_sync";
+        String LOCATION_SYNC = "location_sync";
+        String CLIENT_PROCESSING = "client_processing";
     }
 }

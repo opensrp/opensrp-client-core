@@ -19,7 +19,7 @@ import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.util.Session;
-import org.smartregister.view.activity.mock.LoginActivityMock;
+import org.smartregister.view.activity.BaseLoginActivity;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 21-07-2020.
@@ -56,7 +56,7 @@ public class ConnectivityChangeReceiverTest extends BaseRobolectricUnitTest {
 
         intent.putExtra(ConnectivityManager.EXTRA_NETWORK_INFO, networkInfo);
 
-        DrishtiSyncScheduler.setReceiverClass(LoginActivityMock.class);
+        DrishtiSyncScheduler.setReceiverClass(BaseLoginActivity.class);
 
         AlarmManager alarmManager = (AlarmManager) RuntimeEnvironment.application.getSystemService(Context.ALARM_SERVICE);
         ShadowAlarmManager shadowAlarmManager = Shadows.shadowOf(alarmManager);
@@ -79,7 +79,7 @@ public class ConnectivityChangeReceiverTest extends BaseRobolectricUnitTest {
 
         intent.putExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, true);
 
-        DrishtiSyncScheduler.setReceiverClass(LoginActivityMock.class);
+        DrishtiSyncScheduler.setReceiverClass(BaseLoginActivity.class);
 
         // Create the alarm
         DrishtiSyncScheduler.start(RuntimeEnvironment.application);

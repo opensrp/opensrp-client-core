@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TableRow;
@@ -11,6 +14,9 @@ import android.widget.TableRow;
 import androidx.test.core.app.ApplicationProvider;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -19,19 +25,23 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
+import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.LoginResponse;
+import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.domain.jsonmapping.util.Team;
 import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
+import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
@@ -41,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +73,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.smartregister.TestUtils.getContext;
 import static org.smartregister.util.Utils.getDefaultLocale;
+import static org.smartregister.util.Utils.getUserDefaultTeamId;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
@@ -105,7 +117,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     @Test
     public void assertConvertDateTimeFormatReturnsDate() throws Exception {
         assertEquals("24-07-1985 00:00:00", Utils.convertDateTimeFormat("1985-07-24T00:00:00.000Z", true));
-//        org.junit.Assert.assertEquals("", Utils.convertDateTimeFormat("19850724", true));
+//      assertEquals("", Utils.convertDateTimeFormat("19850724", true));
     }
 
     @Test(expected = RuntimeException.class)
@@ -466,11 +478,16 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testLogoutUserShouldInvokeRequiredMethods() {
-        org.smartregister.Context opensrpContext = spy(CoreLibrary.getInstance().context());
-        Context context = spy(opensrpContext.applicationContext());
-        doReturn(context).when(opensrpContext).applicationContext();
-        UserService mockUserService = mock(UserService.class);
-        doReturn(mockUserService).when(opensrpContext).userService();
+        org.smartregister.Context opensrpContext = Mockito.mock(org.smartregister.Context.class);
+        Context context = spy(RuntimeEnvironment.application);
+        AllSharedPreferences allSharedPreferences = Mockito.mock(AllSharedPreferences.class);
+        Mockito.doReturn("string").when(allSharedPreferences).fetchRegisteredANM();
+        Mockito.doReturn(allSharedPreferences).when(opensrpContext).allSharedPreferences();
+
+        Mockito.doReturn(context).when(opensrpContext).applicationContext();
+        UserService mockUserService = Mockito.mock(UserService.class);
+        Mockito.doReturn(mockUserService).when(opensrpContext).userService();
+
         Utils.logoutUser(opensrpContext, "logged out");
         verify(mockUserService, times(1)).forceRemoteLogin(anyString());
         verify(mockUserService, times(1)).logoutSession();
@@ -479,18 +496,206 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testHideKeyboardShouldInvokeRequireMethods() {
-        Activity activity = mock(Activity.class);
+        Activity activity = Mockito.mock(Activity.class);
 
-        View view = mock(View.class);
-        doReturn(view).when(activity).getCurrentFocus();
+        View view = Mockito.mock(View.class);
 
-        InputMethodManager keyboard = mock(InputMethodManager.class);
+        Mockito.doReturn(view).when(activity).getCurrentFocus();
 
-        doReturn(keyboard).when(activity).getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager keyboard = Mockito.mock(InputMethodManager.class);
+
+        Mockito.doReturn(keyboard).when(activity).getSystemService(Context.INPUT_METHOD_SERVICE);
 
         Utils.hideKeyboard(activity);
 
         verify(keyboard, only()).hideSoftInputFromWindow(isNull(), eq(0));
+    }
+
+    @Test
+    public void addToList() {
+        String locationTag = "County";
+        HashMap<String, String> locations = new HashMap<>();
+
+        LinkedHashMap<String, TreeNode<String, Location>> locationMap = new LinkedHashMap<>();
+        Location countryLocation = new Location("location-id-1", "Kenya", null, null);
+        countryLocation.addTag("Country");
+
+        Location countyLocation = new Location("location-id-2", "Nairobi", null, countryLocation);
+        countyLocation.addTag(locationTag);
+
+        TreeNode<String, Location> childTreeNode = new TreeNode<String, Location>("the-id-2", "Kk", countyLocation, null);
+        LinkedHashMap<String, TreeNode<String, Location>> childLocationMap = new LinkedHashMap<>();
+        childLocationMap.put(childTreeNode.getId(), childTreeNode);
+
+        TreeNode<String, Location> countryTreeNode = new TreeNode<String, Location>("the-id", "Kenya", countryLocation, null, childLocationMap);
+        locationMap.put(countryTreeNode.getId(), countryTreeNode);
+
+        // call the method being tested
+        Utils.addToList(locations, locationMap, locationTag);
+
+        assertEquals("Nairobi", locations.get(locationTag));
+    }
+
+    @Test
+    public void isConnectedToNetworkShouldReturnFalseWhenActiveNetworkInfoIsNotAvailable() {
+        Context context = spy(RuntimeEnvironment.application);
+
+        NetworkInfo networkInfo = mock(NetworkInfo.class);
+        doReturn(false).when(networkInfo).isConnected();
+
+        ConnectivityManager connectivityManager = mock(ConnectivityManager.class);
+        doReturn(connectivityManager).when(context).getSystemService(Context.CONNECTIVITY_SERVICE);
+        doReturn(networkInfo).when(connectivityManager).getActiveNetworkInfo();
+
+        // Call the method under test and assert false
+        assertFalse(Utils.isConnectedToNetwork(context));
+    }
+
+    @Test
+    public void isConnectedToNetworkShouldReturnTrueWhenActiveNetworkInfoIsNotAvailable() {
+        Context context = spy(RuntimeEnvironment.application);
+
+        NetworkInfo networkInfo = mock(NetworkInfo.class);
+        doReturn(true).when(networkInfo).isConnected();
+
+        ConnectivityManager connectivityManager = mock(ConnectivityManager.class);
+        doReturn(connectivityManager).when(context).getSystemService(Context.CONNECTIVITY_SERVICE);
+        doReturn(networkInfo).when(connectivityManager).getActiveNetworkInfo();
+
+        // Call the method under test and assert false
+        assertTrue(Utils.isConnectedToNetwork(context));
+    }
+
+    @Test
+    public void getLongDateAwareGson() {
+        long timeNow = System.currentTimeMillis();
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("iMillis", new JsonPrimitive(timeNow));
+        Gson gson = Utils.getLongDateAwareGson();
+
+        assertNotNull(gson);
+        assertEquals(new DateTime(timeNow), gson.fromJson(jsonObject.toString(), DateTime.class));
+    }
+
+    @Test
+    public void readAssetContents() {
+        String contents = Utils.readAssetContents(RuntimeEnvironment.application, "test_file.txt");
+
+        assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
+                , contents);
+    }
+
+    @Test
+    public void startAsyncTaskShouldExecuteAsyncTaskOnThreadPoolExecutor() {
+        AsyncTask<String, ?, ?> asyncTask = mock(AsyncTask.class);
+
+        Utils.startAsyncTask(asyncTask, null);
+
+        verify(asyncTask).executeOnExecutor(eq(AsyncTask.THREAD_POOL_EXECUTOR)
+                , any(String[].class));
+    }
+
+    @Test
+    public void dobToDateTime() {
+        long expectedDobTime = System.currentTimeMillis();
+
+        CommonPersonObjectClient client = new CommonPersonObjectClient("case-id", null, "John Doe");
+        HashMap<String, String> columnMaps = new HashMap<>();
+        client.setColumnmaps(columnMaps);
+
+        columnMaps.put("dob", new DateTime(expectedDobTime).toString());
+
+        DateTime actualDob = Utils.dobToDateTime(client);
+        assertEquals(expectedDobTime, actualDob.getMillis());
+    }
+
+    @Test
+    public void cleanUpHeader() {
+        assertEquals("Full name"
+                , ReflectionHelpers.callStaticMethod(Utils.class, "cleanUpHeader"
+                        , ReflectionHelpers.ClassParameter.from(String.class, "\"Full name\"")));
+    }
+
+    @Test
+    public void convert() {
+        String name = "John";
+        String caseId = "case-id-john-doe";
+        String relationId = "relational-id";
+        HashMap<String, String> details = new HashMap<>();
+        details.put("first_name", name);
+
+        CommonPersonObject client = new CommonPersonObject(caseId, relationId, details, null);
+        client.setColumnmaps(details);
+
+        CommonPersonObjectClient actualClient = Utils.convert(client);
+
+        assertEquals(name, actualClient.getName());
+        assertEquals(details.size(), actualClient.getDetails().size());
+        assertEquals(client.getCaseId(), actualClient.getCaseId());
+        assertEquals(details.size(), actualClient.getColumnmaps().size());
+    }
+
+    @Test
+    public void getUserDefaultTeamIdShouldReturnNullWhenUserInfoDetailsAreNull() {
+        assertNull(getUserDefaultTeamId(null));
+
+        LoginResponseData loginData = new LoginResponseData();
+        assertNull(getUserDefaultTeamId(loginData));
+
+        loginData.team =  new TeamMember();
+        assertNull(getUserDefaultTeamId(loginData));
+    }
+
+    @Ignore
+    @Test
+    public void getDurationShouldReturnValidDurationString() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(1, Calendar.DAY_OF_MONTH);
+
+        assertEquals("1d", Utils.getDuration(dateFormat.format(calendar.getTime())));
+
+        calendar.add(5, Calendar.WEEK_OF_YEAR);
+        assertEquals("5w 1d", Utils.getDuration(calendar.getTime().toString()));
+
+        calendar.add(-1, Calendar.DAY_OF_MONTH);
+        assertEquals("5w", Utils.getDuration(calendar.getTime().toString()));
+    }
+
+
+    @Test
+    public void getDurationShouldReturnEmptyString() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(1, Calendar.DAY_OF_MONTH);
+
+        assertEquals("", Utils.getDuration(""));
+    }
+
+    @Test
+    public void dobStringToDateTimeShouldHandleNull() {
+        assertNull(Utils.dobStringToDateTime(null));
+    }
+
+    @Test
+    public void dobStringToDateTimeShouldHandleInvalidDateTimeStrings() {
+        assertNull(Utils.dobStringToDateTime("opensrp"));
+    }
+
+    @Test
+    public void getPropertiesShouldLoadPropertiesInPropertiesFile() {
+        AppProperties appProperties = Utils.getProperties(RuntimeEnvironment.application);
+
+        assertEquals(5, appProperties.size());
+        assertEquals("", appProperties.getProperty("DRISHTI_BASE_URL"));
+        assertEquals("false", appProperties.getProperty("SHOULD_VERIFY_CERTIFICATE"));
+        assertEquals("false", appProperties.getProperty("system.toaster.centered"));
+        assertEquals("10", appProperties.getProperty("SYNC_DOWNLOAD_BATCH_SIZE"));
+    }
+
+    @Test
+    public void safeArrayToString() {
+        assertEquals("OpenSRP", Utils.safeArrayToString(new char[]{'O', 'p', 'e', 'n', 'S', 'R', 'P'}));
     }
 }
 
