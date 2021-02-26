@@ -191,7 +191,7 @@ public class HTTPAgentTest {
         httpAgent.setReadTimeout(60000);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testFetchFailsGivenWrongUrl() {
         Response<String> resp = httpAgent.fetch("wrong.url");
         Assert.assertEquals(ResponseStatus.failure, resp.status());
@@ -204,7 +204,7 @@ public class HTTPAgentTest {
         Assert.assertEquals(ResponseStatus.success, resp.status());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testPostFailsGivenWrongUrl() {
         HashMap<String, String> map = new HashMap<>();
         map.put("title", "OpenSRP Testing Tuesdays");
@@ -230,7 +230,7 @@ public class HTTPAgentTest {
         Assert.assertEquals(LoginResponse.SUCCESS.message(), resp.message());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testUrlCanBeAccessWithGivenCredentialsGivenWrongUrl() {
         PowerMockito.mockStatic(Base64.class);
         LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("wrong.url", "", "".toCharArray());
@@ -244,7 +244,7 @@ public class HTTPAgentTest {
         Assert.assertEquals(LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE.message(), resp.message());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testfetchWithCredentialsFailsGivenWrongUrl() {
         Response<String> resp = httpAgent.fetchWithCredentials("wrong.url", SAMPLE_TEST_TOKEN);
         Assert.assertEquals(ResponseStatus.failure, resp.status());
@@ -257,7 +257,7 @@ public class HTTPAgentTest {
         Assert.assertEquals(ResponseStatus.success, resp.status());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testHttpImagePostGivenWrongUrl() {
         String resp = httpAgent.httpImagePost("wrong.url", profileImage);
         Assert.assertEquals("", resp);
