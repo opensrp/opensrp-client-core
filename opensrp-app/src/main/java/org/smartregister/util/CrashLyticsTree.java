@@ -2,7 +2,6 @@ package org.smartregister.util;
 
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,14 +25,14 @@ public class CrashLyticsTree extends Timber.Tree {
             userName = DrishtiApplication.getInstance().getUsername();
         }
 
-        Crashlytics.setInt(CRASHLYTICS_KEY_PRIORITY, priority);
-        Crashlytics.setString(CRASHLYTICS_KEY_TAG, tag);
-        Crashlytics.setString(CRASHLYTICS_KEY_MESSAGE, message);
-        Crashlytics.setUserName(userName);
-        if (t == null) {
-            Crashlytics.logException(new Exception(message));
-        } else {
-            Crashlytics.logException(t);
-        }
+//        Crashlytics.setInt(CRASHLYTICS_KEY_PRIORITY, priority);
+//        Crashlytics.setString(CRASHLYTICS_KEY_TAG, tag);
+//        Crashlytics.setString(CRASHLYTICS_KEY_MESSAGE, message);
+//        Crashlytics.setUserName(userName);
+//        if (t == null) {
+//            Crashlytics.logException(new Exception(message));
+//        } else {
+//            Crashlytics.logException(t);
+//        }
     }
 }

@@ -254,7 +254,6 @@ dependencies {
 
     // Add the dependency for the Performance Monitoring library
     implementation 'com.google.firebase:firebase-perf:19.0.7'
-
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     androidTestImplementation 'junit:junit:4.13'
