@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -492,5 +493,42 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         verify(sqliteDatabase).rawQuery(query, params);
         Assert.assertNotNull(events.size());
 
+    }
+
+    @Test
+    public void testGetEventsByEventId() throws Exception {
+        String eventId = "event-id";
+        String query = "SELECT json FROM event WHERE eventId= ? ";
+        String[] params = new String[]{eventId};
+        when(sqliteDatabase.rawQuery(query, params)).thenReturn(getEventCursor());
+
+        JSONObject actualJsonObject = eventClientRepository.getEventsByEventId(eventId);
+        verify(sqliteDatabase).rawQuery(query, params);
+        Assert.assertNotNull(actualJsonObject);
+        Assert.assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", actualJsonObject.get("baseEntityId"));
+        Assert.assertEquals("2184aaaa-d1cf-4099-945a-c66bd8a93e1e", actualJsonObject.get("formSubmissionId"));
+    }
+
+    @Test
+    public void testGetEventsByEventIdWithNullParam() throws Exception {
+
+        JSONObject actualJsonObject = eventClientRepository.getEventsByEventId(null);
+        verifyNoInteractions(sqliteDatabase);
+        Assert.assertNull(actualJsonObject);
+    }
+
+    @Test
+    public void testGetEventsByEventIds() throws Exception {
+        String query = "SELECT json FROM event WHERE eventId IN (?)";
+        String eventId = "eventId-1";
+        String[] params = new String[]{eventId};
+        when(sqliteDatabase.rawQuery(query, params)).thenReturn(getEventCursor());
+
+        Set<String> eventIds = new HashSet<>();
+        eventIds.add("eventId-1");
+
+        List<Event> events = eventClientRepository.getEventsByEventIds(eventIds);
+        verify(sqliteDatabase).rawQuery(query, params);
+        Assert.assertNotNull(events);
     }
 }
