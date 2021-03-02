@@ -242,11 +242,42 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
         Assert.assertEquals(MyJsonFormActivity.class.getName(), intent.getComponent().getClassName());
     }
 
-    /*@Test
-    public void testStartFormActivity() {
-        //
+    @Test
+    public void startFormActivityShouldCallPresenterStartFormWithEntityTable() {
+        setupModuleConfiguration();
+        createStartAndResumeActivity();
+
+        String formName = "registration";
+        String entityId = "entityId";
+        String metadata = "the-meta-data";
+        String entityTable = "ec_client";
+
+        HashMap<String, String> injectedFieldValues = new HashMap<>();
+        injectedFieldValues.put("gender", "male");
+        injectedFieldValues.put("health_status", "ok");
+
+        Mockito.doNothing().when(presenter).startForm(Mockito.eq(formName), Mockito.eq(entityId), Mockito.eq(metadata), Mockito.nullable(String.class), Mockito.eq(injectedFieldValues), Mockito.eq(entityTable));
+
+        baseConfigurableRegisterActivity.startFormActivity(formName, entityId, metadata, injectedFieldValues, entityTable);
+        Mockito.doNothing().when(presenter).startForm(Mockito.eq(formName), Mockito.eq(entityId), Mockito.eq(metadata), Mockito.nullable(String.class), Mockito.eq(injectedFieldValues), Mockito.eq(entityTable));
     }
-    */
+
+    @Test
+    public void startFormActivityShouldCallPresenterStartFormWithoutEntityTable() {
+        setupModuleConfiguration();
+        createStartAndResumeActivity();
+
+        String formName = "registration";
+        String entityId = "entityId";
+        String metadata = "the-meta-data";
+
+        Mockito.doNothing().when(presenter).startForm(Mockito.eq(formName), Mockito.eq(entityId), Mockito.eq(metadata), Mockito.nullable(String.class), Mockito.nullable(HashMap.class), Mockito.nullable(String.class));
+
+        baseConfigurableRegisterActivity.startFormActivity(formName, entityId, metadata);
+
+        Mockito.verify(presenter).startForm(Mockito.eq(formName), Mockito.eq(entityId), Mockito.eq(metadata), Mockito.nullable(String.class), Mockito.nullable(HashMap.class), Mockito.nullable(String.class));
+    }
+
     private void setupModuleConfiguration() {
         String moduleName = "PNC";
         ModuleConfiguration moduleConfiguration = Mockito.mock(ModuleConfiguration.class);
