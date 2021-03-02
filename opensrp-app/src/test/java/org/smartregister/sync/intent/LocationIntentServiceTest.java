@@ -1,7 +1,5 @@
 package org.smartregister.sync.intent;
 
-import android.content.Intent;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -10,11 +8,8 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.annotation.Config;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.shadows.ShadowContextCompat;
 import org.smartregister.shadows.ShadowLocationServiceHelper;
 import org.smartregister.sync.helper.LocationServiceHelper;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Vincent Karuri on 02/03/2021
