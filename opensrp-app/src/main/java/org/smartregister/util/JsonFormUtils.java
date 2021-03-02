@@ -160,27 +160,23 @@ public class JsonFormUtils {
     /**
      * Update any NULL values in the new Client object with values from the original Client
      *
-     * @param newClient Newly created Client object
+     * @param newClient      Newly created Client object
      * @param originalClient Original retrieved Client object
      */
     public static void updateNewClientNullValues(Client newClient, Client originalClient) {
-        if (originalClient != null) {
-            if (newClient.getFirstName() == null)
+        if (newClient != null && originalClient != null) {
+            if (StringUtils.isEmpty(newClient.getFirstName()))
                 newClient.setFirstName(originalClient.getFirstName());
-            if (newClient.getMiddleName() == null)
+            if (StringUtils.isEmpty(newClient.getMiddleName()))
                 newClient.setMiddleName(originalClient.getMiddleName());
-            if (newClient.getLastName() == null)
+            if (StringUtils.isEmpty(newClient.getLastName()))
                 newClient.setLastName(originalClient.getLastName());
+            if(StringUtils.isEmpty(newClient.getGender()))
+                newClient.setGender(originalClient.getGender());
             if (newClient.getBirthdate() == null)
                 newClient.setBirthdate(originalClient.getBirthdate());
             if (newClient.getDeathdate() == null)
                 newClient.setDeathdate(originalClient.getDeathdate());
-
-            if (newClient.getRelationships() == null || newClient.getRelationships().isEmpty())
-                newClient.setRelationships(originalClient.getRelationships());
-
-            if (newClient.getAttributes() == null || newClient.getAttributes().isEmpty())
-                newClient.setAttributes(originalClient.getAttributes());
         }
 
     }
@@ -203,7 +199,7 @@ public class JsonFormUtils {
             Timber.e(e);
         }
 
-        if (StringUtils.isBlank(encounterLocation)) {
+        if (StringUtils.isEmpty(encounterLocation)) {
             encounterLocation = formTag.locationId;
         }
 

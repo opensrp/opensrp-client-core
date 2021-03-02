@@ -1,5 +1,6 @@
 package org.smartregister.util;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1138,6 +1139,29 @@ public class JsonFormUtilsTest {
         Client client = JsonFormUtils.createBaseClient(fields, formTag, "97dc48f681ddcf188b2758fba89635fe");
         Assert.assertEquals(client.getGender(), "F");
         Assert.assertEquals(client.getFirstName(), "John");
+    }
+
+    @Test
+    public void canCreateBaseClientWithOriginalClientValues() {
+
+        Client originalClient = (Client) new Client("entityId").withFirstName("Mike").withMiddleName("Pence").withLastName("Kimani")
+                .withBirthdate((new DateTime().minusYears(20).toDate()), false).withDeathdate(null, false).withGender("M")
+                .withDateCreated(new Date());
+
+        assertNotNull(originalClient);
+
+        JSONArray fields = new JSONArray();
+
+        FormTag formTag = new FormTag();
+        formTag.providerId = "52c9534da60e66bfc6d1641b3359894c";
+        formTag.appVersion = 1;
+        formTag.databaseVersion = 20;
+
+        assertNotNull(formTag);
+        Client client = JsonFormUtils.createBaseClient(originalClient, fields, formTag, "97dc48f681ddcf188b2758fba89635fe");
+        assertNotNull(client);
+        Assert.assertEquals(client.getGender(), "M");
+        Assert.assertEquals(client.getFirstName(), "Mike");
     }
 
     @Test
