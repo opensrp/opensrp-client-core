@@ -1160,8 +1160,8 @@ public class JsonFormUtilsTest {
         assertNotNull(formTag);
         Client client = JsonFormUtils.createBaseClient(originalClient, fields, formTag, "97dc48f681ddcf188b2758fba89635fe");
         assertNotNull(client);
-        Assert.assertEquals(client.getGender(), "M");
-        Assert.assertEquals(client.getFirstName(), "Mike");
+        assertEquals(client.getGender(), "M");
+        assertEquals(client.getFirstName(), "Mike");
     }
 
     @Test
