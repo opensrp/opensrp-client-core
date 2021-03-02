@@ -27,6 +27,15 @@ public class EventDaoImpl extends EventClientRepository implements EventDao {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<QuestionnaireResponse> findEventsByJurisdictionIdAndPlan(String jurisdictionId, String planIdentifier) {
+        return fetchEvents(String.format("select %s from %s where %s =? and (%s is null or %s =? )", event_column.json,
+                eventTable.name(), event_column.locationId, event_column.planId, event_column.planId), new String[]{jurisdictionId, planIdentifier})
+                .stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
+    }
+
     private QuestionnaireResponse convert(Event event) {
         try {
             return EventConverter.convertEventToEncounterResource(event);

@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.util.Pair;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TableRow;
@@ -54,6 +55,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.junit.Assert.assertEquals;
@@ -696,6 +699,25 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     @Test
     public void safeArrayToString() {
         assertEquals("OpenSRP", Utils.safeArrayToString(new char[]{'O', 'p', 'e', 'n', 'S', 'R', 'P'}));
+    }
+
+    @Test
+    public void testComposeApiCallParamsStringWithNullValues() {
+        assertEquals("", Utils.composeApiCallParamsString(null));
+    }
+
+    @Test
+    public void testComposeApiCallParamsStringWithSingleParamValue() {
+        List <Pair<String,String>> apiParams = Collections.singletonList(Pair.create("identifier", "global_configs"));
+        assertEquals("&identifier=global_configs", Utils.composeApiCallParamsString(apiParams));
+    }
+
+    @Test
+    public void testComposeApiCallParamsStringWithMultipleParamValues() {
+        List <Pair<String,String>> apiParams = new ArrayList<>();
+        apiParams.add(Pair.create("identifier", "global_configs"));
+        apiParams.add(Pair.create("serverVersion", "21"));
+        assertEquals("&identifier=global_configs&serverVersion=21", Utils.composeApiCallParamsString(apiParams));
     }
 }
 
