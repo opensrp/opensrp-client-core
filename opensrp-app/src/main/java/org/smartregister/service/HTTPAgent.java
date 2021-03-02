@@ -27,6 +27,8 @@ import org.smartregister.account.AccountUserInfo;
 import org.smartregister.compression.GZIPCompression;
 import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.LoginResponse;
+import org.smartregister.domain.Practitioner;
+import org.smartregister.domain.PractitionerRole;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseErrorStatus;
@@ -36,6 +38,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.security.SecurityHelper;
 import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.util.Utils;
+import org.smartregister.view.contract.IView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -59,7 +62,9 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -105,6 +110,8 @@ public class HTTPAgent {
     private Gson gson;
 
     private static final String DETAILS_URL = "/user-details?anm-id=";
+    private static final String PRACTITIONER_ROLE_URL = "/rest/practitionerRole";
+    private static final String PRACTITIONER_URL = "/rest/practitioner";
 
 
     public HTTPAgent(Context context, AllSharedPreferences
@@ -1004,6 +1011,88 @@ public class HTTPAgent {
                 String responseString = IOUtils.toString(inputStream);
 
                 return gson.fromJson(responseString, AccountConfiguration.class);
+            }
+
+        } catch (IOException e) {
+            Timber.e(e);
+        } finally {
+
+            closeConnection(urlConnection);
+            closeIOStream(inputStream);
+
+        }
+        return null;
+    }
+
+    private void initializeAdapter(Set<? extends IView> iviews) {
+        Set<IView> mySet = new HashSet<>();
+
+        initializeAdapter(mySet);
+    }
+
+    public Practitioner[] fetchPractitioners() {
+
+        String baseUrl = configuration.dristhiBaseURL();
+
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
+
+        baseUrl = baseUrl + PRACTITIONER_URL;
+
+        HttpURLConnection urlConnection = null;
+
+        InputStream inputStream = null;
+        try {
+
+            urlConnection = initializeHttp(baseUrl, true);
+
+            int statusCode = urlConnection.getResponseCode();
+            if (statusCode == HttpStatus.SC_OK) {
+
+                inputStream = urlConnection.getInputStream();
+
+                String responseString = IOUtils.toString(inputStream);
+
+                return gson.fromJson(responseString, Practitioner[].class);
+            }
+
+        } catch (IOException e) {
+            Timber.e(e);
+        } finally {
+
+            closeConnection(urlConnection);
+            closeIOStream(inputStream);
+
+        }
+        return null;
+    }
+
+    public PractitionerRole[] fetchPractitionerRoles() {
+
+        String baseUrl = configuration.dristhiBaseURL();
+
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
+
+        baseUrl = baseUrl + PRACTITIONER_ROLE_URL;
+
+        HttpURLConnection urlConnection = null;
+
+        InputStream inputStream = null;
+        try {
+
+            urlConnection = initializeHttp(baseUrl, true);
+
+            int statusCode = urlConnection.getResponseCode();
+            if (statusCode == HttpStatus.SC_OK) {
+
+                inputStream = urlConnection.getInputStream();
+
+                String responseString = IOUtils.toString(inputStream);
+
+                return gson.fromJson(responseString, PractitionerRole[].class);
             }
 
         } catch (IOException e) {
