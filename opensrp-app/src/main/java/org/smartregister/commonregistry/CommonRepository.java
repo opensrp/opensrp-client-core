@@ -52,6 +52,7 @@ public class CommonRepository extends DrishtiRepository {
     private String common_Base_Entity_ID_INDEX_SQL = null;
     private String common_Custom_Relational_ID_INDEX_SQL = null;
     private CommonFtsObject commonFtsObject;
+    private String[] columns = null;
 
     // Legacy Support
     public CommonRepository(String tablename, String[] columns) {
@@ -93,20 +94,29 @@ public class CommonRepository extends DrishtiRepository {
         additionalcolumns = columns;
         common_TABLE_COLUMNS = ArrayUtils.addAll(common_TABLE_COLUMNS, columns);
         TABLE_NAME = tablename;
-        common_SQL = "CREATE TABLE " + TABLE_NAME + "(id VARCHAR PRIMARY KEY,relationalid "
-                + "VARCHAR, details VARCHAR, is_closed TINYINT DEFAULT 0";
+
+        StringBuilder builder = new StringBuilder("CREATE TABLE ").append(TABLE_NAME)
+                .append("(id VARCHAR PRIMARY KEY,relationalid ")
+                .append("VARCHAR, details VARCHAR, is_closed TINYINT DEFAULT 0");
+
         for (int i = 0; i < columns.length; i++) {
-            if (i == 0) {
-                common_SQL = common_SQL + ", ";
-            }
+            if (i == 0) builder.append(", ");
+
+            builder.append(columns[i].getName()).append(" ").append(columns[i].getDataType());
+            if(StringUtils.isNotBlank(columns[i].getLength()))
+                builder.append(" (").append(columns[i].getLength()).append(") ");
+
+            if(StringUtils.isNotBlank(columns[i].getDefaultValue()))
+                builder.append(" DEFAULT ").append(columns[i].getDefaultValue()).append(" ");
 
             if (i != columns.length - 1) {
-                common_SQL = common_SQL + columns[i].getName() + " " + columns[i].getDataType() + ",";
+                builder.append(",");
             } else {
-                common_SQL = common_SQL + columns[i].getName() + " " + columns[i].getDataType() + " ";
+                builder.append(" ");
             }
         }
-        common_SQL = common_SQL + ")";
+        builder.append(")");
+        common_SQL = builder.toString();
         common_ID_INDEX_SQL =
                 "CREATE INDEX " + TABLE_NAME + "_" + ID_COLUMN + "_index ON " + TABLE_NAME + "("
                         + ID_COLUMN + " COLLATE NOCASE);";
@@ -185,7 +195,9 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public String[] getTableColumns() {
-        String[] columns = new String[common_TABLE_COLUMNS.length];
+        if(columns != null) return columns;
+
+        columns = new String[common_TABLE_COLUMNS.length];
 
         int x = 0;
         while (x < common_TABLE_COLUMNS.length) {
