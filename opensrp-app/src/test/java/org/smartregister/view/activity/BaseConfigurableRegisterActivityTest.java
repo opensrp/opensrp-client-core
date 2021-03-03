@@ -257,6 +257,8 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
         injectedFieldValues.put("gender", "male");
         injectedFieldValues.put("health_status", "ok");
 
+        Assert.assertNotNull(presenter);
+
         Mockito.doNothing().when(presenter).startForm(Mockito.eq(formName), Mockito.eq(entityId), Mockito.eq(metadata), Mockito.nullable(String.class), Mockito.eq(injectedFieldValues), Mockito.eq(entityTable));
 
         baseConfigurableRegisterActivity.startFormActivity(formName, entityId, metadata, injectedFieldValues, entityTable);
@@ -271,6 +273,8 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
         String formName = "registration";
         String entityId = "entityId";
         String metadata = "the-meta-data";
+
+        Assert.assertNotNull(presenter);
 
         Mockito.doNothing().when(presenter).startForm(Mockito.eq(formName), Mockito.eq(entityId), Mockito.eq(metadata), Mockito.nullable(String.class), Mockito.nullable(HashMap.class), Mockito.nullable(String.class));
 
