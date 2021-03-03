@@ -36,6 +36,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -963,5 +964,29 @@ public class Utils {
         context.applicationContext().startActivity(intent);
         context.userService().forceRemoteLogin(context.allSharedPreferences().fetchRegisteredANM());
         context.userService().logoutSession();
+    }
+
+    /**
+     * This method takes in a list of API call parameters and value pairs,
+     * combines them and returns a single string to be appended to a GET API call
+     *
+     * @param apiParams a list of pairs containing API call parameters and values
+     *
+     * @return a string having all the parameters and values combined
+     */
+    public static String composeApiCallParamsString(List <Pair<String,String>> apiParams) {
+        StringBuilder apiCallParamsString = new StringBuilder("");
+        String paramsSeparator = "&";
+        String equalsSign = "=";
+        if (apiParams == null || apiParams.isEmpty()) {
+            return apiCallParamsString.toString();
+        }
+        for (Pair<String,String> apiParamsPair: apiParams) {
+            apiCallParamsString.append(paramsSeparator)
+                    .append(apiParamsPair.first)
+                    .append(equalsSign)
+                    .append(apiParamsPair.second);
+        }
+        return apiCallParamsString.toString();
     }
 }

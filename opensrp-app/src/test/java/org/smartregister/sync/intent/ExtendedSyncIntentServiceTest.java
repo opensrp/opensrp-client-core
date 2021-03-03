@@ -9,7 +9,9 @@ import org.mockito.Mockito;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.CoreLibrary;
 import org.smartregister.service.ActionService;
+import org.smartregister.service.DrishtiService;
 import org.smartregister.shadows.BaseJobShadow;
 import org.smartregister.shadows.ShadowNetworkUtils;
 
@@ -18,6 +20,8 @@ import org.smartregister.shadows.ShadowNetworkUtils;
  */
 public class ExtendedSyncIntentServiceTest extends BaseUnitTest {
 
+    private final DrishtiService drishtiService = new DrishtiService(CoreLibrary.getInstance().context().httpAgent(), "http://localhost");
+
     private ExtendedSyncIntentService extendedSyncIntentService;
 
     @Before
@@ -25,7 +29,7 @@ public class ExtendedSyncIntentServiceTest extends BaseUnitTest {
         extendedSyncIntentService = new ExtendedSyncIntentService();
     }
 
-    @Config(shadows = { ShadowNetworkUtils.class, BaseJobShadow.class })
+    @Config(shadows = {ShadowNetworkUtils.class, BaseJobShadow.class})
     @Test
     public void testOnHandleIntentShouldStartSyncValidation() {
         ShadowNetworkUtils.setIsNetworkAvailable(true);
@@ -33,7 +37,7 @@ public class ExtendedSyncIntentServiceTest extends BaseUnitTest {
         ActionService actionService = ReflectionHelpers.getField(extendedSyncIntentService, "actionService");
         actionService = Mockito.spy(actionService);
         ReflectionHelpers.setField(extendedSyncIntentService, "actionService", actionService);
-
+        ReflectionHelpers.setField(actionService, "drishtiService", drishtiService);
         Assert.assertEquals(0, BaseJobShadow.getMockCounter().getCount());
 
         extendedSyncIntentService.onHandleIntent(new Intent());
