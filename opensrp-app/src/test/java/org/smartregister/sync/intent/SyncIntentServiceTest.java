@@ -40,7 +40,6 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -466,7 +465,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testOnHandleIntentCallsHandleSync() {
-        Intent intent = mock(Intent.class);
+        Intent intent = Mockito.mock(Intent.class);
         syncIntentService = spy(syncIntentService);
         syncIntentService.onHandleIntent(intent);
 
