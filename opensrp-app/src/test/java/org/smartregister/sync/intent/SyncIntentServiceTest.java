@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
@@ -430,6 +431,10 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
                 new HashMap<>()); // return empty map on 2nd iteration
         Mockito.doReturn(new Response<>(ResponseStatus.success, null))
                 .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+
+        SyncConfiguration syncConfiguration = Mockito.mock(SyncConfiguration.class);
+        Mockito.doReturn(1).when(syncConfiguration).getSyncMaxRetries();
+        ReflectionHelpers.setField(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
 
         Whitebox.invokeMethod(syncIntentService, "pushECToServer", eventClientRepository);
 
