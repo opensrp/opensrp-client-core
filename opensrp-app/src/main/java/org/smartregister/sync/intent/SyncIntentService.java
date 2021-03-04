@@ -283,16 +283,17 @@ public class SyncIntentService extends BaseSyncIntentService {
         int totalEventCount = db.getUnSyncedEventsCount();
         int eventsUploadedCount = 0;
 
-        while (true) {
+
+        String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+        if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
+        }
+
+        for (int i = 0; i < CoreLibrary.getInstance().getSyncConfiguration().getSyncMaxRetries(); i++) {
             Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
 
             if (pendingEvents.isEmpty()) {
                 break;
-            }
-
-            String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-            if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
-                baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
             }
             // create request body
             JSONObject request = new JSONObject();
@@ -324,9 +325,10 @@ public class SyncIntentService extends BaseSyncIntentService {
             } else {
                 db.markEventsAsSynced(pendingEvents);
                 Timber.i("Events synced successfully.");
+                stopTrace(eventSyncTrace);
+                updateProgress(eventsUploadedCount, totalEventCount);
+                break;
             }
-            stopTrace(eventSyncTrace);
-            updateProgress(eventsUploadedCount, totalEventCount);
         }
 
         return isSuccessfulPushSync;
