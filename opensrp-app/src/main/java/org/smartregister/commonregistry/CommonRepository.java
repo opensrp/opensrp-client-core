@@ -69,6 +69,7 @@ public class CommonRepository extends DrishtiRepository {
     public CommonRepository(String tablename, ColumnDetails[] columns) {
         super();
         initialize(tablename, columns);
+
     }
 
     public CommonRepository(CommonFtsObject commonFtsObject, String tablename, ColumnDetails[] columns) {
