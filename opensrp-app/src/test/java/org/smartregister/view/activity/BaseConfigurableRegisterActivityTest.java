@@ -323,6 +323,23 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
         Assert.assertEquals(6, (int) registerParams.getFormTag().databaseVersion);
     }
 
+    @Test
+    public void switchToBaseFragment() {
+        setupModuleConfiguration();
+        createStartAndResumeActivity();
+
+        // Call the method under test
+        baseConfigurableRegisterActivity.switchToBaseFragment();
+
+        ArgumentCaptor<Intent> argumentCaptor = ArgumentCaptor.forClass(Intent.class);
+
+        // Perform assertions and verifications
+        Mockito.verify(baseConfigurableRegisterActivity).startActivity(argumentCaptor.capture());
+        Mockito.verify(baseConfigurableRegisterActivity).finish();
+
+        Assert.assertEquals(BaseConfigurableRegisterActivity.class.getName(), argumentCaptor.getValue().getComponent().getClassName());
+    }
+
     private void setupModuleConfiguration() {
         String moduleName = "PNC";
         ModuleConfiguration moduleConfiguration = Mockito.mock(ModuleConfiguration.class);
