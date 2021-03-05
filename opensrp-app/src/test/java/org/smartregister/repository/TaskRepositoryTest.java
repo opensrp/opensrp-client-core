@@ -2,6 +2,8 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
+import androidx.core.util.Consumer;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -21,6 +23,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
@@ -180,6 +183,17 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals("2018-10-31T0700", task.getLastModified().toString(formatter));
         assertEquals("demouser", task.getOwner());
 
+    }
+
+    @Test
+    public void testReadTask() {
+        List<Task> tasks = new ArrayList<>();
+        Consumer<Task> consumer = tasks::add;
+
+        when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any())).thenReturn(getCursor());
+        taskRepository.readTasks("IRS_2018_S1", "2018_IRS-3734", "CODE", consumer);
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+        assertEquals(1, tasks.size());
     }
 
     @Test
@@ -593,17 +607,17 @@ public class TaskRepositoryTest extends BaseUnitTest {
                 "AND t1.code = t2.code " +
                 "AND t1.for = ? " +
                 "ORDER BY t1.for";
-        when(sqLiteDatabase.rawQuery(query, new String[]{entityId,entityId})).thenReturn(cursor);
+        when(sqLiteDatabase.rawQuery(query, new String[]{entityId, entityId})).thenReturn(cursor);
 
         Set<Task> duplicateTasks = taskRepository.getDuplicateTasksForEntity(entityId);
         assertEquals(2, duplicateTasks.size());
         for (Task taskEntity : duplicateTasks) {
-                assertTrue(taskIds.contains(taskEntity.getIdentifier()));
+            assertTrue(taskIds.contains(taskEntity.getIdentifier()));
         }
     }
 
     @Test
-    public void testDeleteTasksByIds(){
+    public void testDeleteTasksByIds() {
         List<String> taskIds = new ArrayList<>();
         taskIds.add("taskId-1");
         taskIds.add("taskId-2");
