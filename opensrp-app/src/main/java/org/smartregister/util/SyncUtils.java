@@ -139,6 +139,11 @@ public class SyncUtils {
         return isAppVersionAllowed;
     }
 
+    /**
+     * Returns the number of times sync should be attempted
+     *
+     * @return
+     */
     public int getNumOfSyncAttempts() {
         int numOfRetries = CoreLibrary.getInstance().getSyncConfiguration().getSyncMaxRetries();
         return  numOfRetries > 0 ? numOfRetries + 1 : 1;
