@@ -17,7 +17,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -194,7 +193,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
         when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any())).thenReturn(getCursor());
         taskRepository.readTasks("IRS_2018_S1", "2018_IRS-3734", "CODE", consumer);
         verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
-        Assert.assertEquals(1, tasks.size());
+        assertEquals(1, tasks.size());
     }
 
     @Test
