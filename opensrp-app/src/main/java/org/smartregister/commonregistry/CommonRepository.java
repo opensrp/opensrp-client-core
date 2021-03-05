@@ -91,10 +91,7 @@ public class CommonRepository extends DrishtiRepository {
         }
     }
 
-    private void initialize(String tablename, ColumnDetails[] columns) {
-        additionalcolumns = columns;
-        common_TABLE_COLUMNS = ArrayUtils.addAll(common_TABLE_COLUMNS, columns);
-        TABLE_NAME = tablename;
+    private String getCommonSqlString(ColumnDetails[] columns) {
 
         StringBuilder builder = new StringBuilder("CREATE TABLE ").append(TABLE_NAME)
                 .append("(id VARCHAR PRIMARY KEY,relationalid ")
@@ -117,7 +114,16 @@ public class CommonRepository extends DrishtiRepository {
             }
         }
         builder.append(")");
-        common_SQL = builder.toString();
+
+        return builder.toString();
+    }
+
+    private void initialize(String tablename, ColumnDetails[] columns) {
+        additionalcolumns = columns;
+        common_TABLE_COLUMNS = ArrayUtils.addAll(common_TABLE_COLUMNS, columns);
+        TABLE_NAME = tablename;
+
+        common_SQL = getCommonSqlString(columns);
         common_ID_INDEX_SQL =
                 "CREATE INDEX " + TABLE_NAME + "_" + ID_COLUMN + "_index ON " + TABLE_NAME + "("
                         + ID_COLUMN + " COLLATE NOCASE);";
