@@ -289,7 +289,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
         }
 
-        for (int i = 0; i < CoreLibrary.getInstance().getSyncConfiguration().getSyncMaxRetries(); i++) {
+        for (int i = 0; i < syncUtils.getNumOfSyncAttempts(); i++) {
             Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
 
             if (pendingEvents.isEmpty()) {
