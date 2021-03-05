@@ -87,7 +87,7 @@ public class FormDataRepository extends DrishtiRepository {
 
     @JavascriptInterface
     public String queryUniqueResult(String sql, String[] selectionArgs) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = database.rawQuery(sql, selectionArgs);
 
         cursor.moveToFirst();
@@ -99,7 +99,7 @@ public class FormDataRepository extends DrishtiRepository {
 
     @JavascriptInterface
     public String queryList(String sql, String[] selectionArgs) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = database.rawQuery(sql, selectionArgs);
         List<Map<String, String>> results = new ArrayList<Map<String, String>>();
         cursor.moveToFirst();
@@ -114,7 +114,7 @@ public class FormDataRepository extends DrishtiRepository {
     @JavascriptInterface
     public String saveFormSubmission(String paramsJSON, String data, String
             formDataDefinitionVersion) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         Map<String, String> params = new Gson()
                 .fromJson(paramsJSON, new TypeToken<Map<String, String>>() {
                 }.getType());
@@ -125,33 +125,33 @@ public class FormDataRepository extends DrishtiRepository {
 
     @JavascriptInterface
     public void saveFormSubmission(FormSubmission formSubmission) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         database.insert(FORM_SUBMISSION_TABLE_NAME, null,
                 createValuesForFormSubmission(formSubmission));
     }
 
     public FormSubmission fetchFromSubmission(String instanceId) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = database.query(FORM_SUBMISSION_TABLE_NAME, FORM_SUBMISSION_TABLE_COLUMNS,
                 INSTANCE_ID_COLUMN + " = ?", new String[]{instanceId}, null, null, null);
         return readFormSubmission(cursor).get(0);
     }
 
     public List<FormSubmission> getPendingFormSubmissions() {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = database.query(FORM_SUBMISSION_TABLE_NAME, FORM_SUBMISSION_TABLE_COLUMNS,
                 SYNC_STATUS_COLUMN + " = ?", new String[]{PENDING.value()}, null, null, null);
         return readFormSubmission(cursor);
     }
 
     public long getPendingFormSubmissionsCount() {
-        return longForQuery(masterRepository.getReadableDatabase(),
+        return longForQuery(masterRepository().getReadableDatabase(),
                 "SELECT COUNT(1) FROM " + FORM_SUBMISSION_TABLE_NAME + " " + "" + "WHERE "
                         + SYNC_STATUS_COLUMN + " = ? ", new String[]{PENDING.value()});
     }
 
     public void markFormSubmissionsAsSynced(List<FormSubmission> formSubmissions) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         for (FormSubmission submission : formSubmissions) {
             FormSubmission updatedSubmission = new FormSubmission(submission.instanceId(),
                     submission.entityId(), submission.formName(), submission.instance(),
@@ -163,7 +163,7 @@ public class FormDataRepository extends DrishtiRepository {
     }
 
     public void updateServerVersion(String instanceId, String serverVersion) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(SERVER_VERSION_COLUMN, serverVersion);
         database.update(FORM_SUBMISSION_TABLE_NAME, values, INSTANCE_ID_COLUMN + " = ?",
@@ -171,7 +171,7 @@ public class FormDataRepository extends DrishtiRepository {
     }
 
     public boolean submissionExists(String instanceId) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = database.query(FORM_SUBMISSION_TABLE_NAME, new String[]{INSTANCE_ID_COLUMN},
                 INSTANCE_ID_COLUMN + " = ?", new String[]{instanceId}, null, null, null);
         boolean isThere = cursor.moveToFirst();
@@ -181,7 +181,7 @@ public class FormDataRepository extends DrishtiRepository {
 
     @JavascriptInterface
     public String saveEntity(String entityType, String fields) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         Map<String, String> updatedFieldsMap = new Gson()
                 .fromJson(fields, new TypeToken<Map<String, String>>() {
                 }.getType());
@@ -330,7 +330,7 @@ public class FormDataRepository extends DrishtiRepository {
         Map<String, String> map = new HashMap<String, String>();
         Cursor cursor = null;
         try {
-            SQLiteDatabase database = masterRepository.getReadableDatabase();
+            SQLiteDatabase database = masterRepository().getReadableDatabase();
             cursor = database.rawQuery(sql, selectionArgs);
             map = sqliteRowToMap(cursor);
         } catch (Exception e) {
