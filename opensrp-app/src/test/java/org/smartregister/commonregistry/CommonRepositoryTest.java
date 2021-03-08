@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.ColumnDetails;
 import org.smartregister.repository.Repository;
 
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
     @Test
     public void instantiatesSuccessfullyOnConstructorCall() throws Exception {
         String tablename = "";
-        String[] tableColumns = new String[]{};
+        ColumnDetails[] tableColumns = new ColumnDetails[0];
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
         CommonRepository commonRepository = new CommonRepository(tablename, tableColumns);
         Assert.assertNotNull(commonRepository);
@@ -72,7 +73,12 @@ public class CommonRepositoryTest extends BaseUnitTest {
     @Test
     public void instantiatesSuccessfullyOnConstructorCallWithAdditionalColumns() throws Exception {
         String tablename = "";
-        String[] tableColumns = new String[]{CommonRepository.Relational_Underscore_ID, CommonRepository.BASE_ENTITY_ID_COLUMN, ADDITIONALCOLUMN, CUSTOMRELATIONALID};
+        ColumnDetails[] tableColumns = new ColumnDetails[]{
+                ColumnDetails.builder().name(CommonRepository.BASE_ENTITY_ID_COLUMN).build(),
+                ColumnDetails.builder().name(CommonRepository.Relational_Underscore_ID).build(),
+                ColumnDetails.builder().name(ADDITIONALCOLUMN).build(),
+                ColumnDetails.builder().name(CUSTOMRELATIONALID).defaultValue("0").build()
+        };
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
         Mockito.when(commonFtsObject.getCustomRelationalId(Mockito.anyString())).thenReturn(CUSTOMRELATIONALID);
         Assert.assertNotNull(new CommonRepository(commonFtsObject, tablename, tableColumns));
@@ -348,7 +354,12 @@ public class CommonRepositoryTest extends BaseUnitTest {
     @Test
     public void assertOnCreateCallsDatabaseExec() {
         String tablename = "";
-        String[] tableColumns = new String[]{CommonRepository.Relational_Underscore_ID, CommonRepository.BASE_ENTITY_ID_COLUMN, ADDITIONALCOLUMN, CUSTOMRELATIONALID};
+        ColumnDetails[] tableColumns = new ColumnDetails[]{
+                ColumnDetails.builder().name(CommonRepository.BASE_ENTITY_ID_COLUMN).build(),
+                ColumnDetails.builder().name(CommonRepository.Relational_Underscore_ID).build(),
+                ColumnDetails.builder().name(ADDITIONALCOLUMN).build(),
+                ColumnDetails.builder().name(CUSTOMRELATIONALID).defaultValue("0").build()
+        };
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
         Mockito.when(commonFtsObject.getCustomRelationalId(Mockito.anyString())).thenReturn(CUSTOMRELATIONALID);
         CommonRepository commonRepository = new CommonRepository(commonFtsObject, tablename, tableColumns);
@@ -368,9 +379,13 @@ public class CommonRepositoryTest extends BaseUnitTest {
         MatrixCursor cursor = new MatrixCursor(columns);
         cursor.addRow(new Object[]{"caseID", "relationalID", new HashMap<String, String>(), 0});
         cursor.addRow(new Object[]{"caseID2", "relationalID2", new HashMap<String, String>(), 0});
-
         String tablename = "table";
-        String[] tableColumns = new String[]{CommonRepository.Relational_Underscore_ID, CommonRepository.BASE_ENTITY_ID_COLUMN, ADDITIONALCOLUMN, CUSTOMRELATIONALID};
+        ColumnDetails[] tableColumns = new ColumnDetails[]{
+                ColumnDetails.builder().name(CommonRepository.BASE_ENTITY_ID_COLUMN).build(),
+                ColumnDetails.builder().name(CommonRepository.Relational_Underscore_ID).build(),
+                ColumnDetails.builder().name(ADDITIONALCOLUMN).build(),
+                ColumnDetails.builder().name(CUSTOMRELATIONALID).defaultValue("0").build()
+        };
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
         Mockito.when(commonFtsObject.getCustomRelationalId(Mockito.anyString())).thenReturn(CUSTOMRELATIONALID);
         CommonRepository commonRepository = new CommonRepository(commonFtsObject, tablename, tableColumns);
@@ -398,9 +413,13 @@ public class CommonRepositoryTest extends BaseUnitTest {
         MatrixCursor cursor = new MatrixCursor(columns);
         cursor.addRow(new Object[]{"caseID", "relationalID", new HashMap<String, String>(), 0});
         cursor.addRow(new Object[]{"caseID2", "relationalID2", new HashMap<String, String>(), 0});
-
         String tablename = "table";
-        String[] tableColumns = new String[]{CommonRepository.Relational_Underscore_ID, CommonRepository.BASE_ENTITY_ID_COLUMN, ADDITIONALCOLUMN, CUSTOMRELATIONALID};
+        ColumnDetails[] tableColumns = new ColumnDetails[]{
+                ColumnDetails.builder().name(CommonRepository.BASE_ENTITY_ID_COLUMN).build(),
+                ColumnDetails.builder().name(CommonRepository.Relational_Underscore_ID).build(),
+                ColumnDetails.builder().name(ADDITIONALCOLUMN).build(),
+                ColumnDetails.builder().name(CUSTOMRELATIONALID).defaultValue("0").build()
+        };
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
         Mockito.when(commonFtsObject.getCustomRelationalId(Mockito.anyString())).thenReturn(CUSTOMRELATIONALID);
         CommonRepository commonRepository = new CommonRepository(commonFtsObject, tablename, tableColumns);
@@ -422,7 +441,12 @@ public class CommonRepositoryTest extends BaseUnitTest {
     public void assertCloseCaseCallsDatabaseExec() {
         String tablename = "table";
         String baseEntityId = "1";
-        String[] tableColumns = new String[]{CommonRepository.Relational_Underscore_ID, CommonRepository.BASE_ENTITY_ID_COLUMN, ADDITIONALCOLUMN, CUSTOMRELATIONALID};
+        ColumnDetails[] tableColumns = new ColumnDetails[]{
+                ColumnDetails.builder().name(CommonRepository.BASE_ENTITY_ID_COLUMN).build(),
+                ColumnDetails.builder().name(CommonRepository.Relational_Underscore_ID).build(),
+                ColumnDetails.builder().name(ADDITIONALCOLUMN).build(),
+                ColumnDetails.builder().name(CUSTOMRELATIONALID).defaultValue("0").build()
+        };
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
         CommonRepository commonRepository = new CommonRepository(commonFtsObject, tablename, tableColumns);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
@@ -432,14 +456,19 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository.closeCase(baseEntityId, tablename);
         commonRepository.updateMasterRepository(repository);
         commonRepository.closeCase(baseEntityId, tablename);
-        Mockito.verify(sqliteDatabase,Mockito.times(1)).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(),Mockito.any(String[].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class));
     }
 
     @Test
     public void assertDeleteCaseCallsDatabaseExec() {
         String tablename = "table";
         String baseEntityId = "1";
-        String[] tableColumns = new String[]{CommonRepository.Relational_Underscore_ID, CommonRepository.BASE_ENTITY_ID_COLUMN, ADDITIONALCOLUMN, CUSTOMRELATIONALID};
+        ColumnDetails[] tableColumns = new ColumnDetails[]{
+                ColumnDetails.builder().name(CommonRepository.BASE_ENTITY_ID_COLUMN).build(),
+                ColumnDetails.builder().name(CommonRepository.Relational_Underscore_ID).build(),
+                ColumnDetails.builder().name(ADDITIONALCOLUMN).build(),
+                ColumnDetails.builder().name(CUSTOMRELATIONALID).defaultValue("0").build()
+        };
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
         CommonRepository commonRepository = new CommonRepository(commonFtsObject, tablename, tableColumns);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
@@ -461,7 +490,12 @@ public class CommonRepositoryTest extends BaseUnitTest {
         cursor.addRow(new Object[]{"caseID2", "relationalID2", "dd2", "0"});
 
         String tablename = "table";
-        String[] tableColumns = new String[]{CommonRepository.Relational_Underscore_ID, CommonRepository.BASE_ENTITY_ID_COLUMN, ADDITIONALCOLUMN, CUSTOMRELATIONALID};
+        ColumnDetails[] tableColumns = new ColumnDetails[]{
+                ColumnDetails.builder().name(CommonRepository.BASE_ENTITY_ID_COLUMN).build(),
+                ColumnDetails.builder().name(CommonRepository.Relational_Underscore_ID).build(),
+                ColumnDetails.builder().name(ADDITIONALCOLUMN).build(),
+                ColumnDetails.builder().name(CUSTOMRELATIONALID).defaultValue("0").build()
+        };
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
         Mockito.when(commonFtsObject.getCustomRelationalId(Mockito.anyString())).thenReturn(CUSTOMRELATIONALID);
         CommonRepository commonRepository = new CommonRepository(commonFtsObject, tablename, tableColumns);
@@ -484,7 +518,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         MatrixCursor cursor = new MatrixCursor(columns);
         cursor.addRow(new Object[]{"caseID", "relationalID", new HashMap<String, String>(), 0});
         String tableName = "common";
-        String[] tableColumns = new String[]{};
+        ColumnDetails[] tableColumns = new ColumnDetails[0];
         String[] tables = {"common", "common2"};
         String[] mainConditions = {"details"};
         String[] shortFields = {"id", "alerts.relationalid", "alerts.details", "is_closed"};
@@ -519,7 +553,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         MatrixCursor cursor = new MatrixCursor(columns);
         cursor.addRow(new Object[]{"caseID", "relationalID", new HashMap<String, String>(), 0});
         String tableName = "common";
-        String[] tableColumns = new String[]{};
+        ColumnDetails[] tableColumns = new ColumnDetails[0];
         String[] tables = {"common"};
         String[] mainConditions = {"details"};
         String[] shortFields = {"id", "alerts.relationalid", "alerts.details", "is_closed"};
@@ -652,7 +686,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         matrixCursor.addRow(new Object[]{"id-3"});
 
         Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq(query), Mockito.nullable(String[].class));
-        List<String> ids  = commonRepository.findSearchIds(query);
+        List<String> ids = commonRepository.findSearchIds(query);
         Assert.assertEquals(3, ids.size());
         Assert.assertEquals("id-3", ids.get(2));
 
@@ -669,7 +703,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         matrixCursor.addRow(new Object[]{count});
 
         Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq(query), Mockito.nullable(String[].class));
-       int resultCount  = commonRepository.countSearchIds(query);
+        int resultCount = commonRepository.countSearchIds(query);
         Assert.assertEquals(count, resultCount);
 
         Assert.assertTrue(matrixCursor.isClosed());
