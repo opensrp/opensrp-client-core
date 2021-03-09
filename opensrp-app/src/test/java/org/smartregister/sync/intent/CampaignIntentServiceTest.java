@@ -11,6 +11,7 @@ import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
@@ -42,6 +43,7 @@ public class CampaignIntentServiceTest extends BaseUnitTest {
     // TODO: complete this test
     @Test
     public void testOnHandleIntentShouldShowErrorMessageIfFetchFails() throws Exception {
+        RuntimeEnvironment.application.onCreate();
         Context openSRPContext = CoreLibrary.getInstance().context();
         openSRPContext.allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "http//:dummy-url");
 
