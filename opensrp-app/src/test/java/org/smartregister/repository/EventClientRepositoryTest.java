@@ -24,6 +24,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.db.Column;
+import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.ClientData;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
@@ -531,4 +532,16 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         verify(sqliteDatabase).rawQuery(query, params);
         Assert.assertNotNull(events);
     }
+
+    @Test
+    public void testGetSqliteType() {
+        Assert.assertEquals("varchar", eventClientRepository.getSqliteType(ColumnAttribute.Type.text));
+        Assert.assertEquals("boolean", eventClientRepository.getSqliteType(ColumnAttribute.Type.bool));
+        Assert.assertEquals("datetime", eventClientRepository.getSqliteType(ColumnAttribute.Type.date));
+
+        Assert.assertEquals("varchar", eventClientRepository.getSqliteType(ColumnAttribute.Type.list));
+        Assert.assertEquals("varchar", eventClientRepository.getSqliteType(ColumnAttribute.Type.map));
+        Assert.assertEquals("integer", eventClientRepository.getSqliteType(ColumnAttribute.Type.longnum));
+    }
+
 }
