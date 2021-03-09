@@ -5,7 +5,6 @@ package org.smartregister.sync.intent;
  */
 
 import android.content.Intent;
-import android.text.TextUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -82,11 +81,7 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
         if (jsonArray != null && jsonArray.length() > 0) {
             List<String> ids = new ArrayList<>();
             for (int i = 0; i < jsonArray.length(); i++) {
-                String openmrsId = jsonArray.getString(i);
-
-                if (!TextUtils.isEmpty(openmrsId) && !"1000000-8".equals(openmrsId)) {
-                    ids.add(jsonArray.getString(i));
-                }
+                ids.add(jsonArray.getString(i));
             }
             uniqueIdRepo.bulkInsertOpenmrsIds(ids);
         }
