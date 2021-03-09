@@ -4,6 +4,9 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import org.smartregister.CoreLibrary;
+import org.smartregister.service.HTTPAgent;
+
+import timber.log.Timber;
 
 /**
  * Created by Vincent Karuri on 26/08/2019
@@ -17,7 +20,8 @@ public class BaseSyncIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         CoreLibrary coreLibrary =  CoreLibrary.getInstance();
-        coreLibrary.context().httpAgent().setConnectTimeout(coreLibrary.getSyncConfiguration().getConnectTimeout());
-        coreLibrary.context().httpAgent().setReadTimeout(coreLibrary.getSyncConfiguration().getReadTimeout());
+        HTTPAgent httpAgent = coreLibrary.context().httpAgent();
+        httpAgent.setConnectTimeout(coreLibrary.getSyncConfiguration().getConnectTimeout());
+        httpAgent.setReadTimeout(coreLibrary.getSyncConfiguration().getReadTimeout());
     }
 }
