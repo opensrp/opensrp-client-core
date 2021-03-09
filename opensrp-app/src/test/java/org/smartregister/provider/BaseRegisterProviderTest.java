@@ -2,8 +2,11 @@ package org.smartregister.provider;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -80,27 +83,52 @@ public class BaseRegisterProviderTest extends BaseUnitTest {
     }
 
     @Test
-    public void inflaterReturnsInflater() {
+    public void fillSetsTextIfViewNotNull() {
+        TextView textView = new TextView(RuntimeEnvironment.application);
+        String text = "Hello Worlds";
+        BaseRegisterProvider.fillValue(textView, text);
+        Assert.assertEquals("Hello Worlds", textView.getText());
+    }
+
+    @Test
+    public void inflaterReturnsNonNullLayoutInflater() {
         Assert.assertNotNull(registerProvider.inflater());
+    }
+
+    @Test
+    public void canCreateCustomViewHolderWithRowOptionsConfig() {
+        BaseRegisterRowOptions baseRegisterRowOptions = Mockito.mock(BaseRegisterRowOptions.class);
+        ViewGroup parent = Mockito.mock(ViewGroup.class);
+        View view = Mockito.mock(View.class);
+        LayoutInflater inflater = Mockito.mock(LayoutInflater.class);
+
+        registerProvider = Mockito.mock(BaseRegisterProvider.class, Mockito.CALLS_REAL_METHODS);
+        Whitebox.setInternalState(registerProvider, "baseRegisterRowOptions", baseRegisterRowOptions);
+        Whitebox.setInternalState(registerProvider, "inflater", inflater);
+
+        Mockito.doReturn(view).when(inflater).inflate(ArgumentMatchers.anyInt(), ArgumentMatchers.any(ViewGroup.class), ArgumentMatchers.anyBoolean());
+        Mockito.doReturn(true).when(baseRegisterRowOptions).isCustomViewHolder();
+
+        registerProvider.createViewHolder(parent);
+        Mockito.verify(baseRegisterRowOptions).createCustomViewHolder(ArgumentMatchers.eq(view));
     }
 
     private void initializeModuleConfiguration() {
         CoreLibrary.init(org.smartregister.Context.getInstance());
-        ModuleConfiguration customLibraryConfiguration = new ModuleConfiguration.Builder("Test Opd Register",
+        ModuleConfiguration customLibraryConfiguration = new ModuleConfiguration.Builder("Test Module Register",
                 MockRegisterQueryProvider.class, new MockConfigViewsLib(), ActivityStarter.class)
                 .setModuleMetadata(new ModuleMetadata(
                         new ModuleRegister(
-                                "opd_registration",
-                                "ec_client",
-                                "Opd Registration",
-                                "UPDATE OPD REGISTRATION", "custom-opd"),
+                                "test_registration_form",
+                                "ec_test_client",
+                                "Test Registration",
+                                "UPDATE TEST REGISTRATION", "custom-config"),
                         new MockLocationTagsConfiguration(), FormActivity.class, BaseProfileActivity.class, false, ""
                 ))
                 .setRegisterRowOptions(BaseRegisterRowOptions.class)
                 .build();
 
         CoreLibrary.getInstance()
-                .addModuleConfiguration(true, "custom-opd", customLibraryConfiguration);
+                .addModuleConfiguration(true, "testModule", customLibraryConfiguration);
     }
-
 }
