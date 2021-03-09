@@ -22,7 +22,9 @@ import org.mockito.stubbing.Answer;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.domain.Event;
+import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.p2p.sync.data.JsonData;
@@ -40,6 +42,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -542,6 +545,19 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         Assert.assertEquals("varchar", eventClientRepository.getSqliteType(ColumnAttribute.Type.list));
         Assert.assertEquals("varchar", eventClientRepository.getSqliteType(ColumnAttribute.Type.map));
         Assert.assertEquals("integer", eventClientRepository.getSqliteType(ColumnAttribute.Type.longnum));
+    }
+
+    @Test
+    public void testFetchEventClientsByLastSyncDateAndSyncStatus() {
+        eventClientRepository = spy(eventClientRepository);
+        String syncStatus = SyncStatus.SYNCED.name();
+        Date lastSyncDate = new Date();
+        String lastSyncString = DateUtil.yyyyMMddHHmmss.format(lastSyncDate);
+        String query = "select json,updatedAt from event where syncStatus = ? and updatedAt > ? ORDER BY serverVersion";
+
+        eventClientRepository.fetchEventClients(lastSyncDate, syncStatus);
+
+        verify(eventClientRepository).fetchEventClientsCore(query, new String[]{syncStatus, lastSyncString});
     }
 
 }
