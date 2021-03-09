@@ -58,6 +58,7 @@ public class FormDataRepository extends DrishtiRepository {
 
     public FormDataRepository() {
         TABLE_COLUMN_MAP = new HashMap<String, String[]>();
+
         TABLE_COLUMN_MAP.put(EligibleCoupleRepository.EC_TABLE_NAME,
                 EligibleCoupleRepository.EC_TABLE_COLUMNS);
         TABLE_COLUMN_MAP
@@ -71,7 +72,7 @@ public class FormDataRepository extends DrishtiRepository {
         for (int i = 0; i < Context.bindtypes.size(); i++) {
             TABLE_COLUMN_MAP.put(Context.bindtypes.get(i).getBindtypename(), CoreLibrary.getInstance().context()
                     .commonrepository(
-                            Context.bindtypes.get(i).getBindtypename()).common_TABLE_COLUMNS);
+                            Context.bindtypes.get(i).getBindtypename()).getTableColumns());
         }
     }
 

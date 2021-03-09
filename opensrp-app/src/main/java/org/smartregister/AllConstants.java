@@ -624,4 +624,15 @@ public class AllConstants {
         int TRUE = 1;
         int FALSE = 0;
     }
+
+
+    public interface ClientProcessing {
+        String VARCHAR = "VARCHAR";
+        String NAME = "name";
+        String DATA_TYPES = "data_type";
+        String COLUMNS = "columns";
+
+    }
+
+
 }
