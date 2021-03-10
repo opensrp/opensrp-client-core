@@ -12,6 +12,7 @@ import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
+import org.smartregister.domain.ColumnDetails;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
 
@@ -75,7 +76,11 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
     @Test
     public void sharedRepositoriesShouldAddBindTypesAsRepositories() {
         ArrayList<CommonRepositoryInformationHolder> bindtypes = new ArrayList<CommonRepositoryInformationHolder>();
-        String[] columnNames = new String[]{"base_entity_id", "fname", "lname"};
+        ColumnDetails[] columnNames = new ColumnDetails[]{
+                ColumnDetails.builder().name("base_entity_id").build(),
+                ColumnDetails.builder().name("fname").build(),
+                ColumnDetails.builder().name("lname").build(),
+        };
         String tableName = "ec_client_test";
         bindtypes.add(new CommonRepositoryInformationHolder(tableName, columnNames));
         Context context = Context.getInstance();
@@ -96,13 +101,13 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
 
         // Verifications & assertions
         boolean repositoryFoundWithColumns = false;
-        for (DrishtiRepository drishtiRepository: repositories) {
+        for (DrishtiRepository drishtiRepository : repositories) {
             if (drishtiRepository instanceof CommonRepository && tableName.equals(((CommonRepository) drishtiRepository).TABLE_NAME)) {
                 CommonRepository commonRepository = ((CommonRepository) drishtiRepository);
                 Assert.assertEquals(7, commonRepository.common_TABLE_COLUMNS.length);
-                Assert.assertEquals("base_entity_id", commonRepository.common_TABLE_COLUMNS[4]);
-                Assert.assertEquals("fname", commonRepository.common_TABLE_COLUMNS[5]);
-                Assert.assertEquals("lname", commonRepository.common_TABLE_COLUMNS[6]);
+                Assert.assertEquals("base_entity_id", commonRepository.common_TABLE_COLUMNS[4].getName());
+                Assert.assertEquals("fname", commonRepository.common_TABLE_COLUMNS[5].getName());
+                Assert.assertEquals("lname", commonRepository.common_TABLE_COLUMNS[6].getName());
                 repositoryFoundWithColumns = true;
             }
         }
@@ -233,9 +238,9 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
         ArrayList<CommonRepositoryInformationHolder> bindtypes = ReflectionHelpers.getField(context, "bindtypes");
         Assert.assertEquals(1, bindtypes.size());
         Assert.assertEquals(15, bindtypes.get(0).getColumnNames().length);
-        Assert.assertEquals("base_entity_id", bindtypes.get(0).getColumnNames()[0]);
-        Assert.assertEquals("last_interacted_with", bindtypes.get(0).getColumnNames()[12]);
-        Assert.assertEquals("street", bindtypes.get(0).getColumnNames()[6]);
+        Assert.assertEquals("base_entity_id", bindtypes.get(0).getColumnNames()[0].getName());
+        Assert.assertEquals("last_interacted_with", bindtypes.get(0).getColumnNames()[12].getName());
+        Assert.assertEquals("street", bindtypes.get(0).getColumnNames()[6].getName());
     }
 
     @Test
@@ -280,10 +285,10 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
 
         Assert.assertEquals("ec_family", commonRepository.TABLE_NAME);
         Assert.assertEquals(19, commonRepository.common_TABLE_COLUMNS.length);
-        Assert.assertEquals("id", commonRepository.common_TABLE_COLUMNS[0]);
-        Assert.assertEquals("details", commonRepository.common_TABLE_COLUMNS[2]);
-        Assert.assertEquals("last_interacted_with", commonRepository.common_TABLE_COLUMNS[16]);
-        Assert.assertEquals("entity_type", commonRepository.common_TABLE_COLUMNS[18]);
+        Assert.assertEquals("id", commonRepository.common_TABLE_COLUMNS[0].getName());
+        Assert.assertEquals("details", commonRepository.common_TABLE_COLUMNS[2].getName());
+        Assert.assertEquals("last_interacted_with", commonRepository.common_TABLE_COLUMNS[16].getName());
+        Assert.assertEquals("entity_type", commonRepository.common_TABLE_COLUMNS[18].getName());
         Assert.assertFalse(commonRepository.isFts());
     }
 
@@ -307,10 +312,10 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
 
         Assert.assertEquals("ec_family", commonRepository.TABLE_NAME);
         Assert.assertEquals(19, commonRepository.common_TABLE_COLUMNS.length);
-        Assert.assertEquals("id", commonRepository.common_TABLE_COLUMNS[0]);
-        Assert.assertEquals("details", commonRepository.common_TABLE_COLUMNS[2]);
-        Assert.assertEquals("last_interacted_with", commonRepository.common_TABLE_COLUMNS[16]);
-        Assert.assertEquals("entity_type", commonRepository.common_TABLE_COLUMNS[18]);
+        Assert.assertEquals("id", commonRepository.common_TABLE_COLUMNS[0].getName());
+        Assert.assertEquals("details", commonRepository.common_TABLE_COLUMNS[2].getName());
+        Assert.assertEquals("last_interacted_with", commonRepository.common_TABLE_COLUMNS[16].getName());
+        Assert.assertEquals("entity_type", commonRepository.common_TABLE_COLUMNS[18].getName());
         Assert.assertTrue(commonRepository.isFts());
     }
 

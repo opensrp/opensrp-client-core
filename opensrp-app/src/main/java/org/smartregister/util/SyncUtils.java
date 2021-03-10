@@ -140,6 +140,16 @@ public class SyncUtils {
     }
 
     /**
+     * Returns the number of times sync should be attempted
+     *
+     * @return
+     */
+    public int getNumOfSyncAttempts() {
+        int numOfRetries = CoreLibrary.getInstance().getSyncConfiguration().getSyncMaxRetries();
+        return  numOfRetries > 0 ? numOfRetries + 1 : 1;
+    }
+
+    /**
      * Returns true if {@param setting1} was updated more recently when compared to {@param setting2},
      * and false otherwise
      *

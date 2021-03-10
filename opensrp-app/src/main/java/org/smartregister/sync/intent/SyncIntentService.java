@@ -59,18 +59,18 @@ public class SyncIntentService extends BaseSyncIntentService {
     public static final String SYNC_URL = "/rest/event/sync";
     protected static final int EVENT_PULL_LIMIT = 250;
     protected static final int EVENT_PUSH_LIMIT = 50;
-    protected static final String ADD_URL = "rest/event/add";
-    protected Context context;
-    protected HTTPAgent httpAgent;
+    private static final String ADD_URL = "rest/event/add";
+    private Context context;
+    private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
-    protected Trace eventSyncTrace;
+    private Trace eventSyncTrace;
     private Trace processClientTrace;
     private String team;
 
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
     protected ValidateAssignmentHelper validateAssignmentHelper;
-    protected long totalRecords;
+    private long totalRecords;
     private int fetchedRecords = 0;
 
     public SyncIntentService() {
@@ -144,7 +144,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         fetchRetry(0, true);
     }
 
-    protected synchronized void fetchRetry(final int count, boolean returnCount) {
+    private synchronized void fetchRetry(final int count, boolean returnCount) {
         try {
             SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
             if (configs.getSyncFilterParam() == null || StringUtils.isBlank(configs.getSyncFilterValue())) {
@@ -209,7 +209,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
     }
 
-    protected void processFetchedEvents(Response resp, ECSyncHelper ecSyncUpdater, final int count) throws JSONException {
+    private void processFetchedEvents(Response resp, ECSyncHelper ecSyncUpdater, final int count) throws JSONException {
         int eCount;
         JSONObject jsonObject = new JSONObject();
         if (resp.payload() == null) {
@@ -271,28 +271,29 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     // PUSH TO SERVER
-    protected boolean pushToServer() {
+    private boolean pushToServer() {
         return pushECToServer(CoreLibrary.getInstance().context().getEventClientRepository()) &&
                 (!CoreLibrary.getInstance().context().hasForeignEvents() || pushECToServer(CoreLibrary.getInstance().context().getForeignEventClientRepository()));
     }
 
-    protected boolean pushECToServer(EventClientRepository db) {
+    private boolean pushECToServer(EventClientRepository db) {
         boolean isSuccessfulPushSync = true;
 
         // push foreign events to server
         int totalEventCount = db.getUnSyncedEventsCount();
         int eventsUploadedCount = 0;
 
-        while (true) {
+
+        String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+        if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
+        }
+
+        for (int i = 0; i < syncUtils.getNumOfSyncAttempts(); i++) {
             Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
 
             if (pendingEvents.isEmpty()) {
                 break;
-            }
-
-            String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-            if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
-                baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
             }
             // create request body
             JSONObject request = new JSONObject();
@@ -324,15 +325,16 @@ public class SyncIntentService extends BaseSyncIntentService {
             } else {
                 db.markEventsAsSynced(pendingEvents);
                 Timber.i("Events synced successfully.");
+                stopTrace(eventSyncTrace);
+                updateProgress(eventsUploadedCount, totalEventCount);
+                break;
             }
-            stopTrace(eventSyncTrace);
-            updateProgress(eventsUploadedCount, totalEventCount);
         }
 
         return isSuccessfulPushSync;
     }
 
-    protected void startEventTrace(String action, int count) {
+    private void startEventTrace(String action, int count) {
         SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
         if (configs.firebasePerformanceMonitoringEnabled()) {
             clearTraceAttributes(eventSyncTrace);
