@@ -199,4 +199,6 @@ public abstract class SyncConfiguration {
       * @return list of pairs containing API call parameters and their values
      */
     public List <Pair<String,String>> getGlobalSettingsQueryParams() {return null;}
+
+    public abstract boolean shouldPushToServer();
 }

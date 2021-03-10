@@ -72,6 +72,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     protected ValidateAssignmentHelper validateAssignmentHelper;
     private long totalRecords;
     private int fetchedRecords = 0;
+    private SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
 
     public SyncIntentService() {
         super("SyncIntentService");
@@ -146,7 +147,6 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     private synchronized void fetchRetry(final int count, boolean returnCount) {
         try {
-            SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
             if (configs.getSyncFilterParam() == null || StringUtils.isBlank(configs.getSyncFilterValue())) {
                 complete(FetchStatus.fetchedFailed);
                 return;
@@ -240,7 +240,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 startTrace(processClientTrace);
                 processClient(serverVersionPair);
                 addAttribute(processClientTrace, COUNT, String.valueOf(eCount));
-                addAttribute(processClientTrace,  TEAM, team);
+                addAttribute(processClientTrace, TEAM, team);
                 stopTrace(processClientTrace);
                 ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
             }
@@ -279,58 +279,60 @@ public class SyncIntentService extends BaseSyncIntentService {
     private boolean pushECToServer(EventClientRepository db) {
         boolean isSuccessfulPushSync = true;
 
-        // push foreign events to server
-        int totalEventCount = db.getUnSyncedEventsCount();
-        int eventsUploadedCount = 0;
+        if(configs.shouldPushToServer()) {
+            // push foreign events to server
+            int totalEventCount = db.getUnSyncedEventsCount();
+            int eventsUploadedCount = 0;
 
 
-        String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-        if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
-            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
-        }
-
-        for (int i = 0; i < syncUtils.getNumOfSyncAttempts(); i++) {
-            Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
-
-            if (pendingEvents.isEmpty()) {
-                break;
+            String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+            if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
+                baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
             }
-            // create request body
-            JSONObject request = new JSONObject();
-            try {
-                if (pendingEvents.containsKey(AllConstants.KEY.CLIENTS)) {
-                    Object value = pendingEvents.get(AllConstants.KEY.CLIENTS);
-                    request.put(AllConstants.KEY.CLIENTS, value);
 
-                    if (value instanceof List) {
-                        eventsUploadedCount += ((List) value).size();
+            for (int i = 0; i < syncUtils.getNumOfSyncAttempts(); i++) {
+                Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
+
+                if (pendingEvents.isEmpty()) {
+                    break;
+                }
+                // create request body
+                JSONObject request = new JSONObject();
+                try {
+                    if (pendingEvents.containsKey(AllConstants.KEY.CLIENTS)) {
+                        Object value = pendingEvents.get(AllConstants.KEY.CLIENTS);
+                        request.put(AllConstants.KEY.CLIENTS, value);
+
+                        if (value instanceof List) {
+                            eventsUploadedCount += ((List) value).size();
+                        }
                     }
+                    if (pendingEvents.containsKey(AllConstants.KEY.EVENTS)) {
+                        request.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
+                    }
+                } catch (JSONException e) {
+                    Timber.e(e);
                 }
-                if (pendingEvents.containsKey(AllConstants.KEY.EVENTS)) {
-                    request.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
+                String jsonPayload = request.toString();
+                startEventTrace(PUSH, eventsUploadedCount);
+                Response<String> response = httpAgent.post(
+                        MessageFormat.format("{0}/{1}",
+                                baseUrl,
+                                ADD_URL),
+                        jsonPayload);
+                if (response.isFailure()) {
+                    Timber.e("Events sync failed.");
+                    isSuccessfulPushSync = false;
+                } else {
+                    db.markEventsAsSynced(pendingEvents);
+                    Timber.i("Events synced successfully.");
+                    stopTrace(eventSyncTrace);
+                    updateProgress(eventsUploadedCount, totalEventCount);
+                    break;
                 }
-            } catch (JSONException e) {
-                Timber.e(e);
             }
-            String jsonPayload = request.toString();
-            startEventTrace(PUSH, eventsUploadedCount);
-            Response<String> response = httpAgent.post(
-                    MessageFormat.format("{0}/{1}",
-                            baseUrl,
-                            ADD_URL),
-                    jsonPayload);
-            if (response.isFailure()) {
-                Timber.e("Events sync failed.");
-                isSuccessfulPushSync = false;
-            } else {
-                db.markEventsAsSynced(pendingEvents);
-                Timber.i("Events synced successfully.");
-                stopTrace(eventSyncTrace);
-                updateProgress(eventsUploadedCount, totalEventCount);
-                break;
-            }
-        }
 
+        }
         return isSuccessfulPushSync;
     }
 
