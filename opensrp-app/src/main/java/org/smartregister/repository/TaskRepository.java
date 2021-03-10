@@ -689,10 +689,11 @@ public class TaskRepository extends BaseRepository {
         return unsyncedRecordsCount;
     }
 
+
     @NonNull
-    public Set<Task> getTasksByJurisdiction(@NonNull String jurisdictionId) {
-        String query = "SELECT * FROM " + TASK_TABLE + " WHERE " + GROUP_ID + " = ?";
-        return getTasks(query, new String[]{jurisdictionId});
+    public Set<Task> getTasksByJurisdictionAndPlan(@NonNull String jurisdictionId, String planIdentifier) {
+        String query = "SELECT * FROM " + TASK_TABLE + " WHERE " + GROUP_ID + " = ? AND " + PLAN_ID + " = ?";
+        return getTasks(query, new String[]{jurisdictionId, planIdentifier});
     }
 
     public List<String> getEntityIdsWithDuplicateTasks() {
