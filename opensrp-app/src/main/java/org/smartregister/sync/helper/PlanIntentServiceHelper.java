@@ -27,6 +27,7 @@ import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,6 +64,8 @@ public class PlanIntentServiceHelper extends BaseHelper {
     private SyncProgress syncProgress;
 
     private Trace planSyncTrace;
+    private ArrayList<PlanDefinition> planIdsToEvaluate = new ArrayList<>();
+    private PeriodicTriggerEvaluationHelper periodicTriggerEvaluationHelper;
 
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
@@ -117,10 +120,12 @@ public class PlanIntentServiceHelper extends BaseHelper {
             for (PlanDefinition plan : plans) {
                 try {
                     planDefinitionRepository.addOrUpdate(plan);
+                    planIdsToEvaluate.add(plan);
                 } catch (Exception e) {
                     Timber.e(e, "EXCEPTION %s", e.toString());
                 }
             }
+
             // update most recent server version
             if (!Utils.isEmptyCollection(plans)) {
                 batchFetchCount = plans.size();
@@ -132,12 +137,17 @@ public class PlanIntentServiceHelper extends BaseHelper {
                 // retry fetch since there were items synced from the server
                 batchFetchPlansFromServer(false);
             }
+
+            if (!planIdsToEvaluate.isEmpty()) {
+                periodicTriggerEvaluationHelper.reschedulePeriodicPlanEvaluations(plans, this);
+            }
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
 
         return batchFetchCount;
     }
+
 
     private void startPlanTrace(String action) {
         String providerId = allSharedPreferences.fetchRegisteredANM();

@@ -434,6 +434,8 @@ public class AllConstants {
         public static final String TASK_GENERATED = "task_generated";
         public static final String DIALOG_TITLE = "dialog_title";
         public static final String DIALOG_MESSAGE = "dialog_message";
+        public static final String PLAN_IDS = "plan-ids";
+        public static final String ACTION_CODE = "action-code";
     }
 
     public static final class REGISTER_FRAGMENT {
