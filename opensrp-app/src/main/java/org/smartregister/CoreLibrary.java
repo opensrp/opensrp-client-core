@@ -110,22 +110,26 @@ public class CoreLibrary implements OnAccountsUpdateListener {
      * If configured not to encrypt but previous version encrypted, clear the prefs
      */
     private static void upgradeSharedPreferences() {
-        android.content.Context appContext = instance.context().applicationContext();
-        SharedPreferences existingPrefs = appContext.getSharedPreferences(appContext.getPackageName() + "_preferences", android.content.Context.MODE_PRIVATE);
-        Map<String, ?> entries = existingPrefs.getAll();
+        try {
+            android.content.Context appContext = instance.context().applicationContext();
+            SharedPreferences existingPrefs = appContext.getSharedPreferences(appContext.getPackageName() + "_preferences", android.content.Context.MODE_PRIVATE);
+            Map<String, ?> entries = existingPrefs.getAll();
 
-        // check the version of SharedPreferences (encrypted vs unencrypted)
-        // as well as whether encryption key-value pair is set
-        if (Utils.getBooleanProperty(AllConstants.PROPERTY.ENCRYPT_SHARED_PREFERENCES)
-                && !entries.containsKey(ENCRYPTED_PREFS_KEY_KEYSET)
-                && !entries.containsKey(ENCRYPTED_PREFS_VALUE_KEYSET)) {
+            // check the version of SharedPreferences (encrypted vs unencrypted)
+            // as well as whether encryption key-value pair is set
+            if (Utils.getBooleanProperty(AllConstants.PROPERTY.ENCRYPT_SHARED_PREFERENCES)
+                    && !entries.containsKey(ENCRYPTED_PREFS_KEY_KEYSET)
+                    && !entries.containsKey(ENCRYPTED_PREFS_VALUE_KEYSET)) {
 
-            existingPrefs.edit().clear().apply();
+                existingPrefs.edit().clear().apply();
 
-            // create the new instance
-            SharedPreferences newPrefs = instance.context().allSharedPreferences().getPreferences();
+                // create the new instance
+                SharedPreferences newPrefs = instance.context().allSharedPreferences().getPreferences();
 
-            copySharedPreferences(entries, newPrefs);
+                copySharedPreferences(entries, newPrefs);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
         }
     }
 
