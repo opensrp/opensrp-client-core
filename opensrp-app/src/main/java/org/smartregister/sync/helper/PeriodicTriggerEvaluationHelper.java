@@ -1,5 +1,7 @@
 package org.smartregister.sync.helper;
 
+import androidx.annotation.NonNull;
+
 import com.evernote.android.job.JobManager;
 import com.evernote.android.job.JobRequest;
 
@@ -15,6 +17,8 @@ import org.smartregister.job.PlanPeriodicEvaluationJob;
 import org.smartregister.pathevaluator.TriggerType;
 import org.smartregister.view.activity.DrishtiApplication;
 
+import java.sql.Time;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +30,7 @@ public class PeriodicTriggerEvaluationHelper {
 
     private DateTime timeNow;
 
-    public void reschedulePeriodicPlanEvaluations(List<PlanDefinition> plans, PlanIntentServiceHelper planIntentServiceHelper) {
+    public void reschedulePeriodicPlanEvaluations(List<PlanDefinition> plans) {
         for (PlanDefinition plan: plans) {
             List<Action> actions = plan.getActions();
             if (actions != null && actions.size() > 0) {
@@ -37,7 +41,7 @@ public class PeriodicTriggerEvaluationHelper {
                             // This assumes that the action has only one periodic trigger
                             if (triggers != null && trigger.getType() != null
                                     && TriggerType.PERIODIC.value().equals(trigger.getType())
-                                    && isValidDailyTriggerSchedule(trigger, planIntentServiceHelper)) {
+                                    && isValidDailyTriggerSchedule(trigger)) {
                                 // Check if the jobs for the action have been scheduled
                                 // Delete & reschedule the job using the action.code as the job ID
                                 Set<JobRequest> jobRequests = JobManager.create(DrishtiApplication.getInstance())
@@ -49,13 +53,13 @@ public class PeriodicTriggerEvaluationHelper {
                                             String actionCode = jobRequest.getExtras().getString(AllConstants.INTENT_KEY.ACTION_CODE, null);
                                             if (actionCode != null && action.getCode().equals(actionCode)) {
                                                 JobManager.create(DrishtiApplication.getInstance()).cancel(jobRequest.getJobId());
-
-                                                // Reschedule the job again using the timing
-                                                scheduleActionJob(action);
                                             }
                                         }
                                     }
                                 }
+
+                                // Reschedule the job again using the timing
+                                scheduleActionJob(action, action.getCode(), trigger.getTimingTiming(), plan.getIdentifier());
 
                                 break;
                             }
@@ -67,17 +71,38 @@ public class PeriodicTriggerEvaluationHelper {
         }
     }
 
-    public void scheduleActionJob(Action action) {
-        // TODO: Implement this
-        throw new NotImplementedException("This is not implemented");
+    protected boolean scheduleActionJob(@NonNull Action action, @NonNull String actionCode, @NonNull Timing timing, @NonNull String planId) {
+        List<DateTime> eventLists = timing.getEvent();
+        TimingRepeat timingRepeat = timing.getRepeat();
+
+        boolean scheduled = false;
+
+        for (DateTime dateTime: eventLists) {
+            if (dateTime.isBefore(now())) {
+                if (timingRepeat != null && timingRepeat.getFrequency() == 1 && timingRepeat.getPeriodUnit().equals(TimingRepeat.DurationCode.d)) {
+                    List<Time> timesOfDay = timingRepeat.getTimeOfDay();
+
+                    // Schedule a job everyday for each time
+                    for (Time timeOfDay: timesOfDay) {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(timeOfDay);
+
+                        PlanPeriodicEvaluationJob.scheduleEverydayAt(PlanPeriodicEvaluationJob.TAG, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), action);
+                        scheduled = true;
+                    }
+                }
+            }
+        }
+
+        return scheduled;
     }
 
-    public boolean isValidDailyTriggerSchedule(Trigger trigger, PlanIntentServiceHelper planIntentServiceHelper) {
+    public boolean isValidDailyTriggerSchedule(Trigger trigger) {
         Timing timing = trigger.getTimingTiming();
         List<DateTime> eventLists = timing.getEvent();
 
         for (DateTime dateTime: eventLists) {
-            if (dateTime.isBefore(now(planIntentServiceHelper))) {
+            if (dateTime.isBefore(now())) {
                 TimingRepeat repeat = timing.getRepeat();
                 if (repeat != null && repeat.getFrequency() == 1 && repeat.getPeriodUnit().equals(TimingRepeat.DurationCode.d)) {
                     return true;
@@ -88,7 +113,7 @@ public class PeriodicTriggerEvaluationHelper {
         return false;
     }
 
-    protected DateTime now(PlanIntentServiceHelper planIntentServiceHelper) {
+    protected DateTime now() {
         return timeNow != null ? timeNow : DateTime.now();
     }
 

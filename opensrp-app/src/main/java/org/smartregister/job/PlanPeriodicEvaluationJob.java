@@ -13,7 +13,6 @@ import com.google.gson.GsonBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.smartregister.AllConstants;
-import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Action;
 import org.smartregister.sync.intent.PlanPeriodicPlanEvaluationService;
 import org.smartregister.utils.DateTypeConverter;

@@ -436,6 +436,7 @@ public class AllConstants {
         public static final String DIALOG_MESSAGE = "dialog_message";
         public static final String PLAN_IDS = "plan-ids";
         public static final String ACTION_CODE = "action-code";
+        public static final String ACTION = "action";
     }
 
     public static final class REGISTER_FRAGMENT {
