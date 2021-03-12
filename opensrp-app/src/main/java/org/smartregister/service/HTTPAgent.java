@@ -1062,7 +1062,7 @@ public class HTTPAgent {
                 return gson.fromJson(responseString, Practitioner[].class);
             }
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             Timber.e(e);
         } finally {
 
@@ -1100,7 +1100,7 @@ public class HTTPAgent {
                 return gson.fromJson(responseString, PractitionerRole[].class);
             }
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             Timber.e(e);
         } finally {
 
