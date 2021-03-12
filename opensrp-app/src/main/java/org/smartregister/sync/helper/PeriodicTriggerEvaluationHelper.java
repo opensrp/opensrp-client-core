@@ -87,7 +87,7 @@ public class PeriodicTriggerEvaluationHelper {
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(timeOfDay);
 
-                        PlanPeriodicEvaluationJob.scheduleEverydayAt(PlanPeriodicEvaluationJob.TAG, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), action);
+                        PlanPeriodicEvaluationJob.scheduleEverydayAt(PlanPeriodicEvaluationJob.TAG, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), action, planId);
                         scheduled = true;
                     }
                 }

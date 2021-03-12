@@ -35,11 +35,12 @@ public class PlanPeriodicEvaluationJob extends DailyJob {
             .registerTypeAdapter(Time.class, new TimingRepeatTimeTypeConverter())
             .create();
 
-    public static void scheduleEverydayAt(@NonNull String jobTag, int hour, int minute, @NonNull Action action) {
+    public static void scheduleEverydayAt(@NonNull String jobTag, int hour, int minute, @NonNull Action action, String planId) {
         JobRequest.Builder jobRequest = new JobRequest.Builder(jobTag);
         PersistableBundleCompat persistableBundleCompat = new PersistableBundleCompat();
 
         persistableBundleCompat.putString(AllConstants.INTENT_KEY.ACTION, getActionJson(action));
+        persistableBundleCompat.putString(AllConstants.INTENT_KEY.PLAN_ID, planId);
         jobRequest.addExtras(persistableBundleCompat);
 
         long startTime = TimeUnit.HOURS.toMillis(hour) + TimeUnit.MINUTES.toMillis(minute);
@@ -59,12 +60,14 @@ public class PlanPeriodicEvaluationJob extends DailyJob {
     protected DailyJobResult onRunDailyJob(@NonNull Params params) {
         Intent intent = new Intent(getContext(), PlanPeriodicPlanEvaluationService.class);
         String actionString = params.getExtras().getString(AllConstants.INTENT_KEY.ACTION, null);
+        String planId = params.getExtras().getString(AllConstants.INTENT_KEY.PLAN_ID, null);
 
-        if (actionString != null) {
+        if (TextUtils.isEmpty(actionString) || TextUtils.isEmpty(planId)) {
             return DailyJobResult.CANCEL;
         }
 
         intent.putExtra(AllConstants.INTENT_KEY.ACTION, actionString);
+        intent.putExtra(AllConstants.INTENT_KEY.PLAN_ID, planId);
         getContext().startService(intent);
 
         return DailyJobResult.SUCCESS;
