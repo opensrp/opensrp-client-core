@@ -139,7 +139,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
             }
 
             if (!planIdsToEvaluate.isEmpty()) {
-                periodicTriggerEvaluationHelper.reschedulePeriodicPlanEvaluations(plans, this);
+                periodicTriggerEvaluationHelper.reschedulePeriodicPlanEvaluations(plans);
             }
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
