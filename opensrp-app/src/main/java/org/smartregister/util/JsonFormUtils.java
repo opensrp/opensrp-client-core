@@ -132,20 +132,13 @@ public class JsonFormUtils {
         List<Address> addresses = new ArrayList<>(extractAddresses(fields).values());
 
         if (originalClient != null) {
-            firstName = firstName == null ? originalClient.getFirstName() : firstName;
-            middleName = middleName == null ? originalClient.getMiddleName() : middleName;
-            lastName = lastName == null ? originalClient.getLastName() : lastName;
-            birthdate = birthdate == null ? originalClient.getBirthdate() : birthdate;
-            deathdate = deathdate == null ? originalClient.getDeathdate() : deathdate;
-            birthdateApprox = birthdateApprox ? originalClient.getBirthdateApprox() : false;
-            deathdateApprox = deathdateApprox ? originalClient.getDeathdateApprox() : false;
-            gender = gender == null ? originalClient.getGender() : gender;
             addresses = (addresses.isEmpty()) ? originalClient.getAddresses() : addresses;
         }
 
         Client client = (Client) new Client(entityId).withFirstName(firstName).withMiddleName(middleName).withLastName(lastName)
                 .withBirthdate((birthdate), birthdateApprox).withDeathdate(deathdate, deathdateApprox).withGender(gender)
                 .withDateCreated(new Date());
+
 
         client.setLocationId(formTag.locationId);
         client.setTeamId(formTag.teamId);
@@ -158,15 +151,33 @@ public class JsonFormUtils {
                 .withAttributes(extractAttributes(fields)).withIdentifiers(extractIdentifiers(fields));
 
         // Handle null relationships & attributes
-        if (originalClient != null) {
-            if (client.getRelationships() == null || client.getRelationships().isEmpty()) {
-                client.setRelationships(originalClient.getRelationships());
-            }
-            if (client.getAttributes() == null || client.getAttributes().isEmpty()) {
-                client.setAttributes(originalClient.getAttributes());
-            }
-        }
+        updateNewClientNullValues(client, originalClient);
+
         return client;
+
+    }
+
+    /**
+     * Update any NULL values in the new Client object with values from the original Client
+     *
+     * @param newClient      Newly created Client object
+     * @param originalClient Original retrieved Client object
+     */
+    public static void updateNewClientNullValues(Client newClient, Client originalClient) {
+        if (newClient != null && originalClient != null) {
+            if (StringUtils.isEmpty(newClient.getFirstName()))
+                newClient.setFirstName(originalClient.getFirstName());
+            if (StringUtils.isEmpty(newClient.getMiddleName()))
+                newClient.setMiddleName(originalClient.getMiddleName());
+            if (StringUtils.isEmpty(newClient.getLastName()))
+                newClient.setLastName(originalClient.getLastName());
+            if(StringUtils.isEmpty(newClient.getGender()))
+                newClient.setGender(originalClient.getGender());
+            if (newClient.getBirthdate() == null)
+                newClient.setBirthdate(originalClient.getBirthdate());
+            if (newClient.getDeathdate() == null)
+                newClient.setDeathdate(originalClient.getDeathdate());
+        }
 
     }
 
@@ -188,7 +199,7 @@ public class JsonFormUtils {
             Timber.e(e);
         }
 
-        if (StringUtils.isBlank(encounterLocation)) {
+        if (StringUtils.isEmpty(encounterLocation)) {
             encounterLocation = formTag.locationId;
         }
 

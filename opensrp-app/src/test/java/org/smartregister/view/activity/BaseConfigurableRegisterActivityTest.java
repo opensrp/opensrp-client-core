@@ -39,6 +39,7 @@ import org.smartregister.pojo.InnerJoinObject;
 import org.smartregister.pojo.QueryTable;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.view.contract.BaseRegisterContract;
+import org.smartregister.view.contract.RegisterParams;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -242,11 +243,103 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
         Assert.assertEquals(MyJsonFormActivity.class.getName(), intent.getComponent().getClassName());
     }
 
-    /*@Test
-    public void testStartFormActivity() {
-        //
+    @Test
+    public void startFormActivityShouldCallPresenterStartFormWithEntityTable() {
+        setupModuleConfiguration();
+        createStartAndResumeActivity();
+
+        String formName = "registration";
+        String entityId = "entityId";
+        String metadata = "the-meta-data";
+        String entityTable = "ec_client";
+
+        HashMap<String, String> injectedFieldValues = new HashMap<>();
+        injectedFieldValues.put("gender", "male");
+        injectedFieldValues.put("health_status", "ok");
+
+        Assert.assertNotNull(presenter);
+
+        Mockito.doNothing().when(presenter).startForm(Mockito.eq(formName), Mockito.eq(entityId), Mockito.eq(metadata), Mockito.nullable(String.class), Mockito.eq(injectedFieldValues), Mockito.eq(entityTable));
+
+        baseConfigurableRegisterActivity.startFormActivity(formName, entityId, metadata, injectedFieldValues, entityTable);
+        Mockito.doNothing().when(presenter).startForm(Mockito.eq(formName), Mockito.eq(entityId), Mockito.eq(metadata), Mockito.nullable(String.class), Mockito.eq(injectedFieldValues), Mockito.eq(entityTable));
     }
-    */
+
+    @Test
+    public void startFormActivityShouldCallPresenterStartFormWithoutEntityTable() {
+        setupModuleConfiguration();
+        createStartAndResumeActivity();
+
+        String formName = "registration";
+        String entityId = "entityId";
+        String metadata = "the-meta-data";
+
+        Assert.assertNotNull(presenter);
+
+        Mockito.doNothing().when(presenter).startForm(Mockito.eq(formName), Mockito.eq(entityId), Mockito.eq(metadata), Mockito.nullable(String.class), Mockito.nullable(HashMap.class), Mockito.nullable(String.class));
+
+        baseConfigurableRegisterActivity.startFormActivity(formName, entityId, metadata);
+
+        Mockito.verify(presenter).startForm(Mockito.eq(formName), Mockito.eq(entityId), Mockito.eq(metadata), Mockito.nullable(String.class), Mockito.nullable(HashMap.class), Mockito.nullable(String.class));
+    }
+
+    @Test
+    public void onActivityResultExtendedShouldCallPresenterSaveForm() {
+        setupModuleConfiguration();
+        createStartAndResumeActivity();
+
+        // Add the module metadata
+        ModuleConfiguration moduleConfiguration = Mockito.mock(ModuleConfiguration.class);
+        ModuleMetadata moduleMetadata = Mockito.mock(ModuleMetadata.class);
+        ModuleRegister moduleRegister = Mockito.mock(ModuleRegister.class);
+
+        Mockito.doReturn(moduleRegister).when(moduleMetadata).getModuleRegister();
+        Mockito.doReturn(moduleMetadata).when(moduleConfiguration).getModuleMetadata();
+        Mockito.doReturn("Reg").when(moduleRegister).getRegisterEventType();
+        Mockito.doReturn(moduleConfiguration).when(baseConfigurableRegisterActivity).getModuleConfiguration();
+
+        CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName("demo5");
+        ReflectionHelpers.setField(CoreLibrary.getInstance(), "databaseVersion", 6);
+        ReflectionHelpers.setField(CoreLibrary.getInstance(), "applicationVersion", 11);
+
+        String jsonString = "{\"encounter_type\": \"Reg\"}";
+        Intent intent = new Intent();
+        intent.putExtra(AllConstants.IntentExtra.JsonForm.JSON, jsonString);
+
+        ArgumentCaptor<RegisterParams> registerParamsArgumentCaptor = ArgumentCaptor.forClass(RegisterParams.class);
+
+        Mockito.doNothing().when(presenter).saveForm(Mockito.eq(jsonString), Mockito.any(RegisterParams.class));
+
+        // Call the method under test
+        baseConfigurableRegisterActivity.onActivityResultExtended(AllConstants.RequestCode.START_JSON_FORM, Activity.RESULT_OK, intent);
+
+        // Verifications and assertions
+        Mockito.verify(presenter).saveForm(Mockito.eq(jsonString), registerParamsArgumentCaptor.capture());
+
+        RegisterParams registerParams = registerParamsArgumentCaptor.getValue();
+        Assert.assertFalse(registerParams.isEditMode());
+        Assert.assertEquals("demo5", registerParams.getFormTag().providerId);
+        Assert.assertEquals(11, (int) registerParams.getFormTag().appVersion);
+        Assert.assertEquals(6, (int) registerParams.getFormTag().databaseVersion);
+    }
+
+    @Test
+    public void switchToBaseFragment() {
+        setupModuleConfiguration();
+        createStartAndResumeActivity();
+
+        // Call the method under test
+        baseConfigurableRegisterActivity.switchToBaseFragment();
+
+        ArgumentCaptor<Intent> argumentCaptor = ArgumentCaptor.forClass(Intent.class);
+
+        // Perform assertions and verifications
+        Mockito.verify(baseConfigurableRegisterActivity).startActivity(argumentCaptor.capture());
+        Mockito.verify(baseConfigurableRegisterActivity).finish();
+
+        Assert.assertEquals(BaseConfigurableRegisterActivity.class.getName(), argumentCaptor.getValue().getComponent().getClassName());
+    }
+
     private void setupModuleConfiguration() {
         String moduleName = "PNC";
         ModuleConfiguration moduleConfiguration = Mockito.mock(ModuleConfiguration.class);

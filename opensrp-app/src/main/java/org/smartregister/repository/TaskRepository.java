@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Consumer;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
@@ -242,6 +243,34 @@ public class TaskRepository extends BaseRepository {
         return tasks;
     }
 
+    /**
+     * Accepts a stream of tasks
+     *
+     * @param planId
+     * @param groupId
+     * @param consumer
+     */
+    public void readTasks(String planId, String groupId, String code, Consumer<Task> consumer) {
+        Cursor cursor = null;
+        try {
+            String[] params = new String[]{planId, groupId, code};
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =? AND %s NOT IN (%s)",
+                    TASK_TABLE, PLAN_ID, GROUP_ID, CODE, STATUS,
+                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                    ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
+            while (cursor.moveToNext()) {
+                Task task = readCursor(cursor);
+                consumer.accept(task);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+    }
+
+
 
     public Task getTaskByIdentifier(String identifier) {
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TASK_TABLE +
@@ -395,7 +424,7 @@ public class TaskRepository extends BaseRepository {
     }
 
     public List<Task> getAllUnsynchedCreatedTasks() {
-        return new ArrayList<>(getTasks(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL OR %s = 0", TASK_TABLE, SYNC_STATUS, SERVER_VERSION,SERVER_VERSION), new String[]{BaseRepository.TYPE_Created}));
+        return new ArrayList<>(getTasks(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL OR %s = 0", TASK_TABLE, SYNC_STATUS, SERVER_VERSION, SERVER_VERSION), new String[]{BaseRepository.TYPE_Created}));
     }
 
     /**
@@ -741,7 +770,7 @@ public class TaskRepository extends BaseRepository {
                 "AND t1.code = t2.code " +
                 "AND t1.for = ? " +
                 "ORDER BY t1.for";
-        return getTasks(query, new String[]{entityId,entityId});
+        return getTasks(query, new String[]{entityId, entityId});
     }
 
     public void deleteTasksByIds(List<String> taskIds) {
