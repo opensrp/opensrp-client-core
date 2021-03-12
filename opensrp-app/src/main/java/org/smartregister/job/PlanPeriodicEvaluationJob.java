@@ -4,18 +4,75 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
-import org.smartregister.AllConstants;
-import org.smartregister.sync.intent.CampaignIntentService;
+import com.evernote.android.job.DailyJob;
+import com.evernote.android.job.JobRequest;
+import com.evernote.android.job.util.support.PersistableBundleCompat;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-public class PlanPeriodicEvaluationJob extends BaseJob {
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
+import org.smartregister.domain.Action;
+import org.smartregister.sync.intent.PlanPeriodicPlanEvaluationService;
+import org.smartregister.utils.DateTypeConverter;
+import org.smartregister.utils.TaskDateTimeTypeConverter;
+import org.smartregister.utils.TimingRepeatTimeTypeConverter;
+
+import java.sql.Time;
+import java.util.concurrent.TimeUnit;
+
+import timber.log.Timber;
+
+public class PlanPeriodicEvaluationJob extends DailyJob {
 
     public static final String TAG = "PlanPeriodicEvaluationJob";
+    public static final String SCHEDULE_ADHOC_TAG = "PlanPeriodicEvaluationAdhocJob";
+
+    public static Gson gson = new GsonBuilder()
+            .registerTypeAdapter(DateTime.class, new TaskDateTimeTypeConverter())
+            .registerTypeAdapter(LocalDate.class, new DateTypeConverter())
+            .registerTypeAdapter(Time.class, new TimingRepeatTimeTypeConverter())
+            .create();
+
+    public static void scheduleEverydayAt(@NonNull String jobTag, int hour, int minute, @NonNull Action action) {
+        JobRequest.Builder jobRequest = new JobRequest.Builder(jobTag);
+        PersistableBundleCompat persistableBundleCompat = new PersistableBundleCompat();
+
+        persistableBundleCompat.putString(AllConstants.INTENT_KEY.ACTION, getActionJson(action));
+        jobRequest.addExtras(persistableBundleCompat);
+
+        long startTime = TimeUnit.HOURS.toMillis(hour) + TimeUnit.MINUTES.toMillis(minute);
+        schedule(jobRequest, startTime, startTime + TimeUnit.MINUTES.toMillis(45));
+    }
+
+    /**
+     * For jobs that need to be started immediately
+     */
+    public static void scheduleJobImmediately() {
+        int jobId = startNowOnce(new JobRequest.Builder(SCHEDULE_ADHOC_TAG));
+        Timber.d("Scheduling job with name " + SCHEDULE_ADHOC_TAG + " immediately with JOB ID " + jobId);
+    }
 
     @NonNull
     @Override
-    protected Result onRunJob(@NonNull Params params) {
-        Intent intent = new Intent(getApplicationContext(), CampaignIntentService.class);
-        getApplicationContext().startService(intent);
-        return params != null && params.getExtras().getBoolean(AllConstants.INTENT_KEY.TO_RESCHEDULE, false) ? Result.RESCHEDULE : Result.SUCCESS;
+    protected DailyJobResult onRunDailyJob(@NonNull Params params) {
+        Intent intent = new Intent(getContext(), PlanPeriodicPlanEvaluationService.class);
+        String actionString = params.getExtras().getString(AllConstants.INTENT_KEY.ACTION, null);
+
+        if (actionString != null) {
+            return DailyJobResult.CANCEL;
+        }
+
+        intent.putExtra(AllConstants.INTENT_KEY.ACTION, actionString);
+        getContext().startService(intent);
+
+        return DailyJobResult.SUCCESS;
     }
+
+    public static String getActionJson(@NonNull Action action) {
+        return gson.toJson(action);
+    }
+
 }
