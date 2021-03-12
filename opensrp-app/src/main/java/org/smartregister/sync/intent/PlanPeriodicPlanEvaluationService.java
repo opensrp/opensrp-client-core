@@ -67,7 +67,7 @@ public class PlanPeriodicPlanEvaluationService extends IntentService {
                     Jurisdiction jurisdiction = new Jurisdiction(allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM()));
 
                     // TODO: Change this to evaluate a single action
-                    planEvaluator.evaluatePlan(planDefinition, TriggerType.PERIODIC, jurisdiction, null);
+                    planEvaluator.evaluatePlanAction(planDefinition, TriggerType.PERIODIC, jurisdiction, null, action);
                 }
 
                 return;
