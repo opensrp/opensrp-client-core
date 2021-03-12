@@ -32,8 +32,10 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.TestP2pApplication;
 import org.smartregister.broadcastreceivers.OpenSRPClientBroadCastReceiver;
+import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
 import org.smartregister.customshadows.ShadowLocalBroadcastManager;
+import org.smartregister.domain.ColumnDetails;
 import org.smartregister.event.Event;
 import org.smartregister.event.Listener;
 import org.smartregister.service.AlertService;
@@ -67,7 +69,11 @@ public class SecuredActivityTest extends BaseRobolectricUnitTest {
     @Before
     public void setUp() {
         Context.bindtypes = new ArrayList<CommonRepositoryInformationHolder>();
-        CommonRepositoryInformationHolder bt = new CommonRepositoryInformationHolder("BINDTYPENAME", new String[]{"A", "B"});
+        ColumnDetails[] tableColumns = new ColumnDetails[]{
+                ColumnDetails.builder().name(CommonRepository.BASE_ENTITY_ID_COLUMN).build(),
+                ColumnDetails.builder().name(CommonRepository.Relational_Underscore_ID).build(),
+        };
+        CommonRepositoryInformationHolder bt = new CommonRepositoryInformationHolder("BINDTYPENAME", tableColumns);
         Context.bindtypes.add(bt);
 
         // Make sure the user is logged in

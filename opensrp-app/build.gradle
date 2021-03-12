@@ -232,7 +232,7 @@ dependencies {
         transitive = true
     }
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:1.4.0-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-plan-evaluator:1.5.1-alpha.2-SNAPSHOT'
 
     implementation 'xerces:xercesImpl:2.12.0'
 

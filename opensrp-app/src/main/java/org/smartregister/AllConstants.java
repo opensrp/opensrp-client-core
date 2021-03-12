@@ -435,6 +435,10 @@ public class AllConstants {
         public static final String DIALOG_TITLE = "dialog_title";
         public static final String DIALOG_MESSAGE = "dialog_message";
         public static final String COMMON_PERSON_CLIENT = "common_person_client";
+        public static final String PLAN_ID = "plan-id";
+        public static final String ACTION_CODE = "action-code";
+        public static final String ACTION_IDENTIFIER = "action-identifier";
+        public static final String ACTION = "action";
     }
 
     public static final class REGISTER_FRAGMENT {
@@ -624,4 +628,15 @@ public class AllConstants {
         int TRUE = 1;
         int FALSE = 0;
     }
+
+
+    public interface ClientProcessing {
+        String VARCHAR = "VARCHAR";
+        String NAME = "name";
+        String DATA_TYPES = "data_type";
+        String COLUMNS = "columns";
+
+    }
+
+
 }
