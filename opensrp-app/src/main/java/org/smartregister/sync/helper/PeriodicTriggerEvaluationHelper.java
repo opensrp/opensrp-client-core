@@ -22,6 +22,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
+import timber.log.Timber;
+
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 11-03-2021.
  */
@@ -44,22 +46,12 @@ public class PeriodicTriggerEvaluationHelper {
                                     && isValidDailyTriggerSchedule(trigger)) {
                                 // Check if the jobs for the action have been scheduled
                                 // Delete & reschedule the job using the action.code as the job ID
-                                Set<JobRequest> jobRequests = JobManager.create(DrishtiApplication.getInstance())
-                                        .getAllJobRequestsForTag(PlanPeriodicEvaluationJob.TAG);
-
-                                if (jobRequests != null && jobRequests.size() > 0) {
-                                    for (JobRequest jobRequest: jobRequests) {
-                                        if (jobRequest.getExtras() != null) {
-                                            String actionCode = jobRequest.getExtras().getString(AllConstants.INTENT_KEY.ACTION_CODE, null);
-                                            if (actionCode != null && action.getCode().equals(actionCode)) {
-                                                JobManager.create(DrishtiApplication.getInstance()).cancel(jobRequest.getJobId());
-                                            }
-                                        }
-                                    }
-                                }
+                                int cancelledJobs = cancelJobsForAction(action.getIdentifier(), action.getCode());
+                                Timber.i("Cancelled %d jobs for action-code [%s] and action-identifier [%s]"
+                                        , cancelledJobs, action.getCode(), action.getIdentifier());
 
                                 // Reschedule the job again using the timing
-                                scheduleActionJob(action, action.getCode(), trigger.getTimingTiming(), plan.getIdentifier());
+                                scheduleActionJob(action, trigger.getTimingTiming(), plan.getIdentifier());
 
                                 break;
                             }
@@ -71,7 +63,7 @@ public class PeriodicTriggerEvaluationHelper {
         }
     }
 
-    protected boolean scheduleActionJob(@NonNull Action action, @NonNull String actionCode, @NonNull Timing timing, @NonNull String planId) {
+    protected boolean scheduleActionJob(@NonNull Action action, @NonNull Timing timing, @NonNull String planId) {
         List<DateTime> eventLists = timing.getEvent();
         TimingRepeat timingRepeat = timing.getRepeat();
 
@@ -111,6 +103,31 @@ public class PeriodicTriggerEvaluationHelper {
         }
 
         return false;
+    }
+
+    public int cancelJobsForAction(String actionIdentifier, String actionCode) {
+        int jobsCancelled = 0;
+
+        JobManager jobManager = JobManager.create(DrishtiApplication.getInstance());
+        Set<JobRequest> jobRequests = jobManager
+                .getAllJobRequestsForTag(PlanPeriodicEvaluationJob.TAG);
+
+        if (jobRequests != null && jobRequests.size() > 0) {
+            for (JobRequest jobRequest: jobRequests) {
+                if (jobRequest.getExtras() != null) {
+                    String jobRqActionCode = jobRequest.getExtras().getString(AllConstants.INTENT_KEY.ACTION_CODE, null);
+                    String jobRqActionIdentifier = jobRequest.getExtras().getString(AllConstants.INTENT_KEY.ACTION_CODE, null);
+                    if (actionCode != null && actionCode.equals(jobRqActionCode)
+                            && actionIdentifier != null
+                            && actionIdentifier.equals(jobRqActionIdentifier)) {
+                        jobManager.cancel(jobRequest.getJobId());
+                        jobsCancelled++;
+                    }
+                }
+            }
+        }
+
+        return jobsCancelled;
     }
 
     protected DateTime now() {

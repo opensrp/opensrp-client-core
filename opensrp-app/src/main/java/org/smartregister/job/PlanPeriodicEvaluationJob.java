@@ -1,6 +1,7 @@
 package org.smartregister.job;
 
 import android.content.Intent;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -40,6 +41,8 @@ public class PlanPeriodicEvaluationJob extends DailyJob {
         PersistableBundleCompat persistableBundleCompat = new PersistableBundleCompat();
 
         persistableBundleCompat.putString(AllConstants.INTENT_KEY.ACTION, getActionJson(action));
+        persistableBundleCompat.putString(AllConstants.INTENT_KEY.ACTION_CODE, action.getCode());
+        persistableBundleCompat.putString(AllConstants.INTENT_KEY.ACTION_IDENTIFIER, action.getIdentifier());
         persistableBundleCompat.putString(AllConstants.INTENT_KEY.PLAN_ID, planId);
         jobRequest.addExtras(persistableBundleCompat);
 
@@ -61,12 +64,16 @@ public class PlanPeriodicEvaluationJob extends DailyJob {
         Intent intent = new Intent(getContext(), PlanPeriodicPlanEvaluationService.class);
         String actionString = params.getExtras().getString(AllConstants.INTENT_KEY.ACTION, null);
         String planId = params.getExtras().getString(AllConstants.INTENT_KEY.PLAN_ID, null);
+        String actionIdentifier = params.getExtras().getString(AllConstants.INTENT_KEY.ACTION_IDENTIFIER, null);
+        String actionCode = params.getExtras().getString(AllConstants.INTENT_KEY.ACTION_CODE, null);
 
         if (TextUtils.isEmpty(actionString) || TextUtils.isEmpty(planId)) {
             return DailyJobResult.CANCEL;
         }
 
         intent.putExtra(AllConstants.INTENT_KEY.ACTION, actionString);
+        intent.putExtra(AllConstants.INTENT_KEY.ACTION_IDENTIFIER, actionIdentifier);
+        intent.putExtra(AllConstants.INTENT_KEY.ACTION_CODE, actionCode);
         intent.putExtra(AllConstants.INTENT_KEY.PLAN_ID, planId);
         getContext().startService(intent);
 

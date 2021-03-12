@@ -2,16 +2,22 @@ package org.smartregister.sync.intent;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.Context;
+import android.text.TextUtils;
 
-import com.google.common.collect.Sets;
-
-import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.DateTime;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.domain.Action;
+import org.smartregister.domain.Jurisdiction;
 import org.smartregister.domain.PlanDefinition;
+import org.smartregister.job.PlanPeriodicEvaluationJob;
+import org.smartregister.pathevaluator.TriggerType;
+import org.smartregister.pathevaluator.plan.PlanEvaluator;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.PlanDefinitionRepository;
+import org.smartregister.sync.helper.PeriodicTriggerEvaluationHelper;
 
-import java.util.Set;
+import timber.log.Timber;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -23,43 +29,61 @@ import java.util.Set;
  */
 public class PlanPeriodicPlanEvaluationService extends IntentService {
 
+    private DateTime timeNow;
+    private PeriodicTriggerEvaluationHelper periodicTriggerEvaluationHelper;
 
     public PlanPeriodicPlanEvaluationService() {
         super("PlanPeriodicPlanEvaluationService");
+        periodicTriggerEvaluationHelper =  new PeriodicTriggerEvaluationHelper();
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (intent != null && intent.getExtras() != null) {
+            String planId = intent.getStringExtra(AllConstants.INTENT_KEY.PLAN_ID);
+            String actionIdentifier = intent.getStringExtra(AllConstants.INTENT_KEY.ACTION_IDENTIFIER);
+            String actionCode = intent.getStringExtra(AllConstants.INTENT_KEY.ACTION_CODE);
+            String actionJsonString = intent.getStringExtra(AllConstants.INTENT_KEY.ACTION);
 
-        if (intent != null) {
-            String[] planIds = intent.getStringArrayExtra(AllConstants.INTENT_KEY.PLAN_IDS);
-            if (planIds != null && planIds.length > 0) {
-                Set<String> planIdsSet = Sets.newHashSet(planIds);
-                Set<PlanDefinition> planDefinitions = CoreLibrary.getInstance().context().getPlanDefinitionRepository().findPlanDefinitionByIds(planIdsSet);
+            if (TextUtils.isEmpty(planId) || TextUtils.isEmpty(actionJsonString)
+                    || TextUtils.isEmpty(actionIdentifier) || TextUtils.isEmpty(actionCode)) {
+                Timber.e(new Exception(), "Periodic action was not evaluated since planId, action, action-identifier OR action-code was empty");
+                return;
+            }
 
-                for (Pl)
+            Action action = PlanPeriodicEvaluationJob.gson.fromJson(actionJsonString, Action.class);
+            if (action != null) {
+                PlanDefinitionRepository planDefinitionRepository = CoreLibrary.getInstance().context()
+                        .getPlanDefinitionRepository();
+                PlanDefinition planDefinition = planDefinitionRepository.findPlanDefinitionById(planId);
+
+
+                if ((planDefinition.getEffectivePeriod() != null && planDefinition.getEffectivePeriod().getEnd().isBefore(now()))
+                        || (action.getTimingPeriod() != null && action.getTimingPeriod().getEnd().isBefore(now()))) {
+                    periodicTriggerEvaluationHelper.cancelJobsForAction(actionIdentifier, actionCode);
+                } else {
+                    AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+                    PlanEvaluator planEvaluator = new PlanEvaluator(allSharedPreferences.fetchRegisteredANM());
+                    Jurisdiction jurisdiction = new Jurisdiction(allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM()));
+
+                    // TODO: Change this to evaluate a single action
+                    planEvaluator.evaluatePlan(planDefinition, TriggerType.PERIODIC, jurisdiction, null);
+                }
+
+                return;
             }
         }
 
-        CoreLibrary.getInstance().context().getPlanDefinitionRepository().findPlanDefinitionByIds()
+        Timber.e(new Exception(), "An error occurred and the service did not evaluate the plan/action");
 
     }
 
-    /**
-     * Handle action Foo in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionFoo(String param1, String param2) {
-        // TODO: Handle action Foo
-        throw new UnsupportedOperationException("Not yet implemented");
+
+    protected DateTime now() {
+        return timeNow != null ? timeNow : DateTime.now();
     }
 
-    /**
-     * Handle action Baz in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionBaz(String param1, String param2) {
-        // TODO: Handle action Baz
-        throw new UnsupportedOperationException("Not yet implemented");
+    protected void setNow(DateTime timeNow) {
+        this.timeNow = timeNow;
     }
 }
