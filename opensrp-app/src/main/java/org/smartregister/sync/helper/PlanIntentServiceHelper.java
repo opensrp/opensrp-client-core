@@ -79,6 +79,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
         this.planDefinitionRepository = planRepository;
         this.planSyncTrace  = initTrace(PLAN_SYNC);
         this.allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+        periodicTriggerEvaluationHelper = new PeriodicTriggerEvaluationHelper();
     }
 
     public void syncPlans() {
