@@ -25,7 +25,9 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
+import org.smartregister.utils.TimingRepeatTimeTypeConverter;
 
+import java.sql.Time;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,8 +52,10 @@ public class PlanIntentServiceHelper extends BaseHelper {
 
     private final PlanDefinitionRepository planDefinitionRepository;
     private final AllSharedPreferences allSharedPreferences;
-    protected static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd"))
+    protected static Gson gson = new GsonBuilder()
+            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd"))
             .registerTypeAdapter(LocalDate.class, new DateTypeConverter())
+            .registerTypeAdapter(Time.class, new TimingRepeatTimeTypeConverter())
             .disableHtmlEscaping()
             .create();
 
