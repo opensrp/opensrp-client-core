@@ -503,6 +503,6 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     @NonNull
     @Override
     public String getDueOnlyText() {
-        return getString(R.string.due_only);
+        return getContext().getString(R.string.due_only);
     }
 }
