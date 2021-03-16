@@ -714,6 +714,12 @@ public class TaskRepository extends BaseRepository {
         return getTasks(query, new String[]{jurisdictionId, planIdentifier});
     }
 
+    @NonNull
+    public Set<Task> getTasksByJurisdictionAndPlan(@NonNull String jurisdictionId) {
+        String query = "SELECT * FROM " + TASK_TABLE + " WHERE " + GROUP_ID + " = ?";
+        return getTasks(query, new String[]{jurisdictionId});
+    }
+
     public List<String> getEntityIdsWithDuplicateTasks() {
         List<String> entityIds = new ArrayList<>();
         android.database.Cursor cursor = null;
