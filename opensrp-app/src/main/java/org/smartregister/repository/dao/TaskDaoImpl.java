@@ -96,4 +96,12 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
                 .map(TaskConverter::convertTasktoFihrResource)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Task> findTasksByJurisdiction(String jurisdiction) {
+        return getTasksByJurisdictionAndPlan(jurisdiction)
+                .stream()
+                .map(TaskConverter::convertTasktoFihrResource)
+                .collect(Collectors.toList());
+    }
 }
