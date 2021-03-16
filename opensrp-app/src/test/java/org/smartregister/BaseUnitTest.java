@@ -3,14 +3,22 @@ package org.smartregister;
 import android.os.Build;
 import android.view.View;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.Assert;
+import org.junit.Test;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.customshadows.FontTextViewShadow;
+import org.smartregister.util.FormUtils;
 import org.smartregister.view.UnitTest;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.UUID;
 
 /**
  * Created by onaio on 29/08/2017.
@@ -74,5 +82,65 @@ public abstract class BaseUnitTest extends UnitTest {
         }
         System.out.println("Resetting Window Manager");
 
+    }
+
+    @Test
+    public void getMultiStepFormFields() throws JSONException {
+        JSONObject form = new JSONObject();
+        form.put(AllConstants.COUNT, String.valueOf(3));
+        JSONObject step1 = new JSONObject();
+        step1.put(AllConstants.JSON.FIELDS, new JSONArray());
+
+        form.put("step1", step1);
+
+
+        JSONObject step2 = new JSONObject();
+        step2.put(AllConstants.JSON.FIELDS, new JSONArray());
+        form.put("step2", step2);
+
+
+        JSONObject step3 = new JSONObject();
+        step3.put(AllConstants.JSON.FIELDS, new JSONArray());
+        form.put("step3", step3);
+
+        HashSet<String> fieldIds = new HashSet<>();
+
+        for (int i = 0; i < 4; i++) {
+            JSONObject field = new JSONObject();
+            String key = UUID.randomUUID().toString();
+            fieldIds.add(key);
+            field.put("key", key);
+
+            form.getJSONObject("step1").getJSONArray(AllConstants.JSON.FIELDS).put(field);
+        }
+
+
+        for (int i = 0; i < 6; i++) {
+            JSONObject field = new JSONObject();
+            String key = UUID.randomUUID().toString();
+            fieldIds.add(key);
+            field.put("key", key);
+
+            form.getJSONObject("step2").getJSONArray(AllConstants.JSON.FIELDS).put(field);
+        }
+
+
+        for (int i = 0; i < 6; i++) {
+            JSONObject field = new JSONObject();
+            String key = UUID.randomUUID().toString();
+            fieldIds.add(key);
+            field.put("key", key);
+
+            form.getJSONObject("step3").getJSONArray(AllConstants.JSON.FIELDS).put(field);
+        }
+
+        // call the method under test
+        JSONArray actualFields = FormUtils.getMultiStepFormFields(form);
+
+        // Verifications and assertions
+        for (int i = 0; i < actualFields.length(); i++) {
+            JSONObject field = actualFields.getJSONObject(i);
+            Assert.assertTrue(fieldIds.contains(field.getString(AllConstants.JSON.KEY)));
+        }
     }
 }
