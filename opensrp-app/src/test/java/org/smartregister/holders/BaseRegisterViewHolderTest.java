@@ -7,13 +7,9 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.R;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 16-03-2021.
