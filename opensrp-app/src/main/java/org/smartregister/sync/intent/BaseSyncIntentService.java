@@ -6,8 +6,6 @@ import android.content.Intent;
 import org.smartregister.CoreLibrary;
 import org.smartregister.service.HTTPAgent;
 
-import timber.log.Timber;
-
 /**
  * Created by Vincent Karuri on 26/08/2019
  */
