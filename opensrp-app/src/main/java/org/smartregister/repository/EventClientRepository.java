@@ -1429,7 +1429,7 @@ public class EventClientRepository extends BaseRepository {
                 + eventTable.name()
                 + " WHERE "
                 + event_column.eventId.name()
-                + " IN (" + StringUtils.repeat(",", eventIds.size()) + ")", eventIds.toArray(new String[0]));
+                + " IN (" + StringUtils.repeat("?",",", eventIds.size()) + ")", eventIds.toArray(new String[0]));
     }
 
     public JSONObject getEventsByFormSubmissionId(String formSubmissionId) {

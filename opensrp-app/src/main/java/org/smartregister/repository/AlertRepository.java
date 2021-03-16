@@ -66,7 +66,7 @@ public class AlertRepository extends DrishtiRepository {
     }
 
     public List<Alert> allAlerts() {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = null;
         try {
             cursor = database
@@ -80,7 +80,7 @@ public class AlertRepository extends DrishtiRepository {
     }
 
     public List<Alert> allActiveAlertsForCase(String caseId) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = null;
         try {
             cursor = database.query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS,
@@ -95,7 +95,7 @@ public class AlertRepository extends DrishtiRepository {
     }
 
     public void createAlert(Alert alert) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         String[] caseAndScheduleNameColumnValues = {alert.caseId(), alert.scheduleName()};
 
         String caseAndScheduleNameColumnSelections =
@@ -124,7 +124,7 @@ public class AlertRepository extends DrishtiRepository {
     }
 
     public void markAlertAsClosed(String caseId, String visitCode, String completionDate) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         String[] caseAndVisitCodeColumnValues = {caseId, visitCode};
 
         ContentValues valuesToBeUpdated = new ContentValues();
@@ -135,19 +135,19 @@ public class AlertRepository extends DrishtiRepository {
     }
 
     public void deleteVaccineAlertForEntity(String caseId, String visitCode) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         database.delete(ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN + " = ? AND " + ALERTS_VISIT_CODE_COLUMN + " = ? "
                 , new String[]{caseId, visitCode});
     }
 
     public void deleteAllAlertsForEntity(String caseId) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         database.delete(ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN + "= ?  COLLATE NOCASE ",
                 new String[]{caseId});
     }
 
     public void deleteOfflineAlertsForEntity(String caseId) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         database.delete(ALERTS_TABLE_NAME,
                 ALERTS_CASEID_COLUMN + "= ?  COLLATE NOCASE AND " + ALERTS_OFFLINE_COLUMN + " = 1",
                 new String[]{caseId});
@@ -157,12 +157,12 @@ public class AlertRepository extends DrishtiRepository {
         String whereClause = format(" %s = ? COLLATE NOCASE AND %s = 1 AND %s IN (%s)",
                 ALERTS_CASEID_COLUMN, ALERTS_OFFLINE_COLUMN, ALERTS_VISIT_CODE_COLUMN,
                 insertPlaceholdersForInClause(names.length));
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         database.delete(ALERTS_TABLE_NAME, whereClause, addAll(new String[]{caseId}, names));
     }
 
     public void deleteAllAlerts() {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         database.delete(ALERTS_TABLE_NAME, null, null);
     }
 
@@ -211,7 +211,7 @@ public class AlertRepository extends DrishtiRepository {
     }
 
     public List<Alert> findByEntityId(String entityId) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = null;
         try {
             cursor = database.rawQuery(
@@ -227,7 +227,7 @@ public class AlertRepository extends DrishtiRepository {
     }
 
     public List<Alert> findByEntityIdAndAlertNames(String entityId, String... names) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = null;
         try {
             cursor = database.rawQuery(
@@ -244,7 +244,7 @@ public class AlertRepository extends DrishtiRepository {
     }
 
     public List<Alert> findOfflineByEntityIdAndName(String entityId, String... names) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = null;
         try {
             cursor = database.rawQuery(
@@ -262,7 +262,7 @@ public class AlertRepository extends DrishtiRepository {
     }
 
     public Alert findByEntityIdAndScheduleName(String entityId, String scheduleName) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         String[] caseAndScheduleNameColumnValues = {entityId, scheduleName};
 
         String caseAndScheduleNameColumnSelections =
@@ -292,7 +292,7 @@ public class AlertRepository extends DrishtiRepository {
     }
 
     public void changeAlertStatusToInProcess(String entityId, String alertName) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         String[] caseAndVisitCodeColumnValues = {entityId, alertName};
 
         ContentValues valuesToBeUpdated = new ContentValues();
@@ -302,7 +302,7 @@ public class AlertRepository extends DrishtiRepository {
     }
 
     public void changeAlertStatusToComplete(String entityId, String alertName) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         String[] caseAndVisitCodeColumnValues = {entityId, alertName};
 
         ContentValues valuesToBeUpdated = new ContentValues();
