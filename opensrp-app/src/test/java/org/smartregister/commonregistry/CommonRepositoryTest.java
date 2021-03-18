@@ -597,7 +597,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository.updateMasterRepository(repository);
 
         ArgumentCaptor<String[]> caseIdCaptor = ArgumentCaptor.forClass(String[].class);
-        Mockito.doReturn(2).when(sqliteDatabase).delete(Mockito.eq("ec_client_search"), Mockito.eq("object_id = ?"), caseIdCaptor.capture());
+        Mockito.doReturn(2).when(sqliteDatabase).delete(Mockito.eq("ec_client_search"), Mockito.eq("object_id match ?"), caseIdCaptor.capture());
 
         String caseId = "my-case-id";
         Assert.assertTrue(commonRepository.deleteSearchRecord(caseId));
@@ -616,7 +616,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 throw new Exception("An error occurred");
             }
-        }).when(sqliteDatabase).delete(Mockito.eq("ec_client_search"), Mockito.eq("object_id = ?"), caseIdCaptor.capture());
+        }).when(sqliteDatabase).delete(Mockito.eq("ec_client_search"), Mockito.eq("object_id match ?"), caseIdCaptor.capture());
 
         String caseId = "my-case-id";
         Assert.assertFalse(commonRepository.deleteSearchRecord(caseId));
