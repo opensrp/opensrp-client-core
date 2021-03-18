@@ -577,11 +577,11 @@ public class CommonRepositoryTest extends BaseUnitTest {
         Mockito.when(commonFtsObject.getMainConditions(Mockito.anyString())).thenReturn(mainConditions);
         Mockito.when(commonFtsObject.getSortFields(Mockito.anyString())).thenReturn(shortFields);
 
-        String query = "SELECT object_id, field FROM common_search WHERE  object_id = ?";
+        String query = "SELECT object_id, field FROM common_search WHERE  object_id match ?";
         Mockito.when(sqliteDatabase.rawQuery(query, new String[]{"caseID"})).thenReturn(cursor2);
         Assert.assertEquals(commonRepository.populateSearchValues("caseID", "field", "value", new String[]{"details"}), false);
         Mockito.when(sqliteDatabase.update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class))).thenReturn(1);
-        query = "SELECT object_id, phrase FROM common_search WHERE  object_id = ?";
+        query = "SELECT object_id, phrase FROM common_search WHERE  object_id match ?";
         Mockito.when(sqliteDatabase.rawQuery(query, new String[]{"caseID"})).thenReturn(cursor2);
         Assert.assertEquals(commonRepository.populateSearchValues("caseID", CommonFtsObject.phraseColumn, "hello_world", new String[]{"hello"}), true);
     }
@@ -663,12 +663,12 @@ public class CommonRepositoryTest extends BaseUnitTest {
         ArrayList<HashMap<String, String>> mapList = new ArrayList<>();
         mapList.add(new HashMap<>());
 
-        Mockito.doReturn(mapList).when(commonRepository).rawQuery(Mockito.eq("SELECT object_id FROM " + tablename + "_search WHERE object_id = ?"), Mockito.any(String[].class));
+        Mockito.doReturn(mapList).when(commonRepository).rawQuery(Mockito.eq("SELECT object_id FROM " + tablename + "_search WHERE object_id match ?"), Mockito.any(String[].class));
 
         ArgumentCaptor<String[]> caseIdArgumentCaptor = ArgumentCaptor.forClass(String[].class);
 
         Assert.assertTrue(commonRepository.searchBatchInserts(searchMap));
-        Mockito.verify(sqliteDatabase).update(Mockito.eq(tablename + "_search"), Mockito.eq(contentValues), Mockito.eq("object_id = ?"), caseIdArgumentCaptor.capture());
+        Mockito.verify(sqliteDatabase).update(Mockito.eq(tablename + "_search"), Mockito.eq(contentValues), Mockito.eq("object_id match ?"), caseIdArgumentCaptor.capture());
         Assert.assertEquals(caseId, caseIdArgumentCaptor.getValue()[0]);
 
         Mockito.verify(sqliteDatabase).endTransaction();

@@ -792,7 +792,7 @@ public class CommonRepository extends DrishtiRepository {
 
         try {
             int rowsAffected = database
-                    .update(ftsSearchTable, searchValues, CommonFtsObject.idColumn + " = ?",
+                    .update(ftsSearchTable, searchValues, CommonFtsObject.idColumn + " match ?",
                             new String[]{caseId});
             return rowsAffected > 0;
         } catch (Exception e) {
@@ -813,7 +813,7 @@ public class CommonRepository extends DrishtiRepository {
                                 + " WHERE " + CommonFtsObject.idColumn + " match ?", new String[]{caseId});
                 if (!mapList.isEmpty()) {
                     int updated = database.update(ftsSearchTable, searchValues,
-                            CommonFtsObject.idColumn + " match " + "?", new String[]{caseId});
+                            CommonFtsObject.idColumn + " match ?", new String[]{caseId});
                     Timber.i("Fts Row Updated: %s", String.valueOf(updated));
 
                 } else {
@@ -840,7 +840,7 @@ public class CommonRepository extends DrishtiRepository {
         try {
 
             int afftectedRows = database
-                    .delete(ftsSearchTable, CommonFtsObject.idColumn + " = " + "?",
+                    .delete(ftsSearchTable, CommonFtsObject.idColumn + " match ?",
                             new String[]{caseId});
 
             database.setTransactionSuccessful();
