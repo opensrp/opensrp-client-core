@@ -25,9 +25,20 @@ import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
+/**
+ * PlanPeriodicEvaluationJob runs the periodically-triggered actions. The tags for these jobs are made up of
+ * the prefix-tag, action-code and action-identifier as {PREFIX_TAG-actionCode-actionIdentifier}. This
+ * assumes that an action can have only one periodic trigger. In cases where a periodic trigger will have
+ * multiple timings then this would need to be extended to support such a scenario since only
+ * a single {@link DailyJob} for a given TAG can exist at any one time.
+ *
+ * Use {@link #generateJobTag(String, String)} to generate the appropriate job tag and {@link #isPlanPeriodEvaluationJob(String)}
+ * to check if a tag belongs to the {@link PlanPeriodicEvaluationJob} in the applications {@link com.evernote.android.job.JobCreator}
+ */
 public class PlanPeriodicEvaluationJob extends DailyJob {
 
-    public static final String TAG = "PlanPeriodicEvaluationJob";
+    public static final String PREFIX_TAG = "PlanPeriodicEvaluationJob";
+    public static final String TAG_FORMAT = "%s-%s-%s";
     public static final String SCHEDULE_ADHOC_TAG = "PlanPeriodicEvaluationAdhocJob";
 
     public static Gson gson = new GsonBuilder()
@@ -82,6 +93,14 @@ public class PlanPeriodicEvaluationJob extends DailyJob {
 
     public static String getActionJson(@NonNull Action action) {
         return gson.toJson(action);
+    }
+
+    public static boolean isPlanPeriodEvaluationJob(String tag) {
+        return (tag.startsWith(PREFIX_TAG) || SCHEDULE_ADHOC_TAG.equals(tag));
+    }
+
+    public static String generateJobTag(String actionIdentifier, String actionCode) {
+        return String.format(PlanPeriodicEvaluationJob.TAG_FORMAT, PlanPeriodicEvaluationJob.PREFIX_TAG, actionCode, actionIdentifier);
     }
 
 }
