@@ -740,11 +740,11 @@ public class CommonRepository extends DrishtiRepository {
         String selectSql =
                 "SELECT " + CommonFtsObject.idColumn + ", " + CommonFtsObject.phraseColumn
                         + " FROM " + ftsSearchTable + " WHERE  " + CommonFtsObject.idColumn
-                        + " = ?";
+                        + " match ?";
         if (!field.equals(CommonFtsObject.phraseColumn)) {
             selectSql =
                     "SELECT " + CommonFtsObject.idColumn + ", " + field + " FROM " + ftsSearchTable
-                            + " WHERE  " + CommonFtsObject.idColumn + " = ?";
+                            + " WHERE  " + CommonFtsObject.idColumn + " match ?";
         }
 
         ArrayList<HashMap<String, String>> mapList = rawQuery(selectSql, new String[]{caseId});
@@ -810,10 +810,10 @@ public class CommonRepository extends DrishtiRepository {
                 ContentValues searchValues = searchMap.get(caseId);
                 ArrayList<HashMap<String, String>> mapList = rawQuery(
                         "SELECT " + CommonFtsObject.idColumn + " FROM " + ftsSearchTable
-                                + " WHERE " + CommonFtsObject.idColumn + " = ?", new String[]{caseId});
+                                + " WHERE " + CommonFtsObject.idColumn + " match ?", new String[]{caseId});
                 if (!mapList.isEmpty()) {
                     int updated = database.update(ftsSearchTable, searchValues,
-                            CommonFtsObject.idColumn + " = " + "" + "?", new String[]{caseId});
+                            CommonFtsObject.idColumn + " match " + "?", new String[]{caseId});
                     Timber.i("Fts Row Updated: %s", String.valueOf(updated));
 
                 } else {
