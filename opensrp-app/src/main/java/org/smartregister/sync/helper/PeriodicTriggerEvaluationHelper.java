@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.evernote.android.job.JobManager;
 import com.evernote.android.job.JobRequest;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.joda.time.DateTime;
 import org.smartregister.AllConstants;
 import org.smartregister.domain.Action;
@@ -79,7 +78,8 @@ public class PeriodicTriggerEvaluationHelper {
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(timeOfDay);
 
-                        PlanPeriodicEvaluationJob.scheduleEverydayAt(PlanPeriodicEvaluationJob.TAG, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), action, planId);
+                        String jobTag = PlanPeriodicEvaluationJob.generateJobTag(action.getIdentifier(), action.getCode());
+                        PlanPeriodicEvaluationJob.scheduleEverydayAt(jobTag, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), action, planId);
                         scheduled = true;
                     }
                 }
@@ -108,24 +108,10 @@ public class PeriodicTriggerEvaluationHelper {
     public int cancelJobsForAction(String actionIdentifier, String actionCode) {
         int jobsCancelled = 0;
 
-        JobManager jobManager = JobManager.create(DrishtiApplication.getInstance());
-        Set<JobRequest> jobRequests = jobManager
-                .getAllJobRequestsForTag(PlanPeriodicEvaluationJob.TAG);
+        String jobTag = PlanPeriodicEvaluationJob.generateJobTag(actionIdentifier, actionCode);
 
-        if (jobRequests != null && jobRequests.size() > 0) {
-            for (JobRequest jobRequest: jobRequests) {
-                if (jobRequest.getExtras() != null) {
-                    String jobRqActionCode = jobRequest.getExtras().getString(AllConstants.INTENT_KEY.ACTION_CODE, null);
-                    String jobRqActionIdentifier = jobRequest.getExtras().getString(AllConstants.INTENT_KEY.ACTION_CODE, null);
-                    if (actionCode != null && actionCode.equals(jobRqActionCode)
-                            && actionIdentifier != null
-                            && actionIdentifier.equals(jobRqActionIdentifier)) {
-                        jobManager.cancel(jobRequest.getJobId());
-                        jobsCancelled++;
-                    }
-                }
-            }
-        }
+        JobManager jobManager = JobManager.create(DrishtiApplication.getInstance());
+        jobsCancelled = jobManager.cancelAllForTag(jobTag);
 
         return jobsCancelled;
     }
