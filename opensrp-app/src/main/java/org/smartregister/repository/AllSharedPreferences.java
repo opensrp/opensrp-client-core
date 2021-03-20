@@ -33,6 +33,7 @@ public class AllSharedPreferences {
     public static final String FORMS_VERSION = "FORMS_VERSION";
     private static final String ENCRYPTED_PASSPHRASE_KEY = "ENCRYPTED_PASSPHRASE_KEY";
     private static final String DB_ENCRYPTION_VERSION = "DB_ENCRYPTION_VERSION";
+    private static final String USER_PRACTITIONER_ROLE = "USER_PRACTITIONER_ROLE";
     private SharedPreferences preferences;
 
     public AllSharedPreferences(SharedPreferences preferences) {
@@ -384,6 +385,15 @@ public class AllSharedPreferences {
 
     public void setDBEncryptionVersion(int encryptionVersion) {
         preferences.edit().putInt(DB_ENCRYPTION_VERSION, encryptionVersion).commit();
+    }
+
+    @Nullable
+    public String getUserPractitionerRole() {
+        return preferences.getString(USER_PRACTITIONER_ROLE, null);
+    }
+
+    public void setUserPractitionerRole(String practitionerRole) {
+        preferences.edit().putString(USER_PRACTITIONER_ROLE, practitionerRole).commit();
     }
 }
 
