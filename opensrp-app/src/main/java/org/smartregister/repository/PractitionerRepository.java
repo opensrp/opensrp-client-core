@@ -16,8 +16,8 @@ import timber.log.Timber;
 
 public class PractitionerRepository extends BaseRepository {
 
-
     protected static final String ID = "_id";
+    protected static final String IDENTIFIER = "identifier";
     protected static final String IS_ACTIVE = "is_active";
     protected static final String NAME = "name";
     protected static final String USER_ID = "user_id";
@@ -26,8 +26,9 @@ public class PractitionerRepository extends BaseRepository {
     private static final String PRACTITIONER_TABLE = "practitioner";
 
     private static final String CREATE_PRACTITIONER_TABLE =
-            "CREATE TABLE " + PRACTITIONER_TABLE + " (" +
+            "CREATE TABLE IF NOT EXISTS " + PRACTITIONER_TABLE + " (" +
                     ID + " VARCHAR NOT NULL PRIMARY KEY," +
+                    IDENTIFIER + " VARCHAR NOT NULL PRIMARY KEY," +
                     IS_ACTIVE + " INTEGER NOT NULL," +
                     NAME + " VARCHAR NOT NULL," +
                     USER_ID + " VARCHAR NOT NULL," +
@@ -40,6 +41,7 @@ public class PractitionerRepository extends BaseRepository {
     public void addOrUpdate(Practitioner practitioner) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ID, practitioner.getIdentifier());
+        contentValues.put(IDENTIFIER, practitioner.getIdentifier());
         contentValues.put(IS_ACTIVE, practitioner.getActive());
         contentValues.put(NAME, practitioner.getName());
         contentValues.put(USER_ID, practitioner.getUserId());
@@ -50,7 +52,7 @@ public class PractitionerRepository extends BaseRepository {
 
     protected Practitioner readCursor(@NonNull Cursor cursor) {
         Practitioner practitioner = new Practitioner();
-        practitioner.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
+        practitioner.setIdentifier(cursor.getString(cursor.getColumnIndex(IDENTIFIER)));
         practitioner.setName(cursor.getString(cursor.getColumnIndex(NAME)));
         practitioner.setActive(cursor.getInt(cursor.getColumnIndex(IS_ACTIVE)) > 0);
         practitioner.setUserId(cursor.getString(cursor.getColumnIndex(USER_ID)));
@@ -74,7 +76,7 @@ public class PractitionerRepository extends BaseRepository {
     public Practitioner getPractitionerByIdentifier(String identifier) {
         Practitioner practitioner = null;
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + PRACTITIONER_TABLE +
-                " WHERE " + ID + " =?", new String[]{identifier})) {
+                " WHERE " + IDENTIFIER + " =?", new String[]{identifier})) {
             while (cursor.moveToNext()) {
                 practitioner = readCursor(cursor);
             }
