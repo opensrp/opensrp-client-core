@@ -18,8 +18,12 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.client.utils.domain.Form;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.configuration.BottomNavigationOptions;
+import org.smartregister.configuration.ConfigurableNavigationOptions;
 import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.configuration.ModuleMetadata;
+import org.smartregister.listener.ConfigurableBottomNavigationListener;
+import org.smartregister.util.ConfigurationInstancesHelper;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseRegisterContract;
@@ -46,12 +50,13 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
 
     protected String moduleName;
     protected ModuleConfiguration moduleConfiguration;
+    private ConfigurableNavigationOptions navigationOptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         moduleName = Utils.extractModuleName(getIntent());
         fetchModuleConfiguration();
-
+        initNavigationOptions();
         super.onCreate(savedInstanceState);
         onStartActivityWithAction();
     }
@@ -59,6 +64,13 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
     private void fetchModuleConfiguration() {
         moduleConfiguration = CoreLibrary.getInstance()
                 .getModuleConfiguration(getModuleName());
+    }
+
+    private void initNavigationOptions() {
+        Class<? extends ConfigurableNavigationOptions> navigationOptionsClass = moduleConfiguration.getNavigationOptions();
+        if (navigationOptionsClass != null) {
+            this.navigationOptions = ConfigurationInstancesHelper.newInstance(navigationOptionsClass);
+        }
     }
 
     public String getModuleName() {
@@ -86,11 +98,20 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
     @Override
     protected void registerBottomNavigation() {
         try {
-            View bottomNavGeneralView = findViewById(org.smartregister.R.id.bottom_navigation);
-            if (bottomNavGeneralView instanceof BottomNavigationView) {
-                BottomNavigationView bottomNavigationView = (BottomNavigationView) bottomNavGeneralView;
-                if (!getModuleConfiguration().isBottomNavigationEnabled()) {
+            if (!getModuleConfiguration().isBottomNavigationEnabled()) {
+                View bottomNavGeneralView = findViewById(org.smartregister.R.id.bottom_navigation);
+                if (bottomNavGeneralView instanceof BottomNavigationView) {
+                    BottomNavigationView bottomNavigationView = (BottomNavigationView) bottomNavGeneralView;
                     bottomNavigationView.setVisibility(View.GONE);
+                }
+            } else {
+                BottomNavigationOptions bottomNavigationOptions = navigationOptions.getBottomNavigationOptions();
+                if (bottomNavigationOptions != null) {
+                    BottomNavigationView bottomNavigationView = findViewById(bottomNavigationOptions.getBottomNavigationLayoutId());
+                    bottomNavigationView.setOnNavigationItemSelectedListener(new ConfigurableBottomNavigationListener(this,
+                            bottomNavigationOptions.getBottomNavigationOptionsModel()));
+                    bottomNavigationView.getMenu().findItem(bottomNavigationOptions.checkedItemId()).setChecked(true);
+                    bottomNavigationView.setVisibility(View.VISIBLE);
                 }
             }
         } catch (NoSuchFieldError e) {
@@ -109,6 +130,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
     protected BaseRegisterFragment getRegisterFragment() {
         BaseConfigurableRegisterFragment baseConfigurableRegisterFragment = new BaseConfigurableRegisterFragment();
         baseConfigurableRegisterFragment.setModuleConfiguration(getModuleConfiguration());
+        baseConfigurableRegisterFragment.setToolbarOptions(navigationOptions.getToolbarOptions());
         return baseConfigurableRegisterFragment;
     }
 
