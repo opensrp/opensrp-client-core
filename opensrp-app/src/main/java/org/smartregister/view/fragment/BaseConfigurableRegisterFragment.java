@@ -61,10 +61,10 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     public void setModuleConfiguration(@NonNull ModuleConfiguration moduleConfiguration) {
         moduleRegisterQueryProvider = ConfigurationInstancesHelper.newInstance(moduleConfiguration.getRegisterQueryProvider());
         this.moduleConfiguration = moduleConfiguration;
-        Class<? extends ToolbarOptions> toolbarOptionsClass = moduleConfiguration.getToolbarOptions();
-        if (toolbarOptionsClass != null) {
-            this.toolbarOptions = ConfigurationInstancesHelper.newInstance(toolbarOptionsClass);
-        }
+    }
+
+    public void setToolbarOptions(ToolbarOptions toolbarOptions) {
+        this.toolbarOptions = toolbarOptions;
     }
 
     public ModuleConfiguration getModuleConfiguration() {
