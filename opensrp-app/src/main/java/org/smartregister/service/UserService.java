@@ -568,6 +568,10 @@ public class UserService {
                 String preferredName = user.getPreferredName();
                 String userName = user.getUsername();
                 allSharedPreferences.updateANMPreferredName(userName, preferredName);
+                if(user.getRoles() !=null && user.getRoles().size() >0){
+                    String defRole = user.getRoles().get(0);
+                    allSharedPreferences.updateANMRole(defRole);
+                }
             }
         } catch (Exception e) {
             Timber.e(e);
