@@ -94,6 +94,31 @@ android {
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
         buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
+        if (project.rootProject.file("local.properties").exists()) {
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file("local.properties").newDataInputStream())
+            if (properties != null) {
+                def envsArray = "["
+                properties.toSorted().findAll {
+                    return it.key.toString().contains("oauth.client")
+                }.groupBy {
+                    return it.key.toString().contains("secret")
+                }[true].each {
+                    def env = it.key.toString().tokenize(".")[2]
+                    print(env)
+                    envsArray += """${getJavaMap([env   : "$env",
+                                                  id    : properties["oauth.client." + env + ".id"],
+                                                  secret: properties["oauth.client." + env + ".secret"],
+                                                  url: properties["oauth.client." + env + ".url"]
+                    ])},"""
+                }
+                envsArray = envsArray.substring(0, envsArray.length() - 1)
+                envsArray += "]"
+                buildConfigField "String", "ENV_ARRAY", "\"${envsArray}\""
+            }
+        } else {
+            buildConfigField "String", "ENV_ARRAY", "[]"
+        }
     }
 
     sourceSets {
@@ -154,6 +179,13 @@ task copyTestResources() {
             into dest
         }
     }
+}
+
+private static String getJavaMap(apiUrlMap) {
+    def hashMap = "{ "
+    apiUrlMap.each { k, v -> hashMap += "\\\"${k}\\\":" + "\\\"${v.toString().replace("\"", '')}\\\"" + "," }
+    hashMap = hashMap.substring(0, hashMap.length() - 1)
+    return hashMap + "}"
 }
 
 afterEvaluate {
