@@ -40,36 +40,33 @@ public class LocationPickerViewTest extends BaseRobolectricUnitTest {
         if (LocationHelper.getInstance() != null) {
             ReflectionHelpers.setField(LocationHelper.getInstance(), "instance", null);
         }
+
         LocationPickerView.OnLocationChangeListener onLocationChangeListener = Mockito.mock(LocationPickerView.OnLocationChangeListener.class);
         CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentLocality(defaultLocation);
-        LocationHelper.init(new ArrayList<String>() {{
-                                add(defaultLocation);
-                            }}, defaultLocation,
-                new ArrayList<String>() {{
-                    add(advancedLocation);
-                }});
+        LocationHelper.init(new ArrayList<String>() {{ add(defaultLocation); }}, defaultLocation,
+                new ArrayList<String>() {{ add(advancedLocation); }});
         ReflectionHelpers.setField(LocationHelper.getInstance(), "defaultLocation", defaultLocation);
 
         locationPickerView.init();
         locationPickerView.setOnLocationChangeListener(onLocationChangeListener);
         locationPickerView.performClick();
 
-        // advanced location
+        // default location
         Dialog locationPickerDialog = ShadowDialog.getLatestDialog();
         Assert.assertNotNull(locationPickerDialog);
-        verifyCurrentLocationDetailsAreUpdated(locationPickerDialog.findViewById(R.id.locations_lv), 0, advancedLocation, AllConstants.DATA_CAPTURE_STRATEGY.ADVANCED);
-        Assert.assertEquals(advancedLocation, locationPickerView.getText());
-        Mockito.verify(onLocationChangeListener).onLocationChange(ArgumentMatchers.eq(advancedLocation));
+        verifyCurrentLocationDetailsAreUpdated(locationPickerDialog.findViewById(R.id.locations_lv), 0, defaultLocation, AllConstants.DATA_CAPTURE_STRATEGY.NORMAL);
+        Assert.assertEquals(defaultLocation, locationPickerView.getText());
+        Mockito.verify(onLocationChangeListener).onLocationChange(ArgumentMatchers.eq(defaultLocation));
         Assert.assertFalse(locationPickerDialog.isShowing());
 
-        // default location
+        // advanced location
         locationPickerView.performClick();
         locationPickerDialog = ShadowDialog.getLatestDialog();
         Assert.assertNotNull(locationPickerDialog);
         Assert.assertNotNull(locationPickerView.getServiceLocationsAdapter());
-        verifyCurrentLocationDetailsAreUpdated(locationPickerDialog.findViewById(R.id.locations_lv), 1, defaultLocation, AllConstants.DATA_CAPTURE_STRATEGY.NORMAL);
-        Assert.assertEquals(defaultLocation, locationPickerView.getText());
-        Mockito.verify(onLocationChangeListener).onLocationChange(ArgumentMatchers.eq(defaultLocation));
+        verifyCurrentLocationDetailsAreUpdated(locationPickerDialog.findViewById(R.id.locations_lv), 1, advancedLocation, AllConstants.DATA_CAPTURE_STRATEGY.ADVANCED);
+        Assert.assertEquals(advancedLocation, locationPickerView.getText());
+        Mockito.verify(onLocationChangeListener).onLocationChange(ArgumentMatchers.eq(advancedLocation));
         Assert.assertFalse(locationPickerDialog.isShowing());
     }
 
