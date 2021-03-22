@@ -14,7 +14,6 @@ import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.location.helper.LocationHelper;
@@ -67,6 +66,7 @@ public class LocationPickerViewTest extends BaseRobolectricUnitTest {
         locationPickerView.performClick();
         locationPickerDialog = ShadowDialog.getLatestDialog();
         Assert.assertNotNull(locationPickerDialog);
+        Assert.assertNotNull(locationPickerView.getServiceLocationsAdapter());
         verifyCurrentLocationDetailsAreUpdated(locationPickerDialog.findViewById(R.id.locations_lv), 1, defaultLocation, AllConstants.DATA_CAPTURE_STRATEGY.NORMAL);
         Assert.assertEquals(defaultLocation, locationPickerView.getText());
         Mockito.verify(onLocationChangeListener).onLocationChange(ArgumentMatchers.eq(defaultLocation));

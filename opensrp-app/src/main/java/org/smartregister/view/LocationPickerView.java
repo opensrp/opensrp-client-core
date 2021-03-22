@@ -108,13 +108,8 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
 
     private List<String> getLocations(String defaultLocation) {
         List<String> locations = LocationHelper.getInstance().locationNamesFromHierarchy(defaultLocation);
-
-        if (locations.contains(defaultLocation)) {
-            locations.remove(defaultLocation);
-        }
-        Collections.sort(locations);
+        locations.remove(defaultLocation);
         locations.add(0, defaultLocation);
-
         return locations;
     }
 
@@ -137,5 +132,9 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
 
     public interface OnLocationChangeListener {
         void onLocationChange(String newLocation);
+    }
+
+    public ServiceLocationsAdapter getServiceLocationsAdapter() {
+        return serviceLocationsAdapter;
     }
 }
