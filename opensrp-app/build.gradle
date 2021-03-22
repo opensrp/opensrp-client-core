@@ -117,7 +117,7 @@ android {
                 buildConfigField "String", "ENV_ARRAY", "\"${envsArray}\""
             }
         } else {
-            buildConfigField "String", "ENV_ARRAY", "[]"
+            buildConfigField "String", "ENV_ARRAY", '"[]"'
         }
     }
 
