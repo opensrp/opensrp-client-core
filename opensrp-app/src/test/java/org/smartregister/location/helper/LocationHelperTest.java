@@ -33,6 +33,7 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 public class LocationHelperTest extends BaseRobolectricUnitTest {
 
@@ -179,8 +180,14 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
 
         String locationIds = spiedLocationHelper.locationIdsFromHierarchy();
 
+        assertNotNull(spiedLocationHelper.getLocationIds());
         Mockito.verify(spiedLocationHelper).locationsFromHierarchy(Mockito.eq(true), Mockito.nullable(String.class));
         assertEquals("718b2864-7d6a-44c8-b5b6-bb375f82654e,2c3a0ebd-f79d-4128-a6d3-5dfbffbd01c8", locationIds);
+
+        List<String> locationNames = spiedLocationHelper.locationNamesFromHierarchy("MOH Jhpiego Facility Name");
+        assertNotNull(spiedLocationHelper.getLocationNames());
+        assertTrue(locationNames.contains("Huruma"));
+        assertTrue(locationNames.contains("Kabila Village"));
     }
 
     @Test
@@ -314,12 +321,11 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
     @Test
     public void testGenerateLocationHierarchyTreeShouldReturnListWithOtherFormLocationOnly() {
         locationHelper = Mockito.spy(locationHelper);
-        String locationData = anmLocation1;
 
         ArrayList<String> allowedLevels = new ArrayList<>();
         allowedLevels.add("Canton");
 
-        LinkedHashMap<String, TreeNode<String, Location>> map = AssetHandler.jsonStringToJava(locationData, LocationTree.class).getLocationsHierarchy();
+        LinkedHashMap<String, TreeNode<String, Location>> map = AssetHandler.jsonStringToJava(anmLocation1, LocationTree.class).getLocationsHierarchy();
         Mockito.doReturn(map).when(locationHelper).map();
 
         List<FormLocation> formLocationsList = locationHelper.generateLocationHierarchyTree(true, allowedLevels);
@@ -399,7 +405,7 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         List<String> hierarchy = locationHelper.getOpenMrsLocationHierarchy("1", false);
 
         assertEquals(1, hierarchy.size());
-        assertEquals(true, hierarchy.contains("Kiamb"));
+        assertTrue(hierarchy.contains("Kiamb"));
     }
 
     @Test
@@ -418,7 +424,7 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
 
         assertNotNull(actualAllowedLevels);
         assertEquals(3, actualAllowedLevels.size());
-        assertEquals(true, actualAllowedLevels.contains("Facility"));
+        assertTrue(actualAllowedLevels.contains("Facility"));
     }
 
     @Test
