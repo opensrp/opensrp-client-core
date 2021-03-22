@@ -11,26 +11,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class EnvironmentManager {
+    private final Map<String, Environment> environments;
 
-    private static EnvironmentManager instance;
-    private Map<String, Environment> environments;
-
-    private EnvironmentManager() {
+    public EnvironmentManager(String json) {
+        environments = loadEnvironments(json).stream().collect(
+                Collectors.toMap(Environment::getUrl, item -> item)
+        );
     }
 
-    public static EnvironmentManager getInstance() {
-        if (instance == null) {
-            instance = new EnvironmentManager();
-            instance.environments = loadEnvironments().stream().collect(
-                    Collectors.toMap(Environment::getUrl, item -> item)
-            );
-        }
-        return instance;
-    }
-
-    private static List<Environment> loadEnvironments() {
+    private List<Environment> loadEnvironments(String jsonString) {
         Gson gson = new Gson();
-        return gson.fromJson(BuildConfig.ENV_ARRAY, new TypeToken<List<Environment>>() {
+        return gson.fromJson(jsonString, new TypeToken<List<Environment>>() {
         }.getType());
     }
 

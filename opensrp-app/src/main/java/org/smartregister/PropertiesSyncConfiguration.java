@@ -1,16 +1,13 @@
 package org.smartregister;
 
 import org.smartregister.domain.Environment;
-import org.smartregister.repository.AllSharedPreferences;
 
 public abstract class PropertiesSyncConfiguration extends SyncConfiguration {
 
     private final EnvironmentManager environmentManager;
-    private final AllSharedPreferences preferences;
 
-    public PropertiesSyncConfiguration(EnvironmentManager environmentManager, AllSharedPreferences preferences) {
+    public PropertiesSyncConfiguration(EnvironmentManager environmentManager) {
         this.environmentManager = environmentManager;
-        this.preferences = preferences;
     }
 
     @Override
@@ -23,9 +20,14 @@ public abstract class PropertiesSyncConfiguration extends SyncConfiguration {
         return getCurrentEnvironment().getSecret();
     }
 
+    @Override
+    public boolean validateOAuthUrl(String url) {
+        return environmentManager.getEnvironments().isEmpty() || environmentManager.getEnvironment(url) != null;
+    }
+
     private Environment getCurrentEnvironment() {
         Environment environment =
-                environmentManager.getEnvironment(preferences.fetchBaseURL(AllConstants.DRISHTI_BASE_URL));
+                environmentManager.getEnvironment(CoreLibrary.getInstance().context().allSharedPreferences().fetchBaseURL(AllConstants.DRISHTI_BASE_URL));
         if (environment != null) {
             return environment;
         } else {
