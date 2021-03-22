@@ -22,6 +22,7 @@ import org.smartregister.configuration.BottomNavigationOptions;
 import org.smartregister.configuration.ConfigurableNavigationOptions;
 import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.configuration.ModuleMetadata;
+import org.smartregister.helper.BottomNavigationHelper;
 import org.smartregister.listener.ConfigurableBottomNavigationListener;
 import org.smartregister.util.ConfigurationInstancesHelper;
 import org.smartregister.util.JsonFormUtils;
@@ -110,8 +111,10 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
                     BottomNavigationView bottomNavigationView = findViewById(bottomNavigationOptions.getBottomNavigationLayoutId());
                     bottomNavigationView.setOnNavigationItemSelectedListener(new ConfigurableBottomNavigationListener(this,
                             bottomNavigationOptions.getBottomNavigationOptionsModel()));
-                    bottomNavigationView.getMenu().findItem(bottomNavigationOptions.checkedItemId()).setChecked(true);
                     bottomNavigationView.setVisibility(View.VISIBLE);
+                    BottomNavigationHelper bottomNavigationHelper = new BottomNavigationHelper();
+                    bottomNavigationHelper.disableShiftMode(bottomNavigationView);
+                    bottomNavigationView.getMenu().findItem(bottomNavigationOptions.checkedItemId()).setChecked(true);
                 }
             }
         } catch (NoSuchFieldError e) {

@@ -16,7 +16,7 @@ import timber.log.Timber;
 
 public class PractitionerRepository extends BaseRepository {
 
-    protected static final String ID = "_id";
+    protected static final String ID = "id";
     protected static final String IDENTIFIER = "identifier";
     protected static final String IS_ACTIVE = "is_active";
     protected static final String NAME = "name";
@@ -28,7 +28,7 @@ public class PractitionerRepository extends BaseRepository {
     private static final String CREATE_PRACTITIONER_TABLE =
             "CREATE TABLE IF NOT EXISTS " + PRACTITIONER_TABLE + " (" +
                     ID + " VARCHAR NOT NULL PRIMARY KEY," +
-                    IDENTIFIER + " VARCHAR NOT NULL PRIMARY KEY," +
+                    IDENTIFIER + " VARCHAR NOT NULL," +
                     IS_ACTIVE + " INTEGER NOT NULL," +
                     NAME + " VARCHAR NOT NULL," +
                     USER_ID + " VARCHAR NOT NULL," +
