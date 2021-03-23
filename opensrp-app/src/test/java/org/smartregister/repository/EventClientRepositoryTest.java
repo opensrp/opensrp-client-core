@@ -22,7 +22,11 @@ import org.mockito.stubbing.Answer;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.clientandeventmodel.DateUtil;
+import org.smartregister.domain.Event;
+import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.db.Column;
+import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.ClientData;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
@@ -37,6 +41,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by onaio on 29/08/2017.
@@ -474,4 +483,81 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
         Assert.assertEquals(3, formSubmissionIds.size());
     }
+
+    @Test
+    public void testGetEventsByTaskIds() throws Exception {
+        String query = "SELECT json FROM event WHERE taskId IN (?)";
+        String[] params = new String[]{"taskId-1"};
+        when(sqliteDatabase.rawQuery(query, params)).thenReturn(getEventCursor());
+
+        Set<String> taskIds = new HashSet<>();
+        taskIds.add("taskId-1");
+
+        List<Event> events = eventClientRepository.getEventsByTaskIds(taskIds);
+        verify(sqliteDatabase).rawQuery(query, params);
+        Assert.assertNotNull(events.size());
+
+    }
+
+    @Test
+    public void testGetEventsByEventId() throws Exception {
+        String eventId = "event-id";
+        String query = "SELECT json FROM event WHERE eventId= ? ";
+        String[] params = new String[]{eventId};
+        when(sqliteDatabase.rawQuery(query, params)).thenReturn(getEventCursor());
+
+        JSONObject actualJsonObject = eventClientRepository.getEventsByEventId(eventId);
+        verify(sqliteDatabase).rawQuery(query, params);
+        Assert.assertNotNull(actualJsonObject);
+        Assert.assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", actualJsonObject.get("baseEntityId"));
+        Assert.assertEquals("2184aaaa-d1cf-4099-945a-c66bd8a93e1e", actualJsonObject.get("formSubmissionId"));
+    }
+
+    @Test
+    public void testGetEventsByEventIdWithNullParam() throws Exception {
+
+        JSONObject actualJsonObject = eventClientRepository.getEventsByEventId(null);
+        verifyNoInteractions(sqliteDatabase);
+        Assert.assertNull(actualJsonObject);
+    }
+
+    @Test
+    public void testGetEventsByEventIds() throws Exception {
+        String query = "SELECT json FROM event WHERE eventId IN (?)";
+        String eventId = "eventId-1";
+        String[] params = new String[]{eventId};
+        when(sqliteDatabase.rawQuery(query, params)).thenReturn(getEventCursor());
+
+        Set<String> eventIds = new HashSet<>();
+        eventIds.add("eventId-1");
+
+        List<Event> events = eventClientRepository.getEventsByEventIds(eventIds);
+        verify(sqliteDatabase).rawQuery(query, params);
+        Assert.assertNotNull(events);
+    }
+
+    @Test
+    public void testGetSqliteType() {
+        Assert.assertEquals("varchar", eventClientRepository.getSqliteType(ColumnAttribute.Type.text));
+        Assert.assertEquals("boolean", eventClientRepository.getSqliteType(ColumnAttribute.Type.bool));
+        Assert.assertEquals("datetime", eventClientRepository.getSqliteType(ColumnAttribute.Type.date));
+
+        Assert.assertEquals("varchar", eventClientRepository.getSqliteType(ColumnAttribute.Type.list));
+        Assert.assertEquals("varchar", eventClientRepository.getSqliteType(ColumnAttribute.Type.map));
+        Assert.assertEquals("integer", eventClientRepository.getSqliteType(ColumnAttribute.Type.longnum));
+    }
+
+    @Test
+    public void testFetchEventClientsByLastSyncDateAndSyncStatus() {
+        eventClientRepository = spy(eventClientRepository);
+        String syncStatus = SyncStatus.SYNCED.name();
+        Date lastSyncDate = new Date();
+        String lastSyncString = DateUtil.yyyyMMddHHmmss.format(lastSyncDate);
+        String query = "select json,updatedAt from event where syncStatus = ? and updatedAt > ? ORDER BY serverVersion";
+
+        eventClientRepository.fetchEventClients(lastSyncDate, syncStatus);
+
+        verify(eventClientRepository).fetchEventClientsCore(query, new String[]{syncStatus, lastSyncString});
+    }
+
 }

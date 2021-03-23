@@ -2,6 +2,8 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
+import androidx.core.util.Consumer;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -21,6 +23,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
@@ -180,6 +183,17 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals("2018-10-31T0700", task.getLastModified().toString(formatter));
         assertEquals("demouser", task.getOwner());
 
+    }
+
+    @Test
+    public void testReadTask() {
+        List<Task> tasks = new ArrayList<>();
+        Consumer<Task> consumer = tasks::add;
+
+        when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any())).thenReturn(getCursor());
+        taskRepository.readTasks("IRS_2018_S1", "2018_IRS-3734", "CODE", consumer);
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+        assertEquals(1, tasks.size());
     }
 
     @Test
@@ -534,6 +548,85 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals("2018-10-31T0700", task.getLastModified().toString(formatter));
         assertEquals("demouser", task.getOwner());
 
+    }
+
+    @Test
+    public void testGetEntityIdsWithDuplicateTasks() {
+
+        String entityId = "entity-id-1";
+        MatrixCursor cursor = new MatrixCursor(new String[]{"for"});
+        cursor.addRow(new Object[]{entityId});
+        String query = "SELECT " +
+                "    DISTINCT(for) " +
+                "FROM " +
+                "    task " +
+                "WHERE status IN (?, ?) " +
+                "GROUP BY " +
+                "    plan_id, for, code " +
+                "HAVING " +
+                "    COUNT(*) > 1";
+
+        when(sqLiteDatabase.rawQuery(query, new String[]{Task.TaskStatus.READY.name(), Task.TaskStatus.COMPLETED.name()})).thenReturn(cursor);
+
+        List<String> entities = taskRepository.getEntityIdsWithDuplicateTasks();
+        assertEquals(1, entities.size());
+        assertEquals(entityId, entities.get(0));
+
+    }
+
+    @Test
+    public void testGetDuplicateTasksForEntity() {
+        MatrixCursor cursor = getCursor();
+        Task task = gson.fromJson(taskJson, Task.class);
+        task.setIdentifier("task-2-identifier");
+        String entityId = "structure-id-1";
+        List<String> taskIds = new ArrayList<>();
+        taskIds.add("tsk11231jh22");
+        taskIds.add("task-2-identifier");
+        cursor.addRow(new Object[]{2, task.getIdentifier(), task.getPlanIdentifier(), task.getGroupIdentifier(),
+                task.getStatus().name(), task.getBusinessStatus(), task.getPriority().name(), task.getCode(),
+                task.getDescription(), task.getFocus(), task.getForEntity(),
+                task.getExecutionPeriod().getStart().getMillis(),
+                null,
+                task.getAuthoredOn().getMillis(), task.getLastModified().getMillis(),
+                task.getOwner(), task.getSyncStatus(), task.getServerVersion(), task.getStructureId(), task.getReasonReference(), null, null, null, null, null});
+
+        String query = "SELECT t1.* " +
+                "FROM task t1 " +
+                "JOIN (SELECT " +
+                "plan_id, for, code, COUNT(*) as count " +
+                "FROM " +
+                "    task " +
+                "WHERE for = ? " +
+                "GROUP BY " +
+                "    plan_id, for, code " +
+                "HAVING  " +
+                "    COUNT(*) > 1) t2 " +
+                "ON t1.plan_id = t2.plan_id " +
+                "AND t1.for = t2.for " +
+                "AND t1.code = t2.code " +
+                "AND t1.for = ? " +
+                "ORDER BY t1.for";
+        when(sqLiteDatabase.rawQuery(query, new String[]{entityId, entityId})).thenReturn(cursor);
+
+        Set<Task> duplicateTasks = taskRepository.getDuplicateTasksForEntity(entityId);
+        assertEquals(2, duplicateTasks.size());
+        for (Task taskEntity : duplicateTasks) {
+            assertTrue(taskIds.contains(taskEntity.getIdentifier()));
+        }
+    }
+
+    @Test
+    public void testDeleteTasksByIds() {
+        List<String> taskIds = new ArrayList<>();
+        taskIds.add("taskId-1");
+        taskIds.add("taskId-2");
+        taskRepository.deleteTasksByIds(taskIds);
+        verify(sqLiteDatabase).delete(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), argsCaptor.capture());
+        assertEquals("task", stringArgumentCaptor.getAllValues().get(0));
+        assertEquals("_id in (? , ? )", stringArgumentCaptor.getAllValues().get(1));
+        assertEquals("taskId-1", argsCaptor.getAllValues().get(0)[0]);
+        assertEquals("taskId-2", argsCaptor.getAllValues().get(0)[1]);
     }
 
 }

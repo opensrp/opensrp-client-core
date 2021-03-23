@@ -10,9 +10,14 @@ import org.smartregister.util.NetworkUtils;
 @Implements(NetworkUtils.class)
 public class ShadowNetworkUtils {
 
+    public static boolean isNetworkAvailable;
+
     @Implementation
     public static boolean isNetworkAvailable() {
-        return false;
+        return isNetworkAvailable;
     }
 
+    public static void setIsNetworkAvailable(boolean isNetworkAvailable) {
+        ShadowNetworkUtils.isNetworkAvailable = isNetworkAvailable;
+    }
 }
