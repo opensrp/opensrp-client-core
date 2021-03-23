@@ -2,8 +2,8 @@ package org.smartregister.repository;
 
 import android.content.SharedPreferences;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
@@ -33,6 +33,8 @@ public class AllSharedPreferences {
     public static final String FORMS_VERSION = "FORMS_VERSION";
     private static final String ENCRYPTED_PASSPHRASE_KEY = "ENCRYPTED_PASSPHRASE_KEY";
     private static final String DB_ENCRYPTION_VERSION = "DB_ENCRYPTION_VERSION";
+    private static final String USER_PRACTITIONER_ROLE = "USER_PRACTITIONER_ROLE";
+    private static final String USER_PRACTITIONER_IDENTIFIER = "USER_PRACTITIONER_IDENTIFIER";
     private SharedPreferences preferences;
 
     public AllSharedPreferences(SharedPreferences preferences) {
@@ -384,6 +386,25 @@ public class AllSharedPreferences {
 
     public void setDBEncryptionVersion(int encryptionVersion) {
         preferences.edit().putInt(DB_ENCRYPTION_VERSION, encryptionVersion).commit();
+    }
+
+    @Nullable
+    public String getUserPractitionerRole() {
+        return preferences.getString(USER_PRACTITIONER_ROLE, null);
+    }
+
+    @Nullable
+    public String getUserPractitionerIdentifier() {
+        return preferences.getString(USER_PRACTITIONER_IDENTIFIER, null);
+    }
+
+    public void setUserPractitionerRole(String practitionerRole) {
+        preferences.edit().putString(USER_PRACTITIONER_ROLE, practitionerRole).commit();
+    }
+
+    public void setUserPractitionerIdentifier(String identifier) {
+        preferences.edit().putString(USER_PRACTITIONER_IDENTIFIER, identifier).commit();
+
     }
 }
 

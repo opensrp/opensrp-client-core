@@ -34,6 +34,7 @@ import org.smartregister.util.Utils;
 import org.smartregister.view.activity.BaseConfigurableRegisterActivity;
 import org.smartregister.view.activity.BaseRegisterActivity;
 import org.smartregister.view.contract.BaseRegisterFragmentContract;
+import org.smartregister.view.dialog.DialogOptionModel;
 import org.smartregister.view.dialog.NoMatchDialogFragment;
 import org.smartregister.view.model.BaseConfigurableRegisterFragmentModel;
 import org.smartregister.view.presenter.BaseConfigurableRegisterFragmentPresenter;
@@ -50,6 +51,7 @@ import timber.log.Timber;
 public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
 
     private static final String DUE_FILTER_TAG = "PRESSED";
+    private View navbarContainer;
     private View dueOnlyLayout;
     private boolean dueFilterActive = false;
     private ModuleRegisterQueryProviderContract moduleRegisterQueryProvider;
@@ -59,10 +61,10 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     public void setModuleConfiguration(@NonNull ModuleConfiguration moduleConfiguration) {
         moduleRegisterQueryProvider = ConfigurationInstancesHelper.newInstance(moduleConfiguration.getRegisterQueryProvider());
         this.moduleConfiguration = moduleConfiguration;
-        Class<? extends ToolbarOptions> toolbarOptionsClass = moduleConfiguration.getToolbarOptions();
-        if (toolbarOptionsClass != null) {
-            this.toolbarOptions = ConfigurationInstancesHelper.newInstance(toolbarOptionsClass);
-        }
+    }
+
+    public void setToolbarOptions(ToolbarOptions toolbarOptions) {
+        this.toolbarOptions = toolbarOptions;
     }
 
     public ModuleConfiguration getModuleConfiguration() {
@@ -85,7 +87,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     @Override
     public void setupViews(View view) {
         super.setupViews(view);
-
+        navbarContainer = view.findViewById(R.id.register_nav_bar_container);
         if (toolbarOptions != null && toolbarOptions.isNewToolbarEnabled()) {
             initializeConfigurableLayoutViews(view);
             return;
@@ -128,7 +130,6 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
             titleView.setPadding(0, titleView.getTop(), titleView.getPaddingRight(), titleView.getPaddingBottom());
         }
 
-        View navbarContainer = view.findViewById(R.id.register_nav_bar_container);
         navbarContainer.setFocusable(false);
 
         View topLeftLayout = view.findViewById(R.id.top_left_layout);
@@ -153,6 +154,10 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     }
 
     public void initializeConfigurableLayoutViews(View view) {
+        // Update Toolbar color
+        if (toolbarOptions.getToolBarColor() > 0) {
+            navbarContainer.setBackgroundColor(toolbarOptions.getToolBarColor());
+        }
         // Update logo
         ImageView logo = view.findViewById(R.id.top_left_logo);
         if (logo != null && toolbarOptions.getLogoResourceId() > 0) {
@@ -163,6 +168,15 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         if (backButton != null)
             backButton.setOnClickListener(v -> getActivity().finish());
 
+
+        // Hide unwanted toolbar options
+        List<Integer> hiddenToolbarOptions = toolbarOptions.getHiddenToolOptions();
+        if (hiddenToolbarOptions.size() > 0) {
+            for (int layoutId : hiddenToolbarOptions) {
+                view.findViewById(layoutId).setVisibility(View.GONE);
+            }
+        }
+
         ExtendedFloatingActionButton addClientsFab = view.findViewById(R.id.add_new_client_fab);
         if (addClientsFab != null) {
             setupAddClientFab(addClientsFab);
@@ -172,7 +186,9 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         if (registerSelect != null) {
             registerSelect.setOnClickListener(v -> {
                 if (getActivity() instanceof BaseConfigurableRegisterActivity) {
-                    ((BaseConfigurableRegisterActivity) getActivity()).showFragmentDialog(toolbarOptions.getDialogOptionModel());
+                    DialogOptionModel dialogOptionModel = toolbarOptions.getDialogOptionModel();
+                    if (dialogOptionModel != null)
+                        ((BaseConfigurableRegisterActivity) getActivity()).showFragmentDialog(dialogOptionModel);
                 }
             });
         }

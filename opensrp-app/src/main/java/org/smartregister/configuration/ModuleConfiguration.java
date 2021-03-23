@@ -83,8 +83,8 @@ public class ModuleConfiguration {
         return builder.registerTitle;
     }
 
-    public Class<? extends ToolbarOptions> getToolbarOptions() {
-        return builder.toolbarOptions;
+    public Class<? extends ConfigurableNavigationOptions> getNavigationOptions() {
+        return builder.navigationOptions;
     }
 
     public int getMaxCheckInDurationInMinutes() {
@@ -127,7 +127,7 @@ public class ModuleConfiguration {
         @NonNull
         private Class<? extends ClientFormContract.View> jsonFormActivity;
 
-        private Class<? extends ToolbarOptions> toolbarOptions;
+        private Class<? extends ConfigurableNavigationOptions> navigationOptions;
 
         private boolean isBottomNavigationEnabled;
 
@@ -163,8 +163,8 @@ public class ModuleConfiguration {
             return this;
         }
 
-        public Builder setToolbarOptions(@Nullable Class<? extends ToolbarOptions> toolbarOptions) {
-            this.toolbarOptions = toolbarOptions;
+        public Builder setNavigationOptions(@Nullable Class<? extends ConfigurableNavigationOptions> navigationOptions) {
+            this.navigationOptions = navigationOptions;
             return this;
         }
 
