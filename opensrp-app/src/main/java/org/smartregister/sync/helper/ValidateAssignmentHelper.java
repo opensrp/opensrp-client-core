@@ -80,6 +80,10 @@ public class ValidateAssignmentHelper extends BaseHelper {
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
     }
 
+    protected Set<String> getExistingJurisdictions() {
+        return new HashSet<>(locationRepository.getAllLocationIds());
+    }
+
     public void validateUserAssignment() {
         boolean keycloakConfigured = allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
         if (!keycloakConfigured) {
@@ -90,7 +94,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
             if (StringUtils.isNotBlank(assignment)) {
                 UserAssignmentDTO currentUserAssignment = gson.fromJson(assignment, UserAssignmentDTO.class);
                 Set<Long> existingOrganizations = userService.fetchOrganizations();
-                Set<String> existingJurisdictions = new HashSet<>(locationRepository.getAllLocationIds());
+                Set<String> existingJurisdictions = getExistingJurisdictions();
                 Set<String> existingPlans = planDefinitionRepository.findAllPlanDefinitionIds();
                 boolean newAssignments = hasNewAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions);
                 UserAssignmentDTO removedAssignments = processRemovedAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions, existingPlans);

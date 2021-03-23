@@ -4,13 +4,12 @@ import android.os.Build;
 import android.view.View;
 
 import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.customshadows.FontTextViewShadow;
+import org.smartregister.view.UnitTest;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,8 +18,7 @@ import java.util.Collection;
  * Created by onaio on 29/08/2017.
  */
 
-@RunWith(RobolectricTestRunner.class)
-@Config(application = TestApplication.class, shadows = {FontTextViewShadow.class}, sdk = Build.VERSION_CODES.O_MR1)
+@Config(shadows = {FontTextViewShadow.class}, sdk = Build.VERSION_CODES.O_MR1)
 @PowerMockIgnore({"org.mockito.*",
         "org.robolectric.*",
         "android.*",
@@ -35,7 +33,7 @@ import java.util.Collection;
         "javax.activation.*",
         "org.springframework.context.*",
         "org.apache.log4j.*"})
-public abstract class BaseUnitTest {
+public abstract class BaseUnitTest extends UnitTest {
     protected static final int INITIALS_RESOURCE_ID = R.drawable.bottom_bar_initials_background;
     protected static final String INITIALS_TEXT = "TR";
     protected static final String TEST_BASE_ENTITY_ID = "23ka2-3e23h2-n3g2i4-9q3b-yts4-20";
@@ -84,5 +82,4 @@ public abstract class BaseUnitTest {
         System.out.println("Resetting Window Manager");
 
     }
-
 }
