@@ -19,7 +19,7 @@ public class SyncLocationsByTeamIdsIntentServiceTest extends BaseUnitTest {
     @Test
     public void testOnHandleIntentShouldSyncLocations() throws Exception {
         LocationServiceHelper locationServiceHelper = Mockito.mock(LocationServiceHelper.class);
-        ShadowLocationServiceHelper.setLocationServiceHelper(locationServiceHelper);
+        ShadowLocationServiceHelper.setInstance(locationServiceHelper);
         SyncLocationsByTeamIdsIntentService syncLocationsByTeamIdsIntentService = new SyncLocationsByTeamIdsIntentService();
         syncLocationsByTeamIdsIntentService.onHandleIntent(new Intent());
         Mockito.verify(locationServiceHelper).fetchOpenMrsLocationsByTeamIds();
