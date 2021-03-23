@@ -12,14 +12,14 @@ import org.smartregister.sync.helper.LocationServiceHelper;
 @Implements(LocationServiceHelper.class)
 public class ShadowLocationServiceHelper extends Shadow {
 
-    private static LocationServiceHelper locationServiceHelper;
+    private static LocationServiceHelper instance;
 
     @Implementation
     public static LocationServiceHelper getInstance() {
-        return locationServiceHelper;
+        return instance;
     }
 
-    public static void setLocationServiceHelper(LocationServiceHelper locationServiceHelper) {
-        ShadowLocationServiceHelper.locationServiceHelper = locationServiceHelper;
+    public static void setInstance(LocationServiceHelper instance) {
+        ShadowLocationServiceHelper.instance = instance;
     }
 }
