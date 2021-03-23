@@ -21,6 +21,8 @@ import org.smartregister.account.AccountConfiguration;
 import org.smartregister.account.AccountHelper;
 import org.smartregister.account.AccountResponse;
 import org.smartregister.domain.LoginResponse;
+import org.smartregister.domain.Practitioner;
+import org.smartregister.domain.PractitionerRole;
 import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.event.Listener;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
@@ -140,6 +142,11 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                         }
 
                     }
+
+                    // Save the registered ANM
+                    getOpenSRPContext().allSharedPreferences().updateANMUserName(mUsername);
+
+                    fetchUserRole();
                 } else {
                     if (response.getAccountError() != null && response.getAccountError().getError() != null) {
                         return LoginResponse.valueOf(response.getAccountError().getError().toUpperCase(Locale.ENGLISH));
@@ -160,6 +167,36 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         }
 
         return loginResponse;
+    }
+
+    protected void fetchUserRole() {
+        Practitioner[] practitioners = getOpenSRPContext().httpAgent().fetchPractitioners();
+        PractitionerRole[] practitionerRoles = getOpenSRPContext().httpAgent().fetchPractitionerRoles();
+
+        if (practitioners == null) {
+            return;
+        }
+
+        Practitioner loggedInPractitioner = null;
+        for (Practitioner practitioner: practitioners) {
+            if (practitioner != null && mUsername.equals(practitioner.getUsername())) {
+                loggedInPractitioner = practitioner;
+            }
+        }
+
+        if (loggedInPractitioner != null && practitionerRoles != null) {
+
+            PractitionerRole loggedInPractitionerRole = null;
+            for (PractitionerRole practitionerRole: practitionerRoles) {
+                if (loggedInPractitioner.getIdentifier().equals(practitionerRole.getPractitionerIdentifier())) {
+                    loggedInPractitionerRole = practitionerRole;
+                }
+            }
+
+            if (loggedInPractitionerRole != null) {
+                getOpenSRPContext().allSharedPreferences().setUserPractitionerRole(loggedInPractitionerRole.getCode().getText());
+            }
+        }
     }
 
     @Override
