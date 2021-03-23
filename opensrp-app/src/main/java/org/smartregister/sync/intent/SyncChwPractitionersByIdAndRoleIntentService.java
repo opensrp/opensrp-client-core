@@ -6,11 +6,11 @@ import org.smartregister.sync.helper.PractitionerSyncHelper;
 
 import timber.log.Timber;
 
-public class SyncPractitionersByIdAndRoleIntentService extends BaseSyncIntentService {
+public class SyncChwPractitionersByIdAndRoleIntentService extends BaseSyncIntentService {
 
-    private static final String TAG = SyncPractitionersByIdAndRoleIntentService.class.getCanonicalName();
+    private static final String TAG = SyncChwPractitionersByIdAndRoleIntentService.class.getCanonicalName();
 
-    public SyncPractitionersByIdAndRoleIntentService() {
+    public SyncChwPractitionersByIdAndRoleIntentService() {
         super(TAG);
     }
 
@@ -21,7 +21,7 @@ public class SyncPractitionersByIdAndRoleIntentService extends BaseSyncIntentSer
         PractitionerSyncHelper practitionerSyncHelper = PractitionerSyncHelper.getInstance();
 
         try {
-            practitionerSyncHelper.syncPractitionersByIdAndRoleFromServer();
+            practitionerSyncHelper.syncChwPractitionersByIdAndRoleFromServer();
         } catch (Exception ex) {
             Timber.e(ex);
         }

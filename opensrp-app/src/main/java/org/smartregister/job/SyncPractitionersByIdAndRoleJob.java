@@ -5,7 +5,7 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 
 import org.smartregister.AllConstants;
-import org.smartregister.sync.intent.SyncPractitionersByIdAndRoleIntentService;
+import org.smartregister.sync.intent.SyncChwPractitionersByIdAndRoleIntentService;
 
 public class SyncPractitionersByIdAndRoleJob extends BaseJob {
 
@@ -14,7 +14,7 @@ public class SyncPractitionersByIdAndRoleJob extends BaseJob {
     @NonNull
     @Override
     protected Result onRunJob(@NonNull Params params) {
-        Intent intent = new Intent(getApplicationContext(), SyncPractitionersByIdAndRoleIntentService.class);
+        Intent intent = new Intent(getApplicationContext(), SyncChwPractitionersByIdAndRoleIntentService.class);
         getApplicationContext().startService(intent);
         return params != null && params.getExtras().getBoolean(AllConstants.INTENT_KEY.TO_RESCHEDULE, false) ? Result.RESCHEDULE : Result.SUCCESS;
     }

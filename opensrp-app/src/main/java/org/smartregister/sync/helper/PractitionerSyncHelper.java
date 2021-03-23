@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Practitioner;
 import org.smartregister.domain.Response;
@@ -31,6 +30,9 @@ public class PractitionerSyncHelper {
     private final AllSharedPreferences allSharedPreferences;
     private static final String PRACTITIONER_URL = "/rest/practitioner";
     private static final String PRACTITIONERS_BY_ID_AND_ROLE_URL = PRACTITIONER_URL + "/report-to";
+    private static final String PRACTITIONER_IDENTIFIER = "practitionerIdentifier";
+    private static final String PRACTITIONER_ROLE_CODE = "code";
+
 
     public static PractitionerSyncHelper getInstance() {
         if (instance == null) {
@@ -47,9 +49,9 @@ public class PractitionerSyncHelper {
     }
 
 
-    public void syncPractitionersByIdAndRoleFromServer() {
+    public void syncChwPractitionersByIdAndRoleFromServer() {
         String practitionerIdentifier = allSharedPreferences.getUserPractitionerIdentifier();
-        String code = allSharedPreferences.getUserPractitionerRole();
+        String code = "Community Health Worker";
         try {
             String response = syncPractitioners(practitionerIdentifier, code);
             List<Practitioner> practitioners = gson.fromJson(response, new TypeToken<List<Practitioner>>() {
@@ -69,15 +71,11 @@ public class PractitionerSyncHelper {
 
         String baseUrl = getFormattedBaseUrl();
 
-        JSONObject request = new JSONObject();
-        request.put("practitionerIdentifier", practitionerIdentifier);
-        request.put("code", code);
-
-        Response resp = httpAgent.post(
-                MessageFormat.format("{0}{1}",
-                        baseUrl,
-                        PRACTITIONERS_BY_ID_AND_ROLE_URL),
-                request.toString());
+        Response resp = httpAgent.fetch(
+                MessageFormat.format("{0}{1}{2}",
+                        baseUrl, PRACTITIONERS_BY_ID_AND_ROLE_URL,
+                        "?" + PRACTITIONER_IDENTIFIER + "=" + practitionerIdentifier +
+                                "&" + PRACTITIONER_ROLE_CODE + "=" + code));
 
         if (resp.isFailure()) {
             throw new NoHttpResponseException(PRACTITIONERS_BY_ID_AND_ROLE_URL + " not data returned");
