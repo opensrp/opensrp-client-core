@@ -195,7 +195,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
             if (loggedInPractitionerRole != null) {
                 getOpenSRPContext().allSharedPreferences().setUserPractitionerRole(loggedInPractitionerRole.getCode().getText());
-                getOpenSRPContext().allSharedPreferences().setUserPractitionerIdentifier(loggedInPractitionerRole.getIdentifier());
+                getOpenSRPContext().allSharedPreferences().setUserPractitionerIdentifier(loggedInPractitionerRole.getPractitionerIdentifier());
             }
         }
     }

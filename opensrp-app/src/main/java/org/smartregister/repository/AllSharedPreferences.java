@@ -403,7 +403,7 @@ public class AllSharedPreferences {
     }
 
     public void setUserPractitionerIdentifier(String identifier) {
-        preferences.edit().putString(USER_PRACTITIONER_ROLE, identifier).commit();
+        preferences.edit().putString(USER_PRACTITIONER_IDENTIFIER, identifier).commit();
 
     }
 }

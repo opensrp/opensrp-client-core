@@ -89,8 +89,8 @@ android {
         //applicationId "org.smartregister"
         minSdkVersion androidMinSdkVersion
         targetSdkVersion androidTargetSdkVersion
-        versionCode Integer.parseInt(project.VERSION_CODE)
-        versionName project.VERSION_NAME
+        /*versionCode Integer.parseInt(project.VERSION_CODE)
+        versionName project.VERSION_NAME*/
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
         buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
@@ -312,4 +312,4 @@ coveralls {
     sourceDirs = ["$project.projectDir/src/main/java"]
 }
 
-apply from: '../maven.gradle'
+//apply from: '../maven.gradle'

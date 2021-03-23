@@ -48,7 +48,7 @@ public class PractitionerSyncHelper {
 
 
     public void syncPractitionersByIdAndRoleFromServer() {
-        String practitionerIdentifier = allSharedPreferences.getUserPractitionerRole();
+        String practitionerIdentifier = allSharedPreferences.getUserPractitionerIdentifier();
         String code = allSharedPreferences.getUserPractitionerRole();
         try {
             String response = syncPractitioners(practitionerIdentifier, code);
