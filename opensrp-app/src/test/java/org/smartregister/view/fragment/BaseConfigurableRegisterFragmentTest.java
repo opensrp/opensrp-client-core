@@ -75,7 +75,7 @@ public class BaseConfigurableRegisterFragmentTest extends BaseUnitTest {
         moduleConfiguration = Mockito.mock(ModuleConfiguration.class, Mockito.CALLS_REAL_METHODS);
         Mockito.doReturn(MockRegisterQueryProvider.class).when(moduleConfiguration).getRegisterQueryProvider();
         Mockito.doReturn(FormActivity.class).when(moduleConfiguration).getJsonFormActivity();
-        Mockito.doReturn(ToolbarOptions.class).when(moduleConfiguration).getToolbarOptions();
+        Mockito.doReturn(ToolbarOptions.class).when(moduleConfiguration).getNavigationOptions();
         CoreLibrary.getInstance().addModuleConfiguration(moduleName, moduleConfiguration);
     }
 

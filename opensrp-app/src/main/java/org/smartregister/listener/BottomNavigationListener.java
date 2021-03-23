@@ -1,15 +1,17 @@
 package org.smartregister.listener;
 
 import android.app.Activity;
-import androidx.annotation.NonNull;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.view.MenuItem;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.smartregister.R;
 import org.smartregister.view.activity.BaseRegisterActivity;
 
 public class BottomNavigationListener implements BottomNavigationView.OnNavigationItemSelectedListener {
-    private Activity context;
+    protected Activity context;
 
     public BottomNavigationListener(Activity context) {
         this.context = context;

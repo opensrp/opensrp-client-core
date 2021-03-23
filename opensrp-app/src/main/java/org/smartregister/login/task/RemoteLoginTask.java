@@ -178,7 +178,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         }
 
         Practitioner loggedInPractitioner = null;
-        for (Practitioner practitioner: practitioners) {
+        for (Practitioner practitioner : practitioners) {
             if (practitioner != null && mUsername.equals(practitioner.getUsername())) {
                 loggedInPractitioner = practitioner;
             }
@@ -187,7 +187,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         if (loggedInPractitioner != null && practitionerRoles != null) {
 
             PractitionerRole loggedInPractitionerRole = null;
-            for (PractitionerRole practitionerRole: practitionerRoles) {
+            for (PractitionerRole practitionerRole : practitionerRoles) {
                 if (loggedInPractitioner.getIdentifier().equals(practitionerRole.getPractitionerIdentifier())) {
                     loggedInPractitionerRole = practitionerRole;
                 }
@@ -195,6 +195,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
             if (loggedInPractitionerRole != null) {
                 getOpenSRPContext().allSharedPreferences().setUserPractitionerRole(loggedInPractitionerRole.getCode().getText());
+                getOpenSRPContext().allSharedPreferences().setUserPractitionerIdentifier(loggedInPractitionerRole.getPractitionerIdentifier());
             }
         }
     }
