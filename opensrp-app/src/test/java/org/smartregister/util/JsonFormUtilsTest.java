@@ -1504,4 +1504,19 @@ public class JsonFormUtilsTest {
             }
         }
     }
+
+    @Test
+    public void testCreateObservationForNativeRadioShouldAddKeyValuePairsToObservation() throws Exception {
+        String strJsonObj = "{\"key\":\"not_good\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"native_radio\",\"label\":\"Quel est le problème avec ce produit ?\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"worn_broken\",\"text\":\"Usé, endommagé, ou cassé\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"},{\"key\":\"expired\",\"text\":\"Expiré\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"},{\"key\":\"parts_missing\",\"text\":\"Pièces manquantes\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"},{\"key\":\"other\",\"text\":\"Autre (préciser)\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}],\"v_required\":{\"value\":true,\"err\":\"Ce champ est requis\"},\"relevance\":{\"step1:flag_problem\":{\"ex-checkbox\":[{\"or\":[\"not_good\"]}]}},\"is-rule-check\":false,\"is_visible\":true,\"value\":\"worn_broken\"}";
+        JSONObject jsonObject = new JSONObject(strJsonObj);
+        Event event = new Event();
+        String value = "worn_broken";
+        Whitebox.invokeMethod(JsonFormUtils.class, "createObservation", event, jsonObject, value);
+        List<Obs> obsList = event.getObs();
+        assertEquals(1, obsList.size());
+        Obs obs = obsList.get(0);
+        assertNotNull(obs.getKeyValPairs());
+        assertEquals(1, obs.getKeyValPairs().size());
+        assertEquals("Usé, endommagé, ou cassé", obs.getKeyValPairs().get("worn_broken"));
+    }
 }
