@@ -15,7 +15,7 @@ public class EnvironmentManager {
 
     public EnvironmentManager(String json) {
         environments = loadEnvironments(json).stream().collect(
-                Collectors.toMap(Environment::getUrl, item -> item)
+                Collectors.toMap(this::getKey, item -> item)
         );
     }
 
@@ -30,6 +30,13 @@ public class EnvironmentManager {
     }
 
     public Environment getEnvironment(String url) {
-        return environments.get(url);
+        return environments.get(getKey(url));
+    }
+
+    private String getKey(Environment env) {
+        return getKey(env.getUrl());
+    }
+    private String getKey(String url) {
+        return url.replace("/", "");
     }
 }
