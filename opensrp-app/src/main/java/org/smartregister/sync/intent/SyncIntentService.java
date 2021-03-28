@@ -43,6 +43,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     protected static final int EVENT_PULL_LIMIT = 250;
     protected static final int EVENT_PUSH_LIMIT = 50;
+    private boolean isEmptyToAdd = false;
 
     public SyncIntentService() {
         super("SyncIntentService");
@@ -126,10 +127,11 @@ public class SyncIntentService extends BaseSyncIntentService {
                 syncParams.put(configs.getSyncFilterParam().value(), configs.getSyncFilterValue());
                 syncParams.put("serverVersion", lastSyncDatetime);
                 syncParams.put("limit",  getEventPullLimit());
+                syncParams.put("isFromAdd",  isEmptyToAdd);
                 resp = httpAgent.postWithJsonResponse(url,syncParams.toString());
             } else {
-                url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit();
-                Timber.i("URL: %s", url);
+                url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit()+"&isEmptyToAdd="+isEmptyToAdd;
+                Log.i("URL: %s", url);
                 resp = httpAgent.fetch(url);
             }
 
@@ -207,6 +209,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     protected void pushECToServer() {
         EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
         boolean keepSyncing = true;
+        isEmptyToAdd = true;
 
         while (keepSyncing) {
             try {
@@ -228,11 +231,14 @@ public class SyncIntentService extends BaseSyncIntentService {
                 if (pendingEvents.containsKey(AllConstants.KEY.EVENTS)) {
                     request.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
                 }
+                isEmptyToAdd = false;
                 String jsonPayload = request.toString();
-                Response<String> response = httpAgent.post(
-                        MessageFormat.format("{0}/{1}",
-                                baseUrl,
-                                ADD_URL),
+                String add_url =  MessageFormat.format("{0}/{1}",
+                        baseUrl,
+                        ADD_URL);
+                Log.i("URL: %s", add_url);
+                Response<String> response = httpAgent.post(add_url
+                       ,
                         jsonPayload);
                 if (response.isFailure()) {
                     Timber.e("Events sync failed.");
