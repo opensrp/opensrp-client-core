@@ -147,24 +147,41 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Override
     public void displaySyncNotification() {
-        Snackbar syncStatusSnackbar =
-                Snackbar.make(this.getWindow().getDecorView(), R.string.manual_sync_triggered, Snackbar.LENGTH_LONG);
-        syncStatusSnackbar.show();
+        try{
+            Snackbar syncStatusSnackbar =
+                    Snackbar.make(this.getWindow().getDecorView(), R.string.manual_sync_triggered, Snackbar.LENGTH_LONG);
+            syncStatusSnackbar.show();
+        }catch (Exception e){
+
+        }
+
     }
 
     @Override
     public void displayToast(int resourceId) {
-        displayToast(getString(resourceId));
+        try{
+            displayToast(getString(resourceId));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void displayToast(String message) {
-        Utils.showToast(getApplicationContext(), message);
+       try{
+           Utils.showToast(getApplicationContext(), message);
+       }catch (Exception e){
+           e.printStackTrace();
+       }
     }
 
     @Override
     public void displayShortToast(int resourceId) {
-        Utils.showShortToast(getApplicationContext(), getString(resourceId));
+       try{
+           Utils.showShortToast(getApplicationContext(), getString(resourceId));
+       }catch (Exception e){
+           e.printStackTrace();
+       }
     }
 
     @Override
@@ -250,12 +267,17 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Override
     public void showProgressDialog(int titleIdentifier) {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setTitle(titleIdentifier);
-        progressDialog.setMessage(getString(R.string.please_wait_message));
-        if (!isFinishing())
-            progressDialog.show();
+        try{
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setCancelable(false);
+            progressDialog.setTitle(titleIdentifier);
+            progressDialog.setMessage(getString(R.string.please_wait_message));
+            if (!isFinishing())
+                progressDialog.show();
+        }catch (Exception e){
+
+        }
+
     }
 
     @Override

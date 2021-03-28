@@ -516,12 +516,30 @@ public class Utils {
     }
 
     public static void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        if (context == null) return;
+        if(context instanceof Activity){
+            Activity activity = (Activity) context;
+            if(activity.isFinishing()) return;
+        }
+       try{
+           Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+       }catch (Exception e){
+        e.printStackTrace();
+       }
 
     }
 
     public static void showShortToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        if (context == null) return;
+        if(context instanceof Activity){
+            Activity activity = (Activity) context;
+            if(activity.isFinishing()) return;
+        }
+        try{
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 

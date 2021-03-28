@@ -102,14 +102,19 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
     }
 
     public void showProgressDialog(int saveMessageStringIdentifier) {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setCancelable(false);
-            progressDialog.setTitle(getString(saveMessageStringIdentifier));
-            progressDialog.setMessage(getString(R.string.please_wait_message));
+        try{
+            if (progressDialog == null) {
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setCancelable(false);
+                progressDialog.setTitle(getString(saveMessageStringIdentifier));
+                progressDialog.setMessage(getString(R.string.please_wait_message));
+            }
+            if (!isFinishing())
+                progressDialog.show();
+        }catch (Exception e){
+
         }
-        if (!isFinishing())
-            progressDialog.show();
+
     }
 
     public void hideProgressDialog() {
@@ -126,7 +131,11 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
 
     @Override
     public void displayToast(int stringID) {
-        Utils.showShortToast(this, this.getString(stringID));
+        try{
+            Utils.showShortToast(this, this.getString(stringID));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }

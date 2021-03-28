@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -252,7 +253,15 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
     }
 
     public void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        if(!isFinishing()){
+            try{
+                Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+            }catch (Exception e){
+                e.printStackTrace();
+
+            }
+        }
+
     }
 
     protected Context context() {

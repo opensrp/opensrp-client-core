@@ -397,49 +397,52 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     }
 
     private void refreshSyncStatusViews(FetchStatus fetchStatus) {
-
-        if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
-            Utils.showShortToast(getActivity(), getString(R.string.syncing));
-            Timber.i( getString(R.string.syncing));
-        } else {
-            if (fetchStatus != null) {
-
-                if (fetchStatus.equals(FetchStatus.fetchedFailed)) {
-                    if(fetchStatus.displayValue().equals(ResponseErrorStatus.malformed_url.name())) {
-                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed_malformed_url));
-                        Timber.i( getString(R.string.sync_failed_malformed_url));
-                    }
-                    else if (fetchStatus.displayValue().equals(ResponseErrorStatus.timeout.name())) {
-                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed_timeout_error));
-                        Timber.i(getString(R.string.sync_failed_timeout_error));
-                    }
-                    else {
-                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed));
-                        Timber.i(getString(R.string.sync_failed));
-                    }
-
-                } else if (fetchStatus.equals(FetchStatus.fetched)
-                        || fetchStatus.equals(FetchStatus.nothingFetched)) {
-
-                    setRefreshList(true);
-                    renderView();
-
-                    Utils.showShortToast(getActivity(), getString(R.string.sync_complete));
-                    Timber.i( getString(R.string.sync_complete));
-
-                } else if (fetchStatus.equals(FetchStatus.noConnection)) {
-
-                    Utils.showShortToast(getActivity(), getString(R.string.sync_failed_no_internet));
-                    Timber.i( getString(R.string.sync_failed_no_internet));
+        try{
+            if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
+                try{
+                    Utils.showShortToast(getActivity(), getString(R.string.syncing));
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
-            }
-            else{
-                Timber.i("Fetch Status NULL");
+            } else {
+                if (fetchStatus != null) {
+
+                    if (fetchStatus.equals(FetchStatus.fetchedFailed)) {
+                        if(fetchStatus.displayValue().equals(ResponseErrorStatus.malformed_url.name())) {
+                            Utils.showShortToast(getActivity(), getString(R.string.sync_failed_malformed_url));
+                        }
+                        else if (fetchStatus.displayValue().equals(ResponseErrorStatus.timeout.name())) {
+                            Utils.showShortToast(getActivity(), getString(R.string.sync_failed_timeout_error));
+                        }
+                        else {
+                            Utils.showShortToast(getActivity(), getString(R.string.sync_failed));
+                        }
+
+                    } else if (fetchStatus.equals(FetchStatus.fetched)
+                            || fetchStatus.equals(FetchStatus.nothingFetched)) {
+
+                        setRefreshList(true);
+                        renderView();
+
+                        Utils.showShortToast(getActivity(), getString(R.string.sync_complete));
+
+                    } else if (fetchStatus.equals(FetchStatus.noConnection)) {
+
+                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed_no_internet));
+                    }
+                }
+                else{
+                    Timber.i("Fetch Status NULL");
+                }
+
             }
 
+            refreshSyncProgressSpinner();
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
-        refreshSyncProgressSpinner();
+
     }
 
     @Override
@@ -455,21 +458,26 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     }
 
     protected void refreshSyncProgressSpinner() {
-        if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
-            if (syncProgressBar != null) {
-                syncProgressBar.setVisibility(View.VISIBLE);
+        try{
+            if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
+                if (syncProgressBar != null) {
+                    syncProgressBar.setVisibility(View.VISIBLE);
+                }
+                if (syncButton != null) {
+                    syncButton.setVisibility(View.GONE);
+                }
+            } else {
+                if (syncProgressBar != null) {
+                    syncProgressBar.setVisibility(View.GONE);
+                }
+                if (syncButton != null) {
+                    syncButton.setVisibility(View.VISIBLE);
+                }
             }
-            if (syncButton != null) {
-                syncButton.setVisibility(View.GONE);
-            }
-        } else {
-            if (syncProgressBar != null) {
-                syncProgressBar.setVisibility(View.GONE);
-            }
-            if (syncButton != null) {
-                syncButton.setVisibility(View.VISIBLE);
-            }
+        }catch (Exception e){
+
         }
+
     }
 
 

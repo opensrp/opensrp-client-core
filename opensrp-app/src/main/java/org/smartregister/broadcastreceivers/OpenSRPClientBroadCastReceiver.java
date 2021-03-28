@@ -50,7 +50,11 @@ public class OpenSRPClientBroadCastReceiver extends BroadcastReceiver {
 //                    ((SecuredActivity) activity).showToast("Replication completed.");
                     break;
                 case AllConstants.CloudantSync.ACTION_REPLICATION_ERROR:
-                    ((SecuredActivity) activity).showToast("Replication error occurred");
+                    try{
+                        ((SecuredActivity) activity).showToast("Replication error occurred");
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                     break;
                 default:
                     // Do nothing

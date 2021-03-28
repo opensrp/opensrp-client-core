@@ -1,5 +1,6 @@
 package org.smartregister.view.activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -64,6 +65,10 @@ public class SettingsActivity extends PreferenceActivity {
                                     baseUrlEditTextPreference.onClick(null, DialogInterface.BUTTON_POSITIVE);
                                     dialog.dismiss();
                                 } else {
+                                    if(getActivity() !=null && getActivity() instanceof Activity){
+                                        Activity activity = (Activity) getActivity();
+                                        if(activity.isFinishing()) return;
+                                    }
                                     Toast.makeText(getActivity(), R.string.invalid_url_massage, Toast.LENGTH_SHORT).show();
                                 }
                             }

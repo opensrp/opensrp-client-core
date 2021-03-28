@@ -1,6 +1,7 @@
 package org.smartregister.sync;
 
 import android.content.Context;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.smartregister.CoreLibrary;
@@ -83,9 +84,15 @@ public class UpdateActionsTask {
 
             public void postExecuteInUIThread(FetchStatus result) {
                 if (result != null && context != null && result != nothingFetched) {
-                    Toast.makeText(context, result.displayValue(), Toast.LENGTH_SHORT).show();
+                   try{
+                       Toast.makeText(context, result.displayValue(), Toast.LENGTH_SHORT).show();
+                       afterFetchListener.afterFetch(result);
+                   }catch (Exception e){
+                       e.printStackTrace();
+
+                   }
                 }
-                afterFetchListener.afterFetch(result);
+
             }
         });
     }

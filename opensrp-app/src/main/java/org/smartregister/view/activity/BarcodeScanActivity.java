@@ -67,8 +67,11 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
             boolean hasLowStorage = registerReceiver(null, lowStorageFilter) != null;
 
             if (hasLowStorage) {
-                Toast.makeText(this, R.string.low_storage_error, Toast.LENGTH_LONG).show();
-                Log.w(TAG, getString(R.string.low_storage_error));
+                try{
+                    Toast.makeText(this, R.string.low_storage_error, Toast.LENGTH_LONG).show();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
         CameraSource.Builder builder = new CameraSource.Builder(getApplicationContext(), barcodeDetector)
