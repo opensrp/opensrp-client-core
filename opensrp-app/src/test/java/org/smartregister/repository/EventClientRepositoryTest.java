@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -27,6 +28,7 @@ import org.smartregister.domain.Event;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
+import org.smartregister.domain.db.EventClient;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.ClientData;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
@@ -169,6 +171,37 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
         Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityIdsAndSyncStatus(syncStatus, Arrays.asList(baseEntityId)));
+
+    }
+
+    @Test
+    public void testGetEventsReturnsNotNullOrEmpty() throws Exception {
+
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
+        List<EventClient> eventClients = eventClientRepository.getEvents(Arrays.asList(baseEntityId), Arrays.asList(syncStatus), Arrays.asList(eventType));
+        Assert.assertNotNull(eventClients);
+        Assert.assertTrue(eventClients.size() > 0);
+
+    }
+
+    @Test
+    public void testGetEventsGeneratesCorrectQueryString() throws Exception {
+        String baseEntityId2 = "baseEntityId2";
+        String baseEntityId3 = "baseEntityId3";
+        String eventType2 = "eventType2";
+
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
+
+        String expectedQueryString = "SELECT json FROM event WHERE baseEntityId IN (?,?,?)  AND syncStatus IN (?)  AND eventType IN (?,?)  ORDER BY serverVersion";
+
+        Assert.assertNotNull(eventClientRepository.getEvents(Arrays.asList(baseEntityId, baseEntityId2, baseEntityId3), Arrays.asList(syncStatus), Arrays.asList(eventType, eventType2)));
+
+        ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String[]> queryParamsCaptor = ArgumentCaptor.forClass(String[].class);
+        Mockito.verify(sqliteDatabase).rawQuery(queryCaptor.capture(), queryParamsCaptor.capture());
+
+        Assert.assertEquals(expectedQueryString, queryCaptor.getValue());
+        Assert.assertArrayEquals(new String[]{baseEntityId, baseEntityId2, baseEntityId3, syncStatus, eventType, eventType2}, queryParamsCaptor.getValue());
 
     }
 
