@@ -36,8 +36,6 @@ import java.util.UUID;
 
 import timber.log.Timber;
 
-import static org.smartregister.AllConstants.TEXT;
-
 /**
  * Created by keyman on 08/02/2017.
  */
@@ -233,9 +231,9 @@ public class JsonFormUtils {
                 String fieldCode = jsonObject.optString(OPENMRS_ENTITY_ID);
                 String parentCode = jsonObject.optString(OPENMRS_ENTITY_PARENT);
                 String value = jsonValObject.optString(OPENMRS_ENTITY_ID);
-                String humanReadableValues = jsonValObject.optString(TEXT);
+                String humanReadableValues = jsonValObject.optString(AllConstants.TEXT);
                 String formSubmissionField = jsonObject.optString(KEY);
-                event.addObs(new Obs(fieldType, TEXT, fieldCode, parentCode, Collections.singletonList(value),
+                event.addObs(new Obs(fieldType, AllConstants.TEXT, fieldCode, parentCode, Collections.singletonList(value),
                         Collections.singletonList(humanReadableValues), "", formSubmissionField));
             }
         } catch (JSONException e) {
@@ -450,7 +448,7 @@ public class JsonFormUtils {
 
                             createObservation(e, option, String.valueOf(option.getBoolean(VALUE)));
                         } else {
-                            String optionText = option.optString(TEXT);
+                            String optionText = option.optString(AllConstants.TEXT);
                             optionValues.add(optionText);
                             optionKeyVals.put(option.optString(KEY), optionText);
                         }
@@ -490,7 +488,7 @@ public class JsonFormUtils {
     }
 
     private static void addGpsObs(Event e, String formSubmissionFieldPrefix, String formSubmissionFieldSuffix, String value) {
-        addObs(e, getGpsFormSubmissionField(formSubmissionFieldPrefix, formSubmissionFieldSuffix), TEXT, Collections.singletonList(value));
+        addObs(e, getGpsFormSubmissionField(formSubmissionFieldPrefix, formSubmissionFieldSuffix), AllConstants.TEXT, Collections.singletonList(value));
     }
 
     @NotNull
@@ -511,7 +509,7 @@ public class JsonFormUtils {
 
         String dataType = getString(jsonObject, OPENMRS_DATA_TYPE);
         if (StringUtils.isBlank(dataType)) {
-            dataType = TEXT;
+            dataType = AllConstants.TEXT;
         }
 
         if (dataType.equals(AllConstants.DATE) && StringUtils.isNotBlank(obsValue)) {
@@ -535,8 +533,8 @@ public class JsonFormUtils {
                 entityIdVal = getString(jsonObject, AllConstants.PARENT_ENTITY_ID);
                 entityParentVal = getString(jsonObject, AllConstants.PARENT_ENTITY_ID);
                 vall.add(getString(jsonObject, OPENMRS_ENTITY_ID));
-                if (jsonObject.has(TEXT)) {
-                    humanReadableValues.add(getString(jsonObject, TEXT));
+                if (jsonObject.has(AllConstants.TEXT)) {
+                    humanReadableValues.add(getString(jsonObject, AllConstants.TEXT));
                 }
             } else if ((AllConstants.NATIVE_RADIO.equals(widgetType) || AllConstants.EXTENDED_RADIO_BUTTON.equals(widgetType)) &&
                     jsonObject.has(AllConstants.OPTIONS)) {
@@ -580,7 +578,7 @@ public class JsonFormUtils {
                     for (int i = 0; i < options.length(); i++) {
                         JSONObject option = options.getJSONObject(i);
                         if (obsValue.equals(option.getString(KEY))) {
-                            keyValPairs.put(obsValue, option.optString(TEXT));
+                            keyValPairs.put(obsValue, option.optString(AllConstants.TEXT));
                             break;
                         }
                     }
@@ -610,7 +608,7 @@ public class JsonFormUtils {
         String formSubmissionField = jsonObject.optString(KEY);
         String dataType = jsonObject.optString(OPENMRS_DATA_TYPE);
         if (StringUtils.isBlank(dataType)) {
-            dataType = TEXT;
+            dataType = AllConstants.TEXT;
         }
 
         e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField,
