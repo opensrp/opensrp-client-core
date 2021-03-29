@@ -11,6 +11,8 @@ import org.smartregister.domain.Alert;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 import static java.lang.String.format;
 import static org.apache.commons.lang3.ArrayUtils.addAll;
 import static org.apache.commons.lang3.StringUtils.repeat;
@@ -94,32 +96,82 @@ public class AlertRepository extends DrishtiRepository {
         }
     }
 
+    /**
+     * Creates a single alert in the db. This is inefficient if you have multiple alerts to create.
+     * For efficiency when processing multiple alerts, it is recommended to use {@link #createAlerts(List<Alert> alerts) method} instead
+     *
+     * @param alert the alert to process
+     */
     public void createAlert(Alert alert) {
         SQLiteDatabase database = masterRepository().getWritableDatabase();
-        String[] caseAndScheduleNameColumnValues = {alert.caseId(), alert.scheduleName()};
+        createAlertCore(database, alert);
+    }
 
-        String caseAndScheduleNameColumnSelections =
-                ALERTS_CASEID_COLUMN + " = ?  COLLATE " + "NOCASE" + " AND "
-                        + ALERTS_SCHEDULE_NAME_COLUMN + " = ?";
-        Cursor cursor = null;
-        List<Alert> existingAlerts;
+    /**
+     * Creates alerts in the db as a transaction.
+     * For efficiency it is recommended to use this method instead of the {@link #createAlert(Alert alert) method} which only processes one alert at a time
+     *
+     * @param alertList A list of alerts to persist in the DB
+     */
+    public void createAlerts(List<Alert> alertList) {
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
+        database.beginTransaction();
+
         try {
-            cursor = database
-                    .query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, caseAndScheduleNameColumnSelections,
-                            caseAndScheduleNameColumnValues, null, null, null, null);
-            existingAlerts = readAllAlerts(cursor);
+
+            for (Alert alert : alertList) {
+
+                createAlertCore(database, alert);
+            }
+
+            database.setTransactionSuccessful();
+
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            database.endTransaction();
+        }
+    }
+
+    /**
+     * A more efficient way to check for the prescence of Alerts in the db corresponding to a specific entity id.
+     *
+     * @param database     a reference to the db helper
+     * @param caseId       the entity id
+     * @param scheduleName the name of the vaccine(schedule name) eg. bcg, opv0, penta1 e.t.c
+     */
+    public int getAlertsCount(SQLiteDatabase database, String caseId, String scheduleName) {
+
+        String[] caseAndScheduleNameColumnValues = {caseId, scheduleName};
+        String caseAndScheduleNameColumnSelections = ALERTS_CASEID_COLUMN + " = ?  COLLATE NOCASE" + " AND " + ALERTS_SCHEDULE_NAME_COLUMN + " = ?";
+
+        Cursor cursor = null;
+        int count;
+
+        try {
+            cursor = database.rawQuery(String.format("SELECT COUNT(%s) FROM %s WHERE %s", ALERTS_CASEID_COLUMN, ALERTS_TABLE_NAME, caseAndScheduleNameColumnSelections), caseAndScheduleNameColumnValues);
+            cursor.moveToFirst();
+            count = cursor.getInt(0);
+
         } finally {
             if (cursor != null) {
                 cursor.close();
             }
         }
 
+        return count;
+    }
+
+    private void createAlertCore(SQLiteDatabase database, Alert alert) {
+
+        String caseAndScheduleNameColumnSelections = ALERTS_CASEID_COLUMN + " = ?  COLLATE NOCASE" + " AND " + ALERTS_SCHEDULE_NAME_COLUMN + " = ?";
+        boolean alertsExist = getAlertsCount(database, alert.caseId(), alert.scheduleName()) > 0;
+
         ContentValues values = createValuesFor(alert);
-        if (existingAlerts == null || existingAlerts.isEmpty()) {
+        if (!alertsExist) {
             database.insert(ALERTS_TABLE_NAME, null, values);
         } else {
-            database.update(ALERTS_TABLE_NAME, values, caseAndScheduleNameColumnSelections,
-                    caseAndScheduleNameColumnValues);
+            database.update(ALERTS_TABLE_NAME, values, caseAndScheduleNameColumnSelections, new String[]{alert.caseId(), alert.scheduleName()});
         }
     }
 
