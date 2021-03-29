@@ -45,8 +45,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -527,7 +525,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         taskIds.add("taskId-1");
 
         List<Event> events = eventClientRepository.getEventsByTaskIds(taskIds);
-        verify(sqliteDatabase).rawQuery(query, params);
+        Mockito.verify(sqliteDatabase).rawQuery(query, params);
         Assert.assertNotNull(events.size());
 
     }
@@ -540,7 +538,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         when(sqliteDatabase.rawQuery(query, params)).thenReturn(getEventCursor());
 
         JSONObject actualJsonObject = eventClientRepository.getEventsByEventId(eventId);
-        verify(sqliteDatabase).rawQuery(query, params);
+        Mockito.verify(sqliteDatabase).rawQuery(query, params);
         Assert.assertNotNull(actualJsonObject);
         Assert.assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", actualJsonObject.get("baseEntityId"));
         Assert.assertEquals("2184aaaa-d1cf-4099-945a-c66bd8a93e1e", actualJsonObject.get("formSubmissionId"));
@@ -550,7 +548,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     public void testGetEventsByEventIdWithNullParam() throws Exception {
 
         JSONObject actualJsonObject = eventClientRepository.getEventsByEventId(null);
-        verifyNoInteractions(sqliteDatabase);
+        Mockito.verifyNoInteractions(sqliteDatabase);
         Assert.assertNull(actualJsonObject);
     }
 
@@ -565,7 +563,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         eventIds.add("eventId-1");
 
         List<Event> events = eventClientRepository.getEventsByEventIds(eventIds);
-        verify(sqliteDatabase).rawQuery(query, params);
+        Mockito.verify(sqliteDatabase).rawQuery(query, params);
         Assert.assertNotNull(events);
     }
 
@@ -590,7 +588,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
         eventClientRepository.fetchEventClients(lastSyncDate, syncStatus);
 
-        verify(eventClientRepository).fetchEventClientsCore(query, new String[]{syncStatus, lastSyncString});
+        Mockito.verify(eventClientRepository).fetchEventClientsCore(query, new String[]{syncStatus, lastSyncString});
     }
 
 }
