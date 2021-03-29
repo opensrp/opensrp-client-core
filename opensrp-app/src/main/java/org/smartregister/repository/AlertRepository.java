@@ -13,7 +13,6 @@ import java.util.List;
 
 import timber.log.Timber;
 
-import static java.lang.String.format;
 import static org.apache.commons.lang3.ArrayUtils.addAll;
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.smartregister.domain.AlertStatus.complete;
@@ -98,7 +97,7 @@ public class AlertRepository extends DrishtiRepository {
 
     /**
      * Creates a single alert in the db. This is inefficient if you have multiple alerts to create.
-     * For efficiency when processing multiple alerts, it is recommended to use {@link #createAlerts(List<Alert> alerts) method} instead
+     * For efficiency when processing multiple alerts, it is recommended to use {@link #createAlerts(List<Alert>) method} instead
      *
      * @param alert the alert to process
      */
@@ -206,7 +205,7 @@ public class AlertRepository extends DrishtiRepository {
     }
 
     public void deleteOfflineAlertsForEntity(String caseId, String... names) {
-        String whereClause = format(" %s = ? COLLATE NOCASE AND %s = 1 AND %s IN (%s)",
+        String whereClause = String.format(" %s = ? COLLATE NOCASE AND %s = 1 AND %s IN (%s)",
                 ALERTS_CASEID_COLUMN, ALERTS_OFFLINE_COLUMN, ALERTS_VISIT_CODE_COLUMN,
                 insertPlaceholdersForInClause(names.length));
         SQLiteDatabase database = masterRepository().getWritableDatabase();
@@ -267,7 +266,7 @@ public class AlertRepository extends DrishtiRepository {
         Cursor cursor = null;
         try {
             cursor = database.rawQuery(
-                    format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "ORDER BY " + "DATE"
+                    String.format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "ORDER BY " + "DATE"
                             + "(%s)", ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN, ALERTS_STARTDATE_COLUMN),
                     new String[]{entityId});
             return readAllAlerts(cursor);
@@ -283,7 +282,7 @@ public class AlertRepository extends DrishtiRepository {
         Cursor cursor = null;
         try {
             cursor = database.rawQuery(
-                    format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "AND %s IN "
+                    String.format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "AND %s IN "
                                     + "(%s) ORDER BY DATE(%s)", ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN,
                             ALERTS_VISIT_CODE_COLUMN, insertPlaceholdersForInClause(names.length),
                             ALERTS_STARTDATE_COLUMN), addAll(new String[]{entityId}, names));
@@ -300,7 +299,7 @@ public class AlertRepository extends DrishtiRepository {
         Cursor cursor = null;
         try {
             cursor = database.rawQuery(
-                    format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "AND %s = 1 "
+                    String.format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "AND %s = 1 "
                                     + "AND %s IN (%s) ORDER BY DATE(%s)", ALERTS_TABLE_NAME,
                             ALERTS_CASEID_COLUMN, ALERTS_OFFLINE_COLUMN, ALERTS_VISIT_CODE_COLUMN,
                             insertPlaceholdersForInClause(names.length), ALERTS_STARTDATE_COLUMN),
