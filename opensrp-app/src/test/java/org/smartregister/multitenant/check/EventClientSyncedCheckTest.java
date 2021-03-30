@@ -59,7 +59,6 @@ public class EventClientSyncedCheckTest extends BaseRobolectricUnitTest {
 
     @Test
     public void isEventsClientSyncedShouldReturnFalseWhenEventClientRepositoryIsNull() {
-        Context originalContext = DrishtiApplication.getInstance().getContext();
         Context mockedContext = Mockito.spy(DrishtiApplication.getInstance().getContext());
         DrishtiApplication mockedDrishtiApplication = Mockito.spy(DrishtiApplication.getInstance());
         Mockito.doReturn(mockedContext).when(mockedDrishtiApplication).getContext();
