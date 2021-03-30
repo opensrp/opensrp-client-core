@@ -363,7 +363,9 @@ public class SyncIntentService extends BaseSyncIntentService {
         if (!fetchStatus.equals(FetchStatus.noConnection) && !fetchStatus.equals(FetchStatus.fetchedFailed)) {
             ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
             ecSyncUpdater.updateLastCheckTimeStamp(new Date().getTime());
-            validateAssignmentHelper.validateUserAssignment();
+            if (CoreLibrary.getInstance().getSyncConfiguration().runPlanEvaluationOnClientProcessing()) {
+                validateAssignmentHelper.validateUserAssignment();
+            }
 
         }
 
