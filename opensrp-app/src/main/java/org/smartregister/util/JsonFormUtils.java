@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.DateUtil;
@@ -21,6 +22,8 @@ import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.sync.helper.ECSyncHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -79,6 +82,21 @@ public class JsonFormUtils {
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
     public static Client createBaseClient(JSONArray fields, FormTag formTag, String entityId) {
+        return createBaseClient(null, fields, formTag, entityId);
+    }
+
+
+    /**
+     * Create base client from Form fields and the original client
+     * Null values are populated with the original client details
+     *
+     * @param originalClient original client
+     * @param fields         JSON Form fields
+     * @param formTag
+     * @param entityId
+     * @return base Client object
+     */
+    public static Client createBaseClient(Client originalClient, JSONArray fields, FormTag formTag, String entityId) {
 
         String firstName = getFieldValue(fields, FormEntityConstants.Person.first_name);
         String middleName = getFieldValue(fields, FormEntityConstants.Person.middle_name);
@@ -113,9 +131,14 @@ public class JsonFormUtils {
 
         List<Address> addresses = new ArrayList<>(extractAddresses(fields).values());
 
+        if (originalClient != null) {
+            addresses = (addresses.isEmpty()) ? originalClient.getAddresses() : addresses;
+        }
+
         Client client = (Client) new Client(entityId).withFirstName(firstName).withMiddleName(middleName).withLastName(lastName)
                 .withBirthdate((birthdate), birthdateApprox).withDeathdate(deathdate, deathdateApprox).withGender(gender)
                 .withDateCreated(new Date());
+
 
         client.setLocationId(formTag.locationId);
         client.setTeamId(formTag.teamId);
@@ -124,9 +147,37 @@ public class JsonFormUtils {
         client.setClientApplicationVersionName(formTag.appVersionName);
         client.setClientDatabaseVersion(formTag.databaseVersion);
 
-        client.withRelationships(new HashMap<String, List<String>>()).withAddresses(addresses)
+        client.withRelationships(new HashMap<>()).withAddresses(addresses)
                 .withAttributes(extractAttributes(fields)).withIdentifiers(extractIdentifiers(fields));
+
+        // Handle null relationships & attributes
+        updateNewClientNullValues(client, originalClient);
+
         return client;
+
+    }
+
+    /**
+     * Update any NULL values in the new Client object with values from the original Client
+     *
+     * @param newClient      Newly created Client object
+     * @param originalClient Original retrieved Client object
+     */
+    public static void updateNewClientNullValues(Client newClient, Client originalClient) {
+        if (newClient != null && originalClient != null) {
+            if (StringUtils.isEmpty(newClient.getFirstName()))
+                newClient.setFirstName(originalClient.getFirstName());
+            if (StringUtils.isEmpty(newClient.getMiddleName()))
+                newClient.setMiddleName(originalClient.getMiddleName());
+            if (StringUtils.isEmpty(newClient.getLastName()))
+                newClient.setLastName(originalClient.getLastName());
+            if(StringUtils.isEmpty(newClient.getGender()))
+                newClient.setGender(originalClient.getGender());
+            if (newClient.getBirthdate() == null)
+                newClient.setBirthdate(originalClient.getBirthdate());
+            if (newClient.getDeathdate() == null)
+                newClient.setDeathdate(originalClient.getDeathdate());
+        }
 
     }
 
@@ -148,7 +199,7 @@ public class JsonFormUtils {
             Timber.e(e);
         }
 
-        if (StringUtils.isBlank(encounterLocation)) {
+        if (StringUtils.isEmpty(encounterLocation)) {
             encounterLocation = formTag.locationId;
         }
 
@@ -1259,5 +1310,25 @@ public class JsonFormUtils {
 
     public static boolean isBlankJsonObject(JSONObject jsonObject) {
         return jsonObject == null || jsonObject.length() == 0;
+    }
+
+    public static FormTag formTag(@NonNull AllSharedPreferences allSharedPreferences) {
+        //TODO: Finish and fix this
+        FormTag formTag = new FormTag();
+        formTag.providerId = allSharedPreferences.fetchRegisteredANM();
+        formTag.appVersion = CoreLibrary.getInstance().getApplicationVersion();
+        formTag.databaseVersion = CoreLibrary.getInstance().getDatabaseVersion();
+        return formTag;
+    }
+
+    public static void mergeAndSaveClient(@NonNull Client baseClient) throws Exception {
+        JSONObject updatedClientJson = new JSONObject(JsonFormUtils.gson.toJson(baseClient));
+        ECSyncHelper ecSyncHelper = ECSyncHelper.getInstance(CoreLibrary.getInstance().context().applicationContext());
+        JSONObject originalClientJsonObject = ecSyncHelper.getClient(baseClient.getBaseEntityId());
+
+        if (originalClientJsonObject != null) {
+            JSONObject mergedJson = JsonFormUtils.merge(originalClientJsonObject, updatedClientJson);
+            ecSyncHelper.addClient(baseClient.getBaseEntityId(), mergedJson);
+        }
     }
 }

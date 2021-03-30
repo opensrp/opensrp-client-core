@@ -560,4 +560,20 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         verify(eventClientRepository).fetchEventClientsCore(query, new String[]{syncStatus, lastSyncString});
     }
 
+
+    @Test
+    public void getSqliteTypeShouldReturnVarcharForListType() {
+        Assert.assertEquals("varchar", EventClientRepository.getSqliteType(ColumnAttribute.Type.list));
+    }
+
+    @Test
+    public void getSqliteTypeShouldReturnVarcharForMapType() {
+        Assert.assertEquals("varchar", EventClientRepository.getSqliteType(ColumnAttribute.Type.map));
+    }
+
+    @Test
+    public void getSqliteTypeShouldReturnIntegerForLongnumType() {
+        Assert.assertEquals("integer", EventClientRepository.getSqliteType(ColumnAttribute.Type.longnum));
+    }
+
 }

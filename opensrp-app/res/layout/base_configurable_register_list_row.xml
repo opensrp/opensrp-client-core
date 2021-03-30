@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/register_columns"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/view_clientColumn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/register_list_item_margin"
+        android:layout_marginLeft="@dimen/register_list_item_margin"
+        android:layout_marginTop="@dimen/register_list_top_bottom_margin"
+        android:layout_marginEnd="@dimen/register_list_item_margin"
+        android:layout_marginRight="@dimen/register_list_item_margin"
+        android:layout_marginBottom="@dimen/register_list_top_bottom_margin"
+        android:layout_toStartOf="@+id/ll_baseRegisterListRow_clientActionWrapper"
+        android:layout_toLeftOf="@+id/ll_baseRegisterListRow_clientActionWrapper"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_baseRegisterListRow_guardianName"
+            style="@style/CustomFontTextViewStyle.ClientList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingLeft="0dp"
+            android:singleLine="true"
+            android:text="CG:Parent Name, Age"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/child_register_title_size"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_baseRegisterListRow_clientName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingLeft="0dp"
+            android:text="Patient Name, Age"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/child_register_title_size"
+            android:textStyle="normal" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_baseRegisterListRow_registerType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_horizontal"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:text="Child"
+                android:textColor="@color/text_blue"
+                android:textSize="@dimen/child_register_list_desc_size" />
+
+            <TextView
+                android:id="@+id/tv_baseRegisterListRow_firstDotDivider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="\u2022"
+                android:textSize="@dimen/child_register_list_desc_size" />
+
+            <org.smartregister.view.customcontrols.CustomFontTextView
+                android:id="@+id/tv_baseRegisterListRow_gender"
+                style="@style/CustomFontTextViewStyle.ClientList.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_horizontal"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:text="Male"
+                android:textColor="@color/light_grey_text"
+                android:textSize="@dimen/child_register_list_desc_size"
+                android:textStyle="normal" />
+
+
+            <TextView
+                android:id="@+id/tv_baseRegisterListRow_secondDotDivider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="\u2022"
+                android:textSize="@dimen/child_register_list_desc_size" />
+
+            <org.smartregister.view.customcontrols.CustomFontTextView
+                android:id="@+id/tv_baseRegisterListRow_location"
+                style="@style/CustomFontTextViewStyle.ClientList.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_horizontal"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:text="Lavington"
+                android:textColor="@color/light_grey_text"
+                android:textSize="@dimen/child_register_list_desc_size"
+                android:textStyle="normal" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_baseRegisterListRow_clientActionWrapper"
+        android:layout_width="@dimen/child_register_list_item_width"
+        android:layout_height="90dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:paddingStart="@dimen/register_list_item_padding"
+        android:paddingLeft="@dimen/register_list_item_padding"
+        android:paddingTop="@dimen/register_list_top_bottom_padding"
+        android:paddingEnd="@dimen/register_list_item_padding"
+        android:paddingRight="@dimen/register_list_item_padding"
+        android:paddingBottom="@dimen/register_list_top_bottom_padding">
+
+        <Button
+            android:id="@+id/btn_baseRegisterListRow_clientAction"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:gravity="center"
+            android:hapticFeedbackEnabled="true"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/check_in"
+            android:textAllCaps="true"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textSize="15sp"
+            android:typeface="normal" />
+
+    </LinearLayout>
+
+</RelativeLayout>

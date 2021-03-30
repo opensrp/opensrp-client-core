@@ -70,7 +70,7 @@ public class SmartRegisterDialogFragment extends DialogFragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 dismiss();
-                dialogOptionModel.onDialogOptionSelection(options[i], tag);
+                dialogOptionModel.onDialogOptionSelection(parentActivity, options[i], tag);
             }
         });
 

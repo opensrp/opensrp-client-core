@@ -81,9 +81,12 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
     @Override
     public org.smartregister.domain.Task updateTask(org.smartregister.domain.Task task) {
         task.setSyncStatus(BaseRepository.TYPE_Created);
-        addOrUpdate(task, true);
-        sendBroadcast(task);
-        return task;
+        if (addOrUpdate(task, true)) {
+            sendBroadcast(task);
+            return task;
+        }
+
+        return null;
     }
 
 

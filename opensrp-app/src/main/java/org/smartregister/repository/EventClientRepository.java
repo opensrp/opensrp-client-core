@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.DateUtil;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.ClientRelationship;
 import org.smartregister.domain.Event;
@@ -1500,6 +1501,92 @@ public class EventClientRepository extends BaseRepository {
                 String jsonString = cursor.getString(0);
                 jsonString = jsonString.replaceAll("'", "");
                 return convert(jsonString, Client.class);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return null;
+    }
+
+    public CommonPersonObjectClient fetchCommonPersonObjectClientByBaseEntityId(String baseEntityId) {
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery("SELECT "
+                    + client_column.json
+                    + " FROM "
+                    + clientTable.name()
+                    + " WHERE "
+                    + client_column.baseEntityId.name()
+                    + " = ? ", new String[]{baseEntityId});
+            if (cursor.moveToNext()) {
+                String jsonString = cursor.getString(0);
+                jsonString = jsonString.replaceAll("'", "");
+
+                Map map = convert(jsonString, Map.class);
+                HashMap<String, String> details = new HashMap<>();
+
+                for (Object key: map.keySet()) {
+                    details.put(String.valueOf(key), String.valueOf(map.get(key)));
+                }
+
+                CommonPersonObjectClient commonPersonObjectClient = new CommonPersonObjectClient(details.get("baseEntityId"), details, details.get("first_name") + " " + details.get("last_name"));
+                commonPersonObjectClient.setColumnmaps(details);
+                return commonPersonObjectClient;
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return null;
+    }
+
+    public CommonPersonObjectClient fetchCommonPersonObjectClientByBaseEntityId(@NonNull String primaryTableName, @NonNull String baseEntityId, @Nullable String otherTableName) {
+        Cursor cursor = null;
+        try {
+            if (TextUtils.isEmpty(otherTableName)) {
+                cursor = getWritableDatabase().rawQuery(String.format(
+                        "SELECT * FROM %s WHERE %s = ?", primaryTableName, "base_entity_id"), new String[]{baseEntityId});
+            } else {
+                cursor = getWritableDatabase().rawQuery(String.format(
+                        "SELECT * FROM %s INNER JOIN %s ON %s.base_entity_id = %s.base_entity_id WHERE %s.%s = ?"
+                        , primaryTableName, otherTableName, primaryTableName, otherTableName, primaryTableName, "base_entity_id")
+                        , new String[]{baseEntityId});
+            }
+
+            if (cursor != null && cursor.moveToNext()) {
+                HashMap<String, String> details = new HashMap<>();
+
+                int cols = cursor.getColumnCount();
+
+                for (int i = 0; i < cols; i++) {
+                    int type = cursor.getType(i);
+                    Object cellValue = null;
+
+                    if (type == Cursor.FIELD_TYPE_FLOAT) {
+                        cellValue = cursor.getFloat(i);
+                    } else if (type == Cursor.FIELD_TYPE_INTEGER) {
+                        cellValue = cursor.getLong(i);
+                    } else if (type == Cursor.FIELD_TYPE_STRING) {
+                        cellValue = cursor.getString(i);
+                    }
+
+                    // Types BLOB and NULL are ignored
+                    // Blob is not supposed to a reporting result & NULL is already defined in the cellValue at the top
+
+                    details.put(cursor.getColumnName(i), String.valueOf(cellValue));
+                }
+
+                CommonPersonObjectClient commonPersonObjectClient = new CommonPersonObjectClient(details.get("base_entity_id"), details, details.get("first_name") + " " + details.get("last_name"));
+                commonPersonObjectClient.setColumnmaps(details);
+
+                return commonPersonObjectClient;
             }
         } catch (Exception e) {
             Timber.e(e);

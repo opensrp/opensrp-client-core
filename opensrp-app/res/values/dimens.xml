@@ -129,4 +129,23 @@
     <dimen name="profile_btn_registration_info_padding">24dp</dimen>
     <dimen name="profile_dot_separator_margin">10dp</dimen>
 
+    <!-- GENERIC REGISTER -->
+
+    <!--Child register -->
+    <dimen name="child_register_title_size">16sp</dimen>
+    <dimen name="child_register_list_desc_size">16sp</dimen>
+    <dimen name="child_register_list_item_width">120dp</dimen>
+
+    <dimen name="register_list_item_width">130dp</dimen>
+    <dimen name="register_list_item_height">75dp</dimen>
+    <dimen name="register_list_item_margin">15dp</dimen>
+    <dimen name="register_list_member_icon_margin">10dp</dimen>
+    <dimen name="register_list_top_bottom_margin">7dp</dimen>
+    <dimen name="register_list_item_end_margin">5dp</dimen>
+
+    <dimen name="register_list_item_padding">7dp</dimen>
+    <dimen name="register_list_top_bottom_padding">7dp</dimen>
+    
+    <dimen name="configurable_member_profile_name_size">20sp</dimen>
+
 </resources>

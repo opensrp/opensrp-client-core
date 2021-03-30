@@ -11,7 +11,14 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.smartregister.configuration.ActivityStarter;
+import org.smartregister.configuration.MockConfigViewsLib;
+import org.smartregister.configuration.MockLocationTagsConfiguration;
+import org.smartregister.configuration.MockRegisterQueryProvider;
+import org.smartregister.configuration.ModuleConfiguration;
+import org.smartregister.configuration.ModuleMetadata;
 import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.configuration.ModuleRegister;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.authorizer.P2PAuthorizationService;
 import org.smartregister.p2p.model.dao.ReceiverTransferDao;
@@ -20,6 +27,8 @@ import org.smartregister.pathevaluator.PathEvaluatorLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.shadows.ShadowAppDatabase;
+import org.smartregister.view.activity.BaseProfileActivity;
+import org.smartregister.view.activity.FormActivity;
 
 import static org.junit.Assert.assertEquals;
 
@@ -192,4 +201,27 @@ public class CoreLibraryTest extends BaseUnitTest {
         Assert.assertNotNull(PathEvaluatorLibrary.getInstance().getTaskProvider().getTaskDao());
         Assert.assertNotNull(PathEvaluatorLibrary.getInstance().getEventProvider().getEventDao());
     }
+
+    @Test
+    public void canGetCurrentDefaultModuleConfiguration() {
+        Context context = Context.getInstance();
+        CoreLibrary.init(context);
+        ModuleConfiguration customLibraryConfiguration = new ModuleConfiguration.Builder("ONA Library",
+                MockRegisterQueryProvider.class, new MockConfigViewsLib(), ActivityStarter.class)
+                .setModuleMetadata(new ModuleMetadata(
+                        new ModuleRegister(
+                                "opd_registration",
+                                "ec_client",
+                                "Opd Registration",
+                                "UPDATE OPD REGISTRATION", "custom-family"),
+                        new MockLocationTagsConfiguration(), FormActivity.class, BaseProfileActivity.class, false, ""
+                ))
+                .build();
+
+        CoreLibrary.getInstance()
+                .addModuleConfiguration(true, "custom-family", customLibraryConfiguration);
+        assertEquals("custom-family", CoreLibrary.getInstance().getCurrentModuleName());
+        assertEquals("ONA Library", CoreLibrary.getInstance().getCurrentModuleConfiguration().getRegisterTitle());
+    }
+
 }

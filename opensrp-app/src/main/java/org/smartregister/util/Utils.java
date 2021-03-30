@@ -35,6 +35,7 @@ import android.os.Environment;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
@@ -988,5 +989,31 @@ public class Utils {
                     .append(apiParamsPair.second);
         }
         return apiCallParamsString.toString();
+    }
+
+
+    @NonNull
+    public static String getClientAge(String dobString, String translatedYearInitial) {
+        String age = dobString;
+        if (dobString.contains(translatedYearInitial)) {
+            String extractedYear = dobString.substring(0, dobString.indexOf(translatedYearInitial));
+            int year = dobString.contains(translatedYearInitial) ? Integer.parseInt(extractedYear) : 0;
+            if (year >= 5) {
+                age = extractedYear;
+            }
+        }
+        return age;
+    }
+
+    public static float convertDpToPixel(float dp, @NonNull Context context) {
+        return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+    public static String extractModuleName(Intent intent) {
+        if (intent.getExtras() != null && intent.hasExtra(AllConstants.IntentExtra.MODULE_NAME)) {
+            return intent.getStringExtra(AllConstants.IntentExtra.MODULE_NAME);
+        } else {
+            throw new IllegalStateException("Module name was not passed to the activity! Kindly use ModuleLibrary.getInstance().startRegisterActivity() to start the activity");
+        }
     }
 }

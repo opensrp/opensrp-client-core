@@ -434,6 +434,7 @@ public class AllConstants {
         public static final String TASK_GENERATED = "task_generated";
         public static final String DIALOG_TITLE = "dialog_title";
         public static final String DIALOG_MESSAGE = "dialog_message";
+        public static final String COMMON_PERSON_CLIENT = "common_person_client";
     }
 
     public static final class REGISTER_FRAGMENT {
@@ -483,11 +484,30 @@ public class AllConstants {
     public interface JSON {
         String KEY = "key";
         String VALUE = "value";
+        String COUNT = AllConstants.COUNT;
+        String STEP = AllConstants.STEP;
+        String FIELDS = "fields";
 
         interface Property {
             String IS_NEW = "is_new";
             String FORM_VERSION = "form_version";
             String CLIENT_FORM_ID = "client_form_id";
+            String ENCOUNTER_TYPE = "encounter_type";
+            String COUNT = JSON.COUNT;
+            String STEP = JSON.STEP;
+        }
+
+        interface FieldKey {
+            String LAST_INTERACTED_WITH = "last_interacted_with";
+            String DOB_UNKNOWN = "dob_unknown";
+            String OPTIONS = "options";
+            String SEX = "Sex";
+
+            String AGE_ENTERED = "age_entered";
+            String DOB_ENTERED = "dob_entered";
+            String OPENSRP_ID = "opensrp_id";
+            String CURRENT_OPENSRP_ID = "current_opensrp_id";
+            String ZEIR_ID = "zeir_id";
         }
     }
 
@@ -560,6 +580,49 @@ public class AllConstants {
         String EVENT_SYNC = "event_sync";
         String LOCATION_SYNC = "location_sync";
         String CLIENT_PROCESSING = "client_processing";
+    }
+
+    public interface RequestCode {
+        int START_JSON_FORM = 2244;
+    }
+
+    public interface IntentExtra {
+
+        String MODULE_NAME = "module-name";
+
+        interface JsonForm {
+            String JSON = "json";
+            String FORM = "form";
+            String BASE_ENTITY_ID = "base-entity-id";
+            String ENTITY_TABLE = "entity_table";
+            String ACTION_REGISTRATION = "registration";
+            String ACTION = "action";
+        }
+    }
+
+    public interface ENTITY {
+        String PERSON = "person";
+    }
+
+    public interface Client {
+        String BASE_ENTITY_ID = "base_entity_id";
+        String PHONE_NUMBER = "phone_number";
+        String FIRST_NAME = "first_name";
+        String LAST_NAME = "last_name";
+        String PRIMARY_CAREGIVER = "primary_care_giver";
+        String VILLAGE_TOWN = "village_town";
+        String GENDER = "gender";
+        String DOB = "dob";
+    }
+
+    public interface OPENMRS {
+        String ENTITY = "openmrs_entity";
+        String ENTITY_ID = "openmrs_entity_id";
+    }
+
+    public interface BooleanInt {
+        int TRUE = 1;
+        int FALSE = 0;
     }
 
 

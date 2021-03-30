@@ -2,11 +2,13 @@ package org.smartregister.view.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -35,9 +37,12 @@ import org.smartregister.util.Utils;
 import org.smartregister.view.activity.BaseRegisterActivity;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.BaseRegisterFragmentContract;
+import org.smartregister.view.contract.ConfigurableRegisterFragmentContract;
+import org.smartregister.view.contract.IView;
 import org.smartregister.view.dialog.DialogOption;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -129,6 +134,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(getLayout(), container, false);
+        initializePresenter();
         rootView = view;//handle to the root
         setUpActionBar();
         setupViews(view);
@@ -275,7 +281,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
                     String.format(getActivity().getString(R.string.clients), clientAdapter.getTotalcount()) :
                     String.format(getActivity().getString(R.string.client), clientAdapter.getTotalcount()));
 
-            filterRelativeLayout.setVisibility(View.GONE);
+            if (filterRelativeLayout != null)
+                filterRelativeLayout.setVisibility(View.GONE);
         }
     }
 
@@ -293,7 +300,9 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     protected abstract String getDefaultSortQuery();
 
     public void filter(String filterString, String joinTableString, String mainConditionString, boolean qrCode) {
-        getSearchCancelView().setVisibility(isEmpty(filterString) ? View.INVISIBLE : View.VISIBLE);
+        View searchCancelView = getSearchCancelView();
+        if (searchCancelView != null)
+            searchCancelView.setVisibility(isEmpty(filterString) ? View.INVISIBLE : View.VISIBLE);
         if (isEmpty(filterString)) {
             Utils.hideKeyboard(getActivity());
         }
@@ -476,6 +485,16 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         }
     }
 
+    @Override
+    public void initializeAdapter(Set<IView> visibleColumns) {
+        // Do nothing
+    }
+
+    @Override
+    public ConfigurableRegisterFragmentContract.Presenter presenter() {
+        initializePresenter();
+        return presenter;
+    }
 
     ////////////////////////////////////////////////////////////////
     // Inner classes

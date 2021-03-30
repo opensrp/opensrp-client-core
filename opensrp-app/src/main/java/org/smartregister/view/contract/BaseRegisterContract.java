@@ -11,7 +11,8 @@ import java.util.List;
  * Created by keyamn on 27/06/2018.
  */
 public interface BaseRegisterContract {
-    interface Presenter {
+
+    interface Presenter extends ConfigurableRegisterActivityContract.Presenter {
 
         void registerViewConfigurations(List<String> viewIdentifiers);
 
@@ -22,7 +23,7 @@ public interface BaseRegisterContract {
         void updateInitials();
     }
 
-    interface View {
+    interface View extends ConfigurableRegisterActivityContract.View {
 
         Context getContext();
 
@@ -44,4 +45,10 @@ public interface BaseRegisterContract {
 
         void updateInitialsText(String initials);
     }
+
+    interface Model extends ConfigurableRegisterActivityContract.Model {}
+
+    interface InteractorCallBack extends ConfigurableRegisterActivityContract.InteractorCallBack {}
+
+    interface Interactor extends ConfigurableRegisterActivityContract.Interactor {}
 }

@@ -1,0 +1,8 @@
+
+---
+name: step1_appointment_done_inless_time
+description: appointment_done_inless_time
+priority: 1
+condition: "step1_appointment_due == 'Yes' && step_appointment_due_date != ''"
+actions:
+  - "calculation = (helper.getDifferenceDays(step1_appointment_due_date) < 28 ? 'Yes' : 'No')"

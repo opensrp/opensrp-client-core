@@ -7,12 +7,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
+import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.pathevaluator.PathEvaluatorLibrary;
 import org.smartregister.repository.AllSharedPreferences;
@@ -26,6 +28,9 @@ import org.smartregister.repository.dao.TaskDaoImpl;
 import org.smartregister.sync.P2PSyncFinishCallback;
 import org.smartregister.util.CredentialsHelper;
 import org.smartregister.util.Utils;
+import org.smartregister.view.activity.BaseConfigurableRegisterActivity;
+
+import java.util.HashMap;
 
 import java.util.Map;
 import java.util.Set;
@@ -58,6 +63,13 @@ public class CoreLibrary implements OnAccountsUpdateListener {
 
     private static String ENCRYPTED_PREFS_KEY_KEYSET = "__androidx_security_crypto_encrypted_prefs_key_keyset__";
     private static String ENCRYPTED_PREFS_VALUE_KEYSET = "__androidx_security_crypto_encrypted_prefs_value_keyset__";
+
+    private HashMap<String, ModuleConfiguration> moduleConfigurations = new HashMap<>();
+    private String defaultModule;
+    private String currentModule;
+
+    private int databaseVersion;
+    private int applicationVersion;
 
     public static void init(Context context) {
         init(context, null);
@@ -309,5 +321,61 @@ public class CoreLibrary implements OnAccountsUpdateListener {
                 Timber.e(e);
             }
         }
+    }
+
+    public boolean addModuleConfiguration(@NonNull String moduleName, @NonNull ModuleConfiguration moduleConfiguration) {
+        return addModuleConfiguration(false, moduleName, moduleConfiguration);
+    }
+
+    public boolean addModuleConfiguration(boolean isDefaultModule, @NonNull String moduleName, @NonNull ModuleConfiguration moduleConfiguration) {
+        this.moduleConfigurations.put(moduleName, moduleConfiguration);
+        if (isDefaultModule) {
+            this.defaultModule = moduleName;
+        }
+
+        return true;
+    }
+
+    public boolean removeModuleConfiguration(@NonNull String moduleName) {
+        return this.moduleConfigurations.remove(moduleName) != null;
+    }
+
+    @NonNull
+    public ModuleConfiguration getModuleConfiguration(@NonNull String moduleName) {
+        ModuleConfiguration moduleConfiguration = this.moduleConfigurations.get(moduleName);
+
+        if (moduleConfiguration == null) {
+            throw new IllegalStateException("The module configuration for " + moduleName + " could not be found! Kindly make sure that this is configured correctly through CoreLibrary.getInstance().addModuleConfiguration()");
+        }
+        return moduleConfiguration;
+
+    }
+
+    public void setCurrentModule(@NonNull String moduleName) {
+        this.currentModule = moduleName;
+    }
+
+    @NonNull
+    public String getCurrentModuleName() {
+        return currentModule != null ? currentModule : defaultModule;
+    }
+
+    @NonNull
+    public ModuleConfiguration getCurrentModuleConfiguration() {
+        return getModuleConfiguration(getCurrentModuleName());
+    }
+
+    public void startRegisterActivity(@NonNull android.content.Context context) {
+        Intent intent = new Intent(context, BaseConfigurableRegisterActivity.class);
+        intent.putExtra(AllConstants.IntentExtra.MODULE_NAME, getCurrentModuleName());
+        context.startActivity(intent);
+    }
+
+    public int getDatabaseVersion() {
+        return databaseVersion;
+    }
+
+    public int getApplicationVersion() {
+        return applicationVersion;
     }
 }

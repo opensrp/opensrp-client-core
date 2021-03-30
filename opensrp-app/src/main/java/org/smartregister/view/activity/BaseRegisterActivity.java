@@ -10,6 +10,8 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
+
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -29,9 +31,11 @@ import org.smartregister.util.AppExecutors;
 import org.smartregister.util.PermissionUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseRegisterContract;
+import org.smartregister.view.contract.ConfigurableRegisterActivityContract;
 import org.smartregister.view.fragment.BaseRegisterFragment;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -205,7 +209,18 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     public abstract void startFormActivity(JSONObject form);
 
     @Override
+    public void startFormActivity(String formName, String entityId, String metaData, @Nullable HashMap<String, String> injectedFieldValues, @Nullable String clientTable) {
+        //Implement Abstract Method
+    }
+
+    @Override
+    public void startFormActivity(@NonNull JSONObject jsonForm, @Nullable HashMap<String, String> parcelableData) {
+        //Implement Abstract Method
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == AllConstants.BARCODE.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
             if (data != null) {
                 Barcode barcode = data.getParcelableExtra(AllConstants.BARCODE.BARCODE_KEY);
@@ -353,5 +368,13 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     public void setSearchTerm(String searchTerm) {
         mBaseFragment.setSearchTerm(searchTerm);
+    }
+
+    @Override
+    public ConfigurableRegisterActivityContract.Presenter presenter() {
+        if (presenter == null) {
+            initializePresenter();
+        }
+        return presenter;
     }
 }
