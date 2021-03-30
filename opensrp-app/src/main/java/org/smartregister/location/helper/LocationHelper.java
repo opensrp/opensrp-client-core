@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 
 import timber.log.Timber;
 
-
 /**
  * Created by ndegwamartin on 09/04/2018.
  */
@@ -703,6 +702,16 @@ public class LocationHelper {
     public String getDefaultLocationLevel() {
         return DEFAULT_LOCATION_LEVEL;
     }
+
+
+    public List<String> getLocationIds() {
+        return locationIds;
+    }
+
+    public List<String> getLocationNames() {
+        return locationNames;
+    }
+
 
     /**
      * Gets list of values for display in the service locations helper for alternative data capture strategies

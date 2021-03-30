@@ -1080,7 +1080,7 @@ public class FormUtils {
         return fileContents;
     }
 
-    public JSONObject getFormJson(String formIdentity) throws IOException {
+    public JSONObject getFormJson(String formIdentity) {
         if (mContext != null) {
 
             InputStream inputStream = null;
@@ -1101,7 +1101,11 @@ public class FormUtils {
                 Timber.e(e);
             } finally {
                 if (inputStream != null) {
-                    inputStream.close();
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        Timber.e(e);
+                    }
                 }
             }
         }
