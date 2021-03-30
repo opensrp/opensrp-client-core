@@ -17,5 +17,6 @@ public class SaveTeamLocationsTaskTest extends BaseUnitTest {
         Whitebox.setInternalState(LocationHelper.class, "instance", locationHelper);
         new SaveTeamLocationsTask().execute();
         Mockito.verify(locationHelper).locationIdsFromHierarchy();
+        Whitebox.setInternalState(LocationHelper.class, "instance", (LocationHelper) null);
     }
 }
