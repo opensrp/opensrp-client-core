@@ -6,8 +6,6 @@ import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.sync.helper.TaskServiceHelper;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by Vincent Karuri on 30/03/2021
  */
