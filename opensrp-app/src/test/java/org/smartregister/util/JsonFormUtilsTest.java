@@ -1517,8 +1517,8 @@ public class JsonFormUtilsTest {
         Obs obs = obsList.get(0);
         assertNotNull(obs.getKeyValPairs());
         assertEquals(1, obs.getKeyValPairs().size());
-        assertNotNull(obs.getKeyValPairs().get("worn_broken"));
-        assertEquals("Usé, endommagé, ou cassé", obs.getKeyValPairs().get("worn_broken"));
+        assertNotNull(obs.getKeyValPairs().get(value));
+        assertEquals("Usé, endommagé, ou cassé", obs.getKeyValPairs().get(value));
         assertEquals(value, obs.getValue());
     }
 }
