@@ -133,7 +133,9 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
     protected BaseRegisterFragment getRegisterFragment() {
         BaseConfigurableRegisterFragment baseConfigurableRegisterFragment = new BaseConfigurableRegisterFragment();
         baseConfigurableRegisterFragment.setModuleConfiguration(getModuleConfiguration());
-        baseConfigurableRegisterFragment.setToolbarOptions(navigationOptions.getToolbarOptions());
+        if (navigationOptions != null && navigationOptions.getToolbarOptions() != null) {
+            baseConfigurableRegisterFragment.setToolbarOptions(navigationOptions.getToolbarOptions());
+        }
         return baseConfigurableRegisterFragment;
     }
 

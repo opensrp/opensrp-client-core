@@ -23,6 +23,7 @@ import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -31,13 +32,16 @@ import org.smartregister.R;
 import org.smartregister.client.utils.contract.ClientFormContract;
 import org.smartregister.client.utils.domain.Form;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.configuration.ConfigurableNavigationOptions;
 import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.configuration.ModuleMetadata;
 import org.smartregister.configuration.ModuleRegister;
 import org.smartregister.configuration.ModuleRegisterQueryProviderContract;
+import org.smartregister.configuration.ToolbarOptions;
 import org.smartregister.pojo.InnerJoinObject;
 import org.smartregister.pojo.QueryTable;
 import org.smartregister.service.ZiggyService;
+import org.smartregister.shadows.ConfigurationInstancesHelperShadow;
 import org.smartregister.view.contract.BaseRegisterContract;
 import org.smartregister.view.contract.RegisterParams;
 
@@ -48,6 +52,7 @@ import java.util.HashMap;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 16-02-2021.
  */
+@Config(shadows = {ConfigurationInstancesHelperShadow.class})
 public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTest {
 
     private BaseConfigurableRegisterActivity baseConfigurableRegisterActivity;
@@ -105,7 +110,7 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
         ModuleConfiguration moduleConfiguration = Mockito.mock(ModuleConfiguration.class);
         Mockito.doReturn(MyRegisterQueryConfiguration.class).when(moduleConfiguration).getRegisterQueryProvider();
         CoreLibrary.getInstance().addModuleConfiguration(moduleName, moduleConfiguration);
-
+        Mockito.doReturn(ConfigurableNavigationOptions.class).when(moduleConfiguration).getNavigationOptions();
         // Call the method under test
         createStartAndResumeActivity();
 
@@ -215,7 +220,7 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
         Mockito.doNothing().when(baseConfigurableRegisterActivity).startActivityForResult(intentArgumentCaptor.capture()
                 , Mockito.eq(AllConstants.RequestCode.START_JSON_FORM));
 
-        HashMap<String, String> parcelableData =  new HashMap<>();
+        HashMap<String, String> parcelableData = new HashMap<>();
         parcelableData.put("gender", "male");
         parcelableData.put("health_status", "ok");
 
@@ -344,6 +349,10 @@ public class BaseConfigurableRegisterActivityTest extends BaseRobolectricUnitTes
         String moduleName = "PNC";
         ModuleConfiguration moduleConfiguration = Mockito.mock(ModuleConfiguration.class);
         Mockito.doReturn(MyRegisterQueryConfiguration.class).when(moduleConfiguration).getRegisterQueryProvider();
+        ConfigurableNavigationOptions configurableNavigationOptions = Mockito.mock(ConfigurableNavigationOptions.class);
+        Mockito.doReturn(ConfigurableNavigationOptions.class).when(moduleConfiguration).getNavigationOptions();
+        ToolbarOptions toolBarOptions = Mockito.mock(ToolbarOptions.class);
+        Mockito.doReturn(toolBarOptions).when(configurableNavigationOptions).getToolbarOptions();
         Mockito.doReturn(MyJsonFormActivity.class).when(moduleConfiguration).getJsonFormActivity();
         CoreLibrary.getInstance().addModuleConfiguration(moduleName, moduleConfiguration);
     }
