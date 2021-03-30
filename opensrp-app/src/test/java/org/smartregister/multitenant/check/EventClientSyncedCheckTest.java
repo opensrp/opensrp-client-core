@@ -1,5 +1,8 @@
 package org.smartregister.multitenant.check;
 
+import com.evernote.android.job.ShadowJobManager;
+
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -76,5 +79,10 @@ public class EventClientSyncedCheckTest extends BaseRobolectricUnitTest {
         // Verify that performSync() was called
         Mockito.verify(eventClientSyncedCheck).onSyncStart();
         Mockito.verify(eventClientSyncedCheck).onSyncComplete(FetchStatus.fetchedFailed);
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        ShadowJobManager.mockJobManager = null;
     }
 }
