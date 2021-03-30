@@ -14,6 +14,7 @@ import org.robolectric.annotation.Config;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.configuration.ConfigurableNavigationOptions;
 import org.smartregister.configuration.MockRegisterQueryProvider;
 import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.configuration.ToolbarOptions;
@@ -25,6 +26,7 @@ public class BaseConfigurableRegisterFragmentTest extends BaseUnitTest {
 
     private BaseConfigurableRegisterFragment registerFragment;
     private ModuleConfiguration moduleConfiguration;
+    private ConfigurableNavigationOptions configurableNavigationOptions;
     private Application context;
 
     @Before
@@ -45,7 +47,6 @@ public class BaseConfigurableRegisterFragmentTest extends BaseUnitTest {
         registerFragment.setModuleConfiguration(moduleConfiguration);
         Assert.assertNotNull(Whitebox.getInternalState(registerFragment, "moduleRegisterQueryProvider"));
         Assert.assertNotNull(Whitebox.getInternalState(registerFragment, "moduleConfiguration"));
-        Assert.assertNotNull(Whitebox.getInternalState(registerFragment, "toolbarOptions"));
     }
 
     @Test
@@ -75,7 +76,10 @@ public class BaseConfigurableRegisterFragmentTest extends BaseUnitTest {
         moduleConfiguration = Mockito.mock(ModuleConfiguration.class, Mockito.CALLS_REAL_METHODS);
         Mockito.doReturn(MockRegisterQueryProvider.class).when(moduleConfiguration).getRegisterQueryProvider();
         Mockito.doReturn(FormActivity.class).when(moduleConfiguration).getJsonFormActivity();
-        Mockito.doReturn(ToolbarOptions.class).when(moduleConfiguration).getToolbarOptions();
+        configurableNavigationOptions = Mockito.mock(ConfigurableNavigationOptions.class, Mockito.CALLS_REAL_METHODS);
+        ToolbarOptions toolBarOptions = Mockito.mock(ToolbarOptions.class, Mockito.CALLS_REAL_METHODS);
+        Mockito.doReturn(ConfigurableNavigationOptions.class).when(moduleConfiguration).getNavigationOptions();
+        Mockito.doReturn(toolBarOptions).when(configurableNavigationOptions).getToolbarOptions();
         CoreLibrary.getInstance().addModuleConfiguration(moduleName, moduleConfiguration);
     }
 
