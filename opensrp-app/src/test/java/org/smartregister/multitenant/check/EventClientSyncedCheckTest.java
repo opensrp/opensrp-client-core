@@ -6,6 +6,8 @@ import org.mockito.Mockito;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.Context;
+import org.smartregister.domain.FetchStatus;
+import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -66,5 +68,14 @@ public class EventClientSyncedCheckTest extends BaseRobolectricUnitTest {
         // Perform assertions & call method under test
         assertFalse(eventClientSyncedCheck.isEventsClientSynced(mockedDrishtiApplication));
         assertNull(mockedDrishtiApplication.getContext().getEventClientRepository());
+    }
+
+    @Test
+    public void performPreResetAppOperations() throws PreResetAppOperationException {
+        eventClientSyncedCheck.performPreResetAppOperations(DrishtiApplication.getInstance());
+
+        // Verify that performSync() was called
+        Mockito.verify(eventClientSyncedCheck).onSyncStart();
+        Mockito.verify(eventClientSyncedCheck).onSyncComplete(FetchStatus.fetchedFailed);
     }
 }
