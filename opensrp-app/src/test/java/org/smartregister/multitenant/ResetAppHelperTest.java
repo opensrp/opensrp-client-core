@@ -30,6 +30,7 @@ import org.smartregister.shadows.ShadowAppDatabase;
 import org.smartregister.util.AppExecutors;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.activity.mock.ReportsActivityMock;
+import org.smartregister.view.dialog.ResetAppDialog;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
@@ -213,5 +214,17 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
         assertNull(resetAppHelper.removePreResetAppCheck(appCheckName));
         assertTrue(resetAppHelper.addPreResetAppCheck(appCheck));
         assertEquals(appCheck, resetAppHelper.removePreResetAppCheck(appCheckName));
+    }
+
+    @Test
+    public void testShowProgressText() {
+        ResetAppDialog resetAppDialog = Mockito.mock(ResetAppDialog.class);
+
+        ReflectionHelpers.setField(resetAppHelper, "resetAppDialog", resetAppDialog);
+
+        String progressText = "this is the progress text";
+        resetAppHelper.showProgressText(progressText);
+
+        Mockito.verify(resetAppDialog).showText(progressText);
     }
 }
