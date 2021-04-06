@@ -72,7 +72,6 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    @Ignore
     public void performPreResetChecksShouldPerformChecksOnAllComponents() throws PreResetAppOperationException {
         AppExecutors appExecutors = ReflectionHelpers.getField(resetAppHelper, "appExecutors");
         Executor diskIoExecutor = spy((Executor) ReflectionHelpers.getField(appExecutors, "diskIO"));
