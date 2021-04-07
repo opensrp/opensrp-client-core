@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
