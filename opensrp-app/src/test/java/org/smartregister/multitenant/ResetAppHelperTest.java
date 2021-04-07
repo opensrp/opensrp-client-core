@@ -4,9 +4,10 @@ import android.content.SharedPreferences;
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
@@ -32,7 +33,13 @@ import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.activity.mock.ReportsActivityMock;
 import org.smartregister.view.dialog.ResetAppDialog;
 
+import java.security.KeyStore;
+import java.security.KeyStoreSpi;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.Executor;
 
 import static org.junit.Assert.assertEquals;
@@ -225,5 +232,39 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
         resetAppHelper.showProgressText(progressText);
 
         Mockito.verify(resetAppDialog).showText(progressText);
+    }
+
+    @Test
+    public void clearAllPrivateKeyEntriesShouldDeleteAllEntries() throws Exception {
+        // Mock keystore
+        KeyStore keyStore = Mockito.mock(KeyStore.class);
+        KeyStoreSpi keyStoreSpi = Mockito.mock(KeyStoreSpi.class);
+
+
+        ReflectionHelpers.setField(DrishtiApplication.getInstance().getContext().userService(), "keyStore", keyStore);
+
+        String[] keys = new String[]{"apple", "boy", "cat", "dog"};
+        Vector<String> enums = new Vector<String>();
+        enums.addAll(Arrays.asList(keys));
+        Enumeration<String> keystoreEnumeration = enums.elements();
+
+        Mockito.doReturn(keystoreEnumeration).when(keyStoreSpi).engineAliases();
+
+        ReflectionHelpers.setField(keyStore, "keyStoreSpi", keyStoreSpi);
+        ReflectionHelpers.setField(keyStore, "initialized", true);
+
+        // call the method under test
+        resetAppHelper.clearAllPrivateKeyEntries();
+
+        ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
+
+        Mockito.verify(keyStoreSpi, Mockito.times(4)).engineDeleteEntry(stringArgumentCaptor.capture());
+
+        List<String> entryAliases = stringArgumentCaptor.getAllValues();
+        Assert.assertEquals("apple", entryAliases.get(0));
+        Assert.assertEquals("boy", entryAliases.get(1));
+        Assert.assertEquals("cat", entryAliases.get(2));
+        Assert.assertEquals("dog", entryAliases.get(3));
+
     }
 }
