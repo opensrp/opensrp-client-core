@@ -261,10 +261,10 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
         Mockito.verify(keyStoreSpi, Mockito.times(4)).engineDeleteEntry(stringArgumentCaptor.capture());
 
         List<String> entryAliases = stringArgumentCaptor.getAllValues();
-        Assert.assertEquals("apple", entryAliases.get(0));
-        Assert.assertEquals("boy", entryAliases.get(1));
-        Assert.assertEquals("cat", entryAliases.get(2));
-        Assert.assertEquals("dog", entryAliases.get(3));
+        assertEquals("apple", entryAliases.get(0));
+        assertEquals("boy", entryAliases.get(1));
+        assertEquals("cat", entryAliases.get(2));
+        assertEquals("dog", entryAliases.get(3));
 
     }
 }
