@@ -8,7 +8,7 @@ public class Environment {
     @Expose
     protected String env;
 
-    @SerializedName("id")
+    @SerializedName("client.id")
     @Expose
     protected String id;
 
@@ -16,7 +16,7 @@ public class Environment {
     @Expose
     protected String url;
 
-    @SerializedName("secret")
+    @SerializedName("client.secret")
     @Expose
     protected String secret;
 
