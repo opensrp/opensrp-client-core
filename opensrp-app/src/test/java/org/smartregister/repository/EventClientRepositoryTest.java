@@ -591,4 +591,23 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         Mockito.verify(eventClientRepository).fetchEventClientsCore(query, new String[]{syncStatus, lastSyncString});
     }
 
+    @Test
+    public void testDropIndexes() throws Exception {
+        String query = "SELECT name FROM sqlite_master WHERE type = ? AND sql is not null AND tbl_name = ?";
+        String[] params = new String[]{"index", EventClientRepository.Table.event.name()};
+        when(sqliteDatabase.rawQuery(query, params)).thenReturn(getIndexCursor());
+
+        eventClientRepository.dropIndexes(sqliteDatabase, EventClientRepository.Table.event);
+
+        Mockito.verify(sqliteDatabase).execSQL("DROP INDEX event_index");
+
+    }
+
+
+    public static MatrixCursor getIndexCursor() {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"index"});
+        matrixCursor.addRow(new String[]{"event_index"});
+        return matrixCursor;
+    }
+
 }
