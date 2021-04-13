@@ -9,7 +9,7 @@ public class TestProfileActivity extends BaseProfileActivity {
 
     @Override
     protected void initializePresenter() {
-
+        // do nothing
     }
 
     @Override
@@ -19,6 +19,6 @@ public class TestProfileActivity extends BaseProfileActivity {
 
     @Override
     protected void fetchProfileData() {
-
+        // do nothing
     }
 }
