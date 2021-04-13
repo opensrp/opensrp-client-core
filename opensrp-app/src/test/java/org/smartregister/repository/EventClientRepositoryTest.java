@@ -212,6 +212,15 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         return matrixCursor;
     }
 
+    public static MatrixCursor getClientCursor() throws Exception {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json", "timestamp"});
+        JSONArray clientArray = new JSONArray(ClientData.clientJsonArray);
+        for (int i = 0; i < clientArray.length(); i++) {
+            matrixCursor.addRow(new String[]{clientArray.getJSONObject(i).toString(), "1985-07-24T00:00:00.000Z"});
+        }
+        return matrixCursor;
+    }
+
     @Test
     public void getEventsByFormSubmissionIdReturnsNotNull() throws Exception {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json"});
@@ -600,6 +609,30 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         eventClientRepository.dropIndexes(sqliteDatabase, EventClientRepository.Table.event);
 
         Mockito.verify(sqliteDatabase).execSQL("DROP INDEX event_index");
+
+    }
+
+    @Test
+    public void testFetchClientByBaseEntityIds() {
+        Set<String> baseEntityIds = Collections.singleton("base_entity_id_1");
+        String query = "SELECT json FROM client WHERE baseEntityId in  (?)";
+        eventClientRepository = spy(eventClientRepository);
+
+        eventClientRepository.fetchClientByBaseEntityIds(baseEntityIds);
+
+        Mockito.verify(eventClientRepository).fetchClients(query, baseEntityIds.toArray(new String[0]));
+    }
+
+    @Test
+    public  void testGetUnSyncedClients() throws Exception {
+        String query = "SELECT json FROM client WHERE syncStatus = ? limit 16";
+        String[] params = new String[]{BaseRepository.TYPE_Unsynced};
+        when(sqliteDatabase.rawQuery(query, params)).thenReturn(getClientCursor());
+
+        List<JSONObject> actualClientJSONObjects = eventClientRepository.getUnSyncedClients(16);
+        Assert.assertNotNull(actualClientJSONObjects);
+        Assert.assertEquals(16, actualClientJSONObjects.size());
+        Mockito.verify(sqliteDatabase).rawQuery(query, params);
 
     }
 
