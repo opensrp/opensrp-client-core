@@ -212,7 +212,7 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testRemovePreResetAppCheck() {
-        String appCheckName = "GIVE_UP";
+        String appCheckName = "Goldsmith";
         PreResetAppCheck appCheck = Mockito.mock(PreResetAppCheck.class);
         Mockito.doReturn(appCheckName).when(appCheck).getUniqueName();
 
