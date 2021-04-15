@@ -284,8 +284,8 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
                 .when(httpAgent).fetch(stringArgumentCaptor.capture());
 
         locationServiceHelper.fetchAllLocations();
-        Mockito.verify(locationServiceHelper).fetchAllLocations(ArgumentMatchers.anyInt());
-        Mockito.verify(locationRepository, Mockito.atLeastOnce()).addOrUpdate(Mockito.any(Location.class));
+        verify(locationServiceHelper).fetchAllLocations(ArgumentMatchers.anyInt());
+        verify(locationRepository, Mockito.atLeastOnce()).addOrUpdate(Mockito.any(Location.class));
 
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
         assertEquals("https://sample-stage.smartregister.org/opensrp//rest/location/getAll?is_jurisdiction=true&serverVersion=0&limit=2000", syncUrl);
