@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -280,15 +281,14 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(new Response<>(ResponseStatus.success,
                 "[{\"type\":\"Feature\",\"id\":\"c2aa34c2-789b-467e-a0ab-9ea3d61632cf\",\"properties\":{\"status\":\"Active\",\"parentId\":\"\",\"name\":\"Level1\",\"geographicLevel\":1,\"version\":0},\"serverVersion\":0,\"locationTags\":[{\"id\":1,\"active\":true,\"name\":\"County\",\"description\":\"County Location Tag\"}]}," +
                         "{\"type\":\"Feature\",\"id\":\"9dee11ba-d352-4df5-9efa-4607723b316e\",\"properties\":{\"status\":\"Active\",\"parentId\":\"c2aa34c2-789b-467e-a0ab-9ea3d61632cf\",\"name\":\"Level2\",\"geographicLevel\":2,\"version\":0},\"serverVersion\":0,\"locationTags\":[{\"id\":2,\"active\":true,\"name\":\"Subcounty\",\"description\":\"Subcounty Location Tag\"}]}]"))
-                .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+                .when(httpAgent).fetch(stringArgumentCaptor.capture());
 
         locationServiceHelper.fetchAllLocations();
+        Mockito.verify(locationServiceHelper).fetchAllLocations(ArgumentMatchers.anyInt());
         Mockito.verify(locationRepository, Mockito.atLeastOnce()).addOrUpdate(Mockito.any(Location.class));
 
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
-        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/location/sync", syncUrl);
-        String requestString = stringArgumentCaptor.getAllValues().get(1);
-        assertEquals("{\"is_jurisdiction\":true,\"serverVersion\":0}", requestString);
+        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/location/getAll?is_jurisdiction=true&serverVersion=0&limit=2000", syncUrl);
     }
 
     @Test
