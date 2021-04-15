@@ -92,7 +92,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     public void onClick(View view) {
 
         String newValue = baseUrlEditTextPreference.getEditText().getText().toString();
-        if (newValue != null && UrlUtil.isValidUrl(newValue)) {
+        if (newValue != null && UrlUtil.isValidUrl(newValue) && UrlUtil.isValidEnvironment(newValue)) {
             baseUrlEditTextPreference.onClick(null, DialogInterface.BUTTON_POSITIVE);
             dialog.dismiss();
         } else {
@@ -133,6 +133,8 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
                             } else {
                                 baseUrlEditTextPreference.getEditText().setError(getString(R.string.invalid_url_massage));
                             }
+                        } else if (!UrlUtil.isValidEnvironment(text)) {
+                            baseUrlEditTextPreference.getEditText().setError(getString(R.string.no_client_available_for_url));
                         } else {
                             baseUrlEditTextPreference.getEditText().setError(null);
                         }
