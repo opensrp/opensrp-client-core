@@ -2,6 +2,9 @@ package org.smartregister;
 
 import org.smartregister.domain.Environment;
 
+/**
+ * Default implementation of SyncConfiguration for handling OAuthClient from local.properties file
+ */
 public abstract class PropertiesSyncConfiguration extends SyncConfiguration {
 
     private final EnvironmentManager environmentManager;
