@@ -3,10 +3,8 @@ package org.smartregister.sync.helper;
 import androidx.annotation.NonNull;
 
 import com.evernote.android.job.JobManager;
-import com.evernote.android.job.JobRequest;
 
 import org.joda.time.DateTime;
-import org.smartregister.AllConstants;
 import org.smartregister.domain.Action;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Timing;
@@ -69,19 +67,18 @@ public class PeriodicTriggerEvaluationHelper {
         boolean scheduled = false;
 
         for (DateTime dateTime: eventLists) {
-            if (dateTime.isBefore(now())) {
-                if (timingRepeat != null && timingRepeat.getFrequency() == 1 && timingRepeat.getPeriodUnit().equals(TimingRepeat.DurationCode.d)) {
-                    List<Time> timesOfDay = timingRepeat.getTimeOfDay();
+            if (dateTime.isBefore(now()) && timingRepeat != null && timingRepeat.getFrequency() == 1
+                    && timingRepeat.getPeriodUnit().equals(TimingRepeat.DurationCode.d)) {
+                List<Time> timesOfDay = timingRepeat.getTimeOfDay();
 
-                    // Schedule a job everyday for each time
-                    for (Time timeOfDay: timesOfDay) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(timeOfDay);
+                // Schedule a job everyday for each time
+                for (Time timeOfDay: timesOfDay) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(timeOfDay);
 
-                        String jobTag = PlanPeriodicEvaluationJob.generateJobTag(action.getIdentifier(), action.getCode());
-                        PlanPeriodicEvaluationJob.scheduleEverydayAt(jobTag, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), action, planId);
-                        scheduled = true;
-                    }
+                    String jobTag = PlanPeriodicEvaluationJob.generateJobTag(action.getIdentifier(), action.getCode());
+                    PlanPeriodicEvaluationJob.scheduleEverydayAt(jobTag, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), action, planId);
+                    scheduled = true;
                 }
             }
         }
