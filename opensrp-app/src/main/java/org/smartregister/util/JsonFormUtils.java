@@ -142,11 +142,8 @@ public class JsonFormUtils {
                 encounterDate = dateTime;
             }
         }
-        try {
-            encounterLocation = metadata.getString(ENCOUNTER_LOCATION);
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
+        
+        encounterLocation = metadata.optString(ENCOUNTER_LOCATION);
 
         if (StringUtils.isBlank(encounterLocation)) {
             encounterLocation = formTag.locationId;
