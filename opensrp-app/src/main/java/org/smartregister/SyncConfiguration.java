@@ -175,6 +175,10 @@ public abstract class SyncConfiguration {
 
     public abstract String getOauthClientSecret();
 
+    public boolean validateOAuthUrl(String url) {
+        return true;
+    }
+
     /**
      * Returns number of times to retry if 401 is received on a request before forcing user to enter credentials
      * Default is once, can be overriden
