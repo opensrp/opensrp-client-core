@@ -601,7 +601,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void testDropIndexes() throws Exception {
+    public void testDropIndexesRemovesTheIndexesForAGivenTable() throws Exception {
         String query = "SELECT name FROM sqlite_master WHERE type = ? AND sql is not null AND tbl_name = ?";
         String[] params = new String[]{"index", EventClientRepository.Table.event.name()};
         when(sqliteDatabase.rawQuery(query, params)).thenReturn(getIndexCursor());
@@ -613,7 +613,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void testFetchClientByBaseEntityIds() {
+    public void testFetchClientByBaseEntityIdsReturnsClientWithGivenBaseEntityId() {
         Set<String> baseEntityIds = Collections.singleton("base_entity_id_1");
         String query = "SELECT json FROM client WHERE baseEntityId in  (?)";
         eventClientRepository = spy(eventClientRepository);
@@ -624,7 +624,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public  void testGetUnSyncedClients() throws Exception {
+    public  void testGetUnSyncedClientsReturnsListOfUnsyncedClients() throws Exception {
         String query = "SELECT json FROM client WHERE syncStatus = ? limit 16";
         String[] params = new String[]{BaseRepository.TYPE_Unsynced};
         when(sqliteDatabase.rawQuery(query, params)).thenReturn(getClientCursor());
