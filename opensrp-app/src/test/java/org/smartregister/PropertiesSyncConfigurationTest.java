@@ -19,13 +19,13 @@ import static org.junit.Assert.*;
 public class PropertiesSyncConfigurationTest extends BaseRobolectricUnitTest {
 
     @Mock
-    public Environment environment;
+    private Environment environment;
 
     @Mock
-    public EnvironmentManager environmentManager;
+    private EnvironmentManager environmentManager;
 
     @Mock(answer = Answers.CALLS_REAL_METHODS)
-    public PropertiesSyncConfiguration propertiesSyncConfiguration;
+    private PropertiesSyncConfiguration propertiesSyncConfiguration;
 
     @Before
     public void setUp() throws Exception {
