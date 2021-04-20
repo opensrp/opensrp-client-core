@@ -11,8 +11,6 @@ import org.smartregister.domain.Environment;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 20-04-2021.
  */

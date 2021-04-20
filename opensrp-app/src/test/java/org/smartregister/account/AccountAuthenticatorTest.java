@@ -1,5 +1,6 @@
 package org.smartregister.account;
 
+import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.accounts.NetworkErrorException;
@@ -10,11 +11,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
-
-import static org.junit.Assert.*;
+import org.smartregister.CoreLibrary;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 20-04-2021.
@@ -81,5 +81,33 @@ public class AccountAuthenticatorTest extends BaseRobolectricUnitTest {
         Assert.assertEquals(authTokenType, intent.getStringExtra(AccountHelper.INTENT_KEY.AUTH_TYPE));
         Assert.assertFalse(intent.getBooleanExtra(AccountHelper.INTENT_KEY.IS_NEW_ACCOUNT, false));
         Assert.assertEquals(accountAuthenticatorResponse, intent.getParcelableExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE));
+    }
+
+    @Test
+    public void getAuthTokenShouldReturnAuthTokenFromAccountManager() throws NetworkErrorException {
+        AccountManager accountManager = Mockito.mock(AccountManager.class);
+        ReflectionHelpers.setField(CoreLibrary.getInstance(), "accountManager", accountManager);
+
+        AccountAuthenticatorResponse accountAuthenticatorResponse = Mockito.mock(AccountAuthenticatorResponse.class);
+        String authToken = "my-token-kenya";
+        String authTokenType = "my-token-type";
+        String accountName = "Goldsmith";
+        String accountType = "org.smartregister.goldsmith";
+        Account account = new Account(accountName, accountType);
+        Bundle bundle = new Bundle();
+
+        Mockito.doReturn(authToken).when(accountManager).peekAuthToken(account, authTokenType);
+
+
+        // Call the method under tests
+        Bundle actualResult = accountAuthenticator.getAuthToken(accountAuthenticatorResponse, account, authTokenType, bundle);
+
+        // Perform assertions
+        Assert.assertEquals(accountName, actualResult.getString(AccountManager.KEY_ACCOUNT_NAME));
+        Assert.assertEquals(accountType, actualResult.getString(AccountManager.KEY_ACCOUNT_TYPE));
+        Assert.assertEquals(authToken, actualResult.getString(AccountManager.KEY_AUTHTOKEN));
+
+        // Reset the accountManager in CoreLibrary
+        ReflectionHelpers.setField(CoreLibrary.getInstance(), "accountManager", null);
     }
 }
