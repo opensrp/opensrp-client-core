@@ -5,8 +5,8 @@ import android.content.SharedPreferences;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
@@ -30,8 +30,15 @@ import org.smartregister.shadows.ShadowAppDatabase;
 import org.smartregister.util.AppExecutors;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.activity.mock.ReportsActivityMock;
+import org.smartregister.view.dialog.ResetAppDialog;
 
+import java.security.KeyStore;
+import java.security.KeyStoreSpi;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.Executor;
 
 import static org.junit.Assert.assertEquals;
@@ -71,7 +78,6 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    @Ignore
     public void performPreResetChecksShouldPerformChecksOnAllComponents() throws PreResetAppOperationException {
         AppExecutors appExecutors = ReflectionHelpers.getField(resetAppHelper, "appExecutors");
         Executor diskIoExecutor = spy((Executor) ReflectionHelpers.getField(appExecutors, "diskIO"));
@@ -206,12 +212,58 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testRemovePreResetAppCheck() {
-        String appCheckName = "GIVE_UP";
+        String appCheckName = "Goldsmith";
         PreResetAppCheck appCheck = Mockito.mock(PreResetAppCheck.class);
         Mockito.doReturn(appCheckName).when(appCheck).getUniqueName();
 
         assertNull(resetAppHelper.removePreResetAppCheck(appCheckName));
         assertTrue(resetAppHelper.addPreResetAppCheck(appCheck));
         assertEquals(appCheck, resetAppHelper.removePreResetAppCheck(appCheckName));
+    }
+
+    @Test
+    public void testShowProgressText() {
+        ResetAppDialog resetAppDialog = Mockito.mock(ResetAppDialog.class);
+
+        ReflectionHelpers.setField(resetAppHelper, "resetAppDialog", resetAppDialog);
+
+        String progressText = "this is the progress text";
+        resetAppHelper.showProgressText(progressText);
+
+        Mockito.verify(resetAppDialog).showText(progressText);
+    }
+
+    @Test
+    public void clearAllPrivateKeyEntriesShouldDeleteAllEntries() throws Exception {
+        // Mock keystore
+        KeyStore keyStore = Mockito.mock(KeyStore.class);
+        KeyStoreSpi keyStoreSpi = Mockito.mock(KeyStoreSpi.class);
+
+
+        ReflectionHelpers.setField(DrishtiApplication.getInstance().getContext().userService(), "keyStore", keyStore);
+
+        String[] keys = new String[]{"apple", "boy", "cat", "dog"};
+        Vector<String> enums = new Vector<String>();
+        enums.addAll(Arrays.asList(keys));
+        Enumeration<String> keystoreEnumeration = enums.elements();
+
+        Mockito.doReturn(keystoreEnumeration).when(keyStoreSpi).engineAliases();
+
+        ReflectionHelpers.setField(keyStore, "keyStoreSpi", keyStoreSpi);
+        ReflectionHelpers.setField(keyStore, "initialized", true);
+
+        // call the method under test
+        resetAppHelper.clearAllPrivateKeyEntries();
+
+        ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
+
+        Mockito.verify(keyStoreSpi, Mockito.times(4)).engineDeleteEntry(stringArgumentCaptor.capture());
+
+        List<String> entryAliases = stringArgumentCaptor.getAllValues();
+        assertEquals("apple", entryAliases.get(0));
+        assertEquals("boy", entryAliases.get(1));
+        assertEquals("cat", entryAliases.get(2));
+        assertEquals("dog", entryAliases.get(3));
+
     }
 }
