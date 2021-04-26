@@ -438,4 +438,5 @@
     <string name="component_desc_p2p_process_records_service">Processes the records when using peer to peer for file sharing</string>
     <string name="new_db_encryption_version_migration">You have been logged off as your application database encryption version has changed. Please login in again to complete the upgrade.</string>
     <string name="account_removed">You have been logged off as your account has been removed from the accounts manager.</string>
+    <string name="no_client_available_for_url">No auth client available for the URL</string>
 </resources>

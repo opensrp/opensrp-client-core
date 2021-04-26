@@ -240,7 +240,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 startTrace(processClientTrace);
                 processClient(serverVersionPair);
                 addAttribute(processClientTrace, COUNT, String.valueOf(eCount));
-                addAttribute(processClientTrace,  TEAM, team);
+                addAttribute(processClientTrace, TEAM, team);
                 stopTrace(processClientTrace);
                 ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
             }
@@ -359,14 +359,16 @@ public class SyncIntentService extends BaseSyncIntentService {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
 
         sendBroadcast(intent);
+        
         //sync time not update if sync is fail
         if (!fetchStatus.equals(FetchStatus.noConnection) && !fetchStatus.equals(FetchStatus.fetchedFailed)) {
             ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
             ecSyncUpdater.updateLastCheckTimeStamp(new Date().getTime());
-            validateAssignmentHelper.validateUserAssignment();
 
+            if (CoreLibrary.getInstance().getSyncConfiguration().validateUserAssignments()) {
+                validateAssignmentHelper.validateUserAssignment();
+            }
         }
-
     }
 
     protected void updateProgress(@IntRange(from = 0) int progress, @IntRange(from = 1) int total) {

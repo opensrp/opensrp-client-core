@@ -142,11 +142,8 @@ public class JsonFormUtils {
                 encounterDate = dateTime;
             }
         }
-        try {
-            encounterLocation = metadata.getString(ENCOUNTER_LOCATION);
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
+        
+        encounterLocation = metadata.optString(ENCOUNTER_LOCATION);
 
         if (StringUtils.isBlank(encounterLocation)) {
             encounterLocation = formTag.locationId;
@@ -520,6 +517,7 @@ public class JsonFormUtils {
         }
 
         String entityVal = getString(jsonObject, OPENMRS_ENTITY);
+        String widgetType = getString(jsonObject, AllConstants.TYPE);
 
         if (CONCEPT.equals(entityVal)) {
             String entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
@@ -528,7 +526,6 @@ public class JsonFormUtils {
             List<Object> humanReadableValues = new ArrayList<>();
 
             JSONArray values = getJSONArray(jsonObject, VALUES);
-            String widgetType = getString(jsonObject, AllConstants.TYPE);
             if (AllConstants.CHECK_BOX.equals(widgetType)) {
                 entityIdVal = getString(jsonObject, AllConstants.PARENT_ENTITY_ID);
                 entityParentVal = getString(jsonObject, AllConstants.PARENT_ENTITY_ID);
@@ -567,10 +564,32 @@ public class JsonFormUtils {
             e.addObs(new Obs(CONCEPT, dataType, entityIdVal, entityParentVal, vall, humanReadableValues, null,
                     formSubmissionField));
         } else if (StringUtils.isBlank(entityVal)) {
+
             vall.add(obsValue);
 
-            e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
-                    formSubmissionField));
+            if ((AllConstants.NATIVE_RADIO.equals(widgetType) || AllConstants.EXTENDED_RADIO_BUTTON.equals(widgetType)) &&
+                    jsonObject.has(AllConstants.OPTIONS)) {
+                Map<String, Object> keyValPairs = new HashMap<>();
+                try {
+                    JSONArray options = getJSONArray(jsonObject, AllConstants.OPTIONS);
+                    for (int i = 0; i < options.length(); i++) {
+                        JSONObject option = options.getJSONObject(i);
+                        if (obsValue.equals(option.getString(KEY))) {
+                            keyValPairs.put(obsValue, option.optString(AllConstants.TEXT));
+                            break;
+                        }
+                    }
+                } catch (JSONException jsonException) {
+                    Timber.e(jsonException);
+                }
+
+                if (!keyValPairs.isEmpty()) {
+                    createObservation(e, jsonObject, keyValPairs, vall);
+                }
+            } else {
+                e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
+                        formSubmissionField));
+            }
         }
     }
 

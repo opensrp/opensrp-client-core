@@ -175,6 +175,10 @@ public abstract class SyncConfiguration {
 
     public abstract String getOauthClientSecret();
 
+    public boolean validateOAuthUrl(String url) {
+        return true;
+    }
+
     /**
      * Returns number of times to retry if 401 is received on a request before forcing user to enter credentials
      * Default is once, can be overriden
@@ -191,12 +195,23 @@ public abstract class SyncConfiguration {
 
     /**
      * This method is used to specify a list of pairs containing API call parameters and their values
-     *
+     * <p>
      * that can be appended to the call for fetching global configs
-     *
+     * <p>
      * an example would be Collections.singletonList(Pair.create("identifier", "global_configs"))
      *
-      * @return list of pairs containing API call parameters and their values
+     * @return list of pairs containing API call parameters and their values
      */
-    public List <Pair<String,String>> getGlobalSettingsQueryParams() {return null;}
+    public List<Pair<String, String>> getGlobalSettingsQueryParams() {
+        return null;
+    }
+
+    /**
+     * Specifies whether locations stored on device are trimmed to only those assigned to a user's team
+     *
+     * @return true/false -- {@link Boolean}
+     */
+    public boolean validateUserAssignments() {
+        return true;
+    }
 }

@@ -74,6 +74,7 @@ public class LocationServiceHelper extends BaseHelper {
     public static final String COMMON_LOCATIONS_SERVICE_URL = "/location/by-level-and-tags";
     public static final String OPENMRS_LOCATION_BY_TEAM_IDS = "/location/by-team-ids";
     public static final String LOCATION_HIERARCHY_URL = "/rest/location/hierarchy/";
+    public static final String ALL_LOCATIONS_URL = "/rest/location/getAll";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
@@ -81,7 +82,8 @@ public class LocationServiceHelper extends BaseHelper {
     private static final String IS_JURISDICTION = "is_jurisdiction";
     private static final String LOCATION_NAMES = "location_names";
     private static final String PARENT_ID = "parent_id";
-
+    private static final String LIMIT = "limit";
+    private static final int RECORD_COUNT = 2000;
 
     public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
@@ -101,7 +103,7 @@ public class LocationServiceHelper extends BaseHelper {
         this.locationRepository = locationRepository;
         this.locationTagRepository = locationTagRepository;
         this.structureRepository = structureRepository;
-        this.locationSyncTrace  = initTrace(LOCATION_SYNC);
+        this.locationSyncTrace = initTrace(LOCATION_SYNC);
         String providerId = allSharedPreferences.fetchRegisteredANM();
         team = allSharedPreferences.fetchDefaultTeam(providerId);
     }
@@ -437,24 +439,26 @@ public class LocationServiceHelper extends BaseHelper {
     }
 
     public void fetchAllLocations() {
+        fetchAllLocations(RECORD_COUNT);
+    }
+
+    public void fetchAllLocations(int recordCount) {
         try {
             HTTPAgent httpAgent = getHttpAgent();
             if (httpAgent == null) {
-                throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
+                throw new IllegalArgumentException(ALL_LOCATIONS_URL + " http agent is null");
             }
 
             String baseUrl = getFormattedBaseUrl();
 
-            JSONObject request = new JSONObject();
-            request.put(IS_JURISDICTION, true);
-            request.put(AllConstants.SERVER_VERSION, 0);
+            String urlParams = "?" + IS_JURISDICTION + "=" + true;
+            urlParams += "&" + AllConstants.SERVER_VERSION + "=" + 0;
+            urlParams += "&" + LIMIT + "=" + recordCount;
 
-            Response<String> resp = httpAgent.post(
-                    MessageFormat.format("{0}{1}", baseUrl, LOCATION_STRUCTURE_URL),
-                    request.toString());
+            Response<String> resp = httpAgent.fetch(MessageFormat.format("{0}{1}{2}", baseUrl, ALL_LOCATIONS_URL, urlParams));
 
             if (resp.isFailure()) {
-                throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
+                throw new NoHttpResponseException(ALL_LOCATIONS_URL + " not returned data");
             }
 
             List<Location> locations = locationGson.fromJson(

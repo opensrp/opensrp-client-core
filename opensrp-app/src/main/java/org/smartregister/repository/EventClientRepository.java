@@ -1429,7 +1429,7 @@ public class EventClientRepository extends BaseRepository {
                 + eventTable.name()
                 + " WHERE "
                 + event_column.eventId.name()
-                + " IN (" + StringUtils.repeat(",", eventIds.size()) + ")", eventIds.toArray(new String[0]));
+                + " IN (" + StringUtils.repeat("?", ",", eventIds.size()) + ")", eventIds.toArray(new String[0]));
     }
 
     public JSONObject getEventsByFormSubmissionId(String formSubmissionId) {
@@ -1618,13 +1618,7 @@ public class EventClientRepository extends BaseRepository {
             params[len] = syncStatus;
             cursor = getReadableDatabase().rawQuery(query, params);
 
-            while (cursor.moveToNext()) {
-                String jsonEventStr = cursor.getString(0);
-
-                jsonEventStr = jsonEventStr.replaceAll("'", "");
-                Event event = convert(jsonEventStr, Event.class);
-                list.add(new EventClient(event));
-            }
+            eventCursorParser(list, cursor);
         } catch (Exception e) {
             Timber.e(e);
         } finally {
@@ -1633,6 +1627,56 @@ public class EventClientRepository extends BaseRepository {
             }
         }
         return list;
+    }
+
+    /**
+     * Returns a list of {@link Event}s wrapped in an {@link EventClient} object.
+     *
+     * @param baseEntityIds The entity identifiers of the client
+     * @param syncStatus    The sync status of the event e.g. BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_Unprocessed
+     * @param eventTypes    The type of event
+     */
+    public List<EventClient> getEvents(@NonNull List<String> baseEntityIds, @NonNull List<String> syncStatus, @NonNull List<String> eventTypes) {
+        List<EventClient> list = new ArrayList<>();
+        if (Utils.isEmptyCollection(baseEntityIds) || Utils.isEmptyCollection(syncStatus) || Utils.isEmptyCollection(eventTypes))
+            return list;
+
+        Cursor cursor = null;
+        List<String> paramsList = new ArrayList<>();
+        paramsList.addAll(baseEntityIds);
+        paramsList.addAll(syncStatus);
+        paramsList.addAll(eventTypes);
+
+        try {
+            String query = String.format("SELECT json FROM "
+                            + eventTable.name()
+                            + " WHERE " + event_column.baseEntityId.name() + " IN (%s) "
+                            + " AND " + event_column.syncStatus.name() + " IN (%s) "
+                            + " AND " + event_column.eventType.name() + " IN (%s) "
+                            + " ORDER BY " + event_column.serverVersion.name(),
+                    TextUtils.join(",", Collections.nCopies(baseEntityIds.size(), "?")), TextUtils.join(",", Collections.nCopies(syncStatus.size(), "?")), TextUtils.join(",", Collections.nCopies(eventTypes.size(), "?")));
+            String[] params = paramsList.toArray(new String[paramsList.size()]);
+            cursor = getReadableDatabase().rawQuery(query, params);
+
+            eventCursorParser(list, cursor);
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return list;
+    }
+
+    private void eventCursorParser(List<EventClient> list, Cursor cursor) {
+        while (cursor.moveToNext()) {
+            String jsonEventStr = cursor.getString(0);
+
+            jsonEventStr = jsonEventStr.replaceAll("'", "");
+            Event event = convert(jsonEventStr, Event.class);
+            list.add(new EventClient(event));
+        }
     }
 
     /**
@@ -2278,6 +2322,6 @@ public class EventClientRepository extends BaseRepository {
                 + eventTable.name()
                 + " WHERE "
                 + event_column.taskId.name()
-                + " IN (" + StringUtils.repeat("?",",", taskIds.size()) + ")", taskIds.toArray(new String[0]));
+                + " IN (" + StringUtils.repeat("?", ",", taskIds.size()) + ")", taskIds.toArray(new String[0]));
     }
 }

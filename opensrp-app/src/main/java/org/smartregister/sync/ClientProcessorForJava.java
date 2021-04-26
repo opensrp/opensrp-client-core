@@ -2,6 +2,7 @@ package org.smartregister.sync;
 
 import android.content.ContentValues;
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import com.ibm.fhir.model.resource.QuestionnaireResponse;
@@ -323,7 +324,7 @@ public class ClientProcessorForJava {
 
             for (String tableName : closesCase) {
                 closeCase(tableName, baseEntityId);
-                updateFTSsearch(tableName, baseEntityId, null);
+                updateFTSsearch(tableName, client.getClientType(), baseEntityId, null);
             }
 
             return true;
@@ -339,15 +340,15 @@ public class ClientProcessorForJava {
             if (createsCase == null || createsCase.isEmpty()) {
                 return false;
             }
-            for (String clientType : createsCase) {
-                Table table = getColumnMappings(clientType);
+            for (String tableName : createsCase) {
+                Table table = getColumnMappings(tableName);
                 List<Column> columns = table.columns;
-                String baseEntityId = getBaseEntityId(event, client, clientType);
+                String baseEntityId = getBaseEntityId(event, client, tableName);
 
                 ContentValues contentValues = new ContentValues();
                 //Add the base_entity_id
-                contentValues.put("base_entity_id", baseEntityId);
-                contentValues.put("is_closed", 0);
+                contentValues.put(CommonRepository.BASE_ENTITY_ID_COLUMN, baseEntityId);
+                contentValues.put(CommonRepository.IS_CLOSED_COLUMN, 0);
 
                 for (Column colObject : columns) {
                     processCaseModel(event, client, colObject, contentValues);
@@ -357,10 +358,10 @@ public class ClientProcessorForJava {
                 updateIdentifier(contentValues);
 
                 // save the values to db
-                executeInsertStatement(contentValues, clientType);
+                executeInsertStatement(contentValues, tableName);
 
-                String entityId=contentValues.getAsString("base_entity_id");
-                updateFTSsearch(clientType, entityId, contentValues);
+                String entityId = contentValues.getAsString(CommonRepository.BASE_ENTITY_ID_COLUMN);
+                updateFTSsearch(tableName, client.getClientType(), entityId, contentValues);
                 Long timestamp = getEventDate(event.getEventDate());
                 addContentValuesToDetailsTable(contentValues, timestamp);
                 updateClientDetailsTable(event, client);
@@ -941,6 +942,17 @@ public class ClientProcessorForJava {
         return getField(clazz.getSuperclass(), fieldName);
     }
 
+    /**
+     * Update the fts table with the provided values. This overloaded method adds the parameter entityType to uniquely distiguish the client types being processed
+     *
+     * @param tableName     the case table
+     * @param entityType    the client type or bind type
+     * @param entityId      the entity identifier
+     * @param contentValues the fields to update and corresponding values
+     */
+    public void updateFTSsearch(String tableName, String entityType, String entityId, ContentValues contentValues) {
+        updateFTSsearch(tableName, entityId, contentValues);
+    }
 
     public void updateFTSsearch(String tableName, String entityId, ContentValues contentValues) {
         Timber.d("Starting updateFTSsearch table: " + tableName);
