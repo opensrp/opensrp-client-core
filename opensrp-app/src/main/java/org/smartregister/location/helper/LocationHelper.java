@@ -63,9 +63,9 @@ public class LocationHelper {
 
     private void locationHelperCore(List<String> allowedLevels, String defaultLocationLevel) {
         childAndParentLocationIds = new HashMap<>();
+        setParentAndChildLocationIds(getDefaultLocation());
         this.ALLOWED_LEVELS = allowedLevels;
         this.DEFAULT_LOCATION_LEVEL = defaultLocationLevel;
-        setParentAndChildLocationIds(getDefaultLocation());
     }
 
     public static void init(List<String> allowedLevels, String defaultLocationLevel) {

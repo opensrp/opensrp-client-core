@@ -25,7 +25,7 @@ public abstract class PropertiesSyncConfiguration extends SyncConfiguration {
 
     @Override
     public boolean validateOAuthUrl(String url) {
-        return environmentManager.getEnvironments().isEmpty() || environmentManager.getEnvironment(url) != null;
+        return !environmentManager.getEnvironments().isEmpty() && environmentManager.getEnvironment(url) != null;
     }
 
     private Environment getCurrentEnvironment() {
