@@ -511,6 +511,10 @@ public class UserService {
             if (user != null && user.getPreferredName() != null) {
                 String preferredName = user.getPreferredName();
                 String userName = user.getUsername();
+                if(user.getRoles() !=null && user.getRoles().size() >0){
+                    String defRole = user.getRoles().get(0);
+                    allSharedPreferences.updateANMRole(defRole);
+                }
                 allSharedPreferences.updateANMPreferredName(userName, preferredName);
             }
         } catch (Exception e) {

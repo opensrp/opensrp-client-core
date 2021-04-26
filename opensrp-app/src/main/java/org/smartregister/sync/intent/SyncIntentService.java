@@ -128,8 +128,8 @@ public class SyncIntentService extends BaseSyncIntentService {
                 syncParams.put("limit",  getEventPullLimit());
                 resp = httpAgent.postWithJsonResponse(url,syncParams.toString());
             } else {
-                url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit()+"&isEmptyToAdd="+isEmptyToAdd;
-                Log.i("URL: %s", url);
+                url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit();
+                Timber.i("URL: %s", url);
                 resp = httpAgent.fetch(url);
             }
 
@@ -229,12 +229,10 @@ public class SyncIntentService extends BaseSyncIntentService {
                     request.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
                 }
                 String jsonPayload = request.toString();
-                String add_url =  MessageFormat.format("{0}/{1}",
-                        baseUrl,
-                        ADD_URL);
-                Log.i("URL: %s", add_url);
-                Response<String> response = httpAgent.post(add_url
-                       ,
+                Response<String> response = httpAgent.post(
+                        MessageFormat.format("{0}/{1}",
+                                baseUrl,
+                                ADD_URL),
                         jsonPayload);
                 if (response.isFailure()) {
                     Timber.e("Events sync failed.");
