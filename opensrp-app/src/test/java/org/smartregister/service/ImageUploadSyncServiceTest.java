@@ -3,6 +3,7 @@ package org.smartregister.service;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
@@ -12,6 +13,7 @@ import org.smartregister.domain.ResponseStatus;
 import org.smartregister.repository.ImageRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Vincent Karuri on 27/04/2021
@@ -19,7 +21,7 @@ import java.util.ArrayList;
 public class ImageUploadSyncServiceTest extends BaseUnitTest {
 
     @Test
-    public void onHandleIntent() {
+    public void testOnHandleIntentShouldUploadImages() throws Exception {
         // mock dependencies
         Context opensrpContext = CoreLibrary.getInstance().context();
 
@@ -32,15 +34,20 @@ public class ImageUploadSyncServiceTest extends BaseUnitTest {
         final String IMAGE_ID_2 = "image_id_2";
         ImageRepository imageRepository = Mockito.mock(ImageRepository.class);
         ReflectionHelpers.setField(opensrpContext, "imageRepository", imageRepository);
-        Mockito.doReturn(new ArrayList<ProfileImage>() {{
+
+        List<ProfileImage> profileImages = new ArrayList<ProfileImage>() {{
             add(new ProfileImage(IMAGE_ID_1));
             add(new ProfileImage(IMAGE_ID_2));
-        }}).when(imageRepository).findAllUnSynced();
+        }};
+        Mockito.doReturn(profileImages).when(imageRepository).findAllUnSynced();
 
         // verify uploads
         ImageUploadSyncService imageUploadSyncService = new ImageUploadSyncService();
         imageUploadSyncService.onHandleIntent(null);
 
+        String imageUploadEndpoint = Whitebox.invokeMethod(imageUploadSyncService, "getImageUploadEndpoint");
+        Mockito.verify(httpAgent).httpImagePost(imageUploadEndpoint, profileImages.get(0));
+        Mockito.verify(httpAgent).httpImagePost(imageUploadEndpoint, profileImages.get(1));
         Mockito.verify(imageRepository).close(IMAGE_ID_1);
         Mockito.verify(imageRepository).close(IMAGE_ID_2);
     }

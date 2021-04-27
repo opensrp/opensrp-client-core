@@ -14,7 +14,6 @@ import java.util.List;
 import timber.log.Timber;
 
 import static org.smartregister.util.Log.logError;
-import static org.smartregister.util.Log.logInfo;
 
 /**
  * Created by Raihan Ahmed on 10/14/15.
@@ -39,8 +38,7 @@ public class ImageUploadSyncService extends IntentService {
             List<ProfileImage> profileImages = imageRepo.findAllUnSynced();
             for (int i = 0; i < profileImages.size(); i++) {
                 String response = CoreLibrary.getInstance().context().getHttpAgent().httpImagePost(
-                        CoreLibrary.getInstance().context().configuration().dristhiBaseURL()
-                                + AllConstants.PROFILE_IMAGES_UPLOAD_PATH, profileImages.get(i));
+                        getImageUploadEndpoint(), profileImages.get(i));
                 if (response.contains(ResponseStatus.success.displayValue())) {
                     imageRepo.close(profileImages.get(i).getImageid());
                 } else {
@@ -51,5 +49,10 @@ public class ImageUploadSyncService extends IntentService {
         } catch (Exception e) {
             logError(TAG, e.getMessage());
         }
+    }
+
+    private String getImageUploadEndpoint() {
+        return CoreLibrary.getInstance().context().configuration().dristhiBaseURL()
+                + AllConstants.PROFILE_IMAGES_UPLOAD_PATH;
     }
 }
