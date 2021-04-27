@@ -165,8 +165,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             startEventTrace(FETCH, 0);
 
-            String url = baseUrl + SYNC_URL;
-            Response resp = getUrlResponse(configs,httpAgent,url,lastSyncDatetime,returnCount);
+            Response resp = getUrlResponse(configs,httpAgent,baseUrl + SYNC_URL,lastSyncDatetime,returnCount);
             if(resp == null){
                 FetchStatus.fetchedFailed.setDisplayValue("Empty response");
                 complete(FetchStatus.fetchedFailed);
