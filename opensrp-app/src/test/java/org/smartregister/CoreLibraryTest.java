@@ -1,6 +1,7 @@
 package org.smartregister;
 
 import android.accounts.Account;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import org.junit.Assert;
@@ -20,6 +21,10 @@ import org.smartregister.pathevaluator.PathEvaluatorLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.shadows.ShadowAppDatabase;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -191,5 +196,41 @@ public class CoreLibraryTest extends BaseUnitTest {
         Assert.assertNotNull(PathEvaluatorLibrary.getInstance().getClientProvider().getClientDao());
         Assert.assertNotNull(PathEvaluatorLibrary.getInstance().getTaskProvider().getTaskDao());
         Assert.assertNotNull(PathEvaluatorLibrary.getInstance().getEventProvider().getEventDao());
+    }
+
+    @Test
+    public void copySharedPreferences() {
+        SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.doReturn(editor).when(sharedPreferences).edit();
+        Mockito.doReturn(editor).when(editor).putString(Mockito.anyString(), Mockito.anyString());
+        Mockito.doReturn(editor).when(editor).putFloat(Mockito.anyString(), Mockito.anyFloat());
+        Mockito.doReturn(editor).when(editor).putInt(Mockito.anyString(), Mockito.anyInt());
+        Mockito.doReturn(editor).when(editor).putLong(Mockito.anyString(), Mockito.anyLong());
+        Mockito.doReturn(editor).when(editor).putBoolean(Mockito.anyString(), Mockito.anyBoolean());
+        Mockito.doReturn(editor).when(editor).putStringSet(Mockito.anyString(), Mockito.anySet());
+
+        HashMap<String, Object> entries = new HashMap<>();
+        entries.put("key-1", "string type");
+        entries.put("key-2", 1000F);
+        entries.put("key-3", 1001);
+        entries.put("key-4", 1002L);
+        entries.put("key-5", Boolean.TRUE);
+        HashSet<String> set = new HashSet<>();
+        entries.put("key-6", set);
+
+        // Call the method under test
+        ReflectionHelpers.callStaticMethod(CoreLibrary.class, "copySharedPreferences"
+                , ReflectionHelpers.ClassParameter.from(Map.class, entries)
+                , ReflectionHelpers.ClassParameter.from(SharedPreferences.class, sharedPreferences));
+
+        Mockito.verify(sharedPreferences, Mockito.times(6)).edit();
+        Mockito.verify(editor).putString("key-1", "string type");
+        Mockito.verify(editor).putFloat("key-2", 1000F);
+        Mockito.verify(editor).putInt("key-3", 1001);
+        Mockito.verify(editor).putLong("key-4", 1002L);
+        Mockito.verify(editor).putBoolean("key-5", Boolean.TRUE);
+        Mockito.verify(editor).putStringSet("key-6", set);
+        Mockito.verify(editor, Mockito.times(6)).apply();
     }
 }
