@@ -168,7 +168,6 @@ public class AccountAuthenticatorTest extends BaseRobolectricUnitTest {
         ReflectionHelpers.setField(CoreLibrary.getInstance(), "accountManager", accountManager);
 
         AccountAuthenticatorResponse accountAuthenticatorResponse = Mockito.mock(AccountAuthenticatorResponse.class);
-        String accessToken = "my-token-kenya";
         String accountManagerPassword = "my-token-kenya";
         String authTokenType = "my-token-type";
         String accountName = "Goldsmith";
