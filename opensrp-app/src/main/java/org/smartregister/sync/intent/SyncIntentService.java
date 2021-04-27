@@ -165,7 +165,8 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             startEventTrace(FETCH, 0);
 
-            Response resp = getUrlResponse(configs,httpAgent,baseUrl + SYNC_URL,lastSyncDatetime,returnCount);
+            String url = baseUrl + SYNC_URL;
+            Response resp = getUrlResponse(configs,httpAgent,url,lastSyncDatetime,returnCount);
             if(resp == null){
                 FetchStatus.fetchedFailed.setDisplayValue("Empty response");
                 complete(FetchStatus.fetchedFailed);
@@ -199,8 +200,9 @@ public class SyncIntentService extends BaseSyncIntentService {
             fetchFailed(count);
         }
     }
-    protected Response getUrlResponse(SyncConfiguration configs,HTTPAgent httpAgent, String url,Long lastSyncDatetime ,boolean returnCount){
+    protected Response getUrlResponse(SyncConfiguration configs,HTTPAgent httpAgent, String initialUrl,Long lastSyncDatetime ,boolean returnCount){
         Response response = null;
+        String requestUrl = initialUrl;
         try{
 
            if (configs.isSyncUsingPost()) {
@@ -209,11 +211,11 @@ public class SyncIntentService extends BaseSyncIntentService {
                syncParams.put("serverVersion", lastSyncDatetime);
                syncParams.put("limit", getEventPullLimit());
                syncParams.put(AllConstants.RETURN_COUNT, returnCount);
-               response = httpAgent.postWithJsonResponse(url, syncParams.toString());
+               response = httpAgent.postWithJsonResponse(requestUrl, syncParams.toString());
            } else {
-               url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit();
-               Timber.i("URL: %s", url);
-               response = httpAgent.fetch(url);
+               requestUrl += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit();
+               Timber.i("URL: %s", requestUrl);
+               response = httpAgent.fetch(requestUrl);
            }
        }catch (JSONException jsonException){
            Timber.e(jsonException, "Fetch Retry Exception:  %s", jsonException.getMessage());
