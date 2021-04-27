@@ -1,11 +1,9 @@
 package org.smartregister;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Answers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.domain.Environment;
 import org.smartregister.util.JsonFormUtils;
@@ -14,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 27-04-2021.
  */
@@ -23,11 +19,6 @@ public class EnvironmentManagerTest extends BaseRobolectricUnitTest {
 
     @Mock(answer = Answers.CALLS_REAL_METHODS)
     private EnvironmentManager environmentManager;
-
-    @Before
-    public void setUp() throws Exception {
-
-    }
 
     @Test
     public void getEnvironments() {
