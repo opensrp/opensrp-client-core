@@ -6,6 +6,7 @@ import android.content.Intent;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.ProfileImage;
+import org.smartregister.domain.ResponseStatus;
 import org.smartregister.repository.ImageRepository;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import static org.smartregister.util.Log.logInfo;
  */
 public class ImageUploadSyncService extends IntentService {
     private static final String TAG = ImageUploadSyncService.class.getCanonicalName();
-    private ImageRepository imageRepo = null;
+    private ImageRepository imageRepo;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -40,7 +41,7 @@ public class ImageUploadSyncService extends IntentService {
                 String response = CoreLibrary.getInstance().context().getHttpAgent().httpImagePost(
                         CoreLibrary.getInstance().context().configuration().dristhiBaseURL()
                                 + AllConstants.PROFILE_IMAGES_UPLOAD_PATH, profileImages.get(i));
-                if (response.contains("success")) {
+                if (response.contains(ResponseStatus.success.displayValue())) {
                     imageRepo.close(profileImages.get(i).getImageid());
                 } else {
                     Timber.e("Image Upload: could NOT upload image ID: %s %s %s ", profileImages.get(i).getImageid(), " PATH: ", profileImages.get(i).getFilepath());
@@ -50,11 +51,5 @@ public class ImageUploadSyncService extends IntentService {
         } catch (Exception e) {
             logError(TAG, e.getMessage());
         }
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        logInfo("Started image upload sync service");
-        return super.onStartCommand(intent, flags, startId);
     }
 }
