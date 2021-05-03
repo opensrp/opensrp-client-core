@@ -111,7 +111,7 @@ public class TaskDaoImplTest extends BaseUnitTest {
         String jurisdictionId = "jurisdiction-id";
         String planId = "plan-id";
 
-        String query = "SELECT * FROM task WHERE group_id=? AND plan_id =?"; // ensure query exactly matches what is in TaskDaoImpl
+        String query = "SELECT * FROM task WHERE group_id =? AND plan_id =?"; // ensure query exactly matches what is in TaskDaoImpl
         when(sqLiteDatabase.rawQuery(query, new String[]{jurisdictionId, planId})).thenReturn(getCursor());
         taskDao = Mockito.spy(taskDao);
 
@@ -127,7 +127,7 @@ public class TaskDaoImplTest extends BaseUnitTest {
     public void testFindTasksByJurisdictionShouldReturnMatchingRecords() {
         String jurisdictionId = "jurisdiction-id";
 
-        String query = "SELECT * FROM task WHERE group_id=?"; // ensure query exactly matches what is in TaskDaoImpl
+        String query = "SELECT * FROM task WHERE group_id =?"; // ensure query exactly matches what is in TaskDaoImpl
         when(sqLiteDatabase.rawQuery(query, new String[]{jurisdictionId})).thenReturn(getCursor());
         taskDao = Mockito.spy(taskDao);
 

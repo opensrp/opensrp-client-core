@@ -711,14 +711,14 @@ public class TaskRepository extends BaseRepository {
     @NonNull
     public Set<Task> getTasksByJurisdictionAndPlan(@NonNull String jurisdictionId, String planIdentifier) {
         String query = TextUtils.join(" ",
-                new String[]{"SELECT * FROM", TASK_TABLE, "WHERE", GROUP_ID + "=?", "AND", PLAN_ID, "=?"});
+                new String[]{"SELECT * FROM", TASK_TABLE, "WHERE", GROUP_ID, "=?", "AND", PLAN_ID, "=?"});
         return getTasks(query, new String[]{jurisdictionId, planIdentifier});
     }
 
     @NonNull
     public Set<Task> getTasksByJurisdiction(@NonNull String jurisdictionId) {
         String query = TextUtils.join(" ",
-                new String[]{"SELECT * FROM", TASK_TABLE, "WHERE", GROUP_ID + "=?"});
+                new String[]{"SELECT * FROM", TASK_TABLE, "WHERE", GROUP_ID, "=?"});
         return getTasks(query, new String[]{jurisdictionId});
     }
 
