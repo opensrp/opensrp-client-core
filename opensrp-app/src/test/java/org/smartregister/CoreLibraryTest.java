@@ -21,6 +21,7 @@ import org.smartregister.pathevaluator.PathEvaluatorLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.shadows.ShadowAppDatabase;
+import org.smartregister.util.AppProperties;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -232,5 +233,51 @@ public class CoreLibraryTest extends BaseUnitTest {
         Mockito.verify(editor).putBoolean("key-5", Boolean.TRUE);
         Mockito.verify(editor).putStringSet("key-6", set);
         Mockito.verify(editor, Mockito.times(6)).apply();
+    }
+
+    @Test
+    public void upgradeSharedPreferencesShouldCallCopySharedPreferences() {
+        SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.doReturn(editor).when(sharedPreferences).edit();
+        Mockito.doReturn(editor).when(editor).putString(Mockito.anyString(), Mockito.anyString());
+        Mockito.doReturn(editor).when(editor).clear();
+
+        CoreLibrary originalCoreLibrary = CoreLibrary.getInstance();
+        CoreLibrary mockCoreLibrary = Mockito.spy(originalCoreLibrary);
+
+        android.content.Context mockApplicationContext = Mockito.spy(RuntimeEnvironment.application);
+        Mockito.doReturn(context).when(mockCoreLibrary).context();
+        Mockito.doReturn(mockApplicationContext).when(context).applicationContext();
+        String prefName = mockApplicationContext.getPackageName() + "_preferences";
+        Mockito.doReturn(sharedPreferences).when(mockApplicationContext)
+                .getSharedPreferences(prefName, android.content.Context.MODE_PRIVATE);
+        AllSharedPreferences allSharedPreferences = Mockito.mock(AllSharedPreferences.class);
+        Mockito.doReturn(allSharedPreferences).when(context).allSharedPreferences();
+        Mockito.doReturn(sharedPreferences).when(allSharedPreferences).getPreferences();
+
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", mockCoreLibrary);
+
+        HashMap<String, Object> entries = new HashMap<>();
+        entries.put(AllConstants.PROPERTY.ENCRYPT_SHARED_PREFERENCES, true);
+        entries.put("key-1", "string type");
+        entries.put("key-2", 1000F);
+
+        Mockito.doReturn(entries).when(sharedPreferences).getAll();
+
+        AppProperties appProperties = new AppProperties();
+        appProperties.setProperty(AllConstants.PROPERTY.ENCRYPT_SHARED_PREFERENCES, Boolean.TRUE.toString());
+
+        Mockito.doReturn(appProperties).when(context).getAppProperties();
+
+        // Call the method under test
+        ReflectionHelpers.callStaticMethod(CoreLibrary.class, "upgradeSharedPreferences");
+
+        // Perform verifications that copySharedPreferences was called putting the entries in the preferences
+        Mockito.verify(editor).putString("key-1", "string type");
+        Mockito.verify(editor, Mockito.times(2)).apply();
+
+        // Reset the CoreLibrary instance
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", originalCoreLibrary);
     }
 }
