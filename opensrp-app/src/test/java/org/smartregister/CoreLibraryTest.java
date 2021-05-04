@@ -199,7 +199,7 @@ public class CoreLibraryTest extends BaseUnitTest {
     }
 
     @Test
-    public void copySharedPreferences() {
+    public void copySharedPreferencesShouldCopyKeyValuesFromMapToPreferences() {
         SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
         SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
         Mockito.doReturn(editor).when(sharedPreferences).edit();
