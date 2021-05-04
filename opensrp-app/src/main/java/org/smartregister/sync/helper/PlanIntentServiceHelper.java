@@ -89,6 +89,10 @@ public class PlanIntentServiceHelper extends BaseHelper {
         sendSyncProgressBroadcast(syncProgress, context);
     }
 
+    public static void destroyInstance() {
+        instance = null;
+    }
+
     private int batchFetchPlansFromServer(boolean returnCount) {
         int batchFetchCount = 0;
         try {

@@ -115,6 +115,10 @@ public class LocationServiceHelper extends BaseHelper {
         return instance;
     }
 
+    public static void destroyInstance() {
+        instance = null;
+    }
+
     protected List<Location> syncLocationsStructures(boolean isJurisdiction) {
         syncProgress = new SyncProgress();
         if (isJurisdiction) {
