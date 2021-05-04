@@ -18,7 +18,6 @@ import java.util.Set;
 public class AllSharedPreferences {
     public static final String ANM_IDENTIFIER_PREFERENCE_KEY = "anmIdentifier";
     public static final String ANM_IDENTIFIER_SET_PREFERENCE_KEY = "anmIdentifierSet";
-    public static final String ANM_IDENTIFIER_ROLE = "anm_role";
 
     private static final String HOST = "HOST";
     private static final String PORT = "PORT";
@@ -53,16 +52,11 @@ public class AllSharedPreferences {
     public String fetchRegisteredANM() {
         return preferences.getString(ANM_IDENTIFIER_PREFERENCE_KEY, "").trim();
     }
-    public void updateANMRole(String role) {
-        preferences.edit().putString(ANM_IDENTIFIER_ROLE, role).commit();
-    }
 
     public boolean isRegisteredANM(String userName) {
         return preferences.getStringSet(ANM_IDENTIFIER_SET_PREFERENCE_KEY, new HashSet<>()).contains(userName);
     }
-    public String fetchRegisteredRole() {
-        return preferences.getString(ANM_IDENTIFIER_ROLE, "").trim();
-    }
+
     public boolean fetchForceRemoteLogin(String username) {
         return preferences.getBoolean(new StringBuffer(AllConstants.FORCE_REMOTE_LOGIN).append('_').append(username).toString(), true);
     }
