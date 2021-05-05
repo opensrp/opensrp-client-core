@@ -73,6 +73,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     private long totalRecords;
     private int fetchedRecords = 0;
     protected boolean isEmptyToAdd = true;
+
     public SyncIntentService() {
         super("SyncIntentService");
     }
@@ -165,9 +166,11 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             startEventTrace(FETCH, 0);
 
-            String url = baseUrl + SYNC_URL;
-            Response resp = getUrlResponse(configs,httpAgent,url,lastSyncDatetime,returnCount);
-            if(resp == null){
+            BaseSyncIntentService.RequestParamsBuilder syncParamBuilder = new BaseSyncIntentService.RequestParamsBuilder().
+                    configureSyncFilter(configs.getSyncFilterParam().value(), configs.getSyncFilterValue()).addServerVersion(lastSyncDatetime).addEventPullLimit(getEventPullLimit());
+
+            Response resp = getUrlResponse(baseUrl + SYNC_URL, syncParamBuilder, configs, returnCount);
+            if (resp == null) {
                 FetchStatus.fetchedFailed.setDisplayValue("Empty response");
                 complete(FetchStatus.fetchedFailed);
                 return;
@@ -200,28 +203,30 @@ public class SyncIntentService extends BaseSyncIntentService {
             fetchFailed(count);
         }
     }
-    protected Response getUrlResponse(SyncConfiguration configs,HTTPAgent httpAgent, String initialUrl,Long lastSyncDatetime ,boolean returnCount){
-        Response response = null;
-        String requestUrl = initialUrl;
-        try{
 
-           if (configs.isSyncUsingPost()) {
-               JSONObject syncParams = new JSONObject();
-               syncParams.put(configs.getSyncFilterParam().value(), configs.getSyncFilterValue());
-               syncParams.put("serverVersion", lastSyncDatetime);
-               syncParams.put("limit", getEventPullLimit());
-               syncParams.put(AllConstants.RETURN_COUNT, returnCount);
-               response = httpAgent.postWithJsonResponse(requestUrl, syncParams.toString());
-           } else {
-               requestUrl += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit();
-               Timber.i("URL: %s", requestUrl);
-               response = httpAgent.fetch(requestUrl);
-           }
-       }catch (JSONException jsonException){
-           Timber.e(jsonException, "Fetch Retry Exception:  %s", jsonException.getMessage());
-       }
-       return response;
+    /**
+     * This methods makes a request to the server using either Get or Post as is configured by {@link org.smartregister.SyncConfiguration#isSyncUsingPost()}
+     *
+     * @param baseURL              the base url for the request
+     * @param requestParamsBuilder the query string builder object
+     * @param configs              the Sync Configuration object with various configurations
+     * @param returnCount          a boolean flag, whether to return the total count of records as part of the response (field - total_records)
+     */
+    protected Response getUrlResponse(@NonNull String baseURL, @NonNull BaseSyncIntentService.RequestParamsBuilder requestParamsBuilder, @NonNull SyncConfiguration configs, boolean returnCount) {
+        Response response;
+        String requestUrl = baseURL;
 
+        if (configs.isSyncUsingPost()) {
+
+            response = httpAgent.postWithJsonResponse(requestUrl, requestParamsBuilder.returnCount(returnCount).build());
+
+        } else {
+            requestUrl += "?" + requestParamsBuilder.build();
+            Timber.i("URL: %s", requestUrl);
+            response = httpAgent.fetch(requestUrl);
+        }
+
+        return response;
 
     }
 
@@ -376,7 +381,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
 
         sendBroadcast(intent);
-        
+
         //sync time not update if sync is fail
         if (!fetchStatus.equals(FetchStatus.noConnection) && !fetchStatus.equals(FetchStatus.fetchedFailed)) {
             ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
@@ -396,7 +401,6 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     protected Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
         final String EVENTS = "events";
-        final String SERVER_VERSION = "serverVersion";
         try {
             if (jsonObject != null && jsonObject.has(EVENTS)) {
                 JSONArray events = jsonObject.getJSONArray(EVENTS);
@@ -408,8 +412,8 @@ public class SyncIntentService extends BaseSyncIntentService {
                     Object o = events.get(i);
                     if (o instanceof JSONObject) {
                         JSONObject jo = (JSONObject) o;
-                        if (jo.has(SERVER_VERSION)) {
-                            long serverVersion = jo.getLong(SERVER_VERSION);
+                        if (jo.has(AllConstants.SERVER_VERSION)) {
+                            long serverVersion = jo.getLong(AllConstants.SERVER_VERSION);
                             if (serverVersion > maxServerVersion) {
                                 maxServerVersion = serverVersion;
                             }
