@@ -18,7 +18,6 @@ import java.util.Set;
 public class AllSharedPreferences {
     public static final String ANM_IDENTIFIER_PREFERENCE_KEY = "anmIdentifier";
     public static final String ANM_IDENTIFIER_SET_PREFERENCE_KEY = "anmIdentifierSet";
-
     private static final String HOST = "HOST";
     private static final String PORT = "PORT";
     private static final String LAST_SYNC_DATE = "LAST_SYNC_DATE";
