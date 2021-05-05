@@ -73,7 +73,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     private long totalRecords;
     private int fetchedRecords = 0;
     //this variable using to track the sync request goes along with add events/clients
-    protected boolean isEmptyToAdd = true;
+    private boolean isEmptyToAdd = true;
 
     public SyncIntentService() {
         super("SyncIntentService");
@@ -366,6 +366,10 @@ public class SyncIntentService extends BaseSyncIntentService {
             addAttribute(eventSyncTrace, COUNT, String.valueOf(count));
             startTrace(eventSyncTrace);
         }
+    }
+
+    public boolean isEmptyToAdd() {
+        return isEmptyToAdd;
     }
 
     private void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus) {
