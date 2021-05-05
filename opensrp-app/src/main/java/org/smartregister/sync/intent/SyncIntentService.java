@@ -72,6 +72,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     protected ValidateAssignmentHelper validateAssignmentHelper;
     private long totalRecords;
     private int fetchedRecords = 0;
+    //this variable using to track the sync request goes along with add events/clients
     protected boolean isEmptyToAdd = true;
 
     public SyncIntentService() {

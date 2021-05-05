@@ -2,7 +2,6 @@ package org.smartregister.util;
 
 import android.util.Log;
 
-
 import com.crashlytics.android.Crashlytics;
 
 import org.jetbrains.annotations.NotNull;
