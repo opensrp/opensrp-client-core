@@ -60,7 +60,7 @@ public class NativeFormProcessor {
     }
 
     public static NativeFormProcessor createInstanceFromAsset(String filePath) throws JSONException {
-        String jsonString = org.smartregister.util.Utils.readAssetContents(DrishtiApplication.getInstance().getContext().applicationContext()
+        String jsonString = Utils.readAssetContents(DrishtiApplication.getInstance().getContext().applicationContext()
                 , filePath);
         return createInstance(jsonString);
     }
@@ -98,8 +98,8 @@ public class NativeFormProcessor {
         return this;
     }
 
-    private FormTag getFormTag(){
-        if(formTag == null)
+    private FormTag getFormTag() {
+        if (formTag == null)
             formTag = JsonFormUtils.constructFormMetaData(allSharedPreferences, -1);
 
         return formTag;
