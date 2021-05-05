@@ -71,6 +71,11 @@ public class BaseSyncIntentService extends IntentService {
             return this;
         }
 
+        public RequestParamsBuilder removeParam(String key) {
+            paramMap.remove(key);
+            return this;
+        }
+
         public String build() {
 
             for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
