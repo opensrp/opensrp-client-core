@@ -163,7 +163,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         when(view.getActivityContext()).thenReturn(activity);
 
         loginResponseData = new LoginResponseData();
-        loginResponseData.user = new User().withUsername(username);
+        loginResponseData.user = new User().withUsername(username).withRole("READ_ROLE").withRole("WRITE_ROLE").withRole("PROVIDER_ROLE");
         loginResponseData.time = new Time(new Date(), TimeZone.getTimeZone("Africa/Nairobi"));
 
         when(context.getHttpAgent()).thenReturn(httpAgent);
