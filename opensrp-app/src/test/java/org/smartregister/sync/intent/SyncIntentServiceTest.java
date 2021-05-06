@@ -41,6 +41,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -493,14 +494,15 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         responseStatus.setDisplayValue(ResponseErrorStatus.malformed_url.name());
         Mockito.doReturn(new Response<>(responseStatus, null))
                 .when(httpAgent).fetch(stringArgumentCaptor.capture());
-
+        String removeParamKey = "some-other-param-to-remove";
         BaseSyncIntentService.RequestParamsBuilder builder = new BaseSyncIntentService.RequestParamsBuilder().configureSyncFilter("locationId", "location-1")
-                .addServerVersion(0).addEventPullLimit(250).addParam("region", "au-west").addParam("is_enabled", true).addParam("some-other-param", 85l);
+                .addServerVersion(0).addEventPullLimit(250).addParam("region", "au-west").addParam("is_enabled", true).addParam("some-other-param", 85l)
+                .addParam(removeParamKey, 745).removeParam(removeParamKey);
         syncIntentService.getUrlResponse("https://sample-stage.smartregister.org/opensrp/rest/event/sync", builder, syncConfiguration, false);
 
         String syncUrl = stringArgumentCaptor.getValue();
         assertEquals("https://sample-stage.smartregister.org/opensrp/rest/event/sync?locationId=location-1&serverVersion=0&limit=250&region=au-west&is_enabled=true&some-other-param=85", syncUrl);
-
+        assertTrue(syncIntentService.isEmptyToAdd());
     }
 
     @Test

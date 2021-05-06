@@ -28,6 +28,7 @@ import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
 
 import timber.log.Timber;
@@ -117,7 +118,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT));
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_NAME, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_NAME));
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_REFRESH_TOKEN, response.getRefreshToken());
-                    mAccountManager.setUserData(account,AccountHelper.INTENT_KEY.ACCOUNT_ROLES,user.getRoles().toString());
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_ROLES, user.getRoles() != null ? user.getRoles().toString() : Collections.EMPTY_LIST.toString());
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         mAccountManager.notifyAccountAuthenticated(account);
                     }
