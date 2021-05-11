@@ -1,7 +1,6 @@
 package org.smartregister.view.contract;
 
 
-import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,18 +19,15 @@ public class ECDetailTest {
     }
 
     @Test
-    public void addTimelineEventsReturnsTheSameObject() {
-        List<org.smartregister.view.contract.TimelineEvent> timelineEvents = new ArrayList<>();
+    public void addTimelineEventsReturnsTheSameECDdetailObject() {
+        List<TimelineEvent> timelineEvents = new ArrayList<>();
         timelineEvents.add(getAnEvent());
         Assert.assertEquals(ecDetail.addTimelineEvents(timelineEvents), ecDetail);
     }
 
-    @Test
-    public void testEquals() {
-    }
 
     private TimelineEvent getAnEvent(){
-        return new org.smartregister.view.contract.TimelineEvent("PREGNANCY","pregnancy event",
+        return new TimelineEvent("PREGNANCY","pregnancy event",
                 new String[]{"ANC","Registered"},
                 DateUtil.formatDateForTimelineEvent("2011-10-21"));
     }
