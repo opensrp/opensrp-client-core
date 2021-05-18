@@ -28,6 +28,6 @@ public class SyncLocationsByLevelAndTagsIntentServiceTest extends BaseUnitTest {
         Whitebox.setInternalState(LocationServiceHelper.class, "instance", locationServiceHelper);
         Whitebox.invokeMethod(syncLocationsByLevelAndTagsIntentService, "onHandleIntent", null);
         Mockito.verify(locationServiceHelper).fetchLocationsByLevelAndTags();
-        Whitebox.setInternalState(LocationServiceHelper.class, "instance", locationServiceHelper);
+        Whitebox.setInternalState(LocationServiceHelper.class, "instance", (LocationServiceHelper) null);
     }
 }
