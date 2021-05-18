@@ -5,10 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.sync.helper.LocationServiceHelper;
 import org.smartregister.sync.helper.PlanIntentServiceHelper;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Vincent Karuri on 18/05/2021
