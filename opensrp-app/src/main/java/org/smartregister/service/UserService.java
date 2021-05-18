@@ -306,6 +306,11 @@ public class UserService {
         return null;
     }
 
+    public List<String> getUserRoles(String userName){
+        String roles = AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_ROLES, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
+        return Arrays.asList(roles);
+    }
+
     public byte[] getDecryptedPassphraseValue(String userName) {
         if (keyStore != null && userName != null) {
             try {
