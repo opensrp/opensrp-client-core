@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -40,6 +41,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -59,7 +61,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
     private SyncConfiguration syncConfiguration;
 
     @Captor
-    private ArgumentCaptor<Intent>  intentArgumentCaptor;
+    private ArgumentCaptor<Intent> intentArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<String> stringArgumentCaptor;
@@ -438,7 +440,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         Whitebox.invokeMethod(syncIntentService, "pushECToServer", eventClientRepository);
 
         verify(eventClientRepository).markEventsAsSynced(pendingEvents);
-        verify(syncIntentService).updateProgress(1,2);
+        verify(syncIntentService).updateProgress(1, 2);
 
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
         assertEquals("https://sample-stage.smartregister.org/opensrp/rest/event/add", syncUrl);
@@ -481,6 +483,45 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         FetchStatus actualFetchStatus = (FetchStatus) intentArgumentCaptor.getValue().getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS);
         assertEquals(FetchStatus.fetchProgress, actualFetchStatus);
         assertEquals("Sync upload progress 70%", actualFetchStatus.displayValue());
+    }
+
+    @Test
+    public void testGetUrlResponseCreatesValidUrlWithExtraParamsUsingGET() {
+
+        initMocksForPullECFromServerUsingPOST();
+        when(syncConfiguration.isSyncUsingPost()).thenReturn(false);
+        ResponseStatus responseStatus = ResponseStatus.failure;
+        responseStatus.setDisplayValue(ResponseErrorStatus.malformed_url.name());
+        Mockito.doReturn(new Response<>(responseStatus, null))
+                .when(httpAgent).fetch(stringArgumentCaptor.capture());
+        String removeParamKey = "some-other-param-to-remove";
+        BaseSyncIntentService.RequestParamsBuilder builder = new BaseSyncIntentService.RequestParamsBuilder().configureSyncFilter("locationId", "location-1")
+                .addServerVersion(0).addEventPullLimit(250).addParam("region", "au-west").addParam("is_enabled", true).addParam("some-other-param", 85l)
+                .addParam(removeParamKey, 745).removeParam(removeParamKey);
+        syncIntentService.getUrlResponse("https://sample-stage.smartregister.org/opensrp/rest/event/sync", builder, syncConfiguration, false);
+
+        String syncUrl = stringArgumentCaptor.getValue();
+        assertEquals("https://sample-stage.smartregister.org/opensrp/rest/event/sync?locationId=location-1&serverVersion=0&limit=250&region=au-west&is_enabled=true&some-other-param=85", syncUrl);
+        assertTrue(syncIntentService.isEmptyToAdd());
+    }
+
+    @Test
+    public void testGetUrlResponseCreatesValidUrlWithExtraParamsUsingPost() {
+        syncIntentService = spy(syncIntentService);
+
+        initMocksForPullECFromServerUsingPOST();
+        ResponseStatus responseStatus = ResponseStatus.failure;
+        responseStatus.setDisplayValue(ResponseErrorStatus.malformed_url.name());
+        Mockito.doReturn(new Response<>(responseStatus, null))
+                .when(httpAgent).postWithJsonResponse(ArgumentMatchers.anyString(), stringArgumentCaptor.capture());
+
+        BaseSyncIntentService.RequestParamsBuilder builder = new BaseSyncIntentService.RequestParamsBuilder().configureSyncFilter("locationId", "location-2")
+                .addServerVersion(0).addEventPullLimit(500).addParam("region", "au-east").addParam("is_enabled", false).addParam("some-other-param", 36);
+        syncIntentService.getUrlResponse("https://sample-stage.smartregister.org/opensrp/rest/event/sync", builder, syncConfiguration, true);
+
+        String requestString = stringArgumentCaptor.getValue();
+        assertEquals("{\"locationId\":\"location-2\",\"serverVersion\":0,\"limit\":500,\"region\":\"au-east\",\"is_enabled\":false,\"some-other-param\":36,\"return_count\":true}", requestString);
+
     }
 
     private void initMocksForPullECFromServerUsingPOST() {

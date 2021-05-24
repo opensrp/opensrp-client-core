@@ -49,6 +49,7 @@ public class AccountHelper {
         public final static String ACCOUNT_REFRESH_TOKEN = "ACCOUNT_REFRESH_TOKEN";
         public final static String ACCOUNT_LOCAL_PASSWORD_SALT = "ACCOUNT_LOCAL_PASSWORD_SALT";
         public final static String ACCOUNT_LOCAL_PASSWORD = "ACCOUNT_LOCAL_PASSWORD";
+        public final static String ACCOUNT_ROLES = "ACCOUNT_ROLES";
     }
 
     public static final class TOKEN_TYPE {
