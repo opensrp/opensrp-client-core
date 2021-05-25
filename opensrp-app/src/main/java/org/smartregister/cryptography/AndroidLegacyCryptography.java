@@ -27,7 +27,7 @@ import timber.log.Timber;
 /**
  * Created by ndegwamartin on 26/04/2019.
  */
-public class AndroidLegacyCryptography extends BaseCryptography implements ICryptography {
+public class    AndroidLegacyCryptography extends BaseCryptography implements ICryptography {
 
     public static final String AES_MODE = "AES/ECB/PKCS7Padding";
 
