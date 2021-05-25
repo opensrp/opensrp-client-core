@@ -52,7 +52,7 @@ public class FIleEncryptDecryptTest {
     }
 
     @Test
-    public void encryptTest() {
+    public void encryptAndDecreptMethodsTest() {
         StringBuilder data = new StringBuilder();
         try {
 
