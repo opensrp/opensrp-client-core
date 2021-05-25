@@ -17,6 +17,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -578,7 +579,45 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals("2018-10-31T0700", task.getAuthoredOn().toString(formatter));
         assertEquals("2018-10-31T0700", task.getLastModified().toString(formatter));
         assertEquals("demouser", task.getOwner());
+    }
 
+    @Test
+    public void testGetUnsyncedCreatedTasksAndTaskStatusCount() {
+        MatrixCursor cursor = new MatrixCursor(new String[]{"count(*)"});
+        cursor.addRow(new Object[]{89});
+
+        String query = "SELECT count(*) FROM task WHERE sync_status =? OR server_version IS NULL OR sync_status = ?";
+        when(sqLiteDatabase.rawQuery(query,
+                new String[]{BaseRepository.TYPE_Created, BaseRepository.TYPE_Unsynced})).thenReturn(cursor);
+
+        // Call method under test
+        int totalTasks = taskRepository.getUnsyncedCreatedTasksAndTaskStatusCount();
+
+        // Verifications and assertions
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+
+        assertEquals(query, stringArgumentCaptor.getValue());
+        assertEquals(BaseRepository.TYPE_Created, argsCaptor.getValue()[0]);
+        assertEquals(BaseRepository.TYPE_Unsynced, argsCaptor.getValue()[1]);
+        assertEquals(89, totalTasks);
+    }
+
+    @Test
+    public void testGetUnsyncedCreatedTasksAndTaskStatusCountShouldReturn0WhenCursorIsNull() {
+        String query = "SELECT count(*) FROM task WHERE sync_status =? OR server_version IS NULL OR sync_status = ?";
+        when(sqLiteDatabase.rawQuery(query,
+                new String[]{BaseRepository.TYPE_Created, BaseRepository.TYPE_Unsynced})).thenReturn(null);
+
+        // Call method under test
+        int totalTasks = taskRepository.getUnsyncedCreatedTasksAndTaskStatusCount();
+
+        // Verifications and assertions
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+
+        assertEquals(query, stringArgumentCaptor.getValue());
+        assertEquals(BaseRepository.TYPE_Created, argsCaptor.getValue()[0]);
+        assertEquals(BaseRepository.TYPE_Unsynced, argsCaptor.getValue()[1]);
+        assertEquals(0, totalTasks);
     }
 
     @Test
