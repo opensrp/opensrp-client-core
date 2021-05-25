@@ -119,6 +119,37 @@ public class TaskRepositoryTest extends BaseUnitTest {
     }
 
     @Test
+    public void testCreateTableShouldExecuteCreateTableQueryAndCreateIndexQuery() {
+        TaskRepository.createTable(sqLiteDatabase);
+
+        Mockito.verify(sqLiteDatabase).execSQL("CREATE TABLE task (_id VARCHAR NOT NULL PRIMARY KEY,plan_id VARCHAR NOT NULL, group_id VARCHAR NOT NULL, status VARCHAR  NOT NULL, business_status VARCHAR,  priority VARCHAR,  code VARCHAR , description VARCHAR , focus VARCHAR , for VARCHAR NOT NULL, start INTEGER , end INTEGER , authored_on INTEGER NOT NULL, last_modified INTEGER NOT NULL, owner VARCHAR NOT NULL, sync_status VARCHAR DEFAULT Synced, server_version INTEGER, structure_id VARCHAR, reason_reference VARCHAR, location VARCHAR, requester VARCHAR,  restriction_repeat INTEGER,  restriction_start INTEGER,  restriction_end INTEGER )");
+        Mockito.verify(sqLiteDatabase).execSQL("CREATE INDEX task_plan_group_ind  ON task(plan_id,group_id,sync_status)");
+    }
+
+    @Test
+    public void testUpdatePriorityToEnumAndAddRestrictionsShouldExecuteQueriesAddingRestrictionPropertyFields() {
+        TaskRepository.updatePriorityToEnumAndAddRestrictions(sqLiteDatabase);
+
+        Mockito.verify(sqLiteDatabase).execSQL("ALTER TABLE task ADD COLUMN restriction_repeat INTEGER");
+        Mockito.verify(sqLiteDatabase).execSQL("ALTER TABLE task ADD COLUMN restriction_start INTEGER");
+        Mockito.verify(sqLiteDatabase).execSQL("ALTER TABLE task ADD COLUMN restriction_end INTEGER");
+
+        Mockito.verify(sqLiteDatabase).beginTransaction();
+
+        Mockito.verify(sqLiteDatabase).execSQL("ALTER TABLE task RENAME TO _v2task");
+        Mockito.verify(sqLiteDatabase).execSQL("CREATE TABLE task (_id VARCHAR NOT NULL PRIMARY KEY,plan_id VARCHAR NOT NULL, group_id VARCHAR NOT NULL, status VARCHAR  NOT NULL, business_status VARCHAR,  priority VARCHAR,  code VARCHAR , description VARCHAR , focus VARCHAR , for VARCHAR NOT NULL, start INTEGER , end INTEGER , authored_on INTEGER NOT NULL, last_modified INTEGER NOT NULL, owner VARCHAR NOT NULL, sync_status VARCHAR DEFAULT Synced, server_version INTEGER, structure_id VARCHAR, reason_reference VARCHAR, location VARCHAR, requester VARCHAR,  restriction_repeat INTEGER,  restriction_start INTEGER,  restriction_end INTEGER )");
+        Mockito.verify(sqLiteDatabase).execSQL("INSERT INTO task (rowid, _id, plan_id, group_id, status, business_status, priority, code, description, focus, for, start, end, authored_on, last_modified, owner, sync_status, server_version, structure_id, reason_reference, location, requester, restriction_repeat, restriction_start, restriction_end) SELECT rowid, _id, plan_id, group_id, status, business_status, priority, code, description, focus, for, start, end, authored_on, last_modified, owner, sync_status, server_version, structure_id, reason_reference, location, requester, restriction_repeat, restriction_start, restriction_end FROM _v2task");
+        Mockito.verify(sqLiteDatabase).execSQL("DROP TABLE _v2task");
+
+        Mockito.verify(sqLiteDatabase).endTransaction();
+
+        ArgumentCaptor<Object[]> queryArgsCaptor = ArgumentCaptor.forClass(Object[].class);
+        Mockito.verify(sqLiteDatabase).execSQL(Mockito.eq("UPDATE task SET priority=?"), queryArgsCaptor.capture());
+
+        assertEquals(Task.TaskPriority.ROUTINE.name(), queryArgsCaptor.getValue()[0]);
+    }
+
+    @Test
     public void testAddOrUpdateShouldAdd() {
 
         Task task = gson.fromJson(taskJson, Task.class);
