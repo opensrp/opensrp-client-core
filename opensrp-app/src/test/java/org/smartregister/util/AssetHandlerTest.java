@@ -99,7 +99,7 @@ public class AssetHandlerTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assetJsonToJavaShouldReturnNullWhenJsonMapIsNull() {
-        Assert.assertNull(AssetHandler.assetJsonToJava(null, RuntimeEnvironment.application, "some-file.json", null, new TypeToken<Field>(){}.getType()));
+        Assert.assertNull(AssetHandler.assetJsonToJava(null, RuntimeEnvironment.application, "some-file.json", Field.class, new TypeToken<Field>(){}.getType()));
     }
 
     @Test
