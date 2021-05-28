@@ -1228,25 +1228,26 @@ public class JsonFormUtils {
     }
 
     public static JSONObject merge(JSONObject original, JSONObject updated) {
-        JSONObject mergedJSON = new JSONObject();
-        try {
-            mergedJSON = new JSONObject(original, getNames(original));
-            for (String key : getNames(updated)) {
-                mergedJSON.put(key, updated.get(key));
+        String[] keys = getNames(updated);
+        for(String key : keys){
+            try {
+                if(updated.get(key) instanceof JSONObject && original.has(key)){
+                    merge(original.getJSONObject(key), updated.getJSONObject(key));
+                }else{
+                    original.put(key, updated.get(key));
+                }
+            } catch (JSONException e) {
+                Timber.e(e);
             }
-
-        } catch (JSONException e) {
-            Timber.e(e);
         }
-        return mergedJSON;
+        return original;
     }
 
     public static String[] getNames(JSONObject jo) {
         int length = jo.length();
-        if (length == 0) {
-            return null;
-        }
-        Iterator i = jo.keys();
+        if (length == 0) return new String[0];
+
+        Iterator<String> i = jo.keys();
         String[] names = new String[length];
         int j = 0;
         while (i.hasNext()) {
