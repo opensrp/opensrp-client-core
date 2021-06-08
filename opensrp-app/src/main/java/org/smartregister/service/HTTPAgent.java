@@ -243,8 +243,9 @@ public class HTTPAgent {
 
     private Response<String> handleResponse(HttpURLConnection urlConnection) {
         String responseString;
+        int statusCode;
         try {
-            int statusCode = urlConnection.getResponseCode();
+            statusCode = urlConnection.getResponseCode();
 
             InputStream inputStream;
             if (statusCode >= HttpStatus.SC_BAD_REQUEST)
@@ -270,7 +271,7 @@ public class HTTPAgent {
                 urlConnection.disconnect();
             }
         }
-        return new Response<>(ResponseStatus.success, responseString);
+        return new Response<>(statusCode >= HttpStatus.SC_BAD_REQUEST ? ResponseStatus.failure : ResponseStatus.success, responseString);
     }
 
 

@@ -75,7 +75,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
                             baseUrl,
                             VALIDATE_SYNC_PATH),
                     jsonPayload);
-            if (response.isFailure() || StringUtils.isBlank(response.payload())) {
+            if (response.isFailure() || response.isTimeoutError() || StringUtils.isBlank(response.payload())) {
                 Log.e(getClass().getName(), "Validation sync failed.");
                 return;
             }
