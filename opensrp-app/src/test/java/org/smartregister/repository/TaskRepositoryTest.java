@@ -17,6 +17,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -111,7 +112,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
     @Before
     public void setUp() {
 
-        taskRepository = new TaskRepository(taskNotesRepository);
+        taskRepository = Mockito.spy(new TaskRepository(taskNotesRepository));
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase().compileStatement(anyString())).thenReturn(sqLiteStatement);
@@ -348,6 +349,54 @@ public class TaskRepositoryTest extends BaseUnitTest {
         taskRepository.cancelTasksForEntity(null);
         verify(sqLiteDatabase, never()).update(any(), any(), any(), any());
         verifyZeroInteractions(sqLiteDatabase);
+    }
+
+    @Test
+    public void testCancelTaskByIdentifierShouldDoNothingWhenTaskIdentifierIsNotExistent() {
+        String taskIdentifier = "my-task-identifier";
+
+        // Call the method under test
+        taskRepository.cancelTaskByIdentifier(taskIdentifier);
+
+        // Perform verifications
+        Mockito.verify(taskRepository, Mockito.never()).addOrUpdate(Mockito.any(Task.class), Mockito.eq(true));
+        Mockito.verify(taskRepository).getTaskByIdentifier(taskIdentifier);
+    }
+
+    @Test
+    public void testCancelTaskByIdentifierShouldNotUpdateTaskWhenTaskIdentifierIsNull() {
+        String taskIdentifier = "my-task-identifier";
+
+        // Call the method under test
+        taskRepository.cancelTaskByIdentifier(null);
+
+        // Perform verifications
+        Mockito.verify(taskRepository, Mockito.never()).addOrUpdate(Mockito.any(Task.class), Mockito.eq(true));
+        Mockito.verify(taskRepository, Mockito.never()).getTaskByIdentifier(taskIdentifier);
+    }
+
+
+    @Test
+    public void testCancelTaskByIdentifierShouldCallAddOrUpdateTaskWhenTaskIdentifierExists() {
+        String taskIdentifier = "my-task-identifier";
+        Task task = new Task();
+        task.setIdentifier(taskIdentifier);
+        task.setStatus(READY);
+
+        ArgumentCaptor<Task> taskArgumentCaptor = ArgumentCaptor.forClass(Task.class);
+
+        Mockito.doReturn(task).when(taskRepository).getTaskByIdentifier(taskIdentifier);
+
+        // Call the method under test
+        taskRepository.cancelTaskByIdentifier(taskIdentifier);
+
+        // Perform verifications
+        Mockito.verify(taskRepository).addOrUpdate(taskArgumentCaptor.capture(), Mockito.eq(true));
+        Mockito.verify(taskRepository, Mockito.times(2)).getTaskByIdentifier(taskIdentifier);
+
+        Task actualTask = taskArgumentCaptor.getValue();
+        Assert.assertEquals(task, actualTask);
+        Assert.assertEquals(CANCELLED, actualTask.getStatus());
     }
 
 
