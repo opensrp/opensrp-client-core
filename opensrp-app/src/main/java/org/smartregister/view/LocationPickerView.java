@@ -36,22 +36,22 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
     private OnLocationChangeListener onLocationChangeListener;
 
     public LocationPickerView(Context context) {
-        super(context);
-        this.context = context;
+        this(context, null);
     }
 
     public LocationPickerView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        this.context = context;
+        this(context, attrs, 0);
     }
 
     public LocationPickerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.context = context;
-        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.org_ei_drishti_view_customControls_CustomFontTextView, 0, defStyle);
-        //int variant = attributes.getInt(R.styleable.anc_CustomFontTextView_fontVariant, 0);
-        attributes.recycle();
-        //setFontVariant(variant);
+        if (attrs != null) {
+            TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.org_ei_drishti_view_customControls_CustomFontTextView, 0, defStyle);
+            //int variant = attributes.getInt(R.styleable.anc_CustomFontTextView_fontVariant, 0);
+            attributes.recycle();
+            //setFontVariant(variant);
+        }
     }
 
     public void init() {
@@ -63,18 +63,20 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
 
         String defaultLocation = LocationHelper.getInstance().getDefaultLocation();
 
-        List<String> locationNames = getLocations(defaultLocation);
-
-        Set<String> uniqueLocations = new HashSet<>(locationNames);
+        Set<String> uniqueLocations = new HashSet<>(LocationHelper.getInstance().locationNamesFromHierarchy(defaultLocation));
 
         List<String> advancedStrategies = LocationHelper.getInstance().getAdvancedDataCaptureStrategies();
         boolean hasAdvancedDataStrategies = advancedStrategies != null && advancedStrategies.size() > 0;
         if (hasAdvancedDataStrategies) {
             uniqueLocations.addAll(advancedStrategies);
         }
-        locationNames = new ArrayList<>(uniqueLocations);
 
-        serviceLocationsAdapter = new ServiceLocationsAdapter(context, locationNames);
+        List<String> sortedLocations = new ArrayList<>(uniqueLocations);
+        sortedLocations.remove(defaultLocation);
+        Collections.sort(sortedLocations);
+        sortedLocations.add(0, defaultLocation);
+
+        serviceLocationsAdapter = new ServiceLocationsAdapter(context, sortedLocations);
         locationsLV.setAdapter(serviceLocationsAdapter);
         locationsLV.setOnItemClickListener((parent, view, position, id) -> {
             CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentLocality(serviceLocationsAdapter.getLocationAt(position));
@@ -106,18 +108,6 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
         this.onLocationChangeListener = onLocationChangeListener;
     }
 
-    private List<String> getLocations(String defaultLocation) {
-        List<String> locations = LocationHelper.getInstance().locationNamesFromHierarchy(defaultLocation);
-
-        if (locations.contains(defaultLocation)) {
-            locations.remove(defaultLocation);
-        }
-        Collections.sort(locations);
-        locations.add(0, defaultLocation);
-
-        return locations;
-    }
-
     @Override
     public void onClick(View v) {
         showDialog();
@@ -139,4 +129,7 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
         void onLocationChange(String newLocation);
     }
 
+    public ServiceLocationsAdapter getServiceLocationsAdapter() {
+        return serviceLocationsAdapter;
+    }
 }

@@ -95,10 +95,8 @@ public class FileUtilities {
     }
 
     public static String getImageUrl(String entityID) {
-        String url = format("{0}/{1}/{2}",
-                CoreLibrary.getInstance().context().allSharedPreferences().fetchBaseURL(""),
-                AllConstants.PROFILE_IMAGES_DOWNLOAD_PATH, entityID);
-        return url;
+        String baseUrl = CoreLibrary.getInstance().context().allSharedPreferences().fetchBaseURL("");
+        return format("{0}{1}/{2}", baseUrl, AllConstants.PROFILE_IMAGES_DOWNLOAD_PATH, entityID);
     }
 
     public void write(String fileName, String data) {

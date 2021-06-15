@@ -32,18 +32,20 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -99,7 +101,6 @@ import java.util.Map;
 import timber.log.Timber;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
-import static org.smartregister.util.Log.logError;
 
 
 /**
@@ -107,6 +108,7 @@ import static org.smartregister.util.Log.logError;
  * Class containing some static utility methods.
  */
 public class Utils {
+
     private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Utils.getDefaultLocale());
     private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Utils.getDefaultLocale());
 
@@ -515,7 +517,6 @@ public class Utils {
     }
 
     public static boolean getBooleanProperty(String key) {
-
         return CoreLibrary.getInstance().context().getAppProperties().isTrue(key);
     }
 
@@ -546,7 +547,7 @@ public class Utils {
                 inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         } catch (Exception e) {
-            logError("Error encountered while hiding keyboard " + e);
+            Timber.e(e, "Error encountered while hiding keyboard");
         }
     }
 
@@ -614,6 +615,7 @@ public class Utils {
         String preferredName = getPrefferedName();
 
         if (StringUtils.isNotBlank(preferredName)) {
+            preferredName = preferredName.trim();
             String[] preferredNameArray = preferredName.split(" ");
             initials = "";
             if (preferredNameArray.length > 1) {
@@ -963,5 +965,29 @@ public class Utils {
         context.applicationContext().startActivity(intent);
         context.userService().forceRemoteLogin(context.allSharedPreferences().fetchRegisteredANM());
         context.userService().logoutSession();
+    }
+
+    /**
+     * This method takes in a list of API call parameters and value pairs,
+     * combines them and returns a single string to be appended to a GET API call
+     *
+     * @param apiParams a list of pairs containing API call parameters and values
+     *
+     * @return a string having all the parameters and values combined
+     */
+    public static String composeApiCallParamsString(List <Pair<String,String>> apiParams) {
+        StringBuilder apiCallParamsString = new StringBuilder("");
+        String paramsSeparator = "&";
+        String equalsSign = "=";
+        if (apiParams == null || apiParams.isEmpty()) {
+            return apiCallParamsString.toString();
+        }
+        for (Pair<String,String> apiParamsPair: apiParams) {
+            apiCallParamsString.append(paramsSeparator)
+                    .append(apiParamsPair.first)
+                    .append(equalsSign)
+                    .append(apiParamsPair.second);
+        }
+        return apiCallParamsString.toString();
     }
 }

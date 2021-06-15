@@ -27,6 +27,7 @@ public class AllConstants {
     public static final String ATTRIBUTES = "attributes";
     public static final String FAMILY = "Family";
     public static final String RELATIONSHIPS = "relationships";
+    public static final String TASK_IDENTIFIER = "taskIdentifier";
 
 
     // Maximum time difference between server and client time in milliseconds
@@ -136,7 +137,10 @@ public class AllConstants {
 
     public static final String CLIENT_FORM_ASSET_VERSION = "base version";
     public static final String RETURN_COUNT = "return_count";
+    public static final String LIMIT = "limit";
     public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
+
+    public static final String GPS = "gps";
 
 
     public static class Immunizations {
@@ -469,7 +473,7 @@ public class AllConstants {
         public static final String SYSTEM_TOASTER_CENTERED = "system.toaster.centered";
         public static final String DISABLE_LOCATION_PICKER_VIEW = "disable.location.picker.view";
         public static final String LOCATION_PICKER_TAG_SHOWN = "location.picker.tag.shown";
-
+        public static final String ENCRYPT_SHARED_PREFERENCES = "encrypt.shared.preferences";
     }
 
     public interface FORCED_LOGOUT {
@@ -528,4 +532,45 @@ public class AllConstants {
         public static String ADVANCED = "Advanced";
         public static String NORMAL = "Normal";
     }
+
+    public static class DataTypes {
+        public static final String INTEGER = "INTEGER";
+    }
+
+    public interface DownloadFileConstants {
+        String FILE_NAME = "FILE_NAME";
+        String FILE_PATH = "FILE_PATH";
+    }
+
+    public interface GpsConstants {
+        String ALTITUDE = "altitude";
+        String ACCURACY = "accuracy";
+        String LATITUDE = "latitude";
+        String LONGITUDE = "longitude";
+    }
+
+    public interface PerformanceMonitoring {
+        String TEAM = "team";
+        String PUSH = "push";
+        String FETCH = "fetch";
+        String ACTION = "action";
+        String STRUCTURE = "structure";
+        String LOCATION = "location";
+        String TASK_SYNC = "task_sync";
+        String PLAN_SYNC = "plan_sync";
+        String EVENT_SYNC = "event_sync";
+        String LOCATION_SYNC = "location_sync";
+        String CLIENT_PROCESSING = "client_processing";
+    }
+
+
+    public interface ClientProcessing {
+        String VARCHAR = "VARCHAR";
+        String NAME = "name";
+        String DATA_TYPES = "data_type";
+        String COLUMNS = "columns";
+
+    }
+
+
 }

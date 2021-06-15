@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Consumer;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
@@ -19,11 +20,13 @@ import org.json.JSONObject;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Note;
+import org.smartregister.domain.Period;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.Task.TaskStatus;
 import org.smartregister.domain.TaskUpdate;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.helper.TaskServiceHelper;
+import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.P2PUtil;
 
@@ -37,6 +40,7 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.DataTypes.INTEGER;
 import static org.smartregister.AllConstants.ROWID;
 import static org.smartregister.domain.Task.INACTIVE_TASK_STATUS;
 
@@ -69,10 +73,13 @@ public class TaskRepository extends BaseRepository {
     private static final String REASON_REFERENCE = "reason_reference";
     private static final String LOCATION = "location";
     private static final String REQUESTER = "requester";
+    private static final String RESTRICTION_REPEAT = "restriction_repeat";
+    private static final String RESTRICTION_START = "restriction_start";
+    private static final String RESTRICTION_END = "restriction_end";
 
-    private TaskNotesRepository taskNotesRepository;
+    private final TaskNotesRepository taskNotesRepository;
 
-    protected static final String[] COLUMNS = {ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION, STRUCTURE_ID, REASON_REFERENCE, LOCATION, REQUESTER};
+    protected static final String[] COLUMNS = {ROWID, ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION, STRUCTURE_ID, REASON_REFERENCE, LOCATION, REQUESTER, RESTRICTION_REPEAT, RESTRICTION_START, RESTRICTION_END};
 
     protected static final String TASK_TABLE = "task";
 
@@ -83,7 +90,7 @@ public class TaskRepository extends BaseRepository {
                     GROUP_ID + " VARCHAR NOT NULL, " +
                     STATUS + " VARCHAR  NOT NULL, " +
                     BUSINESS_STATUS + " VARCHAR,  " +
-                    PRIORITY + " INTEGER,  " +
+                    PRIORITY + " VARCHAR,  " +
                     CODE + " VARCHAR , " +
                     DESCRIPTION + " VARCHAR , " +
                     FOCUS + " VARCHAR , " +
@@ -98,7 +105,10 @@ public class TaskRepository extends BaseRepository {
                     STRUCTURE_ID + " VARCHAR, " +
                     REASON_REFERENCE + " VARCHAR, " +
                     LOCATION + " VARCHAR, " +
-                    REQUESTER + " VARCHAR  )";
+                    REQUESTER + " VARCHAR,  " +
+                    RESTRICTION_REPEAT + " INTEGER,  " +
+                    RESTRICTION_START + " INTEGER,  " +
+                    RESTRICTION_END + " INTEGER )";
 
     private static final String CREATE_TASK_PLAN_GROUP_INDEX = "CREATE INDEX "
             + TASK_TABLE + "_plan_group_ind  ON " + TASK_TABLE + "(" + PLAN_ID + "," + GROUP_ID + "," + SYNC_STATUS + ")";
@@ -112,12 +122,24 @@ public class TaskRepository extends BaseRepository {
         database.execSQL(CREATE_TASK_PLAN_GROUP_INDEX);
     }
 
+    /**
+     * Migrate the older database by add restriction columns and changing of priority to enum
+     *
+     * @param database the database being upgraded
+     */
+    public static void updatePriorityToEnumAndAddRestrictions(@NonNull SQLiteDatabase database) {
+        DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_REPEAT, INTEGER);
+        DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_START, INTEGER);
+        DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_END, INTEGER);
+        DatabaseMigrationUtils.recreateSyncTableWithExistingColumnsOnly(database, TASK_TABLE, COLUMNS, CREATE_TASK_TABLE);
+        database.execSQL(String.format("UPDATE %s SET %s=?", TASK_TABLE, PRIORITY), new Object[]{Task.TaskPriority.ROUTINE.name()});
+    }
 
     public void addOrUpdate(Task task) {
         addOrUpdate(task, false);
     }
 
-    public void addOrUpdate(Task task, boolean updateOnly) {
+    public Task addOrUpdate(Task task, boolean updateOnly) {
         if (StringUtils.isBlank(task.getIdentifier())) {
             throw new IllegalArgumentException("identifier must be specified");
         }
@@ -126,7 +148,7 @@ public class TaskRepository extends BaseRepository {
         Task existingTask = getTaskByIdentifier(task.getIdentifier());
         if (existingTask != null) {
             if (existingTask.getLastModified().isAfter(task.getLastModified())) {
-                return;
+                return task;
             }
             int maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
             contentValues.put(ROWID, ++maxRowId);
@@ -139,13 +161,19 @@ public class TaskRepository extends BaseRepository {
             contentValues.put(STATUS, task.getStatus().name());
         }
         contentValues.put(BUSINESS_STATUS, task.getBusinessStatus());
-        contentValues.put(PRIORITY, task.getPriority());
+        if (task.getPriority() != null) {
+            contentValues.put(PRIORITY, task.getPriority().name());
+        } else {
+            contentValues.put(PRIORITY, Task.TaskPriority.ROUTINE.name());
+        }
         contentValues.put(CODE, task.getCode());
         contentValues.put(DESCRIPTION, task.getDescription());
         contentValues.put(FOCUS, task.getFocus());
         contentValues.put(FOR, task.getForEntity());
-        contentValues.put(START, DateUtil.getMillis(task.getExecutionStartDate()));
-        contentValues.put(END, DateUtil.getMillis(task.getExecutionEndDate()));
+        if (task.getExecutionPeriod() != null) {
+            contentValues.put(START, DateUtil.getMillis(task.getExecutionPeriod().getStart()));
+            contentValues.put(END, DateUtil.getMillis(task.getExecutionPeriod().getEnd()));
+        }
         contentValues.put(AUTHORED_ON, DateUtil.getMillis(task.getAuthoredOn()));
         contentValues.put(LAST_MODIFIED, DateUtil.getMillis(task.getLastModified()));
         contentValues.put(OWNER, task.getOwner());
@@ -155,6 +183,13 @@ public class TaskRepository extends BaseRepository {
         contentValues.put(REASON_REFERENCE, task.getReasonReference());
         contentValues.put(LOCATION, task.getLocation());
         contentValues.put(REQUESTER, task.getRequester());
+        if (task.getRestriction() != null) {
+            contentValues.put(RESTRICTION_REPEAT, task.getRestriction().getRepetitions());
+            if (task.getRestriction().getPeriod() != null) {
+                contentValues.put(RESTRICTION_START, DateUtil.getMillis(task.getRestriction().getPeriod().getStart()));
+                contentValues.put(RESTRICTION_END, DateUtil.getMillis(task.getRestriction().getPeriod().getEnd()));
+            }
+        }
 
         if (updateOnly) {
             getWritableDatabase().update(TASK_TABLE, contentValues, ID + " =?", new String[]{task.getIdentifier()});
@@ -167,6 +202,7 @@ public class TaskRepository extends BaseRepository {
                 taskNotesRepository.addOrUpdate(note, task.getIdentifier());
         }
 
+        return task;
     }
 
     public Map<String, Set<Task>> getTasksByPlanAndGroup(String planId, String groupId) {
@@ -196,6 +232,34 @@ public class TaskRepository extends BaseRepository {
         }
         return tasks;
     }
+
+    /**
+     * Accepts a stream of tasks
+     *
+     * @param planId
+     * @param groupId
+     * @param consumer
+     */
+    public void readTasks(String planId, String groupId, String code, Consumer<Task> consumer) {
+        Cursor cursor = null;
+        try {
+            String[] params = new String[]{planId, groupId, code};
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =? AND %s NOT IN (%s)",
+                    TASK_TABLE, PLAN_ID, GROUP_ID, CODE, STATUS,
+                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                    ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
+            while (cursor.moveToNext()) {
+                Task task = readCursor(cursor);
+                consumer.accept(task);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+    }
+
 
 
     public Task getTaskByIdentifier(String identifier) {
@@ -273,13 +337,15 @@ public class TaskRepository extends BaseRepository {
             task.setStatus(TaskStatus.valueOf(cursor.getString(cursor.getColumnIndex(STATUS))));
         }
         task.setBusinessStatus(cursor.getString(cursor.getColumnIndex(BUSINESS_STATUS)));
-        task.setPriority(cursor.getInt(cursor.getColumnIndex(PRIORITY)));
+        task.setPriority(Task.TaskPriority.valueOf(cursor.getString(cursor.getColumnIndex(PRIORITY))));
         task.setCode(cursor.getString(cursor.getColumnIndex(CODE)));
         task.setDescription(cursor.getString(cursor.getColumnIndex(DESCRIPTION)));
         task.setFocus(cursor.getString(cursor.getColumnIndex(FOCUS)));
         task.setForEntity(cursor.getString(cursor.getColumnIndex(FOR)));
-        task.setExecutionStartDate(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(START))));
-        task.setExecutionEndDate(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(END))));
+        Period period = new Period();
+        period.setStart(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(START))));
+        period.setEnd(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(END))));
+        task.setExecutionPeriod(period);
         task.setAuthoredOn(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(AUTHORED_ON))));
         task.setLastModified(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(LAST_MODIFIED))));
         task.setOwner(cursor.getString(cursor.getColumnIndex(OWNER)));
@@ -289,7 +355,13 @@ public class TaskRepository extends BaseRepository {
         task.setReasonReference(cursor.getString(cursor.getColumnIndex(REASON_REFERENCE)));
         task.setLocation(cursor.getString(cursor.getColumnIndex(LOCATION)));
         task.setRequester(cursor.getString(cursor.getColumnIndex(REQUESTER)));
-
+        Period restrictionPeriod = new Period();
+        restrictionPeriod.setStart(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(RESTRICTION_START))));
+        restrictionPeriod.setEnd(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(RESTRICTION_END))));
+        Task.Restriction restriction = new Task.Restriction(cursor.getInt(cursor.getColumnIndex(RESTRICTION_REPEAT)), restrictionPeriod);
+        if (restriction.getRepetitions() != 0 || restrictionPeriod.getStart() != null && restrictionPeriod.getEnd() != null) {
+            task.setRestriction(restriction);
+        }
         return task;
     }
 
@@ -342,7 +414,7 @@ public class TaskRepository extends BaseRepository {
     }
 
     public List<Task> getAllUnsynchedCreatedTasks() {
-        return new ArrayList<>(getTasks(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL", TASK_TABLE, SYNC_STATUS, SERVER_VERSION), new String[]{BaseRepository.TYPE_Created}));
+        return new ArrayList<>(getTasks(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL OR %s = 0", TASK_TABLE, SYNC_STATUS, SERVER_VERSION, SERVER_VERSION), new String[]{BaseRepository.TYPE_Created}));
     }
 
     /**
@@ -579,7 +651,7 @@ public class TaskRepository extends BaseRepository {
 
     /**
      * Cancels a particular task
-     *
+     * <p>
      * Cancels the task if it has a status ready @{@link TaskStatus}
      *
      * @param identifier id of the task to be cancelled
@@ -634,5 +706,72 @@ public class TaskRepository extends BaseRepository {
         }
 
         return unsyncedRecordsCount;
+    }
+
+    @NonNull
+    public Set<Task> getTasksByJurisdictionAndPlan(@NonNull String jurisdictionId, String planIdentifier) {
+        String query = TextUtils.join(" ",
+                new String[]{"SELECT * FROM", TASK_TABLE, "WHERE", GROUP_ID, "=?", "AND", PLAN_ID, "=?"});
+        return getTasks(query, new String[]{jurisdictionId, planIdentifier});
+    }
+
+    @NonNull
+    public Set<Task> getTasksByJurisdiction(@NonNull String jurisdictionId) {
+        String query = TextUtils.join(" ",
+                new String[]{"SELECT * FROM", TASK_TABLE, "WHERE", GROUP_ID, "=?"});
+        return getTasks(query, new String[]{jurisdictionId});
+    }
+
+    public List<String> getEntityIdsWithDuplicateTasks() {
+        List<String> entityIds = new ArrayList<>();
+        android.database.Cursor cursor = null;
+        String query = "SELECT " +
+                "    DISTINCT(for) " +
+                "FROM " +
+                "    task " +
+                "WHERE status IN (?, ?) " +
+                "GROUP BY " +
+                "    plan_id, for, code " +
+                "HAVING " +
+                "    COUNT(*) > 1";
+
+        try {
+            cursor = getReadableDatabase().rawQuery(query, new String[]{TaskStatus.READY.name(), TaskStatus.COMPLETED.name()});
+
+            while (cursor.moveToNext()) {
+                entityIds.add(cursor.getString(0));
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return entityIds;
+    }
+
+    public Set<Task> getDuplicateTasksForEntity(String entityId) {
+        String query = "SELECT t1.* " +
+                "FROM task t1 " +
+                "JOIN (SELECT " +
+                "plan_id, for, code, COUNT(*) as count " +
+                "FROM " +
+                "    task " +
+                "WHERE for = ? " +
+                "GROUP BY " +
+                "    plan_id, for, code " +
+                "HAVING  " +
+                "    COUNT(*) > 1) t2 " +
+                "ON t1.plan_id = t2.plan_id " +
+                "AND t1.for = t2.for " +
+                "AND t1.code = t2.code " +
+                "AND t1.for = ? " +
+                "ORDER BY t1.for";
+        return getTasks(query, new String[]{entityId, entityId});
+    }
+
+    public void deleteTasksByIds(List<String> taskIds) {
+        String taskIdsBinding = StringUtils.repeat("? ", ", ", taskIds.size());
+        getWritableDatabase().delete(TASK_TABLE, String.format("_id in (%s)", taskIdsBinding), taskIds.toArray(new String[0]));
     }
 }

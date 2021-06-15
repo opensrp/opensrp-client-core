@@ -6,14 +6,15 @@ import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONArray;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
-import org.smartregister.BaseUnitTest;
+import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.CoreLibrary;
+import org.smartregister.repository.ClientRelationshipRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.ClientData;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -31,9 +32,7 @@ import static org.mockito.Mockito.when;
  * Created by samuelgithengi on 9/3/20.
  */
 
-public class ClientDaoImplTest extends BaseUnitTest {
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
+public class ClientDaoImplTest extends BaseRobolectricUnitTest {
 
     private ClientDaoImpl clientDao;
 
@@ -51,6 +50,11 @@ public class ClientDaoImplTest extends BaseUnitTest {
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
     }
 
+    @After
+    public void tearDown() {
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", (Repository) null);
+    }
+
     @Test
     public void testFindClientById() throws Exception {
         String query = "SELECT json FROM client WHERE baseEntityId = ? ";
@@ -63,9 +67,7 @@ public class ClientDaoImplTest extends BaseUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     @Test
     public void testFindFamilyByJurisdiction() throws Exception {
@@ -79,9 +81,7 @@ public class ClientDaoImplTest extends BaseUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     @Test
     public void testFindFamilyByResidence() throws Exception {
@@ -95,9 +95,7 @@ public class ClientDaoImplTest extends BaseUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     @Test
     public void testFindFamilyMemberByJurisdiction() throws Exception {
@@ -111,9 +109,7 @@ public class ClientDaoImplTest extends BaseUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     @Test
     public void testFindFamilyMemberByResidence() throws Exception {
@@ -127,14 +123,17 @@ public class ClientDaoImplTest extends BaseUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
 
     @Test
     public void testFindClientByRelationship() throws Exception {
+        ClientRelationshipRepository clientRelationshipRepository = new ClientRelationshipRepository();
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "clientRelationshipRepository", clientRelationshipRepository);
+
         String query = "SELECT json FROM client_relationship JOIN  client  ON base_entity_id=baseEntityId WHERE relationship=? AND relational_id =?";
         String[] params = new String[]{"41587456-b7c8-4c4e-b433-23a786f742fc", "Family"};
         when(sqLiteDatabase.rawQuery(anyString(), any())).thenReturn(getCursor(2));
+
         List<Patient> patients = clientDao.findClientByRelationship(params[0], params[1]);
         verify(sqLiteDatabase).rawQuery(query, params);
 
@@ -142,9 +141,7 @@ public class ClientDaoImplTest extends BaseUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     public static MatrixCursor getCursor() throws Exception {
         return getCursor(Integer.MAX_VALUE);
@@ -158,6 +155,4 @@ public class ClientDaoImplTest extends BaseUnitTest {
         }
         return matrixCursor;
     }
-
-
 }

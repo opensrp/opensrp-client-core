@@ -4,10 +4,11 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
 import android.content.Intent;
-import androidx.annotation.NonNull;
+import android.content.SharedPreferences;
+import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import android.text.TextUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.account.AccountAuthenticatorXml;
@@ -26,9 +27,12 @@ import org.smartregister.sync.P2PSyncFinishCallback;
 import org.smartregister.util.CredentialsHelper;
 import org.smartregister.util.Utils;
 
+import java.util.Map;
+import java.util.Set;
+
 import timber.log.Timber;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Created by keyman on 31/07/17.
@@ -52,31 +56,33 @@ public class CoreLibrary implements OnAccountsUpdateListener {
 
     private AccountAuthenticatorXml authenticatorXml;
 
+    private static String ENCRYPTED_PREFS_KEY_KEYSET = "__androidx_security_crypto_encrypted_prefs_key_keyset__";
+    private static String ENCRYPTED_PREFS_VALUE_KEYSET = "__androidx_security_crypto_encrypted_prefs_value_keyset__";
+
     public static void init(Context context) {
         init(context, null);
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration) {
-        if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, null);
-        }
+        init(context, syncConfiguration, BuildConfig.BUILD_TIMESTAMP);
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp) {
-        if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, null);
-            buildTimeStamp = buildTimestamp;
-        }
+        init(context, syncConfiguration, buildTimestamp, null);
     }
 
-    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, @NonNull P2POptions options) {
+    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, @Nullable P2POptions options) {
         if (instance == null) {
             instance = new CoreLibrary(context, syncConfiguration, options);
             buildTimeStamp = buildTimestamp;
+            upgradeSharedPreferences();
             checkPlatformMigrations();
         }
     }
 
+    public static void destroyInstance() {
+        instance = null;
+    }
 
     private static void checkPlatformMigrations() {
         boolean shouldMigrate = CredentialsHelper.shouldMigrate();
@@ -84,6 +90,57 @@ public class CoreLibrary implements OnAccountsUpdateListener {
             Utils.logoutUser(instance.context(), instance.context().applicationContext().getString(R.string.new_db_encryption_version_migration));
         }
         instance.context().userService().getAllSharedPreferences().migratePassphrase();
+    }
+
+    /**
+     * Check encrypted prefs sync configuration
+     * If configured to encrypt and there are previously saved shared prefs, recreate them encrypted
+     * If configured not to encrypt but previous version encrypted, clear the prefs
+     */
+    private static void upgradeSharedPreferences() {
+        try {
+            android.content.Context appContext = instance.context().applicationContext();
+            SharedPreferences existingPrefs = appContext.getSharedPreferences(appContext.getPackageName() + "_preferences", android.content.Context.MODE_PRIVATE);
+            Map<String, ?> entries = existingPrefs.getAll();
+
+            // check the version of SharedPreferences (encrypted vs unencrypted)
+            // as well as whether encryption key-value pair is set
+            if (Utils.getBooleanProperty(AllConstants.PROPERTY.ENCRYPT_SHARED_PREFERENCES)
+                    && !entries.containsKey(ENCRYPTED_PREFS_KEY_KEYSET)
+                    && !entries.containsKey(ENCRYPTED_PREFS_VALUE_KEYSET)) {
+
+                existingPrefs.edit().clear().apply();
+
+                // create the new instance
+                SharedPreferences newPrefs = instance.context().allSharedPreferences().getPreferences();
+
+                copySharedPreferences(entries, newPrefs);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+    }
+
+    private static void copySharedPreferences(Map<String, ?> entries, SharedPreferences preferences) {
+        try {
+            for (Map.Entry<String, ?> entry : entries.entrySet()) {
+                if (entry.getValue() instanceof Boolean) {
+                    preferences.edit().putBoolean(entry.getKey(), (Boolean) entry.getValue()).apply();
+                } else if (entry.getValue() instanceof Float) {
+                    preferences.edit().putFloat(entry.getKey(), (Float) entry.getValue()).apply();
+                } else if (entry.getValue() instanceof Integer) {
+                    preferences.edit().putInt(entry.getKey(), (Integer) entry.getValue()).apply();
+                } else if (entry.getValue() instanceof Long) {
+                    preferences.edit().putLong(entry.getKey(), (Long) entry.getValue()).apply();
+                } else if (entry.getValue() instanceof String) {
+                    preferences.edit().putString(entry.getKey(), (String) entry.getValue()).apply();
+                } else if (entry.getValue() instanceof Set) {
+                    preferences.edit().putStringSet(entry.getKey(), (Set) entry.getValue()).apply();
+                }
+            }
+        } catch (Exception e) {
+            Timber.e(e, "Failed to save SharedPreference");
+        }
     }
 
     public static CoreLibrary getInstance() {
@@ -168,13 +225,8 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         }
     }
 
+    @Nullable
     public SyncConfiguration getSyncConfiguration() {
-        if (syncConfiguration == null) {
-            throw new IllegalStateException(" Instance does not exist!!! Call "
-                    + CoreLibrary.class.getName()
-                    + ".init method in the onCreate method of "
-                    + "your Application class ");
-        }
         return syncConfiguration;
     }
 

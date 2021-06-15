@@ -2,6 +2,7 @@ package org.smartregister.service;
 
 import android.content.Context;
 import android.util.Base64;
+import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -55,8 +56,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -120,7 +125,7 @@ public class HTTPAgent {
      * @param setOauthToken  A boolean to flag whether to set the OAuth2 bearer access token in the Authorization header of request.
      * @return HttpURLConnection Http connection to the OpenSRP server.
      */
-    private HttpURLConnection initializeHttp(String requestURLPath, boolean setOauthToken) throws IOException {
+    private HttpURLConnection initializeHttp(String requestURLPath, boolean setOauthToken) throws IOException, URISyntaxException {
 
         HttpURLConnection urlConnection = getHttpURLConnection(requestURLPath);
 
@@ -139,8 +144,9 @@ public class HTTPAgent {
     }
 
     @VisibleForTesting
-    protected HttpURLConnection getHttpURLConnection(String requestURLPath) throws IOException {
-        URL url = new URL(requestURLPath);
+    protected HttpURLConnection getHttpURLConnection(String requestURLPath) throws IOException, URISyntaxException {
+        URI inputURI = new URI(requestURLPath.replaceAll(" ", "%20"));
+        URL url = inputURI.normalize().toURL();
         return (HttpURLConnection) url.openConnection();
     }
 
@@ -160,7 +166,7 @@ public class HTTPAgent {
 
             return processResponse(urlConnection);
 
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             Timber.e(ex, "EXCEPTION %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
@@ -190,7 +196,7 @@ public class HTTPAgent {
 
             return processResponse(urlConnection);
 
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             Timber.e(ex, "EXCEPTION: %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
@@ -198,7 +204,7 @@ public class HTTPAgent {
 
     @NonNull
     @VisibleForTesting
-    protected HttpURLConnection generatePostRequest(String postURLPath, String jsonPayload) throws IOException {
+    protected HttpURLConnection generatePostRequest(String postURLPath, String jsonPayload) throws IOException, URISyntaxException {
         HttpURLConnection urlConnection;
         urlConnection = initializeHttp(postURLPath, true);
 
@@ -271,7 +277,7 @@ public class HTTPAgent {
                 Timber.e("Bad response from Dristhi. Status code: %s username: %s using %s ", statusCode, userName, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             Timber.e(e, "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
         } catch (SocketTimeoutException e) {
@@ -312,7 +318,7 @@ public class HTTPAgent {
             }
             return processResponse(urlConnection);
 
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             Timber.e(ex, "EXCEPTION %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
@@ -322,8 +328,9 @@ public class HTTPAgent {
     private Response<String> processResponse(HttpURLConnection urlConnection) {
         String responseString;
         String totalRecords;
+        int statusCode = -1;
         try {
-            int statusCode = urlConnection.getResponseCode();
+            statusCode = urlConnection.getResponseCode();
 
             InputStream inputStream = null;
 
@@ -352,7 +359,8 @@ public class HTTPAgent {
         } finally {
             closeConnection(urlConnection);
         }
-        return new Response<>(ResponseStatus.success, responseString).withTotalRecords(Utils.tryParseLong(totalRecords, 0));
+        return new Response<>(statusCode >= HttpStatus.SC_BAD_REQUEST ? ResponseStatus.failure : ResponseStatus.success, responseString)
+                .withTotalRecords(Utils.tryParseLong(totalRecords, 0));
     }
 
 
@@ -423,7 +431,7 @@ public class HTTPAgent {
             Timber.e(e, "Protocol exception %s", e.toString());
         } catch (SocketTimeoutException e) {
             Timber.e(e, "SocketTimeout %s %s", TIMEOUT, e.toString());
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             Timber.e(e, "MalformedUrl %s %s", MALFORMED_URL, e.toString());
         } catch (IOException e) {
             Timber.e(e, "IOException %s %s", NO_INTERNET_CONNECTIVITY, e.toString());
@@ -633,7 +641,7 @@ public class HTTPAgent {
                 return new AccountResponse(statusCode, accountError);
 
             }
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             Timber.e(e, "Failed to check credentials bad url %s", tokenEndpointURL);
             accountError = new AccountError(0, MALFORMED_URL.name());
 
@@ -720,7 +728,7 @@ public class HTTPAgent {
                 Timber.e("Bad response from Server. Status code: %s using %s ", statusCode, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             Timber.e(e, "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
         } catch (SocketTimeoutException e) {
@@ -742,21 +750,30 @@ public class HTTPAgent {
      * @return Response<DownloadStatus> This returns whether the download succeeded or failed.
      */
     public Response<DownloadStatus> downloadFromURL(String downloadURL_, String fileName) {
+        return downloadFromURL(downloadURL_, fileName, new HashMap<>());
+    }
+
+    /**
+     * @param downloadURL_ This is the url of the image
+     * @param fileName     This is how the image should be name after it has been downloaded.
+     * @param detailsMap   store values that might be needed after save of file
+     * @return Response<DownloadStatus> This returns whether the download succeeded or failed.
+     */
+    public Response<DownloadStatus> downloadFromURL(String downloadURL_, String fileName, Map<String, String> detailsMap) {
 
         HttpURLConnection httpUrlConnection = null;
         try {
-            File dir = getSDCardDownloadPath();
 
+            File dir = getSDCardDownloadPath();
+            String tempFileName = fileName;
             if (!dir.exists()) {
                 dir.mkdirs();
             }
 
-            File file = getFile(fileName, dir);
-
             long startTime = System.currentTimeMillis();
             Timber.d("DownloadFormService %s", "download begin");
             Timber.d("DownloadFormService %s %s", "download url: ", downloadURL_);
-            Timber.d("DownloadFormService %s %s", "download file name: ", fileName);
+            Timber.d("DownloadFormService %s %s", "download file name: ", tempFileName);
 
 
             String downloadURL = downloadURL_.replaceAll("\\s+", "");
@@ -766,15 +783,25 @@ public class HTTPAgent {
             int status = httpUrlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
 
+                if (StringUtils.isBlank(httpUrlConnection.getContentType()))
+                    return new Response<DownloadStatus>(ResponseStatus.success,
+                            DownloadStatus.nothingDownloaded);
+
+                int periodIndex = tempFileName.lastIndexOf(".");
+                if (periodIndex == -1) {
+                    String mimeType = httpUrlConnection.getContentType().split(";")[0];
+                    tempFileName = String.format("%s.%s", tempFileName, MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType));
+                }
+
+                File file = getFile(tempFileName, dir);
+
+                detailsMap.put(AllConstants.DownloadFileConstants.FILE_NAME, tempFileName);
+                detailsMap.put(AllConstants.DownloadFileConstants.FILE_PATH, file.getPath());
+
                 InputStream inputStream = httpUrlConnection.getInputStream();
                 BufferedInputStream bufferedInputStream = getBufferedInputStream(inputStream);
 
-                long fileLength = bufferedInputStream.available();
-                if (fileLength == 0) {
-                    return new Response<DownloadStatus>(ResponseStatus.success,
-                            DownloadStatus.nothingDownloaded);
-                }
-                Timber.d("DownloadFormService %s %d", "file length : ", fileLength);
+                Timber.d("DownloadFormService file content type : %s", httpUrlConnection.getContentType());
 
                 ByteArrayBuffer baf = new ByteArrayBuffer(9999);
                 int current = 0;
@@ -797,7 +824,7 @@ public class HTTPAgent {
                 return new Response<DownloadStatus>(ResponseStatus.failure, DownloadStatus.failedDownloaded);
             }
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             Timber.d(e, "DownloadFormService");
             return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.failedDownloaded);
         } finally {
@@ -896,7 +923,7 @@ public class HTTPAgent {
                 return false;
             }
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
 
             Timber.e(e);
 
@@ -948,7 +975,7 @@ public class HTTPAgent {
                 Timber.i("User is Authorized");
             }
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             Timber.e(e);
         } finally {
 
@@ -984,7 +1011,7 @@ public class HTTPAgent {
                 return gson.fromJson(responseString, AccountConfiguration.class);
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             Timber.e(e);
         } finally {
 

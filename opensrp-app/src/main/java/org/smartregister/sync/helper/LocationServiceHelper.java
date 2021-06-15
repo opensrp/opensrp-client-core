@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
+import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -44,6 +45,7 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.COUNT;
 import static org.smartregister.AllConstants.JURISDICTION_IDS;
 import static org.smartregister.AllConstants.LocationConstants.DISPLAY;
 import static org.smartregister.AllConstants.LocationConstants.LOCATION;
@@ -52,7 +54,18 @@ import static org.smartregister.AllConstants.LocationConstants.SPECIAL_TAG_FOR_O
 import static org.smartregister.AllConstants.LocationConstants.TEAM;
 import static org.smartregister.AllConstants.LocationConstants.UUID;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.LOCATION_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.STRUCTURE;
 import static org.smartregister.AllConstants.RETURN_COUNT;
+import static org.smartregister.AllConstants.TYPE;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 public class LocationServiceHelper extends BaseHelper {
 
@@ -61,6 +74,7 @@ public class LocationServiceHelper extends BaseHelper {
     public static final String COMMON_LOCATIONS_SERVICE_URL = "/location/by-level-and-tags";
     public static final String OPENMRS_LOCATION_BY_TEAM_IDS = "/location/by-team-ids";
     public static final String LOCATION_HIERARCHY_URL = "/rest/location/hierarchy/";
+    public static final String ALL_LOCATIONS_URL = "/rest/location/getAll";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
@@ -68,7 +82,8 @@ public class LocationServiceHelper extends BaseHelper {
     private static final String IS_JURISDICTION = "is_jurisdiction";
     private static final String LOCATION_NAMES = "location_names";
     private static final String PARENT_ID = "parent_id";
-
+    private static final String LIMIT = "limit";
+    private static final int RECORD_COUNT = 2000;
 
     public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
@@ -78,6 +93,8 @@ public class LocationServiceHelper extends BaseHelper {
     private LocationRepository locationRepository;
     private LocationTagRepository locationTagRepository;
     private StructureRepository structureRepository;
+    private Trace locationSyncTrace;
+    private String team;
     private long totalRecords;
     private SyncProgress syncProgress;
 
@@ -86,6 +103,9 @@ public class LocationServiceHelper extends BaseHelper {
         this.locationRepository = locationRepository;
         this.locationTagRepository = locationTagRepository;
         this.structureRepository = structureRepository;
+        this.locationSyncTrace = initTrace(LOCATION_SYNC);
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        team = allSharedPreferences.fetchDefaultTeam(providerId);
     }
 
     public static LocationServiceHelper getInstance() {
@@ -121,9 +141,19 @@ public class LocationServiceHelper extends BaseHelper {
         if (serverVersion > 0) serverVersion += 1;
         try {
             List<String> parentIds = locationRepository.getAllLocationIds();
+
+            if (isJurisdiction) {
+                startLocationTrace(FETCH, AllConstants.PerformanceMonitoring.LOCATION, 0);
+            } else {
+                startLocationTrace(FETCH, STRUCTURE, 0);
+            }
+            startTrace(locationSyncTrace);
             String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, TextUtils.join(",", parentIds), returnCount);
             List<Location> locations = locationGson.fromJson(featureResponse, new TypeToken<List<Location>>() {
             }.getType());
+
+            addAttribute(locationSyncTrace, COUNT, String.valueOf(locations.size()));
+            stopTrace(locationSyncTrace);
 
             for (Location location : locations) {
                 try {
@@ -278,6 +308,7 @@ public class LocationServiceHelper extends BaseHelper {
         List<Location> locations = structureRepository.getAllUnsynchedCreatedStructures();
         if (!locations.isEmpty()) {
             String jsonPayload = locationGson.toJson(locations);
+            startLocationTrace(PUSH, STRUCTURE, locations.size());
             String baseUrl = getFormattedBaseUrl();
             Response<String> response = getHttpAgent().postWithJsonResponse(
                     MessageFormat.format("{0}/{1}",
@@ -288,7 +319,7 @@ public class LocationServiceHelper extends BaseHelper {
                 Timber.e("Failed to create new locations on server: %s", response.payload());
                 return;
             }
-
+            stopTrace(locationSyncTrace);
             Set<String> unprocessedIds = new HashSet<>();
             if (StringUtils.isNotBlank(response.payload())) {
                 if (response.payload().startsWith(LOCATIONS_NOT_PROCESSED)) {
@@ -300,6 +331,15 @@ public class LocationServiceHelper extends BaseHelper {
                 }
             }
         }
+    }
+
+    private void startLocationTrace(String action, String type, int count) {
+        clearTraceAttributes(locationSyncTrace);
+        addAttribute(locationSyncTrace, AllConstants.PerformanceMonitoring.TEAM, team);
+        addAttribute(locationSyncTrace, ACTION, action);
+        addAttribute(locationSyncTrace, TYPE, type);
+        addAttribute(locationSyncTrace, COUNT, String.valueOf(count));
+        startTrace(locationSyncTrace);
     }
 
     public void syncUpdatedLocationsToServer() {
@@ -399,24 +439,26 @@ public class LocationServiceHelper extends BaseHelper {
     }
 
     public void fetchAllLocations() {
+        fetchAllLocations(RECORD_COUNT);
+    }
+
+    public void fetchAllLocations(int recordCount) {
         try {
             HTTPAgent httpAgent = getHttpAgent();
             if (httpAgent == null) {
-                throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
+                throw new IllegalArgumentException(ALL_LOCATIONS_URL + " http agent is null");
             }
 
             String baseUrl = getFormattedBaseUrl();
 
-            JSONObject request = new JSONObject();
-            request.put(IS_JURISDICTION, true);
-            request.put(AllConstants.SERVER_VERSION, 0);
+            String urlParams = "?" + IS_JURISDICTION + "=" + true;
+            urlParams += "&" + AllConstants.SERVER_VERSION + "=" + 0;
+            urlParams += "&" + LIMIT + "=" + recordCount;
 
-            Response<String> resp = httpAgent.post(
-                    MessageFormat.format("{0}{1}", baseUrl, LOCATION_STRUCTURE_URL),
-                    request.toString());
+            Response<String> resp = httpAgent.fetch(MessageFormat.format("{0}{1}{2}", baseUrl, ALL_LOCATIONS_URL, urlParams));
 
             if (resp.isFailure()) {
-                throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
+                throw new NoHttpResponseException(ALL_LOCATIONS_URL + " not returned data");
             }
 
             List<Location> locations = locationGson.fromJson(

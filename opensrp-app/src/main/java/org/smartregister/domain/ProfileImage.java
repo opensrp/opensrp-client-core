@@ -2,6 +2,7 @@ package org.smartregister.domain;
 
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.util.FileUtilities;
 
 import static java.text.MessageFormat.format;
 
@@ -26,6 +27,10 @@ public class ProfileImage {
     }
 
     public ProfileImage() {
+    }
+
+    public ProfileImage(String imageId) {
+        this(imageId, null, null, null, null, null, null);
     }
 
     public String getFilecategory() {
@@ -85,9 +90,6 @@ public class ProfileImage {
     }
 
     public String getImageUrl() {
-        String url = format("{0}/{1}/{2}",
-                CoreLibrary.getInstance().context().allSharedPreferences().fetchBaseURL(""),
-                AllConstants.PROFILE_IMAGES_DOWNLOAD_PATH, entityID);
-        return url;
+        return FileUtilities.getImageUrl(entityID);
     }
 }

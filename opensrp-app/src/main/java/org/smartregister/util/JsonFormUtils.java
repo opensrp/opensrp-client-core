@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -141,11 +142,8 @@ public class JsonFormUtils {
                 encounterDate = dateTime;
             }
         }
-        try {
-            encounterLocation = metadata.getString(ENCOUNTER_LOCATION);
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
+        
+        encounterLocation = metadata.optString(ENCOUNTER_LOCATION);
 
         if (StringUtils.isBlank(encounterLocation)) {
             encounterLocation = formTag.locationId;
@@ -193,7 +191,6 @@ public class JsonFormUtils {
                 addMultiSelectListObservations(event, jsonObject);
                 continue;
             }
-
             setGlobalCheckBoxProperty(metadata, jsonObject);
             addObservation(event, jsonObject);
         }
@@ -466,9 +463,39 @@ public class JsonFormUtils {
             } catch (JSONException e1) {
                 Timber.e(e1);
             }
+        } else if (AllConstants.GPS.equals(type)) {
+            createGpsObservation(e, jsonObject, value);
         } else {
             createObservation(e, jsonObject, value);
         }
+    }
+
+    private static void createGpsObservation(Event e, JSONObject jsonObject, String value) {
+        createObservation(e, jsonObject, value);
+        if (StringUtils.isNotBlank(value)) {
+            String[] valueArr = value.split(" ");
+            String formSubmissionFieldPrefix = getString(jsonObject, KEY);
+            String[] gpsProperties = new String[]{
+                    AllConstants.GpsConstants.LATITUDE, AllConstants.GpsConstants.LONGITUDE,
+                    AllConstants.GpsConstants.ALTITUDE, AllConstants.GpsConstants.ACCURACY};
+            for (int i = 0; i < valueArr.length; i++) {
+                addGpsObs(e, formSubmissionFieldPrefix, gpsProperties[i], valueArr[i]);
+            }
+        }
+    }
+
+    private static void addGpsObs(Event e, String formSubmissionFieldPrefix, String formSubmissionFieldSuffix, String value) {
+        addObs(e, getGpsFormSubmissionField(formSubmissionFieldPrefix, formSubmissionFieldSuffix), AllConstants.TEXT, Collections.singletonList(value));
+    }
+
+    @NotNull
+    private static String getGpsFormSubmissionField(String formSubmissionFieldPrefix, String suffix) {
+        return formSubmissionFieldPrefix + "_" + suffix;
+    }
+
+    private static void addObs(Event e, String formSubmissionField, String text, List<Object> strings) {
+        e.addObs(new Obs("formsubmissionField", text, formSubmissionField, "",
+                strings, new ArrayList<>(), null, formSubmissionField));
     }
 
     private static void createObservation(Event e, JSONObject jsonObject, String value) {
@@ -490,6 +517,7 @@ public class JsonFormUtils {
         }
 
         String entityVal = getString(jsonObject, OPENMRS_ENTITY);
+        String widgetType = getString(jsonObject, AllConstants.TYPE);
 
         if (CONCEPT.equals(entityVal)) {
             String entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
@@ -498,7 +526,6 @@ public class JsonFormUtils {
             List<Object> humanReadableValues = new ArrayList<>();
 
             JSONArray values = getJSONArray(jsonObject, VALUES);
-            String widgetType = getString(jsonObject, AllConstants.TYPE);
             if (AllConstants.CHECK_BOX.equals(widgetType)) {
                 entityIdVal = getString(jsonObject, AllConstants.PARENT_ENTITY_ID);
                 entityParentVal = getString(jsonObject, AllConstants.PARENT_ENTITY_ID);
@@ -537,10 +564,32 @@ public class JsonFormUtils {
             e.addObs(new Obs(CONCEPT, dataType, entityIdVal, entityParentVal, vall, humanReadableValues, null,
                     formSubmissionField));
         } else if (StringUtils.isBlank(entityVal)) {
+
             vall.add(obsValue);
 
-            e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
-                    formSubmissionField));
+            if ((AllConstants.NATIVE_RADIO.equals(widgetType) || AllConstants.EXTENDED_RADIO_BUTTON.equals(widgetType)) &&
+                    jsonObject.has(AllConstants.OPTIONS)) {
+                Map<String, Object> keyValPairs = new HashMap<>();
+                try {
+                    JSONArray options = getJSONArray(jsonObject, AllConstants.OPTIONS);
+                    for (int i = 0; i < options.length(); i++) {
+                        JSONObject option = options.getJSONObject(i);
+                        if (obsValue.equals(option.getString(KEY))) {
+                            keyValPairs.put(obsValue, option.optString(AllConstants.TEXT));
+                            break;
+                        }
+                    }
+                } catch (JSONException jsonException) {
+                    Timber.e(jsonException);
+                }
+
+                if (!keyValPairs.isEmpty()) {
+                    createObservation(e, jsonObject, keyValPairs, vall);
+                }
+            } else {
+                e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
+                        formSubmissionField));
+            }
         }
     }
 
@@ -1179,25 +1228,26 @@ public class JsonFormUtils {
     }
 
     public static JSONObject merge(JSONObject original, JSONObject updated) {
-        JSONObject mergedJSON = new JSONObject();
-        try {
-            mergedJSON = new JSONObject(original, getNames(original));
-            for (String key : getNames(updated)) {
-                mergedJSON.put(key, updated.get(key));
+        String[] keys = getNames(updated);
+        for(String key : keys){
+            try {
+                if(updated.get(key) instanceof JSONObject && original.has(key)){
+                    merge(original.getJSONObject(key), updated.getJSONObject(key));
+                }else{
+                    original.put(key, updated.get(key));
+                }
+            } catch (JSONException e) {
+                Timber.e(e);
             }
-
-        } catch (JSONException e) {
-            Timber.e(e);
         }
-        return mergedJSON;
+        return original;
     }
 
     public static String[] getNames(JSONObject jo) {
         int length = jo.length();
-        if (length == 0) {
-            return null;
-        }
-        Iterator i = jo.keys();
+        if (length == 0) return new String[0];
+
+        Iterator<String> i = jo.keys();
         String[] names = new String[length];
         int j = 0;
         while (i.hasNext()) {

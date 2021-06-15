@@ -42,7 +42,7 @@ public class TaskSyncedCheckTest extends BaseRobolectricUnitTest {
 
     @Test
     public void performPreResetAppOperations() throws PreResetAppOperationException {
-        TaskServiceHelper taskServiceHelper = Mockito.spy(TaskServiceHelper.getInstance());
+        TaskServiceHelper taskServiceHelper = Mockito.mock(TaskServiceHelper.class);
 
         ReflectionHelpers.setStaticField(TaskServiceHelper.class, "instance", taskServiceHelper);
 

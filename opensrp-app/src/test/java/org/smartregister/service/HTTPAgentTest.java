@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.SharedPreferences;
 import android.util.Base64;
+import android.webkit.MimeTypeMap;
 
 import com.google.common.io.BaseEncoding;
 
@@ -59,7 +60,7 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Base64.class, File.class, FileInputStream.class, Context.class, AccountHelper.class, CoreLibrary.class, IOUtils.class})
+@PrepareForTest({Base64.class, File.class, FileInputStream.class, Context.class, AccountHelper.class, CoreLibrary.class, IOUtils.class, MimeTypeMap.class})
 public class HTTPAgentTest {
     @Mock
     private android.content.Context context;
@@ -190,7 +191,7 @@ public class HTTPAgentTest {
         httpAgent.setReadTimeout(60000);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testFetchFailsGivenWrongUrl() {
         Response<String> resp = httpAgent.fetch("wrong.url");
         Assert.assertEquals(ResponseStatus.failure, resp.status());
@@ -203,7 +204,7 @@ public class HTTPAgentTest {
         Assert.assertEquals(ResponseStatus.success, resp.status());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testPostFailsGivenWrongUrl() {
         HashMap<String, String> map = new HashMap<>();
         map.put("title", "OpenSRP Testing Tuesdays");
@@ -229,7 +230,7 @@ public class HTTPAgentTest {
         Assert.assertEquals(LoginResponse.SUCCESS.message(), resp.message());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testUrlCanBeAccessWithGivenCredentialsGivenWrongUrl() {
         PowerMockito.mockStatic(Base64.class);
         LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("wrong.url", "", "".toCharArray());
@@ -243,7 +244,7 @@ public class HTTPAgentTest {
         Assert.assertEquals(LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE.message(), resp.message());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testfetchWithCredentialsFailsGivenWrongUrl() {
         Response<String> resp = httpAgent.fetchWithCredentials("wrong.url", SAMPLE_TEST_TOKEN);
         Assert.assertEquals(ResponseStatus.failure, resp.status());
@@ -256,7 +257,7 @@ public class HTTPAgentTest {
         Assert.assertEquals(ResponseStatus.success, resp.status());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testHttpImagePostGivenWrongUrl() {
         String resp = httpAgent.httpImagePost("wrong.url", profileImage);
         Assert.assertEquals("", resp);
@@ -574,7 +575,7 @@ public class HTTPAgentTest {
 
         Response<String> response = httpAgentSpy.fetch(SECURE_RESOURCE_ENDPOINT);
         Assert.assertNotNull(response);
-        Assert.assertEquals(ResponseStatus.valueOf("success"), response.status());
+        Assert.assertEquals(ResponseStatus.failure, response.status());
         Assert.assertEquals(FETCH_DATA_REQUEST_SERVER_RESPONSE, response.payload());
 
         PowerMockito.verifyStatic(AccountHelper.class);
@@ -1053,14 +1054,22 @@ public class HTTPAgentTest {
 
         HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
 
+        PowerMockito.mockStatic(MimeTypeMap.class);
+
+        String imageContentType = "image/png";
+        String ext = "png";
+        MimeTypeMap mockMimeTypeMap = Mockito.mock(MimeTypeMap.class);
+        Mockito.when(MimeTypeMap.getSingleton()).thenReturn(mockMimeTypeMap);
+        PowerMockito.doReturn(ext).when(mockMimeTypeMap).getExtensionFromMimeType(imageContentType);
         Mockito.doReturn(dirFile).when(httpAgentSpy).getSDCardDownloadPath();
-        Mockito.doReturn(file).when(httpAgentSpy).getFile(TEST_FILE_NAME, dirFile);
+        Mockito.doReturn(file).when(httpAgentSpy).getFile(TEST_FILE_NAME + "." + ext, dirFile);
         Mockito.doReturn(false).when(dirFile).exists();
         Mockito.doReturn(true).when(dirFile).mkdirs();
 
         Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(TEST_IMAGE_DOWNLOAD_ENDPOINT);
         Mockito.doReturn(HttpURLConnection.HTTP_OK).when(httpsURLConnection).getResponseCode();
         Mockito.doReturn(inputStream).when(httpsURLConnection).getInputStream();
+        Mockito.doReturn(imageContentType).when(httpsURLConnection).getContentType();
         Mockito.doReturn(bufferedInputStream).when(httpAgentSpy).getBufferedInputStream(inputStream);
         Mockito.doReturn(1985).when(bufferedInputStream).available();
         Mockito.doReturn(-1).when(bufferedInputStream).read();

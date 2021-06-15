@@ -1,8 +1,5 @@
 package org.smartregister;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobCreator;
 import com.evernote.android.job.JobManager;
@@ -13,6 +10,9 @@ import org.smartregister.repository.Repository;
 import org.smartregister.sync.P2PClassifier;
 import org.smartregister.sync.intent.SyncIntentService;
 import org.smartregister.view.activity.DrishtiApplication;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import static org.mockito.Mockito.mock;
 
@@ -26,14 +26,17 @@ public class TestApplication extends DrishtiApplication {
     @Override
     public void onCreate() {
         mInstance = this;
-        context = Context.getInstance();
-        context.updateApplicationContext(getApplicationContext());
-        CoreLibrary.init(context, new TestSyncConfiguration(), 1588062490000l);
-
+        initCoreLibrary();
         setTheme(R.style.Theme_AppCompat_NoActionBar); //or just R.style.Theme_AppCompat
 
         // Init Job Creator
         JobManager.create(this).addJobCreator(new TestJobCreator());
+    }
+
+    public void initCoreLibrary() {
+        context = Context.setInstance(new Context());
+        context.updateApplicationContext(getApplicationContext());
+        CoreLibrary.init(context, new TestSyncConfiguration(), 1588062490000l);
     }
 
     @Override
@@ -74,7 +77,6 @@ public class TestApplication extends DrishtiApplication {
             switch (tag) {
                 case SyncServiceJob.TAG:
                     return new SyncServiceJob(SyncIntentService.class);
-
                 default:
                     break;
             }
@@ -82,5 +84,9 @@ public class TestApplication extends DrishtiApplication {
             return null;
         }
 
+    }
+
+    public static TestApplication getInstance() {
+        return (TestApplication) mInstance;
     }
 }
