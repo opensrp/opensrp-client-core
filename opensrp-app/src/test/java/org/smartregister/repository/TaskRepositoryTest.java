@@ -113,7 +113,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
     @Before
     public void setUp() {
 
-        taskRepository = Mockito.spy(new TaskRepository(taskNotesRepository));
+        taskRepository = spy(new TaskRepository(taskNotesRepository));
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase().compileStatement(anyString())).thenReturn(sqLiteStatement);
@@ -363,8 +363,8 @@ public class TaskRepositoryTest extends BaseUnitTest {
         taskRepository.cancelTaskByIdentifier(taskIdentifier);
 
         // Perform verifications
-        Mockito.verify(taskRepository, Mockito.never()).addOrUpdate(Mockito.any(Task.class), Mockito.eq(true));
-        Mockito.verify(taskRepository).getTaskByIdentifier(taskIdentifier);
+        verify(taskRepository, never()).addOrUpdate(Mockito.any(Task.class), Mockito.eq(true));
+        verify(taskRepository).getTaskByIdentifier(taskIdentifier);
     }
 
     @Test
@@ -375,8 +375,8 @@ public class TaskRepositoryTest extends BaseUnitTest {
         taskRepository.cancelTaskByIdentifier(null);
 
         // Perform verifications
-        Mockito.verify(taskRepository, Mockito.never()).addOrUpdate(Mockito.any(Task.class), Mockito.eq(true));
-        Mockito.verify(taskRepository, Mockito.never()).getTaskByIdentifier(taskIdentifier);
+        verify(taskRepository, never()).addOrUpdate(Mockito.any(Task.class), Mockito.eq(true));
+        verify(taskRepository, never()).getTaskByIdentifier(taskIdentifier);
     }
 
 
@@ -395,8 +395,8 @@ public class TaskRepositoryTest extends BaseUnitTest {
         taskRepository.cancelTaskByIdentifier(taskIdentifier);
 
         // Perform verifications
-        Mockito.verify(taskRepository).addOrUpdate(taskArgumentCaptor.capture(), Mockito.eq(true));
-        Mockito.verify(taskRepository, Mockito.times(2)).getTaskByIdentifier(taskIdentifier);
+        verify(taskRepository).addOrUpdate(taskArgumentCaptor.capture(), Mockito.eq(true));
+        verify(taskRepository, Mockito.times(2)).getTaskByIdentifier(taskIdentifier);
 
         Task actualTask = taskArgumentCaptor.getValue();
         assertEquals(task, actualTask);
