@@ -18,7 +18,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -397,8 +396,8 @@ public class TaskRepositoryTest extends BaseUnitTest {
         Mockito.verify(taskRepository, Mockito.times(2)).getTaskByIdentifier(taskIdentifier);
 
         Task actualTask = taskArgumentCaptor.getValue();
-        Assert.assertEquals(task, actualTask);
-        Assert.assertEquals(CANCELLED, actualTask.getStatus());
+        assertEquals(task, actualTask);
+        assertEquals(CANCELLED, actualTask.getStatus());
     }
 
 
@@ -772,20 +771,20 @@ public class TaskRepositoryTest extends BaseUnitTest {
         JsonData jsonData = taskRepository.getTasks(lastRowId, limit, jurisdictionId);
 
         // Perform assertions
-        Assert.assertEquals(789, jsonData.getHighestRecordId());
-        Assert.assertEquals(2, jsonData.getJsonArray().length());
+        assertEquals(789, jsonData.getHighestRecordId());
+        assertEquals(2, jsonData.getJsonArray().length());
 
         JSONObject taskObject = jsonData.getJsonArray().getJSONObject(0);
 
-        Assert.assertEquals("Spray House", taskObject.getString("description"));
-        Assert.assertEquals("tsk11231jh22", taskObject.getString("identifier"));
+        assertEquals("Spray House", taskObject.getString("description"));
+        assertEquals("tsk11231jh22", taskObject.getString("identifier"));
 
-        Assert.assertEquals("identifier-2", jsonData.getJsonArray().getJSONObject(1).getString("identifier"));
+        assertEquals("identifier-2", jsonData.getJsonArray().getJSONObject(1).getString("identifier"));
 
         Object[] queryArgs = objectArrayCaptor.getValue();
-        Assert.assertEquals(jurisdictionId, queryArgs[0]);
-        Assert.assertEquals(lastRowId, queryArgs[1]);
-        Assert.assertEquals(limit, queryArgs[2]);
+        assertEquals(jurisdictionId, queryArgs[0]);
+        assertEquals(lastRowId, queryArgs[1]);
+        assertEquals(limit, queryArgs[2]);
     }
 
 }
