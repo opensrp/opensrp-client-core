@@ -294,7 +294,6 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
     }
 
-
     public static MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(TaskRepository.COLUMNS);
         Task task = gson.fromJson(taskJson, Task.class);
@@ -326,13 +325,17 @@ public class TaskRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void updateTaskStructureIdFromStructure() throws Exception {
+    public void updateTaskStructureIdFromStructure() {
         List<Location> locations = new ArrayList<>();
         Location location = gson.fromJson(structureJson, Location.class);
         locations.add(location);
 
-        taskRepository.updateTaskStructureIdFromStructure(locations);
         assertTrue(taskRepository.updateTaskStructureIdFromStructure(locations));
+    }
+
+    @Test
+    public void updateTaskStructureIdFromStructureShouldReturnFalseWhenLocationsListIsNull(){
+        assertFalse(taskRepository.updateTaskStructureIdFromStructure(null));
     }
 
 
