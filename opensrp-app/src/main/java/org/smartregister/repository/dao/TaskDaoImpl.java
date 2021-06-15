@@ -17,6 +17,7 @@ import org.smartregister.repository.TaskNotesRepository;
 import org.smartregister.repository.TaskRepository;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.smartregister.AllConstants.INTENT_KEY.TASK_GENERATED;
@@ -88,9 +89,18 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
 
 
     @Override
-    public List<Task> findTasksByJurisdiction(String jurisdiction,String planIdentifier) {
-        return getTasksByJurisdictionAndPlan(jurisdiction,planIdentifier)
-                .stream()
+    public List<Task> findTasksByJurisdiction(String jurisdiction, String planIdentifier) {
+        return convertToListOfFHIRTasks(getTasksByJurisdictionAndPlan(jurisdiction, planIdentifier));
+    }
+
+    @Override
+    public List<Task> findTasksByJurisdiction(String jurisdiction) {
+        return convertToListOfFHIRTasks(getTasksByJurisdiction(jurisdiction));
+
+    }
+
+    private List<Task> convertToListOfFHIRTasks(Set<org.smartregister.domain.Task> tasks) {
+        return tasks.stream()
                 .map(TaskConverter::convertTasktoFihrResource)
                 .collect(Collectors.toList());
     }
