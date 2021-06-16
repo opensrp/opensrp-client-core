@@ -15,6 +15,7 @@ import androidx.annotation.StringRes;
 import androidx.annotation.VisibleForTesting;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +63,9 @@ public class SyncUtils {
 
     public void logoutUser(@StringRes int logoutMessage) throws AuthenticatorException, OperationCanceledException, IOException {
         //force remote login
-        opensrpContext.userService().forceRemoteLogin(opensrpContext.allSharedPreferences().fetchRegisteredANM());
+        if (!CoreLibrary.getInstance().isAllowOfflineLoginWithInvalidToken() || (HttpStatus.SC_UNAUTHORIZED != CoreLibrary.getInstance().context().allSharedPreferences().getLastAuthenticationHttpStatus())) {
+            opensrpContext.userService().forceRemoteLogin(opensrpContext.allSharedPreferences().fetchRegisteredANM());
+        }
 
         Intent logoutUserIntent = getLogoutUserIntent(logoutMessage);
 

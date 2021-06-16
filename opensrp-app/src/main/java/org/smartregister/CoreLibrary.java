@@ -59,6 +59,16 @@ public class CoreLibrary implements OnAccountsUpdateListener {
     private static String ENCRYPTED_PREFS_KEY_KEYSET = "__androidx_security_crypto_encrypted_prefs_key_keyset__";
     private static String ENCRYPTED_PREFS_VALUE_KEYSET = "__androidx_security_crypto_encrypted_prefs_value_keyset__";
 
+    /**
+     * When true this config will allow offline login when token is no longer valid
+     * after a successful login when online and user is forcefully logged out.
+     *
+     * Reasons why token can be invalid after successful login include:
+     * - Token expires
+     * - Token verification fails (usually after it expires)
+     */
+    private boolean allowOfflineLoginWithInvalidToken = false;
+
     public static void init(Context context) {
         init(context, null);
     }
@@ -309,5 +319,13 @@ public class CoreLibrary implements OnAccountsUpdateListener {
                 Timber.e(e);
             }
         }
+    }
+
+    public void setAllowOfflineLoginWithInvalidToken(boolean allowOfflineLoginWithInvalidToken) {
+        this.allowOfflineLoginWithInvalidToken = allowOfflineLoginWithInvalidToken;
+    }
+
+    public boolean isAllowOfflineLoginWithInvalidToken() {
+        return allowOfflineLoginWithInvalidToken;
     }
 }
