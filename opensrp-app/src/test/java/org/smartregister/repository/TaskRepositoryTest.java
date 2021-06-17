@@ -16,6 +16,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,6 +33,7 @@ import org.smartregister.domain.Client;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
+import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -111,7 +113,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
     @Before
     public void setUp() {
 
-        taskRepository = new TaskRepository(taskNotesRepository);
+        taskRepository = spy(new TaskRepository(taskNotesRepository));
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase().compileStatement(anyString())).thenReturn(sqLiteStatement);
@@ -292,7 +294,6 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
     }
 
-
     public static MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(TaskRepository.COLUMNS);
         Task task = gson.fromJson(taskJson, Task.class);
@@ -324,13 +325,17 @@ public class TaskRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void updateTaskStructureIdFromStructure() throws Exception {
+    public void updateTaskStructureIdFromStructure() {
         List<Location> locations = new ArrayList<>();
         Location location = gson.fromJson(structureJson, Location.class);
         locations.add(location);
 
-        taskRepository.updateTaskStructureIdFromStructure(locations);
         assertTrue(taskRepository.updateTaskStructureIdFromStructure(locations));
+    }
+
+    @Test
+    public void updateTaskStructureIdFromStructureShouldReturnFalseWhenLocationsListIsNull(){
+        assertFalse(taskRepository.updateTaskStructureIdFromStructure(null));
     }
 
 
@@ -348,6 +353,54 @@ public class TaskRepositoryTest extends BaseUnitTest {
         taskRepository.cancelTasksForEntity(null);
         verify(sqLiteDatabase, never()).update(any(), any(), any(), any());
         verifyZeroInteractions(sqLiteDatabase);
+    }
+
+    @Test
+    public void testCancelTaskByIdentifierShouldDoNothingWhenTaskIdentifierIsNotExistent() {
+        String taskIdentifier = "my-task-identifier";
+
+        // Call the method under test
+        taskRepository.cancelTaskByIdentifier(taskIdentifier);
+
+        // Perform verifications
+        verify(taskRepository, never()).addOrUpdate(Mockito.any(Task.class), Mockito.eq(true));
+        verify(taskRepository).getTaskByIdentifier(taskIdentifier);
+    }
+
+    @Test
+    public void testCancelTaskByIdentifierShouldNotUpdateTaskWhenTaskIdentifierIsNull() {
+        String taskIdentifier = "my-task-identifier";
+
+        // Call the method under test
+        taskRepository.cancelTaskByIdentifier(null);
+
+        // Perform verifications
+        verify(taskRepository, never()).addOrUpdate(Mockito.any(Task.class), Mockito.eq(true));
+        verify(taskRepository, never()).getTaskByIdentifier(taskIdentifier);
+    }
+
+
+    @Test
+    public void testCancelTaskByIdentifierShouldCallAddOrUpdateTaskWhenTaskIdentifierExists() {
+        String taskIdentifier = "my-task-identifier";
+        Task task = new Task();
+        task.setIdentifier(taskIdentifier);
+        task.setStatus(READY);
+
+        ArgumentCaptor<Task> taskArgumentCaptor = ArgumentCaptor.forClass(Task.class);
+
+        Mockito.doReturn(task).when(taskRepository).getTaskByIdentifier(taskIdentifier);
+
+        // Call the method under test
+        taskRepository.cancelTaskByIdentifier(taskIdentifier);
+
+        // Perform verifications
+        verify(taskRepository).addOrUpdate(taskArgumentCaptor.capture(), Mockito.eq(true));
+        verify(taskRepository, Mockito.times(2)).getTaskByIdentifier(taskIdentifier);
+
+        Task actualTask = taskArgumentCaptor.getValue();
+        assertEquals(task, actualTask);
+        assertEquals(CANCELLED, actualTask.getStatus());
     }
 
 
@@ -696,6 +749,45 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals("_id in (? , ? )", stringArgumentCaptor.getAllValues().get(1));
         assertEquals("taskId-1", argsCaptor.getAllValues().get(0)[0]);
         assertEquals("taskId-2", argsCaptor.getAllValues().get(0)[1]);
+    }
+
+    @Test
+    public void testGetTasks() throws JSONException {
+        long lastRowId = 0L;
+        int limit = 10;
+        String jurisdictionId = "jurisdiction-id";
+
+        Task task = gson.fromJson(taskJson, Task.class);
+        MatrixCursor matrixCursor = getCursor();
+        matrixCursor.addRow(new Object[]{789, "identifier-2", task.getPlanIdentifier(), task.getGroupIdentifier(),
+                task.getStatus().name(), task.getBusinessStatus(), task.getPriority().name(), task.getCode(),
+                task.getDescription(), task.getFocus(), task.getForEntity(),
+                task.getExecutionPeriod().getStart().getMillis(),
+                null,
+                task.getAuthoredOn().getMillis(), task.getLastModified().getMillis(),
+                task.getOwner(), task.getSyncStatus(), task.getServerVersion(), task.getStructureId(), task.getReasonReference(), null, null, null, null, null});
+        ArgumentCaptor<Object[]> objectArrayCaptor = ArgumentCaptor.forClass(Object[].class);
+        when(sqLiteDatabase.rawQuery(Mockito.eq("SELECT rowid,* FROM task WHERE  group_id =? AND rowid > ?  ORDER BY rowid ASC LIMIT ?")
+                , objectArrayCaptor.capture())).thenReturn(matrixCursor);
+
+        // Call the actual method under test
+        JsonData jsonData = taskRepository.getTasks(lastRowId, limit, jurisdictionId);
+
+        // Perform assertions
+        assertEquals(789, jsonData.getHighestRecordId());
+        assertEquals(2, jsonData.getJsonArray().length());
+
+        JSONObject taskObject = jsonData.getJsonArray().getJSONObject(0);
+
+        assertEquals("Spray House", taskObject.getString("description"));
+        assertEquals("tsk11231jh22", taskObject.getString("identifier"));
+
+        assertEquals("identifier-2", jsonData.getJsonArray().getJSONObject(1).getString("identifier"));
+
+        Object[] queryArgs = objectArrayCaptor.getValue();
+        assertEquals(jurisdictionId, queryArgs[0]);
+        assertEquals(lastRowId, queryArgs[1]);
+        assertEquals(limit, queryArgs[2]);
     }
 
 }
