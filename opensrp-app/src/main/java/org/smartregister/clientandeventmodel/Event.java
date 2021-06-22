@@ -110,7 +110,7 @@ public class Event extends BaseDataObject {
      * @return
      */
     public void setObs(List<Obs> obs) {
-        this.obs = obs;
+        this.obs = new ArrayList<>(obs);
     }
 
     public void addObs(Obs observation) {
@@ -324,7 +324,7 @@ public class Event extends BaseDataObject {
      * @return
      */
     public Event withObs(List<Obs> obs) {
-        this.obs = obs;
+        this.obs = new ArrayList<>(obs);
         return this;
     }
 
