@@ -392,7 +392,7 @@ public class AllSharedPreferences {
      * @param httpStatus
      */
     public void updateLastAuthenticationHttpStatus(int httpStatus) {
-        preferences.edit().putInt(LAST_AUTHENTICATION_HTTP_STATUS, httpStatus).commit();
+        preferences.edit().putInt(LAST_AUTHENTICATION_HTTP_STATUS, httpStatus).apply();
     }
 
     public int getLastAuthenticationHttpStatus() {

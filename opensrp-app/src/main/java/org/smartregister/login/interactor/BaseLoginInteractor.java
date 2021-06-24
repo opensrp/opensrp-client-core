@@ -68,8 +68,8 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     public void login(WeakReference<BaseLoginContract.View> view, String userName, char[] password) {
 
         boolean localLogin = !getSharedPreferences().fetchForceRemoteLogin(userName);
-
-        if (CoreLibrary.getInstance().isAllowOfflineLoginWithInvalidToken()
+        org.smartregister.Context opensrpContext = org.smartregister.Context.getInstance();
+        if (opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN)
                 && localLogin
                 && (HttpStatus.SC_UNAUTHORIZED == CoreLibrary.getInstance().context().allSharedPreferences().getLastAuthenticationHttpStatus())
                 && NetworkUtils.isNetworkAvailable()) {

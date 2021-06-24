@@ -19,6 +19,7 @@ import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.account.AccountHelper;
@@ -63,7 +64,8 @@ public class SyncUtils {
 
     public void logoutUser(@StringRes int logoutMessage) throws AuthenticatorException, OperationCanceledException, IOException {
         //force remote login
-        if (!CoreLibrary.getInstance().isAllowOfflineLoginWithInvalidToken() || (HttpStatus.SC_UNAUTHORIZED != CoreLibrary.getInstance().context().allSharedPreferences().getLastAuthenticationHttpStatus())) {
+        if (!opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN)
+                || (HttpStatus.SC_UNAUTHORIZED != opensrpContext.allSharedPreferences().getLastAuthenticationHttpStatus())) {
             opensrpContext.userService().forceRemoteLogin(opensrpContext.allSharedPreferences().fetchRegisteredANM());
         }
 
@@ -149,7 +151,7 @@ public class SyncUtils {
      */
     public int getNumOfSyncAttempts() {
         int numOfRetries = CoreLibrary.getInstance().getSyncConfiguration().getSyncMaxRetries();
-        return  numOfRetries > 0 ? numOfRetries + 1 : 1;
+        return numOfRetries > 0 ? numOfRetries + 1 : 1;
     }
 
     /**
