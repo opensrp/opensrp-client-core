@@ -306,7 +306,7 @@ public class UserService {
         return null;
     }
 
-    public List<String> getUserRoles(String userName){
+    public List<String> getUserRoles(String userName) {
         String roles = AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_ROLES, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
         return Arrays.asList(roles);
     }
