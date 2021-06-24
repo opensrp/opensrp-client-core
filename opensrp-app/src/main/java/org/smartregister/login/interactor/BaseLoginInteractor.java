@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,6 +68,14 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     public void login(WeakReference<BaseLoginContract.View> view, String userName, char[] password) {
 
         boolean localLogin = !getSharedPreferences().fetchForceRemoteLogin(userName);
+        org.smartregister.Context opensrpContext = org.smartregister.Context.getInstance();
+        if (opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN)
+                && localLogin
+                && (HttpStatus.SC_UNAUTHORIZED == CoreLibrary.getInstance().context().allSharedPreferences().getLastAuthenticationHttpStatus())
+                && NetworkUtils.isNetworkAvailable()) {
+            localLogin = false;
+        }
+
         loginWithLocalFlag(view, localLogin && getSharedPreferences().isRegisteredANM(userName), userName, password);
 
     }
