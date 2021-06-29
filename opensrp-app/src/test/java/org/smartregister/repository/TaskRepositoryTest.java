@@ -193,8 +193,8 @@ public class TaskRepositoryTest extends BaseUnitTest {
         // Call the method under test
         taskRepository.addOrUpdate(updateTask, true);
 
-        verify(sqLiteDatabase, Mockito.never()).replace(Mockito.anyString(), Mockito.nullable(String.class), Mockito.any(ContentValues.class));
-        verify(sqLiteDatabase, Mockito.never()).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class));
+        verify(sqLiteDatabase, never()).replace(Mockito.anyString(), Mockito.nullable(String.class), Mockito.any(ContentValues.class));
+        verify(sqLiteDatabase, never()).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class));
     }
 
     @Test
@@ -842,7 +842,6 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
     @Test
     public void testGetTasksByEntityShouldByForProperty() throws JSONException {
-
         Task task = gson.fromJson(taskJson, Task.class);
         MatrixCursor matrixCursor = getCursor();
         matrixCursor.addRow(new Object[]{789, "identifier-2", task.getPlanIdentifier(), task.getGroupIdentifier(),
