@@ -155,8 +155,12 @@ public class HTTPAgent {
 
             HttpURLConnection urlConnection = initializeHttp(requestURLPath, true);
 
+            int responseCode = urlConnection.getResponseCode();
+
+            allSharedPreferences.updateLastAuthenticationHttpStatus(responseCode);
+
             //If unauthorized invalidate cache of old token retry
-            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+            if (HttpStatus.SC_UNAUTHORIZED == responseCode) {
 
                 invalidateExpiredCachedAccessToken();
 
@@ -185,8 +189,12 @@ public class HTTPAgent {
 
             urlConnection = generatePostRequest(postURLPath, jsonPayload);
 
+            int responseCode = urlConnection.getResponseCode();
+
+            allSharedPreferences.updateLastAuthenticationHttpStatus(responseCode);
+
             //If unauthorized invalidate cache of old token retry
-            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+            if (HttpStatus.SC_UNAUTHORIZED == responseCode) {
 
                 invalidateExpiredCachedAccessToken();
 
@@ -307,8 +315,11 @@ public class HTTPAgent {
             HttpURLConnection urlConnection = initializeHttp(requestURL, false);
             urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(accessToken).toString());
 
+            int responseCode = urlConnection.getResponseCode();
+
+            allSharedPreferences.updateLastAuthenticationHttpStatus(responseCode);
             //If unauthorized invalidate cache of old token retry
-            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+            if (HttpStatus.SC_UNAUTHORIZED == responseCode) {
 
                 AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
                 AccountHelper.invalidateAuthToken(authenticatorXml.getAccountType(), accessToken);
@@ -697,7 +708,6 @@ public class HTTPAgent {
             urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(oauthAccessToken).toString());
 
             int statusCode = urlConnection.getResponseCode();
-
             InputStream inputStream;
             String responseString = null;
             if (statusCode >= HttpStatus.SC_BAD_REQUEST)
@@ -781,6 +791,9 @@ public class HTTPAgent {
             httpUrlConnection = initializeHttp(downloadURL, true);
 
             int status = httpUrlConnection.getResponseCode();
+
+            allSharedPreferences.updateLastAuthenticationHttpStatus(status);
+
             if (status == HttpURLConnection.HTTP_OK) {
 
                 if (StringUtils.isBlank(httpUrlConnection.getContentType()))
@@ -889,7 +902,12 @@ public class HTTPAgent {
 
             AccountUserInfo userInfo = null;
 
-            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+            int responseCode = urlConnection.getResponseCode();
+
+            allSharedPreferences.updateLastAuthenticationHttpStatus(responseCode);
+
+            //If unauthorized invalidate cache of old token retry
+            if (HttpStatus.SC_UNAUTHORIZED == responseCode) {
 
                 invalidateExpiredCachedAccessToken();
 
@@ -952,9 +970,12 @@ public class HTTPAgent {
 
             urlConnection = initializeHttp(baseUrl, true);
 
-            int statusCode = urlConnection.getResponseCode();
+            int statusCode =  urlConnection.getResponseCode();
 
-            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+            allSharedPreferences.updateLastAuthenticationHttpStatus(statusCode);
+
+            //If unauthorized invalidate cache of old token retry
+            if (HttpStatus.SC_UNAUTHORIZED == statusCode) {
 
                 invalidateExpiredCachedAccessToken();
 

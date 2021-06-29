@@ -142,6 +142,7 @@ public class AllConstants {
 
     public static final String CLIENT_FORM_ASSET_VERSION = "base version";
     public static final String RETURN_COUNT = "return_count";
+    public static final String LIMIT = "limit";
     public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
 
     public static final String GPS = "gps";
@@ -478,6 +479,7 @@ public class AllConstants {
         public static final String DISABLE_LOCATION_PICKER_VIEW = "disable.location.picker.view";
         public static final String LOCATION_PICKER_TAG_SHOWN = "location.picker.tag.shown";
         public static final String ENCRYPT_SHARED_PREFERENCES = "encrypt.shared.preferences";
+        public static final String ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN = "allow.offline.login.with.invalid.token";
     }
 
     public interface FORCED_LOGOUT {
