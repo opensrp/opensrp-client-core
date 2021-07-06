@@ -31,13 +31,16 @@ import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.Location;
+import org.smartregister.domain.Period;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.util.DateUtil;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +54,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -153,7 +157,6 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
     @Test
     public void testAddOrUpdateShouldAdd() {
-
         Task task = gson.fromJson(taskJson, Task.class);
         taskRepository.addOrUpdate(task);
 
@@ -171,8 +174,55 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals("2018_IRS-3734", contentValues.getAsString("group_id"));
 
         verify(taskNotesRepository).addOrUpdate(task.getNotes().get(0), task.getIdentifier());
+    }
 
+    @Test
+    public void testAddOrUpdateShouldDoNothingWhenGivenOlderUpdateTask() {
+        Task updateTask = gson.fromJson(taskJson, Task.class);
+        Task dbTask = gson.fromJson(taskJson, Task.class);
 
+        // Reverse updateTask.lastModified date
+        Calendar updateTaskDate = Calendar.getInstance();
+        updateTaskDate.setTime(dbTask.getLastModified().toDate());
+        updateTaskDate.add(Calendar.HOUR_OF_DAY, -1);
+
+        updateTask.setLastModified(DateUtil.getDateTimeFromMillis(updateTaskDate.getTimeInMillis()));
+
+        doReturn(dbTask).when(taskRepository).getTaskByIdentifier(dbTask.getIdentifier());
+
+        // Call the method under test
+        taskRepository.addOrUpdate(updateTask, true);
+
+        verify(sqLiteDatabase, never()).replace(Mockito.anyString(), Mockito.nullable(String.class), Mockito.any(ContentValues.class));
+        verify(sqLiteDatabase, never()).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class));
+    }
+
+    @Test
+    public void testAddOrUpdateShouldCallReplaceWithRestrictionContentValues() {
+        Task task = gson.fromJson(taskJson, Task.class);
+        DateTime start = new DateTime(1593418583L);
+        DateTime stop = new DateTime(1624954599424L);
+        Task.Restriction restriction = new Task.Restriction(4, new Period(start, stop));
+        task.setRestriction(restriction);
+
+        // Call the method under test
+        taskRepository.addOrUpdate(task, false);
+
+        verify(sqLiteDatabase).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
+
+        Iterator<String> iterator = stringArgumentCaptor.getAllValues().iterator();
+        assertEquals(TASK_TABLE, iterator.next());
+        assertNull(iterator.next());
+
+        ContentValues contentValues = contentValuesArgumentCaptor.getValue();
+        assertEquals(24, contentValues.size());
+
+        assertEquals("tsk11231jh22", contentValues.getAsString("_id"));
+        assertEquals("IRS_2018_S1", contentValues.getAsString("plan_id"));
+        assertEquals("2018_IRS-3734", contentValues.getAsString("group_id"));
+        assertEquals(start.getMillis(), (long) contentValues.getAsLong("restriction_start"));
+        assertEquals(stop.getMillis(), (long) contentValues.getAsLong("restriction_end"));
+        assertEquals(4, (int) contentValues.getAsInteger("restriction_repeat"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -788,6 +838,43 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals(jurisdictionId, queryArgs[0]);
         assertEquals(lastRowId, queryArgs[1]);
         assertEquals(limit, queryArgs[2]);
+    }
+
+    @Test
+    public void testGetTasksByEntityShouldByForProperty() throws JSONException {
+        Task task = gson.fromJson(taskJson, Task.class);
+        MatrixCursor matrixCursor = getCursor();
+        matrixCursor.addRow(new Object[]{789, "identifier-2", task.getPlanIdentifier(), task.getGroupIdentifier(),
+                task.getStatus().name(), task.getBusinessStatus(), task.getPriority().name(), task.getCode(),
+                task.getDescription(), task.getFocus(), task.getForEntity(),
+                task.getExecutionPeriod().getStart().getMillis(),
+                null,
+                task.getAuthoredOn().getMillis(), task.getLastModified().getMillis(),
+                task.getOwner(), task.getSyncStatus(), task.getServerVersion(), task.getStructureId(), task.getReasonReference(), null, null, null, null, null});
+        ArgumentCaptor<String[]> stringArrayCaptor = ArgumentCaptor.forClass(String[].class);
+        when(sqLiteDatabase.rawQuery(Mockito.eq("SELECT * FROM task WHERE for =? AND status  NOT IN (?,?)")
+                , stringArrayCaptor.capture())).thenReturn(matrixCursor);
+
+        // Call the actual method under test
+        String forEntity = "location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc";
+        Set<Task> tasks = taskRepository.getTasksByEntity(forEntity);
+
+        // Perform assertions
+        assertEquals(2, tasks.size());
+        Iterator<Task> taskIterator = tasks.iterator();
+        Task resultTask1 = taskIterator.next();
+        Task resultTask2 = taskIterator.next();
+
+        assertEquals("Spray House", resultTask1.getDescription());
+        assertEquals("tsk11231jh22", resultTask1.getIdentifier());
+
+        assertEquals("identifier-2", resultTask2.getIdentifier());
+        assertEquals(task.getFocus(), resultTask2.getFocus());
+
+        Object[] queryArgs = stringArrayCaptor.getValue();
+        assertEquals(forEntity, queryArgs[0]);
+        assertEquals(Task.TaskStatus.CANCELLED.name(), queryArgs[1]);
+        assertEquals(Task.TaskStatus.ARCHIVED.name(), queryArgs[2]);
     }
 
 }
