@@ -439,4 +439,9 @@
     <string name="new_db_encryption_version_migration">You have been logged off as your application database encryption version has changed. Please login in again to complete the upgrade.</string>
     <string name="account_removed">You have been logged off as your account has been removed from the accounts manager.</string>
     <string name="no_client_available_for_url">No auth client available for the URL</string>
+
+    <string name="download_database">Download Database</string>
+    <string name="view_sync_stats">Show Sync Stats</string>
+    <string name="export_db_notification">Exporting Database</string>
+    <string name="database_download_success">Database download successful</string>
 </resources>

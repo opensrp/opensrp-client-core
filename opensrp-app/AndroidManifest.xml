@@ -31,7 +31,8 @@
     <application
         android:clearTaskOnLaunch="true"
         android:label="@string/app_name"
-        android:largeHeap="true">
+        android:largeHeap="true"
+        android:requestLegacyExternalStorage="true">
         <service
             android:name=".service.ImageUploadSyncService"
             android:description="@string/component_desc_image_upload_service"

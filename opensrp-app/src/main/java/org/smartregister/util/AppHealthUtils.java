@@ -15,8 +15,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 
 import org.smartregister.AllConstants;
-import org.smartregister.unicefangola.BuildConfig;
-import org.smartregister.unicefangola.R;
+import org.smartregister.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -30,8 +29,8 @@ import java.util.concurrent.Executors;
 public class AppHealthUtils {
 
     /**
-     * @param view The view we want to bind the event that launches the app heath action selection dialog
-     *             The the selection Alert Dialog will show if you long click/long press the view
+     * @param view The view we want to bind the event that launches the app health action selection dialog
+     *             The selection Alert Dialog will show if you long click/long press the view
      */
     public AppHealthUtils(View view) {
         view.setOnLongClickListener(v -> {
@@ -55,16 +54,13 @@ public class AppHealthUtils {
 
                     switch (which) {
                         case 0:
-
                             triggerDBCopying(context);
-
                             break;
                         case 1:
                             Utils.showToast(context, "TO DO implement " + adapter.getItem(which));
                             break;
                         default:
                             break;
-
                     }
 
                 })
@@ -76,9 +72,9 @@ public class AppHealthUtils {
         Utils.showToast(context, context.getString(R.string.export_db_notification));
         Executor executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(() -> {
 
-            Utils.copyDatabase(AllConstants.DATABASE_NAME, createCopyDBName(), context);
+        executor.execute(() -> {
+            Utils.copyDatabase(AllConstants.DATABASE_NAME, createCopyDBName(context), context);
             refreshFileSystem(context, Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT);
 
             handler.post(() -> Utils.showToast(context, context.getString(R.string.database_download_success)));
@@ -88,11 +84,10 @@ public class AppHealthUtils {
     /**
      * A method to create the moniker for the database file created after exporting
      */
-    public static String createCopyDBName() {
+    public static String createCopyDBName(Context context) {
         String currentTimeStamp = new SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.ENGLISH).format(Calendar.getInstance().getTime());
-        return new StringBuilder(BuildConfig.APPLICATION_ID).append('_').append(currentTimeStamp).append(".db").toString();
+        return new StringBuilder(context.getApplicationContext().getPackageName()).append('_').append(currentTimeStamp).append(".db").toString();
     }
-
 
     /**
      * Once the file is saved trigger a refresh on the file system so that the file is available promptly to the user
@@ -103,10 +98,9 @@ public class AppHealthUtils {
     public static void refreshFileSystem(Context context, @VisibleForTesting boolean isKitKatOrBelow) {
         if (isKitKatOrBelow) {
             context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS))));
-
         } else {
             MediaScannerConnection.scanFile(context, new String[]{Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()}, null, (path, uri) -> {
-                //Overriden: Do nothing
+                //Overridden: Do nothing
             });
         }
     }
