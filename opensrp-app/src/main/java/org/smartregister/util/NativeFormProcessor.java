@@ -1,5 +1,6 @@
 package org.smartregister.util;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.util.Consumer;
 
@@ -38,6 +39,7 @@ public class NativeFormProcessor {
     private Gson gson;
     private JSONArray _fields;
     private String entityId;
+    private String formSubmissionId;
     private Client _client;
     private Event _event;
     private String encounterType;
@@ -46,28 +48,32 @@ public class NativeFormProcessor {
     private org.smartregister.domain.Event domainEvent;
     private boolean hasClient = false;
     private FormTag formTag;
+    private final int databaseVersion;
+    private final ClientProcessorForJava clientProcessorForJava;
 
     private static final String DETAILS = "details";
     private static final String METADATA = "metadata";
 
 
-    public static NativeFormProcessor createInstance(String jsonString) throws JSONException {
-        return new NativeFormProcessor(new JSONObject(jsonString));
+    public static NativeFormProcessor createInstance(String jsonString, int databaseVersion, ClientProcessorForJava clientProcessorForJava) throws JSONException {
+        return new NativeFormProcessor(new JSONObject(jsonString), databaseVersion, clientProcessorForJava);
     }
 
-    public static NativeFormProcessor createInstance(JSONObject jsonObject) {
-        return new NativeFormProcessor(jsonObject);
+    public static NativeFormProcessor createInstance(JSONObject jsonObject, int databaseVersion, ClientProcessorForJava clientProcessorForJava) {
+        return new NativeFormProcessor(jsonObject, databaseVersion, clientProcessorForJava);
     }
 
-    public static NativeFormProcessor createInstanceFromAsset(String filePath) throws JSONException {
+    public static NativeFormProcessor createInstanceFromAsset(String filePath, Integer databaseVersion, ClientProcessorForJava clientProcessorForJava) throws JSONException {
         String jsonString = Utils.readAssetContents(DrishtiApplication.getInstance().getContext().applicationContext()
                 , filePath);
-        return createInstance(jsonString);
+        return createInstance(jsonString, databaseVersion, clientProcessorForJava);
     }
 
     @VisibleForTesting
-    public NativeFormProcessor(JSONObject jsonObject) {
+    public NativeFormProcessor(JSONObject jsonObject, int databaseVersion, ClientProcessorForJava clientProcessorForJava) {
         this.jsonForm = jsonObject;
+        this.databaseVersion = databaseVersion;
+        this.clientProcessorForJava = clientProcessorForJava;
         allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
         gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
                 .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
@@ -80,6 +86,11 @@ public class NativeFormProcessor {
 
     public NativeFormProcessor withEntityId(String entityId) {
         this.entityId = entityId;
+        return this;
+    }
+
+    public NativeFormProcessor withFormSubmissionId(String formSubmissionId) {
+        this.formSubmissionId = formSubmissionId;
         return this;
     }
 
@@ -100,7 +111,7 @@ public class NativeFormProcessor {
 
     private FormTag getFormTag() {
         if (formTag == null)
-            formTag = JsonFormUtils.constructFormMetaData(allSharedPreferences, -1);
+            formTag = JsonFormUtils.constructFormMetaData(allSharedPreferences, databaseVersion);
 
         return formTag;
     }
@@ -142,6 +153,16 @@ public class NativeFormProcessor {
         return this;
     }
 
+    public NativeFormProcessor tagLocationId(String locationId) throws JSONException {
+        jsonForm.put(AllConstants.LOCATION_ID, locationId);
+        return this;
+    }
+
+    public NativeFormProcessor tagChildLocationId(String childLocationId) throws JSONException {
+        jsonForm.put(AllConstants.CHILD_LOCATION_ID, childLocationId);
+        return this;
+    }
+
     private JSONArray getFields() throws JSONException {
         if (_fields == null)
             _fields = jsonForm.getJSONObject(JsonFormUtils.STEP1).getJSONArray(JsonFormUtils.FIELDS);
@@ -177,13 +198,18 @@ public class NativeFormProcessor {
                     _event.addDetails(entry.getKey(), entry.getValue());
                 }
             }
+
+            if (StringUtils.isNotBlank(formSubmissionId)) {
+                _event.setFormSubmissionId(formSubmissionId);
+                _event.setDateEdited(new Date());
+            }
         }
 
         return _event;
     }
 
     public NativeFormProcessor tagEventMetadata() throws JSONException {
-        JsonFormUtils.tagSyncMetadata(formTag, createEvent());
+        JsonFormUtils.tagSyncMetadata(getFormTag(), createEvent());
         return this;
     }
 
@@ -298,7 +324,7 @@ public class NativeFormProcessor {
     public NativeFormProcessor clientProcessForm() throws Exception {
         EventClient eventClient = new EventClient(getDomainEvent(), getDomainClient());
 
-        ClientProcessorForJava.getInstance(DrishtiApplication.getInstance().getApplicationContext()).processClient(Collections.singletonList(eventClient), true);
+        clientProcessorForJava.processClient(Collections.singletonList(eventClient), true);
         long lastSyncTimeStamp = allSharedPreferences.fetchLastUpdatedAtDate(0);
         Date lastSyncDate = new Date(lastSyncTimeStamp);
         allSharedPreferences.saveLastUpdatedAtDate(lastSyncDate.getTime());
@@ -360,6 +386,11 @@ public class NativeFormProcessor {
     }
 
     public <T> NativeFormProcessor populateValues(Map<String, T> dictionary) throws JSONException {
+        populateValues(dictionary, null);
+        return this;
+    }
+
+    public <T> NativeFormProcessor populateValues(Map<String, T> dictionary, @Nullable Consumer<JSONObject> consumer) throws JSONException {
         int step = 1;
         while (jsonForm.has("step" + step)) {
             JSONObject jsonStepObject = jsonForm.getJSONObject("step" + step);
@@ -367,6 +398,10 @@ public class NativeFormProcessor {
             int position = 0;
             while (position < array.length()) {
                 JSONObject object = array.getJSONObject(position);
+
+                if (consumer != null)
+                    consumer.accept(object);
+
                 String key = object.getString(JsonFormUtils.KEY);
                 String type = object.getString(JsonFormUtils.TYPE);
 

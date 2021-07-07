@@ -22,6 +22,7 @@ public class AllConstants {
     public static final String DETAILS = "details";
     public static final String PLAN_IDENTIFIER = "planIdentifier";
     public static final String LOCATION_ID = "locationId";
+    public static final String CHILD_LOCATION_ID = "childLocationId";
     public static final String LOCATION_UUID = "locationUUID";
     public static final String LOCATION_VERSION = "locationVersion";
     public static final String STRUCTURE_ID = "structure_id";
