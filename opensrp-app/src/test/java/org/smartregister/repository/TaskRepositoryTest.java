@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -861,15 +862,18 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
         // Perform assertions
         assertEquals(2, tasks.size());
-        Iterator<Task> taskIterator = tasks.iterator();
+        TreeSet<Task> taskTreeSet = new TreeSet<>((o1, o2) -> o1.getIdentifier().compareTo(o2.getIdentifier()));
+        taskTreeSet.addAll(tasks);
+
+        Iterator<Task> taskIterator = taskTreeSet.iterator();
         Task resultTask1 = taskIterator.next();
         Task resultTask2 = taskIterator.next();
 
-        assertEquals("Spray House", resultTask1.getDescription());
-        assertEquals("tsk11231jh22", resultTask1.getIdentifier());
+        assertEquals("identifier-2", resultTask1.getIdentifier());
+        assertEquals(task.getFocus(), resultTask1.getFocus());
 
-        assertEquals("identifier-2", resultTask2.getIdentifier());
-        assertEquals(task.getFocus(), resultTask2.getFocus());
+        assertEquals("Spray House", resultTask2.getDescription());
+        assertEquals("tsk11231jh22", resultTask2.getIdentifier());
 
         Object[] queryArgs = stringArrayCaptor.getValue();
         assertEquals(forEntity, queryArgs[0]);
