@@ -22,12 +22,18 @@ public class AllConstants {
     public static final String DETAILS = "details";
     public static final String PLAN_IDENTIFIER = "planIdentifier";
     public static final String LOCATION_ID = "locationId";
+    public static final String CHILD_LOCATION_ID = "childLocationId";
+    public static final String LOCATION_UUID = "locationUUID";
+    public static final String LOCATION_VERSION = "locationVersion";
+    public static final String STRUCTURE_ID = "structure_id";
     public static final String RESIDENCE = "residence";
     public static final String CLIENT_TYPE = "clientType";
     public static final String ATTRIBUTES = "attributes";
     public static final String FAMILY = "Family";
     public static final String RELATIONSHIPS = "relationships";
     public static final String TASK_IDENTIFIER = "taskIdentifier";
+    public static final String TASK_BUSINESS_STATUS = "taskBusinessStatus";
+    public static final String TASK_STATUS = "taskStatus";
 
 
     // Maximum time difference between server and client time in milliseconds
@@ -490,6 +496,7 @@ public class AllConstants {
             String IS_NEW = "is_new";
             String FORM_VERSION = "form_version";
             String CLIENT_FORM_ID = "client_form_id";
+            String APP_VERSION_NAME = "appVersionName";
         }
     }
 
