@@ -13,7 +13,9 @@ import android.widget.ArrayAdapter;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 
+import org.jetbrains.annotations.NotNull;
 import org.smartregister.AllConstants;
 import org.smartregister.R;
 
@@ -44,7 +46,7 @@ public class AppHealthUtils {
      *
      * @param context Android Activity or Context with a theme
      */
-    public static AlertDialog showAppHealthSelectDialog(Context context) {
+    public static AlertDialog showAppHealthSelectDialog(@NotNull Context context) {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.select_dialog_item);
         adapter.add(context.getString(R.string.download_database));
         adapter.add(context.getString(R.string.view_sync_stats));
@@ -52,12 +54,18 @@ public class AppHealthUtils {
         return new AlertDialog.Builder(context)
                 .setAdapter(adapter, (dialog, which) -> {
 
+                    Context healthStatContext = context instanceof HealthStatsView ? context : ((ContextThemeWrapper) context).getBaseContext();
+
                     switch (which) {
                         case 0:
-                            triggerDBCopying(context);
+                            if (healthStatContext instanceof HealthStatsView) {
+                                ((HealthStatsView) healthStatContext).performDatabaseDownload();
+                            }
                             break;
                         case 1:
-                            Utils.showToast(context, "TO DO implement " + adapter.getItem(which));
+                            if (healthStatContext instanceof HealthStatsView) {
+                                ((HealthStatsView) healthStatContext).showSyncStats();
+                            }
                             break;
                         default:
                             break;
@@ -68,11 +76,11 @@ public class AppHealthUtils {
                 .show();
     }
 
-    private static void triggerDBCopying(Context context) {
+    public static void triggerDBCopying(Context context) {
         Utils.showToast(context, context.getString(R.string.export_db_notification));
+
         Executor executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
-
         executor.execute(() -> {
             Utils.copyDatabase(AllConstants.DATABASE_NAME, createCopyDBName(context), context);
             refreshFileSystem(context, Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT);
@@ -103,5 +111,12 @@ public class AppHealthUtils {
                 //Overridden: Do nothing
             });
         }
+    }
+
+    public interface HealthStatsView {
+
+        void performDatabaseDownload();
+
+        void showSyncStats();
     }
 }
