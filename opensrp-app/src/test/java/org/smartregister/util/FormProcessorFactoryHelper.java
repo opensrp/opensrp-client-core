@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.view.activity.DrishtiApplication;
 
-public class FormProcessorFactory {
+public class FormProcessorFactoryHelper {
 
     public static NativeFormProcessor createInstance(String jsonString) throws JSONException {
         return NativeFormProcessor.createInstance(jsonString, 1, ClientProcessorForJava.getInstance(DrishtiApplication.getInstance().getApplicationContext()));
