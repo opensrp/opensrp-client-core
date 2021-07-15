@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
+import org.smartregister.BuildConfig;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.DateUtil;
@@ -21,6 +22,7 @@ import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
+import org.smartregister.repository.AllSharedPreferences;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,6 +68,10 @@ public class JsonFormUtils {
     public static final String STEP1 = "step1";
     public static final String SECTIONS = "sections";
     public static final String attributes = "attributes";
+    public static final String TYPE = "type";
+    public static final String CHECK_BOX = "check_box";
+    public static final String OPTIONS_FIELD_NAME = "options";
+    public static final String TEXT = "text";
 
     public static final String ENCOUNTER = "encounter";
     public static final String ENCOUNTER_LOCATION = "encounter_location";
@@ -142,11 +148,8 @@ public class JsonFormUtils {
                 encounterDate = dateTime;
             }
         }
-        try {
-            encounterLocation = metadata.getString(ENCOUNTER_LOCATION);
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
+        
+        encounterLocation = metadata.optString(ENCOUNTER_LOCATION);
 
         if (StringUtils.isBlank(encounterLocation)) {
             encounterLocation = formTag.locationId;
@@ -1231,25 +1234,26 @@ public class JsonFormUtils {
     }
 
     public static JSONObject merge(JSONObject original, JSONObject updated) {
-        JSONObject mergedJSON = new JSONObject();
-        try {
-            mergedJSON = new JSONObject(original, getNames(original));
-            for (String key : getNames(updated)) {
-                mergedJSON.put(key, updated.get(key));
+        String[] keys = getNames(updated);
+        for(String key : keys){
+            try {
+                if(updated.get(key) instanceof JSONObject && original.has(key)){
+                    merge(original.getJSONObject(key), updated.getJSONObject(key));
+                }else{
+                    original.put(key, updated.get(key));
+                }
+            } catch (JSONException e) {
+                Timber.e(e);
             }
-
-        } catch (JSONException e) {
-            Timber.e(e);
         }
-        return mergedJSON;
+        return original;
     }
 
     public static String[] getNames(JSONObject jo) {
         int length = jo.length();
-        if (length == 0) {
-            return null;
-        }
-        Iterator i = jo.keys();
+        if (length == 0) return new String[0];
+
+        Iterator<String> i = jo.keys();
         String[] names = new String[length];
         int j = 0;
         while (i.hasNext()) {
@@ -1281,5 +1285,41 @@ public class JsonFormUtils {
 
     public static boolean isBlankJsonObject(JSONObject jsonObject) {
         return jsonObject == null || jsonObject.length() == 0;
+    }
+
+    public static Event tagSyncMetadata(FormTag formTag, Event event) {
+        event.setProviderId(formTag.providerId);
+        event.setLocationId(formTag.locationId);
+        event.setChildLocationId(formTag.childLocationId);
+        event.setTeam(formTag.team);
+        event.setTeamId(formTag.teamId);
+
+        event.setClientApplicationVersion(formTag.appVersion);
+        event.setClientDatabaseVersion(formTag.databaseVersion);
+
+        return event;
+    }
+    
+    public static FormTag constructFormMetaData(AllSharedPreferences allSharedPreferences, Integer databaseVersion){
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        return FormTag.builder()
+                .providerId(allSharedPreferences.fetchRegisteredANM())
+                .locationId(locationId(allSharedPreferences))
+                .childLocationId(allSharedPreferences.fetchCurrentLocality())
+                .team(allSharedPreferences.fetchDefaultTeam(providerId))
+                .teamId(allSharedPreferences.fetchDefaultTeamId(providerId))
+                .appVersion(BuildConfig.VERSION_CODE)
+                .databaseVersion(databaseVersion)
+                .build();
+    }
+
+    protected static String locationId(AllSharedPreferences allSharedPreferences) {
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        String userLocationId = allSharedPreferences.fetchUserLocalityId(providerId);
+        if (StringUtils.isBlank(userLocationId)) {
+            userLocationId = allSharedPreferences.fetchDefaultLocalityId(providerId);
+        }
+
+        return userLocationId;
     }
 }

@@ -27,9 +27,4 @@ public class EventClientSync extends SyncIntentService {
     protected void pullECFromServer() {
         // Do not pull from EC Server
     }
-
-    @Override
-    public void sendBroadcast(Intent intent) {
-        super.sendBroadcast(intent);
-    }
 }
