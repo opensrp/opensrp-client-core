@@ -350,6 +350,9 @@ public class SyncIntentService extends BaseSyncIntentService {
                 Timber.i("Events synced successfully.");
                 stopTrace(eventSyncTrace);
                 updateProgress(eventsUploadedCount, totalEventCount);
+
+                if((totalEventCount - eventsUploadedCount) > 0)
+                    pushECToServer(db);
                 break;
             }
         }
