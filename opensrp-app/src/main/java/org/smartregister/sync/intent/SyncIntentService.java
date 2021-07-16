@@ -312,7 +312,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
 
         for (int i = 0; i < syncUtils.getNumOfSyncAttempts(); i++) {
-            Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
+            Map<String, Object> pendingEvents = db.getUnSyncedEvents(getEventBatchSize());
 
             if (pendingEvents.isEmpty()) {
                 break;
@@ -485,6 +485,10 @@ public class SyncIntentService extends BaseSyncIntentService {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
         }
         return baseUrl;
+    }
+
+    protected Integer getEventBatchSize(){
+        return EVENT_PUSH_LIMIT;
     }
 
 }
