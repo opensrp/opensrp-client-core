@@ -365,21 +365,36 @@ public class NativeFormProcessor {
         int pos = 0;
         int total = obs.length();
 
+        Map<String, JSONArray> jsonResults = new HashMap<>();
         while (pos < total) {
             JSONObject jsonObject = obs.getJSONObject(pos);
-            String key = jsonObject.getString("fieldCode");
+            String key = jsonObject.getString("formSubmissionField");
 
             JSONArray humanReadableValues = jsonObject.getJSONArray("humanReadableValues");
             JSONArray values = jsonObject.getJSONArray("values");
 
             JSONArray value = humanReadableValues.length() == values.length() ? humanReadableValues : values;
 
-            if (value.length() == 1) {
-                result.put(key, value.getString(0));
-            } else if (value.length() > 1) {
-                result.put(key, value);
+            JSONArray newValue = jsonResults.get(key);
+            if (newValue != null) {
+                for (int i = 0; i < value.length(); i++) {
+                    newValue.put(value.get(i));
+                }
+            } else {
+                newValue = value;
             }
+
+            jsonResults.put(key, newValue);
+
             pos++;
+        }
+
+        for (Map.Entry<String, JSONArray> entry : jsonResults.entrySet()) {
+            if (entry.getValue().length() == 1) {
+                result.put(entry.getKey(), entry.getValue().getString(0));
+            } else if (entry.getValue().length() > 1) {
+                result.put(entry.getKey(), entry.getValue());
+            }
         }
 
         return result;
@@ -409,7 +424,8 @@ public class NativeFormProcessor {
                     Object val = type.equals(JsonFormUtils.CHECK_BOX) ? getCheckBoxValues(key, dictionary, object) :
                             dictionary.get(key);
 
-                    object.put(JsonFormUtils.VALUE, val);
+                    if (val != null)
+                        object.put(JsonFormUtils.VALUE, val);
                 }
 
                 position++;
@@ -434,8 +450,14 @@ public class NativeFormProcessor {
         JSONArray jsonArray = new JSONArray();
         while (x < size) {
             String content = allOptions.getString(x);
-            jsonArray.put(options.get(content));
+            if (options.containsKey(content))
+                jsonArray.put(options.get(content));
             x++;
+        }
+
+        // single option value will have result to a true / false statement
+        if (allOptions.length() == 1 && options.size() == 1 && allOptions.getString(0).trim().equals("true")) {
+            jsonArray.put(options.entrySet().iterator().next().getValue());
         }
 
         return jsonArray;
