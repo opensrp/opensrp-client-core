@@ -70,6 +70,7 @@ public class JsonFormUtils {
     public static final String attributes = "attributes";
     public static final String TYPE = "type";
     public static final String CHECK_BOX = "check_box";
+    public static final String REPEATING_GROUP = "repeating_group";
     public static final String OPTIONS_FIELD_NAME = "options";
     public static final String TEXT = "text";
 
@@ -157,9 +158,15 @@ public class JsonFormUtils {
 
         String formSubmissionId = formTag != null && formTag.formSubmissionId != null ? formTag.formSubmissionId : generateRandomUUIDString();
         Event event =
-                (Event) new Event().withBaseEntityId(entityId).withEventDate(encounterDate).withEventType(encounterType)
-                        .withLocationId(encounterLocation).withProviderId(formTag.providerId).withEntityType(bindType)
-                        .withFormSubmissionId(formSubmissionId).withDateCreated(new Date());
+                (Event) new Event()
+                        .withBaseEntityId(entityId)
+                        .withEventDate(encounterDate)
+                        .withEventType(encounterType)
+                        .withLocationId(encounterLocation)
+                        .withProviderId(formTag.providerId)
+                        .withEntityType(bindType)
+                        .withFormSubmissionId(formSubmissionId)
+                        .withDateCreated(new Date()); // save created date as GMT Date
 
         event.setChildLocationId(formTag.childLocationId);
         event.setTeam(formTag.team);
