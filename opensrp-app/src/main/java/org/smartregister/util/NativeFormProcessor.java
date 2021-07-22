@@ -27,11 +27,15 @@ import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.view.activity.DrishtiApplication;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 public class NativeFormProcessor {
     private JSONObject jsonForm;
@@ -400,15 +404,23 @@ public class NativeFormProcessor {
         return result;
     }
 
+    // backward compatibility
     public <T> NativeFormProcessor populateValues(Map<String, T> dictionary) throws JSONException {
-        populateValues(dictionary, null);
+        populateValues(dictionary, null, null);
         return this;
     }
 
-    public <T> NativeFormProcessor populateValues(Map<String, T> dictionary, @Nullable Consumer<JSONObject> consumer) throws JSONException {
+    // backward compatibility
+    public <T> NativeFormProcessor populateValues(Map<String, T> dictionary, Consumer<JSONObject> consumer) throws JSONException {
+        populateValues(dictionary, consumer, null);
+        return this;
+    }
+
+    public <T> NativeFormProcessor populateValues(Map<String, T> dictionary, @Nullable Consumer<JSONObject> consumer, @Nullable Map<String, NativeFormProcessorFieldSource> fieldSourceMap) throws JSONException {
         int step = 1;
         while (jsonForm.has("step" + step)) {
-            JSONObject jsonStepObject = jsonForm.getJSONObject("step" + step);
+            String stepName = "step" + step;
+            JSONObject jsonStepObject = jsonForm.getJSONObject(stepName);
             JSONArray array = jsonStepObject.getJSONArray(JsonFormUtils.FIELDS);
             int position = 0;
             while (position < array.length()) {
@@ -417,15 +429,20 @@ public class NativeFormProcessor {
                 if (consumer != null)
                     consumer.accept(object);
 
-                String key = object.getString(JsonFormUtils.KEY);
-                String type = object.getString(JsonFormUtils.TYPE);
+                if (object.has(JsonFormUtils.KEY)) {
+                    String key = object.getString(JsonFormUtils.KEY);
+                    String type = object.has(JsonFormUtils.TYPE) ? object.getString(JsonFormUtils.TYPE) : "";
 
-                if (dictionary.containsKey(key)) {
-                    Object val = type.equals(JsonFormUtils.CHECK_BOX) ? getCheckBoxValues(key, dictionary, object) :
-                            dictionary.get(key);
+                    if (fieldSourceMap != null && fieldSourceMap.get(type) != null) {
+                        fieldSourceMap.get(type).populateValue(stepName, jsonStepObject, object, dictionary);
+                    } else if (dictionary.containsKey(key)) {
+                        Object val = type.equals(JsonFormUtils.CHECK_BOX) ? getCheckBoxValues(key, dictionary, object) :
+                                dictionary.get(key);
 
-                    if (val != null)
-                        object.put(JsonFormUtils.VALUE, val);
+                        if (val != null)
+                            object.put(JsonFormUtils.VALUE, val);
+                    }
+
                 }
 
                 position++;
@@ -434,6 +451,60 @@ public class NativeFormProcessor {
             step++;
         }
         return this;
+    }
+
+    /**
+     * This function receives a combination of a NativeForms field json and a dictionary of values.
+     * The values are clustered by the last alphanumeric combination of values, i.e a UUID stripped of "-".
+     * The values are the returned in a 2 dimensional map format of the different repeating groups.
+     *
+     * @param fieldJson  A NativeForms Field
+     * @param dictionary A map containing key value pairs of fieldCode and value(can be an array or String)
+     * @param <T>
+     * @return
+     * @throws JSONException
+     */
+    public <T> Map<String, Map<String, T>> getRepeatingGroupValues(JSONObject fieldJson, Map<String, T> dictionary) throws JSONException {
+        Map<String, Map<String, T>> result = new HashMap<>();
+
+        JSONArray arrayValues = fieldJson.getJSONArray(JsonFormUtils.VALUE);
+
+        Set<String> valueSet = new HashSet<>();
+        int position = 0;
+        while (position < arrayValues.length()) {
+            valueSet.add(arrayValues.getJSONObject(position).getString(JsonFormUtils.KEY));
+            position++;
+        }
+
+        Pattern numberPattern = Pattern.compile("(.)*(\\d)(.)*");
+        Pattern letterPattern = Pattern.compile(".*[a-zA-Z]+.*");
+
+        for (Map.Entry<String, T> entry : dictionary.entrySet()) {
+            String valueKey = entry.getKey();
+            String[] entryKeyArray = valueKey.split("_");
+
+            // if last element is alpha numeric, and the combination is in the set add this guy as an element
+            if (entryKeyArray.length > 1) {
+                String entryKey = StringUtils.join(Arrays.copyOfRange(entryKeyArray, 0, entryKeyArray.length - 1), "_");
+                String lastElement = entryKeyArray[entryKeyArray.length - 1];
+
+                if (lastElement.length() > 9
+                        && valueSet.contains(entryKey)
+                        && numberPattern.matcher(lastElement).matches()
+                        && letterPattern.matcher(lastElement).matches()
+                ) {
+
+                    Map<String, T> value = result.get(lastElement);
+                    if (value == null) value = new HashMap<>();
+
+                    value.put(entryKey, entry.getValue());
+                    result.put(lastElement, value);
+                }
+            }
+
+        }
+
+        return result;
     }
 
     private <T> JSONArray getCheckBoxValues(String key, Map<String, T> dictionary, JSONObject object) throws JSONException {
