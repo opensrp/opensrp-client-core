@@ -87,11 +87,8 @@ public class NativeFormProcessorTest extends BaseUnitTest {
         Assert.assertEquals(processor.getFieldValue("sactaCurrEnroll"), "");
     }
 
-    @Test
-    public void testProcessingAndSavingClientWithCustomNativeFormField() throws Exception {
-        ECSyncHelper ecSyncHelper = Mockito.mock(ECSyncHelper.class);
-
-        String jsonString = "{\n" +
+    private String getJsonString() {
+        return "{\n" +
                 "    \"count\": \"1\",\n" +
                 "    \"encounter_type\": \"OPD_Treatment\",\n" +
                 "    \"entity_id\": \"\",\n" +
@@ -184,6 +181,13 @@ public class NativeFormProcessorTest extends BaseUnitTest {
                 "    },\n" +
                 "    \"baseEntityId\": \"xxxxxxxx-xxxx-xxxx-xxxx-xxxx0000xxxx\"\n" +
                 "}";
+    }
+
+    @Test
+    public void testProcessingAndSavingClientWithCustomNativeFormField() throws Exception {
+        ECSyncHelper ecSyncHelper = Mockito.mock(ECSyncHelper.class);
+        String jsonString = getJsonString();
+
 
         NativeFormProcessor processor = FormProcessorFactoryHelper.createInstance(jsonString);
         processor = Mockito.spy(processor);

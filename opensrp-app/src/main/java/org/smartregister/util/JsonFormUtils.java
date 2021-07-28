@@ -182,6 +182,15 @@ public class JsonFormUtils {
         event.setClientApplicationVersionName(formTag.appVersionName);
         event.setClientDatabaseVersion(formTag.databaseVersion);
 
+        getObs(fields, event, fieldProcessorMap, metadata);
+
+        createFormMetadataObs(metadata, event);
+
+        return event;
+
+    }
+
+    private static void getObs(JSONArray fields, Event event, @Nullable Map<String, NativeFormFieldProcessor> fieldProcessorMap, JSONObject metadata){
         for (int i = 0; i < fields.length(); i++) {
             JSONObject jsonObject = getJSONObject(fields, i);
             try {
@@ -219,9 +228,6 @@ public class JsonFormUtils {
             setGlobalCheckBoxProperty(metadata, jsonObject);
             addObservation(event, jsonObject);
         }
-        createFormMetadataObs(metadata, event);
-
-        return event;
 
     }
 
