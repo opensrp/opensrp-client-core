@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
+import org.smartregister.NativeFormFieldProcessor;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.domain.Location;
@@ -54,6 +55,7 @@ public class NativeFormProcessor {
     private FormTag formTag;
     private final int databaseVersion;
     private final ClientProcessorForJava clientProcessorForJava;
+    private Map<String, NativeFormFieldProcessor> fieldProcessorMap = null;
 
     private static final String DETAILS = "details";
     private static final String METADATA = "metadata";
@@ -110,6 +112,11 @@ public class NativeFormProcessor {
 
     public NativeFormProcessor hasClient(boolean hasClient) {
         this.hasClient = hasClient;
+        return this;
+    }
+
+    public NativeFormProcessor withFieldProcessors(Map<String, NativeFormFieldProcessor> fieldProcessorMap) {
+        this.fieldProcessorMap = fieldProcessorMap;
         return this;
     }
 
@@ -193,7 +200,8 @@ public class NativeFormProcessor {
                     getFormTag(),
                     entityId,
                     encounterType,
-                    bindType
+                    bindType,
+                    fieldProcessorMap
             );
 
             if (jsonForm.has(DETAILS)) {
