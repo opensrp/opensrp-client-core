@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.BuildConfig;
+import org.smartregister.NativeFormFieldProcessor;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.DateUtil;
@@ -137,7 +138,12 @@ public class JsonFormUtils {
 
     }
 
+    // backward compatibility
     public static Event createEvent(JSONArray fields, JSONObject metadata, FormTag formTag, String entityId, String encounterType, String bindType) {
+        return createEvent(fields, metadata, formTag, entityId, encounterType, bindType, null);
+    }
+
+    public static Event createEvent(JSONArray fields, JSONObject metadata, FormTag formTag, String entityId, String encounterType, String bindType, @Nullable Map<String, NativeFormFieldProcessor> fieldProcessorMap) {
 
         String encounterDateField = getFieldValue(fields, FormEntityConstants.Encounter.encounter_date);
         String encounterLocation = null;
@@ -149,7 +155,7 @@ public class JsonFormUtils {
                 encounterDate = dateTime;
             }
         }
-        
+
         encounterLocation = metadata.optString(ENCOUNTER_LOCATION);
 
         if (StringUtils.isBlank(encounterLocation)) {
@@ -202,6 +208,12 @@ public class JsonFormUtils {
 
             if (AllConstants.MULTI_SELECT_LIST.equals(jsonObject.optString(AllConstants.TYPE))) {
                 addMultiSelectListObservations(event, jsonObject);
+                continue;
+            }
+
+            if (fieldProcessorMap != null && fieldProcessorMap.containsKey(jsonObject.optString(AllConstants.TYPE))) {
+                NativeFormFieldProcessor fieldProcessor = fieldProcessorMap.get(jsonObject.optString(AllConstants.TYPE));
+                fieldProcessor.processJsonField(event, jsonObject);
                 continue;
             }
             setGlobalCheckBoxProperty(metadata, jsonObject);
@@ -1242,11 +1254,11 @@ public class JsonFormUtils {
 
     public static JSONObject merge(JSONObject original, JSONObject updated) {
         String[] keys = getNames(updated);
-        for(String key : keys){
+        for (String key : keys) {
             try {
-                if(updated.get(key) instanceof JSONObject && original.has(key)){
+                if (updated.get(key) instanceof JSONObject && original.has(key)) {
                     merge(original.getJSONObject(key), updated.getJSONObject(key));
-                }else{
+                } else {
                     original.put(key, updated.get(key));
                 }
             } catch (JSONException e) {
@@ -1306,8 +1318,8 @@ public class JsonFormUtils {
 
         return event;
     }
-    
-    public static FormTag constructFormMetaData(AllSharedPreferences allSharedPreferences, Integer databaseVersion){
+
+    public static FormTag constructFormMetaData(AllSharedPreferences allSharedPreferences, Integer databaseVersion) {
         String providerId = allSharedPreferences.fetchRegisteredANM();
         return FormTag.builder()
                 .providerId(allSharedPreferences.fetchRegisteredANM())

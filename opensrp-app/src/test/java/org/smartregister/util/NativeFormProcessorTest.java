@@ -1,22 +1,43 @@
 package org.smartregister.util;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.powermock.reflect.Whitebox;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.NativeFormFieldProcessor;
+import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Task;
 import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.sync.helper.ECSyncHelper;
 
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
+
+import timber.log.Timber;
+
+import static org.smartregister.util.JsonFormUtils.KEY;
+import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY;
+import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY_ID;
+import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY_PARENT;
+import static org.smartregister.util.JsonFormUtils.VALUE;
 
 public class NativeFormProcessorTest extends BaseUnitTest {
+
+    @Captor
+    private ArgumentCaptor<JSONObject> argumentCaptor;
 
     @Test
     public void testProcessingAndSavingClient() throws Exception {
@@ -64,6 +85,164 @@ public class NativeFormProcessorTest extends BaseUnitTest {
         Mockito.verify(ecSyncHelper).addEvent(Mockito.eq(entityId), Mockito.any());
 
         Assert.assertEquals(processor.getFieldValue("sactaCurrEnroll"), "");
+    }
+
+    @Test
+    public void testProcessingAndSavingClientWithCustomNativeFormField() throws Exception {
+        ECSyncHelper ecSyncHelper = Mockito.mock(ECSyncHelper.class);
+
+        String jsonString = "{\n" +
+                "    \"count\": \"1\",\n" +
+                "    \"encounter_type\": \"OPD_Treatment\",\n" +
+                "    \"entity_id\": \"\",\n" +
+                "    \"metadata\": {\n" +
+                "        \"start\": {\n" +
+                "            \"openmrs_entity_parent\": \"\",\n" +
+                "            \"openmrs_entity\": \"concept\",\n" +
+                "            \"openmrs_data_type\": \"start\",\n" +
+                "            \"openmrs_entity_id\": \"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+                "            \"value\": \"2021-07-27 23:28:15\"\n" +
+                "        }\n" +
+                "    },\n" +
+                "    \"step1\": {\n" +
+                "        \"title\": \"Treatment\",\n" +
+                "        \"fields\": [\n" +
+                "            {\n" +
+                "                \"key\": \"treatment_type_specify\",\n" +
+                "                \"openmrs_entity_parent\": \"\",\n" +
+                "                \"openmrs_entity\": \"\",\n" +
+                "                \"openmrs_entity_id\": \"\",\n" +
+                "                \"hint\": \"Specify any other treatment type\",\n" +
+                "                \"type\": \"edit_text\",\n" +
+                "                \"relevance\": {\n" +
+                "                    \"rules-engine\": {\n" +
+                "                        \"ex-rules\": {\n" +
+                "                            \"rules-file\": \"opd\\/opd_treatment_relevance_rules.yml\"\n" +
+                "                        }\n" +
+                "                    }\n" +
+                "                },\n" +
+                "                \"is_visible\": false\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"key\": \"medicine\",\n" +
+                "                \"openmrs_entity_parent\": \"\",\n" +
+                "                \"openmrs_entity\": \"\",\n" +
+                "                \"openmrs_entity_id\": \"\",\n" +
+                "                \"sortClass\": \"org.smartregister.opd.comparator.MultiSelectListAlphabetTextComparator\",\n" +
+                "                \"sort\": true,\n" +
+                "                \"groupings\": \"[A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z]\",\n" +
+                "                \"source\": \"csv\",\n" +
+                "                \"repositoryClass\": \"org.smartregister.giz.widget.GizOpdMedicineMultiSelectListRepository\",\n" +
+                "                \"type\": \"multi_select_drug_picker\",\n" +
+                "                \"buttonText\": \"+ Add treatment\\/medicine\",\n" +
+                "                \"dialogTitle\": \"Add treatment\\/medicine\",\n" +
+                "                \"searchHint\": \"Type treatment\\/medicine name\",\n" +
+                "                \"relevance\": {\n" +
+                "                    \"rules-engine\": {\n" +
+                "                        \"ex-rules\": {\n" +
+                "                            \"rules-file\": \"opd\\/opd_treatment_relevance_rules.yml\"\n" +
+                "                        }\n" +
+                "                    }\n" +
+                "                },\n" +
+                "                \"step\": \"step1\",\n" +
+                "                \"is-rule-check\": true,\n" +
+                "                \"is_visible\": true,\n" +
+                "                \"value\": \"[{\\\"key\\\":\\\"AA004200\\\",\\\"text\\\":\\\"Amoxycillin 250mg dispersible tablets\\\",\\\"openmrs_entity\\\":\\\"\\\",\\\"openmrs_entity_id\\\":\\\"AA004200\\\",\\\"openmrs_entity_parent\\\":\\\"\\\",\\\"property\\\":{\\\"pack_size\\\":null,\\\"product_code\\\":\\\"AA004200\\\",\\\"dispensing_unit\\\":\\\"Tablet\\\",\\\"meta\\\":{\\\"duration\\\":\\\"1\\\",\\\"dosage\\\":\\\"1\\\",\\\"frequency\\\":\\\"1\\\",\\\"info\\\":\\\"Dose: 1, Duration: 1, Frequency: 1\\\"}}}]\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"key\": \"special_instructions\",\n" +
+                "                \"openmrs_entity_parent\": \"\",\n" +
+                "                \"openmrs_entity\": \"\",\n" +
+                "                \"openmrs_entity_id\": \"\",\n" +
+                "                \"hint\": \"Special Instructions\",\n" +
+                "                \"type\": \"edit_text\",\n" +
+                "                \"value\": \"none\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"key\": \"medicine_object\",\n" +
+                "                \"openmrs_entity_parent\": \"\",\n" +
+                "                \"openmrs_entity\": \"\",\n" +
+                "                \"openmrs_entity_id\": \"\",\n" +
+                "                \"type\": \"hidden\",\n" +
+                "                \"calculation\": {\n" +
+                "                    \"rules-engine\": {\n" +
+                "                        \"ex-rules\": {\n" +
+                "                            \"rules-file\": \"opd\\/opd_treatment_calculation.yml\"\n" +
+                "                        }\n" +
+                "                    }\n" +
+                "                },\n" +
+                "                \"value\": \"[{\\\"key\\\":\\\"AA004200\\\",\\\"text\\\":\\\"Amoxycillin 250mg dispersible tablets\\\",\\\"openmrs_entity\\\":\\\"\\\",\\\"openmrs_entity_id\\\":\\\"AA004200\\\",\\\"openmrs_entity_parent\\\":\\\"\\\",\\\"property\\\":{\\\"pack_size\\\":null,\\\"product_code\\\":\\\"AA004200\\\",\\\"dispensing_unit\\\":\\\"Tablet\\\",\\\"meta\\\":{\\\"duration\\\":\\\"1\\\",\\\"dosage\\\":\\\"1\\\",\\\"frequency\\\":\\\"1\\\",\\\"info\\\":\\\"Dose: 1, Duration: 1, Frequency: 1\\\"}}}]\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"key\": \"visit_id\",\n" +
+                "                \"openmrs_entity_parent\": \"\",\n" +
+                "                \"openmrs_entity\": \"\",\n" +
+                "                \"openmrs_entity_id\": \"\",\n" +
+                "                \"type\": \"hidden\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"baseEntityId\": \"xxxxxxxx-xxxx-xxxx-xxxx-xxxx0000xxxx\"\n" +
+                "}";
+
+        NativeFormProcessor processor = FormProcessorFactoryHelper.createInstance(jsonString);
+        processor = Mockito.spy(processor);
+        Mockito.doReturn(ecSyncHelper).when(processor).getSyncHelper();
+
+        String entityId = "entityId";
+
+        processor.withBindType("child")
+                .withEncounterType("Child Registration")
+                .withFormSubmissionId("formSubmissionId")
+                .withEntityId(entityId)
+                .withFieldProcessors(getFieldProcessorMap())
+
+                .tagEventMetadata()
+
+                // create and save event to db
+                .saveEvent()
+
+                // execute client processing
+                .clientProcessForm();
+
+        Mockito.verify(ecSyncHelper).addEvent(Mockito.eq(entityId), argumentCaptor.capture());
+
+        // check processed event
+
+        Event event = Whitebox.getInternalState(processor, "_event");
+        List<Obs> obs = event.getObs();
+
+        Set<Object> values = new HashSet<>();
+
+        for (Obs o : obs) {
+            values.addAll(o.getValues());
+        }
+
+        Assert.assertTrue(values.contains("AA004200"));
+    }
+
+    private Map<String, NativeFormFieldProcessor> getFieldProcessorMap() {
+        Map<String, NativeFormFieldProcessor> fieldProcessorMap = new HashMap<>();
+        fieldProcessorMap.put("multi_select_drug_picker", (event, jsonObject1) -> {
+            JSONArray valuesJsonArray;
+            try {
+                valuesJsonArray = new JSONArray(jsonObject1.optString(VALUE));
+                for (int i = 0; i < valuesJsonArray.length(); i++) {
+                    JSONObject jsonValObject = valuesJsonArray.optJSONObject(i);
+                    String fieldType = jsonValObject.optString(OPENMRS_ENTITY);
+                    String fieldCode = jsonObject1.optString(OPENMRS_ENTITY_ID);
+                    String parentCode = jsonObject1.optString(OPENMRS_ENTITY_PARENT);
+                    String value = jsonValObject.optString(OPENMRS_ENTITY_ID);
+                    String humanReadableValues = jsonValObject.optString(AllConstants.TEXT);
+                    String formSubmissionField = jsonObject1.optString(KEY);
+                    event.addObs(new Obs(fieldType, AllConstants.TEXT, fieldCode, parentCode, Collections.singletonList(value),
+                            Collections.singletonList(humanReadableValues), "", formSubmissionField));
+                }
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
+        });
+        return fieldProcessorMap;
     }
 
     @Test
