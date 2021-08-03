@@ -77,10 +77,9 @@ public class ClientRelationshipRepositoryTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testSaveRelationShipVarArgShouldInsertAll() throws Exception {
+    public void testSaveRelationShipVarArgShouldInsertAll() {
         ClientRelationship clientRelationship1 = mock(ClientRelationship.class);
         ClientRelationship clientRelationship2 = mock(ClientRelationship.class);
-        String query = String.format("REPLACE INTO %s VALUES(?,?,?)", "client_relationship");
         SQLiteStatement sqLiteStatement = mock(SQLiteStatement.class);
         when(database.compileStatement(anyString())).thenReturn(sqLiteStatement);
         ClientRelationshipRepository repository = spy(ClientRelationshipRepository.class);
