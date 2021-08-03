@@ -1,8 +1,6 @@
 package org.smartregister.repository;
 
 
-import com.google.gson.Gson;
-
 import net.sqlcipher.Cursor;
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -16,6 +14,7 @@ import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.ClientRelationship;
 import org.smartregister.sync.ClientData;
+import org.smartregister.util.JsonFormUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +50,7 @@ public class ClientRelationshipRepositoryTest extends BaseRobolectricUnitTest {
         when(database.rawQuery(anyString(), any())).thenReturn(getClients());
         List<Client> clients = repository.findClientByRelationship("family", "12323");
         assertEquals(1, clients.size());
-        assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6",clients.get(0).getBaseEntityId());
+        assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", clients.get(0).getBaseEntityId());
     }
 
     private Cursor getClients() throws JSONException {
@@ -63,25 +62,28 @@ public class ClientRelationshipRepositoryTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testRawQueryShouldReturnClientDetails() throws JSONException {
-        ClientRelationshipRepository repository = mock(ClientRelationshipRepository.class);
+        ClientRelationshipRepository repository = spy(ClientRelationshipRepository.class);
         Cursor cursor = spy(getClients());
-        when(database.rawQuery(anyString(), any())).thenReturn(cursor);
+        when(database.rawQuery(anyString(), any()))
+                .thenReturn(cursor);
         String jsonFieldColumn = "json";
-        List<HashMap<String, String>> result = repository.rawQuery(database, String.format("SELECT %s FROM client_relationship;", jsonFieldColumn));
+        String query = String.format("SELECT %s FROM client_relationship;", jsonFieldColumn);
+
+        List<HashMap<String, String>> result = repository.rawQuery(database, query);
         assertEquals(1, result.size());
-        Client client = new Gson().fromJson(result.get(0).get(jsonFieldColumn), Client.class);
+        Client client = JsonFormUtils.gson.fromJson(result.get(0).get(jsonFieldColumn), Client.class);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", client.getBaseEntityId());
         verify(cursor).close();
     }
 
     @Test
-    public void testSaveRelationShipVarArgShouldInsertAll(){
+    public void testSaveRelationShipVarArgShouldInsertAll() throws Exception {
         ClientRelationship clientRelationship1 = mock(ClientRelationship.class);
         ClientRelationship clientRelationship2 = mock(ClientRelationship.class);
         String query = String.format("REPLACE INTO %s VALUES(?,?,?)", "client_relationship");
-        SQLiteStatement sqLiteStatement = spy(database.compileStatement(query));
+        SQLiteStatement sqLiteStatement = mock(SQLiteStatement.class);
         when(database.compileStatement(anyString())).thenReturn(sqLiteStatement);
-        ClientRelationshipRepository repository = mock(ClientRelationshipRepository.class);
+        ClientRelationshipRepository repository = spy(ClientRelationshipRepository.class);
         when(repository.getWritableDatabase()).thenReturn(database);
 
         repository.saveRelationship(clientRelationship1, clientRelationship2);
