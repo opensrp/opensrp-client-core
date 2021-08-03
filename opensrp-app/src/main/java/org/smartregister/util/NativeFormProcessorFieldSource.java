@@ -5,7 +5,8 @@ import org.json.JSONObject;
 import java.util.Map;
 
 /***
- * A common interface to provide a method for population of complex field values
+ * A common interface to provide a method for population of complex field values.
+ * Allows users to specify how to read values of a custom field data type
  */
 public interface NativeFormProcessorFieldSource {
 
