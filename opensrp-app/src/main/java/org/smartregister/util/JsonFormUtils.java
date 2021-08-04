@@ -14,6 +14,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
+import org.smartregister.BuildConfig;
+import org.smartregister.NativeFormFieldProcessor;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.DateUtil;
@@ -21,6 +23,7 @@ import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
+import org.smartregister.repository.AllSharedPreferences;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,6 +69,11 @@ public class JsonFormUtils {
     public static final String STEP1 = "step1";
     public static final String SECTIONS = "sections";
     public static final String attributes = "attributes";
+    public static final String TYPE = "type";
+    public static final String CHECK_BOX = "check_box";
+    public static final String REPEATING_GROUP = "repeating_group";
+    public static final String OPTIONS_FIELD_NAME = "options";
+    public static final String TEXT = "text";
 
     public static final String ENCOUNTER = "encounter";
     public static final String ENCOUNTER_LOCATION = "encounter_location";
@@ -130,7 +138,12 @@ public class JsonFormUtils {
 
     }
 
+    // backward compatibility
     public static Event createEvent(JSONArray fields, JSONObject metadata, FormTag formTag, String entityId, String encounterType, String bindType) {
+        return createEvent(fields, metadata, formTag, entityId, encounterType, bindType, null);
+    }
+
+    public static Event createEvent(JSONArray fields, JSONObject metadata, FormTag formTag, String entityId, String encounterType, String bindType, @Nullable Map<String, NativeFormFieldProcessor> fieldProcessorMap) {
 
         String encounterDateField = getFieldValue(fields, FormEntityConstants.Encounter.encounter_date);
         String encounterLocation = null;
@@ -142,7 +155,7 @@ public class JsonFormUtils {
                 encounterDate = dateTime;
             }
         }
-        
+
         encounterLocation = metadata.optString(ENCOUNTER_LOCATION);
 
         if (StringUtils.isBlank(encounterLocation)) {
@@ -151,9 +164,15 @@ public class JsonFormUtils {
 
         String formSubmissionId = formTag != null && formTag.formSubmissionId != null ? formTag.formSubmissionId : generateRandomUUIDString();
         Event event =
-                (Event) new Event().withBaseEntityId(entityId).withEventDate(encounterDate).withEventType(encounterType)
-                        .withLocationId(encounterLocation).withProviderId(formTag.providerId).withEntityType(bindType)
-                        .withFormSubmissionId(formSubmissionId).withDateCreated(new Date());
+                (Event) new Event()
+                        .withBaseEntityId(entityId)
+                        .withEventDate(encounterDate)
+                        .withEventType(encounterType)
+                        .withLocationId(encounterLocation)
+                        .withProviderId(formTag.providerId)
+                        .withEntityType(bindType)
+                        .withFormSubmissionId(formSubmissionId)
+                        .withDateCreated(new Date()); // save created date as GMT Date
 
         event.setChildLocationId(formTag.childLocationId);
         event.setTeam(formTag.team);
@@ -163,6 +182,15 @@ public class JsonFormUtils {
         event.setClientApplicationVersionName(formTag.appVersionName);
         event.setClientDatabaseVersion(formTag.databaseVersion);
 
+        getObs(fields, event, fieldProcessorMap, metadata);
+
+        createFormMetadataObs(metadata, event);
+
+        return event;
+
+    }
+
+    private static void getObs(JSONArray fields, Event event, @Nullable Map<String, NativeFormFieldProcessor> fieldProcessorMap, JSONObject metadata){
         for (int i = 0; i < fields.length(); i++) {
             JSONObject jsonObject = getJSONObject(fields, i);
             try {
@@ -191,12 +219,15 @@ public class JsonFormUtils {
                 addMultiSelectListObservations(event, jsonObject);
                 continue;
             }
+
+            if (fieldProcessorMap != null && fieldProcessorMap.containsKey(jsonObject.optString(AllConstants.TYPE))) {
+                NativeFormFieldProcessor fieldProcessor = fieldProcessorMap.get(jsonObject.optString(AllConstants.TYPE));
+                fieldProcessor.processJsonField(event, jsonObject);
+                continue;
+            }
             setGlobalCheckBoxProperty(metadata, jsonObject);
             addObservation(event, jsonObject);
         }
-        createFormMetadataObs(metadata, event);
-
-        return event;
 
     }
 
@@ -1229,11 +1260,11 @@ public class JsonFormUtils {
 
     public static JSONObject merge(JSONObject original, JSONObject updated) {
         String[] keys = getNames(updated);
-        for(String key : keys){
+        for (String key : keys) {
             try {
-                if(updated.get(key) instanceof JSONObject && original.has(key)){
+                if (updated.get(key) instanceof JSONObject && original.has(key)) {
                     merge(original.getJSONObject(key), updated.getJSONObject(key));
-                }else{
+                } else {
                     original.put(key, updated.get(key));
                 }
             } catch (JSONException e) {
@@ -1279,5 +1310,41 @@ public class JsonFormUtils {
 
     public static boolean isBlankJsonObject(JSONObject jsonObject) {
         return jsonObject == null || jsonObject.length() == 0;
+    }
+
+    public static Event tagSyncMetadata(FormTag formTag, Event event) {
+        event.setProviderId(formTag.providerId);
+        event.setLocationId(formTag.locationId);
+        event.setChildLocationId(formTag.childLocationId);
+        event.setTeam(formTag.team);
+        event.setTeamId(formTag.teamId);
+
+        event.setClientApplicationVersion(formTag.appVersion);
+        event.setClientDatabaseVersion(formTag.databaseVersion);
+
+        return event;
+    }
+
+    public static FormTag constructFormMetaData(AllSharedPreferences allSharedPreferences, Integer databaseVersion) {
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        return FormTag.builder()
+                .providerId(allSharedPreferences.fetchRegisteredANM())
+                .locationId(locationId(allSharedPreferences))
+                .childLocationId(allSharedPreferences.fetchCurrentLocality())
+                .team(allSharedPreferences.fetchDefaultTeam(providerId))
+                .teamId(allSharedPreferences.fetchDefaultTeamId(providerId))
+                .appVersion(BuildConfig.VERSION_CODE)
+                .databaseVersion(databaseVersion)
+                .build();
+    }
+
+    protected static String locationId(AllSharedPreferences allSharedPreferences) {
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        String userLocationId = allSharedPreferences.fetchUserLocalityId(providerId);
+        if (StringUtils.isBlank(userLocationId)) {
+            userLocationId = allSharedPreferences.fetchDefaultLocalityId(providerId);
+        }
+
+        return userLocationId;
     }
 }
