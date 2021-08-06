@@ -147,6 +147,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             if (resp.isFailure() && !resp.isUrlError() && !resp.isTimeoutError()) {
                 fetchFailed(count);
+                return;
             }
 
             JSONObject jsonObject = new JSONObject((String) resp.payload());
@@ -234,7 +235,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                                 baseUrl,
                                 ADD_URL),
                         jsonPayload);
-                if (response.isFailure()) {
+                if (response.isFailure() || response.isTimeoutError()) {
                     Timber.e("Events sync failed.");
                     return;
                 }

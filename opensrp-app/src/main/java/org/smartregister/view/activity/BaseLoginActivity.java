@@ -175,6 +175,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     }
 
     public void showProgress(final boolean show) {
+        if (isFinishing()) return;
         if (show) {
             progressDialog.show();
         } else {

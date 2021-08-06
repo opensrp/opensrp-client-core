@@ -35,6 +35,9 @@ import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -128,6 +131,35 @@ public class HTTPAgent {
 
         } catch (IOException ex) {
             Timber.e(ex, "EXCEPTION %s", ex.toString());
+            return new Response<>(ResponseStatus.failure, null);
+        }
+    }
+    public Response<String> post(String postURLPath, String jsonPayload, HashMap<String,String> headerList) {
+        HttpURLConnection urlConnection;
+        try {
+            urlConnection = initializeHttp(postURLPath, true);
+            if(headerList!=null){
+
+                for(String headers: headerList.keySet()){
+                    urlConnection.setRequestProperty(headers,headerList.get(headers));
+                }
+            }
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+
+            OutputStream os = urlConnection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(jsonPayload);
+            writer.flush();
+            writer.close();
+            os.close();
+
+            urlConnection.connect();
+
+            return handleResponse(urlConnection);
+
+        } catch (IOException ex) {
+            Timber.e(ex,  "EXCEPTION: %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
     }
@@ -243,8 +275,9 @@ public class HTTPAgent {
 
     private Response<String> handleResponse(HttpURLConnection urlConnection) {
         String responseString;
+        int statusCode;
         try {
-            int statusCode = urlConnection.getResponseCode();
+            statusCode = urlConnection.getResponseCode();
 
             InputStream inputStream;
             if (statusCode >= HttpStatus.SC_BAD_REQUEST)
@@ -270,7 +303,7 @@ public class HTTPAgent {
                 urlConnection.disconnect();
             }
         }
-        return new Response<>(ResponseStatus.success, responseString);
+        return new Response<>(statusCode >= HttpStatus.SC_BAD_REQUEST ? ResponseStatus.failure : ResponseStatus.success, responseString);
     }
 
 

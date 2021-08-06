@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.WindowManager;
 
 import com.google.android.gms.vision.barcode.Barcode;
 
@@ -170,7 +171,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     public void displayToast(String message) {
        try{
            Utils.showToast(getApplicationContext(), message);
-       }catch (Exception e){
+       }catch (WindowManager.BadTokenException e){
            e.printStackTrace();
        }
     }
@@ -179,7 +180,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     public void displayShortToast(int resourceId) {
        try{
            Utils.showShortToast(getApplicationContext(), getString(resourceId));
-       }catch (Exception e){
+       }catch (WindowManager.BadTokenException e){
            e.printStackTrace();
        }
     }
@@ -267,14 +268,14 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Override
     public void showProgressDialog(int titleIdentifier) {
+        if(isFinishing()) return;
         try{
             progressDialog = new ProgressDialog(this);
             progressDialog.setCancelable(false);
             progressDialog.setTitle(titleIdentifier);
             progressDialog.setMessage(getString(R.string.please_wait_message));
-            if (!isFinishing())
-                progressDialog.show();
-        }catch (Exception e){
+            progressDialog.show();
+        }catch (WindowManager.BadTokenException e){
 
         }
 
