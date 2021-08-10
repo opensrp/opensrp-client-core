@@ -362,7 +362,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             try {
                 AppHealthUtils.triggerDBCopying(this);
             } catch (SecurityException e) {
-                org.smartregister.util.Utils.showToast(this, this.getString(org.smartregister.R.string.permission_write_external_storage_rationale));
+                Utils.showToast(this, this.getString(org.smartregister.R.string.permission_write_external_storage_rationale));
             }
         }
     }
