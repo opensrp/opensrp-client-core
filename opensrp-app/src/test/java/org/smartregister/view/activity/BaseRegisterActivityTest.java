@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.SnackbarContentLayout;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
@@ -358,5 +359,12 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
             activity.switchToFragment(2);
         });
         verify(mPager, timeout(ASYNC_TIMEOUT)).setCurrentItem(2, false);
+    }
+
+    @Test
+    public void testShowSyncStatsStartsStatsActivity() {
+        activity = spy(activity);
+        activity.showSyncStats();
+        verify(activity).startActivity(ArgumentMatchers.any(Intent.class));
     }
 }
