@@ -365,6 +365,6 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
     public void testShowSyncStatsStartsStatsActivity() {
         activity = spy(activity);
         activity.showSyncStats();
-        verify(activity).startActivity(ArgumentMatchers.any(Intent.class));
+        verify(activity).startActivity(any(Intent.class));
     }
 }
