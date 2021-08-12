@@ -1,7 +1,5 @@
 package org.smartregister.util;
 
-import static org.mockito.Mockito.doReturn;
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
@@ -70,9 +68,9 @@ public class AppHealthUtilsTest extends BaseRobolectricUnitTest {
 
         String userName = "testuser";
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
-        doReturn(opensrpContext).when(coreLibrary).context();
-        doReturn(allSharedPreferences).when(opensrpContext).allSharedPreferences();
-        doReturn(userName).when(allSharedPreferences).fetchRegisteredANM();
+        Mockito.doReturn(opensrpContext).when(coreLibrary).context();
+        Mockito.doReturn(allSharedPreferences).when(opensrpContext).allSharedPreferences();
+        Mockito.doReturn(userName).when(allSharedPreferences).fetchRegisteredANM();
 
         String copyDBName = AppHealthUtils.createCopyDBName(context);
         Assert.assertNotNull(copyDBName);
