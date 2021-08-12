@@ -17,6 +17,7 @@ import androidx.appcompat.view.ContextThemeWrapper;
 
 import org.jetbrains.annotations.NotNull;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 
 import java.text.SimpleDateFormat;
@@ -93,8 +94,9 @@ public class AppHealthUtils {
      * A method to create the moniker for the database file created after exporting
      */
     public static String createCopyDBName(Context context) {
+        String userName = CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM();
         String currentTimeStamp = new SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.ENGLISH).format(Calendar.getInstance().getTime());
-        return new StringBuilder(context.getApplicationContext().getPackageName()).append('_').append(currentTimeStamp).append(".db").toString();
+        return new StringBuilder(context.getApplicationContext().getPackageName()).append('_').append(userName).append('_').append(currentTimeStamp).append(".db").toString();
     }
 
     /**
