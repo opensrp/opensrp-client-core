@@ -1,5 +1,7 @@
 package org.smartregister.util;
 
+import static org.mockito.Mockito.doReturn;
+
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
@@ -15,8 +17,11 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.repository.AllSharedPreferences;
 
 import java.time.LocalDate;
 
@@ -59,10 +64,20 @@ public class AppHealthUtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testCreateCopyDBNameReturnsCorrectTag() {
+        CoreLibrary coreLibrary = Mockito.mock(CoreLibrary.class);
+        org.smartregister.Context opensrpContext = Mockito.mock(org.smartregister.Context.class);
+        AllSharedPreferences allSharedPreferences = Mockito.mock(AllSharedPreferences.class);
+
+        String userName = "testuser";
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        doReturn(opensrpContext).when(coreLibrary).context();
+        doReturn(allSharedPreferences).when(opensrpContext).allSharedPreferences();
+        doReturn(userName).when(allSharedPreferences).fetchRegisteredANM();
+
         String copyDBName = AppHealthUtils.createCopyDBName(context);
         Assert.assertNotNull(copyDBName);
         LocalDate today = LocalDate.now();
-        Assert.assertEquals(String.format("%s_%d-%02d-%02d", context.getApplicationContext().getPackageName(), today.getYear(), today.getMonthValue(), today.getDayOfMonth()), copyDBName.substring(0, copyDBName.lastIndexOf("-")));
+        Assert.assertEquals(String.format("%s_%s_%d-%02d-%02d", context.getApplicationContext().getPackageName(), userName, today.getYear(), today.getMonthValue(), today.getDayOfMonth()), copyDBName.substring(0, copyDBName.lastIndexOf("-")));
         Assert.assertTrue(copyDBName.contains(".db"));
     }
 
