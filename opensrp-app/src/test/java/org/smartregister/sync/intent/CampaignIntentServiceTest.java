@@ -62,7 +62,7 @@ public class CampaignIntentServiceTest extends BaseUnitTest {
         Mockito.doReturn(new Response<String>(ResponseStatus.failure, null)).when(httpAgent).fetch(ArgumentMatchers.anyString());
         ReflectionHelpers.setField(openSRPContext, "httpAgent", httpAgent);
 
-        Whitebox.invokeMethod(campaignIntentService, "onHandleIntent", null);
+        Whitebox.invokeMethod(campaignIntentService, "onHandleIntent", (Object) null);
 
         Mockito.verify(campaignIntentService).sendBroadcast(intentArgumentCaptor.capture());
         Assert.assertEquals(FetchStatus.nothingFetched,
@@ -102,7 +102,7 @@ public class CampaignIntentServiceTest extends BaseUnitTest {
         CampaignRepository campaignRepository = Mockito.mock(CampaignRepository.class);
         ReflectionHelpers.setField(campaignIntentService, "campaignRepository", campaignRepository);
 
-        Whitebox.invokeMethod(campaignIntentService, "onHandleIntent", null);
+        Whitebox.invokeMethod(campaignIntentService, "onHandleIntent", (Object) null);
 
         Mockito.verify(campaignRepository, Mockito.times(2)).addOrUpdate(campaignArgumentCaptor.capture());
 
