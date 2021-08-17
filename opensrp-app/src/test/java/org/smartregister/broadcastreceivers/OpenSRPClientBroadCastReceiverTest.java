@@ -4,6 +4,7 @@ import android.content.Intent;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
@@ -71,5 +72,13 @@ public class OpenSRPClientBroadCastReceiverTest extends BaseRobolectricUnitTest 
 
         Mockito.verifyZeroInteractions(drishtiApplication);
         Mockito.verify(activity).showToast(Mockito.eq("Replication error occurred"));
+    }
+
+    @Test
+    public void testOnReceiveShouldShowNotificationWhenDeviceShutdownTriggered() {
+        Intent intent = new Intent(Intent.ACTION_SHUTDOWN);
+        openSRPClientBroadCastReceiver.onReceive(RuntimeEnvironment.application, intent);
+
+        Mockito.verify(openSRPClientBroadCastReceiver, Mockito.times(1)).onDeviceShutdown(ArgumentMatchers.anyInt());
     }
 }

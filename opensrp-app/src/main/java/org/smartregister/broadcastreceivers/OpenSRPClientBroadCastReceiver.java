@@ -10,6 +10,8 @@ import org.smartregister.R;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.activity.SecuredActivity;
 
+import java.util.Date;
+
 import timber.log.Timber;
 
 /**
@@ -53,6 +55,9 @@ public class OpenSRPClientBroadCastReceiver extends BroadcastReceiver {
                 case AllConstants.CloudantSync.ACTION_REPLICATION_ERROR:
                     ((SecuredActivity) activity).showToast(context.getString(R.string.replication_error_occurred));
                     break;
+                case Intent.ACTION_SHUTDOWN:
+                    onDeviceShutdown((new Date()).getTime());
+                    break;
                 default:
                     // Do nothing
             }
@@ -60,6 +65,15 @@ public class OpenSRPClientBroadCastReceiver extends BroadcastReceiver {
             Timber.e(e);
         }
 
+    }
+
+    /**
+     * This method is invoked everytime that the device is shut down
+     *
+     * @param time the timestamp
+     */
+    protected void onDeviceShutdown(long time) {
+        Timber.d("####### Device is shutting down at time %d", time);
     }
 
     private void forceFullySignOut() {
