@@ -37,7 +37,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.LocationTest.stripTimezone;
 import static org.smartregister.repository.BaseRepository.TYPE_Unsynced;
+import static org.smartregister.repository.LocationRepository.ID;
 import static org.smartregister.repository.LocationRepository.LOCATION_TABLE;
+import static org.smartregister.repository.LocationRepository.SYNC_STATUS;
 
 /**
  * Created by samuelgithengi on 11/26/18.
@@ -243,6 +245,18 @@ public class LocationRepositoryTest extends BaseUnitTest {
         List<Location> tags = locationRepository.getLocationsByTagName("Facility");
         assertNotNull(tags);
         assertEquals(1, tags.size());
+    }
+
+    @Test
+    public void testMarkLocationsAsSynced(){
+        String locationId = "location-id-1";
+        locationRepository.markLocationsAsSynced(locationId);
+        verify(sqLiteDatabase).update(stringArgumentCaptor.capture(),contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(), argsCaptor.capture() );
+        assertEquals(LOCATION_TABLE, stringArgumentCaptor.getAllValues().get(0));
+        assertEquals(ID + " = ?", stringArgumentCaptor.getAllValues().get(1));
+        assertEquals(locationId, contentValuesArgumentCaptor.getValue().get(ID));
+        assertEquals(BaseRepository.TYPE_Synced, contentValuesArgumentCaptor.getValue().get(SYNC_STATUS));
+
     }
 
     public MatrixCursor getCursor() {
