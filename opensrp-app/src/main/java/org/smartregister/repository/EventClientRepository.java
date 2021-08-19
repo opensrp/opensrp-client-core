@@ -164,6 +164,16 @@ public class EventClientRepository extends BaseRepository {
         db.execSQL(String.format("UPDATE %s set %s = %s WHERE %s >0", Table.event.name(), event_column.locationId.name(), "substr(json,instr(json, '\"locationId\":')+14,36)", "instr(json, '\"locationId\":')"));
     }
 
+    /**
+     * add taskId  column on event table
+     *
+     * @param db the database being upgraded
+     */
+    public static void addEventTaskId(SQLiteDatabase db) {
+        DatabaseMigrationUtils.addColumnIfNotExists(db, Table.event.name(), event_column.taskId.name(), VARCHAR);
+        DatabaseMigrationUtils.addIndexIfNotExists(db, Table.event.name(), event_column.taskId.name());
+    }
+
     public static void dropIndexes(SQLiteDatabase db, BaseTable table) {
         Cursor cursor = null;
         try {
@@ -366,7 +376,7 @@ public class EventClientRepository extends BaseRepository {
                 otherColumns.removeAll(Arrays.asList(client_column.json, client_column.updatedAt, client_column.syncStatus, client_column.validationStatus, client_column.baseEntityId,
                         client_column.residence, client_column.locationId, client_column.clientType,
                         event_column.json, event_column.updatedAt, event_column.syncStatus, event_column.validationStatus, event_column.baseEntityId, event_column.eventId
-                        , event_column.planId));
+                        , event_column.planId, event_column.taskId));
             }
 
             for (Column column : otherColumns) {
@@ -406,6 +416,7 @@ public class EventClientRepository extends BaseRepository {
         JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
         if (details != null) {
             bindString(statement, columnOrder.get(event_column.planId.name()), details.optString(AllConstants.PLAN_IDENTIFIER));
+            bindString(statement, columnOrder.get(event_column.taskId.name()), details.optString(AllConstants.TASK_IDENTIFIER));
         }
     }
 
@@ -1418,7 +1429,7 @@ public class EventClientRepository extends BaseRepository {
                 + eventTable.name()
                 + " WHERE "
                 + event_column.eventId.name()
-                + " IN (" + StringUtils.repeat(",", eventIds.size()) + ")", eventIds.toArray(new String[0]));
+                + " IN (" + StringUtils.repeat("?", ",", eventIds.size()) + ")", eventIds.toArray(new String[0]));
     }
 
     public JSONObject getEventsByFormSubmissionId(String formSubmissionId) {
@@ -1607,13 +1618,7 @@ public class EventClientRepository extends BaseRepository {
             params[len] = syncStatus;
             cursor = getReadableDatabase().rawQuery(query, params);
 
-            while (cursor.moveToNext()) {
-                String jsonEventStr = cursor.getString(0);
-
-                jsonEventStr = jsonEventStr.replaceAll("'", "");
-                Event event = convert(jsonEventStr, Event.class);
-                list.add(new EventClient(event));
-            }
+            eventCursorParser(list, cursor);
         } catch (Exception e) {
             Timber.e(e);
         } finally {
@@ -1622,6 +1627,56 @@ public class EventClientRepository extends BaseRepository {
             }
         }
         return list;
+    }
+
+    /**
+     * Returns a list of {@link Event}s wrapped in an {@link EventClient} object.
+     *
+     * @param baseEntityIds The entity identifiers of the client
+     * @param syncStatus    The sync status of the event e.g. BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_Unprocessed
+     * @param eventTypes    The type of event
+     */
+    public List<EventClient> getEvents(@NonNull List<String> baseEntityIds, @NonNull List<String> syncStatus, @NonNull List<String> eventTypes) {
+        List<EventClient> list = new ArrayList<>();
+        if (Utils.isEmptyCollection(baseEntityIds) || Utils.isEmptyCollection(syncStatus) || Utils.isEmptyCollection(eventTypes))
+            return list;
+
+        Cursor cursor = null;
+        List<String> paramsList = new ArrayList<>();
+        paramsList.addAll(baseEntityIds);
+        paramsList.addAll(syncStatus);
+        paramsList.addAll(eventTypes);
+
+        try {
+            String query = String.format("SELECT json FROM "
+                            + eventTable.name()
+                            + " WHERE " + event_column.baseEntityId.name() + " IN (%s) "
+                            + " AND " + event_column.syncStatus.name() + " IN (%s) "
+                            + " AND " + event_column.eventType.name() + " IN (%s) "
+                            + " ORDER BY " + event_column.serverVersion.name(),
+                    TextUtils.join(",", Collections.nCopies(baseEntityIds.size(), "?")), TextUtils.join(",", Collections.nCopies(syncStatus.size(), "?")), TextUtils.join(",", Collections.nCopies(eventTypes.size(), "?")));
+            String[] params = paramsList.toArray(new String[paramsList.size()]);
+            cursor = getReadableDatabase().rawQuery(query, params);
+
+            eventCursorParser(list, cursor);
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return list;
+    }
+
+    private void eventCursorParser(List<EventClient> list, Cursor cursor) {
+        while (cursor.moveToNext()) {
+            String jsonEventStr = cursor.getString(0);
+
+            jsonEventStr = jsonEventStr.replaceAll("'", "");
+            Event event = convert(jsonEventStr, Event.class);
+            list.add(new EventClient(event));
+        }
     }
 
     /**
@@ -1925,8 +1980,10 @@ public class EventClientRepository extends BaseRepository {
             values.put(event_column.syncStatus.name(), syncStatus);
             values.put(event_column.locationId.name(), jsonObject.optString(event_column.locationId.name()));
             JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
-            if (details != null)
+            if (details != null) {
                 values.put(event_column.planId.name(), details.optString(AllConstants.PLAN_IDENTIFIER));
+                values.put(event_column.taskId.name(), details.optString(AllConstants.TASK_IDENTIFIER));
+            }
             if (jsonObject.has(EVENT_ID)) {
                 values.put(event_column.eventId.name(), jsonObject.getString(EVENT_ID));
             } else if (jsonObject.has(_ID)) {
@@ -2208,7 +2265,8 @@ public class EventClientRepository extends BaseRepository {
         updatedAt(ColumnAttribute.Type.date, false, true),
         serverVersion(ColumnAttribute.Type.longnum, false, true),
         planId(ColumnAttribute.Type.text, false, true),
-        locationId(ColumnAttribute.Type.text, false, true);
+        locationId(ColumnAttribute.Type.text, false, true),
+        taskId(ColumnAttribute.Type.text, false, true);
 
         private ColumnAttribute column;
 
@@ -2257,5 +2315,13 @@ public class EventClientRepository extends BaseRepository {
     static class QueryWrapper {
         public String sqlQuery;
         public Map<String, Integer> columnOrder;
+    }
+
+    public List<Event> getEventsByTaskIds(Set<String> taskIds) {
+        return fetchEvents("SELECT json FROM "
+                + eventTable.name()
+                + " WHERE "
+                + event_column.taskId.name()
+                + " IN (" + StringUtils.repeat("?", ",", taskIds.size()) + ")", taskIds.toArray(new String[0]));
     }
 }

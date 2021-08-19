@@ -359,4 +359,11 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
         });
         verify(mPager, timeout(ASYNC_TIMEOUT)).setCurrentItem(2, false);
     }
+
+    @Test
+    public void testShowSyncStatsStartsStatsActivity() {
+        activity = spy(activity);
+        activity.showSyncStats();
+        verify(activity).startActivity(any(Intent.class));
+    }
 }

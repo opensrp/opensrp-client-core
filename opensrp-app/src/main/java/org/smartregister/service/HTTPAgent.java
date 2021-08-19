@@ -56,6 +56,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -123,7 +125,7 @@ public class HTTPAgent {
      * @param setOauthToken  A boolean to flag whether to set the OAuth2 bearer access token in the Authorization header of request.
      * @return HttpURLConnection Http connection to the OpenSRP server.
      */
-    private HttpURLConnection initializeHttp(String requestURLPath, boolean setOauthToken) throws IOException {
+    private HttpURLConnection initializeHttp(String requestURLPath, boolean setOauthToken) throws IOException, URISyntaxException {
 
         HttpURLConnection urlConnection = getHttpURLConnection(requestURLPath);
 
@@ -142,8 +144,9 @@ public class HTTPAgent {
     }
 
     @VisibleForTesting
-    protected HttpURLConnection getHttpURLConnection(String requestURLPath) throws IOException {
-        URL url = new URL(requestURLPath);
+    protected HttpURLConnection getHttpURLConnection(String requestURLPath) throws IOException, URISyntaxException {
+        URI inputURI = new URI(requestURLPath.replaceAll(" ", "%20"));
+        URL url = inputURI.normalize().toURL();
         return (HttpURLConnection) url.openConnection();
     }
 
@@ -152,8 +155,12 @@ public class HTTPAgent {
 
             HttpURLConnection urlConnection = initializeHttp(requestURLPath, true);
 
+            int responseCode = urlConnection.getResponseCode();
+
+            allSharedPreferences.updateLastAuthenticationHttpStatus(responseCode);
+
             //If unauthorized invalidate cache of old token retry
-            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+            if (HttpStatus.SC_UNAUTHORIZED == responseCode) {
 
                 invalidateExpiredCachedAccessToken();
 
@@ -163,7 +170,7 @@ public class HTTPAgent {
 
             return processResponse(urlConnection);
 
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             Timber.e(ex, "EXCEPTION %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
@@ -182,8 +189,12 @@ public class HTTPAgent {
 
             urlConnection = generatePostRequest(postURLPath, jsonPayload);
 
+            int responseCode = urlConnection.getResponseCode();
+
+            allSharedPreferences.updateLastAuthenticationHttpStatus(responseCode);
+
             //If unauthorized invalidate cache of old token retry
-            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+            if (HttpStatus.SC_UNAUTHORIZED == responseCode) {
 
                 invalidateExpiredCachedAccessToken();
 
@@ -193,7 +204,7 @@ public class HTTPAgent {
 
             return processResponse(urlConnection);
 
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             Timber.e(ex, "EXCEPTION: %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
@@ -201,7 +212,7 @@ public class HTTPAgent {
 
     @NonNull
     @VisibleForTesting
-    protected HttpURLConnection generatePostRequest(String postURLPath, String jsonPayload) throws IOException {
+    protected HttpURLConnection generatePostRequest(String postURLPath, String jsonPayload) throws IOException, URISyntaxException {
         HttpURLConnection urlConnection;
         urlConnection = initializeHttp(postURLPath, true);
 
@@ -274,7 +285,7 @@ public class HTTPAgent {
                 Timber.e("Bad response from Dristhi. Status code: %s username: %s using %s ", statusCode, userName, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             Timber.e(e, "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
         } catch (SocketTimeoutException e) {
@@ -304,8 +315,11 @@ public class HTTPAgent {
             HttpURLConnection urlConnection = initializeHttp(requestURL, false);
             urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(accessToken).toString());
 
+            int responseCode = urlConnection.getResponseCode();
+
+            allSharedPreferences.updateLastAuthenticationHttpStatus(responseCode);
             //If unauthorized invalidate cache of old token retry
-            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+            if (HttpStatus.SC_UNAUTHORIZED == responseCode) {
 
                 AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
                 AccountHelper.invalidateAuthToken(authenticatorXml.getAccountType(), accessToken);
@@ -315,7 +329,7 @@ public class HTTPAgent {
             }
             return processResponse(urlConnection);
 
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             Timber.e(ex, "EXCEPTION %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
@@ -325,8 +339,9 @@ public class HTTPAgent {
     private Response<String> processResponse(HttpURLConnection urlConnection) {
         String responseString;
         String totalRecords;
+        int statusCode = -1;
         try {
-            int statusCode = urlConnection.getResponseCode();
+            statusCode = urlConnection.getResponseCode();
 
             InputStream inputStream = null;
 
@@ -355,7 +370,8 @@ public class HTTPAgent {
         } finally {
             closeConnection(urlConnection);
         }
-        return new Response<>(ResponseStatus.success, responseString).withTotalRecords(Utils.tryParseLong(totalRecords, 0));
+        return new Response<>(statusCode >= HttpStatus.SC_BAD_REQUEST ? ResponseStatus.failure : ResponseStatus.success, responseString)
+                .withTotalRecords(Utils.tryParseLong(totalRecords, 0));
     }
 
 
@@ -426,7 +442,7 @@ public class HTTPAgent {
             Timber.e(e, "Protocol exception %s", e.toString());
         } catch (SocketTimeoutException e) {
             Timber.e(e, "SocketTimeout %s %s", TIMEOUT, e.toString());
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             Timber.e(e, "MalformedUrl %s %s", MALFORMED_URL, e.toString());
         } catch (IOException e) {
             Timber.e(e, "IOException %s %s", NO_INTERNET_CONNECTIVITY, e.toString());
@@ -636,7 +652,7 @@ public class HTTPAgent {
                 return new AccountResponse(statusCode, accountError);
 
             }
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             Timber.e(e, "Failed to check credentials bad url %s", tokenEndpointURL);
             accountError = new AccountError(0, MALFORMED_URL.name());
 
@@ -692,7 +708,6 @@ public class HTTPAgent {
             urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(oauthAccessToken).toString());
 
             int statusCode = urlConnection.getResponseCode();
-
             InputStream inputStream;
             String responseString = null;
             if (statusCode >= HttpStatus.SC_BAD_REQUEST)
@@ -723,7 +738,7 @@ public class HTTPAgent {
                 Timber.e("Bad response from Server. Status code: %s using %s ", statusCode, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             Timber.e(e, "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
         } catch (SocketTimeoutException e) {
@@ -776,6 +791,9 @@ public class HTTPAgent {
             httpUrlConnection = initializeHttp(downloadURL, true);
 
             int status = httpUrlConnection.getResponseCode();
+
+            allSharedPreferences.updateLastAuthenticationHttpStatus(status);
+
             if (status == HttpURLConnection.HTTP_OK) {
 
                 if (StringUtils.isBlank(httpUrlConnection.getContentType()))
@@ -819,7 +837,7 @@ public class HTTPAgent {
                 return new Response<DownloadStatus>(ResponseStatus.failure, DownloadStatus.failedDownloaded);
             }
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             Timber.d(e, "DownloadFormService");
             return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.failedDownloaded);
         } finally {
@@ -884,7 +902,12 @@ public class HTTPAgent {
 
             AccountUserInfo userInfo = null;
 
-            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+            int responseCode = urlConnection.getResponseCode();
+
+            allSharedPreferences.updateLastAuthenticationHttpStatus(responseCode);
+
+            //If unauthorized invalidate cache of old token retry
+            if (HttpStatus.SC_UNAUTHORIZED == responseCode) {
 
                 invalidateExpiredCachedAccessToken();
 
@@ -918,7 +941,7 @@ public class HTTPAgent {
                 return false;
             }
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
 
             Timber.e(e);
 
@@ -947,9 +970,12 @@ public class HTTPAgent {
 
             urlConnection = initializeHttp(baseUrl, true);
 
-            int statusCode = urlConnection.getResponseCode();
+            int statusCode =  urlConnection.getResponseCode();
 
-            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+            allSharedPreferences.updateLastAuthenticationHttpStatus(statusCode);
+
+            //If unauthorized invalidate cache of old token retry
+            if (HttpStatus.SC_UNAUTHORIZED == statusCode) {
 
                 invalidateExpiredCachedAccessToken();
 
@@ -970,7 +996,7 @@ public class HTTPAgent {
                 Timber.i("User is Authorized");
             }
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             Timber.e(e);
         } finally {
 
@@ -1006,7 +1032,7 @@ public class HTTPAgent {
                 return gson.fromJson(responseString, AccountConfiguration.class);
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             Timber.e(e);
         } finally {
 

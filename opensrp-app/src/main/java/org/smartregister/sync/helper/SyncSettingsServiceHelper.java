@@ -17,6 +17,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.intent.SettingsSyncIntentService;
 import org.smartregister.util.JsonFormUtils;
+import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -165,6 +166,11 @@ public class SyncSettingsServiceHelper {
         return getInstance().getSyncConfiguration().getSettingsSyncFilterParam();
     }
 
+    @VisibleForTesting
+    protected String getGlobalSettingsQueryParams() {
+        return Utils.composeApiCallParamsString(getInstance().getSyncConfiguration().getGlobalSettingsQueryParams());
+    }
+
     /**
      * Gets settings that are not tied to team,teamid,location,provider
      *
@@ -172,7 +178,7 @@ public class SyncSettingsServiceHelper {
      * @throws JSONException
      */
     public JSONArray pullGlobalSettingsFromServer(String accessToken) throws JSONException {
-        String url = SettingsSyncIntentService.SETTINGS_URL + "?" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp();
+        String url = SettingsSyncIntentService.SETTINGS_URL + "?" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp() + getGlobalSettingsQueryParams();
         return pullSettings(url, accessToken);
     }
 

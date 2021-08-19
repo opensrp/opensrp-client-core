@@ -2,6 +2,8 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
+import androidx.core.util.Consumer;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -14,6 +16,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,22 +24,28 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.Location;
+import org.smartregister.domain.Period;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
+import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.util.DateUtil;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -46,6 +55,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -108,7 +118,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
     @Before
     public void setUp() {
 
-        taskRepository = new TaskRepository(taskNotesRepository);
+        taskRepository = spy(new TaskRepository(taskNotesRepository));
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase().compileStatement(anyString())).thenReturn(sqLiteStatement);
@@ -116,8 +126,38 @@ public class TaskRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void testAddOrUpdateShouldAdd() {
+    public void testCreateTableShouldExecuteCreateTableQueryAndCreateIndexQuery() {
+        TaskRepository.createTable(sqLiteDatabase);
 
+        verify(sqLiteDatabase).execSQL("CREATE TABLE task (_id VARCHAR NOT NULL PRIMARY KEY,plan_id VARCHAR NOT NULL, group_id VARCHAR NOT NULL, status VARCHAR  NOT NULL, business_status VARCHAR,  priority VARCHAR,  code VARCHAR , description VARCHAR , focus VARCHAR , for VARCHAR NOT NULL, start INTEGER , end INTEGER , authored_on INTEGER NOT NULL, last_modified INTEGER NOT NULL, owner VARCHAR NOT NULL, sync_status VARCHAR DEFAULT Synced, server_version INTEGER, structure_id VARCHAR, reason_reference VARCHAR, location VARCHAR, requester VARCHAR,  restriction_repeat INTEGER,  restriction_start INTEGER,  restriction_end INTEGER )");
+        verify(sqLiteDatabase).execSQL("CREATE INDEX task_plan_group_ind  ON task(plan_id,group_id,sync_status)");
+    }
+
+    @Test
+    public void testUpdatePriorityToEnumAndAddRestrictionsShouldExecuteQueriesAddingRestrictionPropertyFields() {
+        TaskRepository.updatePriorityToEnumAndAddRestrictions(sqLiteDatabase);
+
+        verify(sqLiteDatabase).execSQL("ALTER TABLE task ADD COLUMN restriction_repeat INTEGER");
+        verify(sqLiteDatabase).execSQL("ALTER TABLE task ADD COLUMN restriction_start INTEGER");
+        verify(sqLiteDatabase).execSQL("ALTER TABLE task ADD COLUMN restriction_end INTEGER");
+
+        verify(sqLiteDatabase).beginTransaction();
+
+        verify(sqLiteDatabase).execSQL("ALTER TABLE task RENAME TO _v2task");
+        verify(sqLiteDatabase).execSQL("CREATE TABLE task (_id VARCHAR NOT NULL PRIMARY KEY,plan_id VARCHAR NOT NULL, group_id VARCHAR NOT NULL, status VARCHAR  NOT NULL, business_status VARCHAR,  priority VARCHAR,  code VARCHAR , description VARCHAR , focus VARCHAR , for VARCHAR NOT NULL, start INTEGER , end INTEGER , authored_on INTEGER NOT NULL, last_modified INTEGER NOT NULL, owner VARCHAR NOT NULL, sync_status VARCHAR DEFAULT Synced, server_version INTEGER, structure_id VARCHAR, reason_reference VARCHAR, location VARCHAR, requester VARCHAR,  restriction_repeat INTEGER,  restriction_start INTEGER,  restriction_end INTEGER )");
+        verify(sqLiteDatabase).execSQL("INSERT INTO task (rowid, _id, plan_id, group_id, status, business_status, priority, code, description, focus, for, start, end, authored_on, last_modified, owner, sync_status, server_version, structure_id, reason_reference, location, requester, restriction_repeat, restriction_start, restriction_end) SELECT rowid, _id, plan_id, group_id, status, business_status, priority, code, description, focus, for, start, end, authored_on, last_modified, owner, sync_status, server_version, structure_id, reason_reference, location, requester, restriction_repeat, restriction_start, restriction_end FROM _v2task");
+        verify(sqLiteDatabase).execSQL("DROP TABLE _v2task");
+
+        verify(sqLiteDatabase).endTransaction();
+
+        ArgumentCaptor<Object[]> queryArgsCaptor = ArgumentCaptor.forClass(Object[].class);
+        verify(sqLiteDatabase).execSQL(Mockito.eq("UPDATE task SET priority=?"), queryArgsCaptor.capture());
+
+        assertEquals(Task.TaskPriority.ROUTINE.name(), queryArgsCaptor.getValue()[0]);
+    }
+
+    @Test
+    public void testAddOrUpdateShouldAdd() {
         Task task = gson.fromJson(taskJson, Task.class);
         taskRepository.addOrUpdate(task);
 
@@ -135,8 +175,55 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals("2018_IRS-3734", contentValues.getAsString("group_id"));
 
         verify(taskNotesRepository).addOrUpdate(task.getNotes().get(0), task.getIdentifier());
+    }
 
+    @Test
+    public void testAddOrUpdateShouldDoNothingWhenGivenOlderUpdateTask() {
+        Task updateTask = gson.fromJson(taskJson, Task.class);
+        Task dbTask = gson.fromJson(taskJson, Task.class);
 
+        // Reverse updateTask.lastModified date
+        Calendar updateTaskDate = Calendar.getInstance();
+        updateTaskDate.setTime(dbTask.getLastModified().toDate());
+        updateTaskDate.add(Calendar.HOUR_OF_DAY, -1);
+
+        updateTask.setLastModified(DateUtil.getDateTimeFromMillis(updateTaskDate.getTimeInMillis()));
+
+        doReturn(dbTask).when(taskRepository).getTaskByIdentifier(dbTask.getIdentifier());
+
+        // Call the method under test
+        taskRepository.addOrUpdate(updateTask, true);
+
+        verify(sqLiteDatabase, never()).replace(Mockito.anyString(), Mockito.nullable(String.class), Mockito.any(ContentValues.class));
+        verify(sqLiteDatabase, never()).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class));
+    }
+
+    @Test
+    public void testAddOrUpdateShouldCallReplaceWithRestrictionContentValues() {
+        Task task = gson.fromJson(taskJson, Task.class);
+        DateTime start = new DateTime(1593418583L);
+        DateTime stop = new DateTime(1624954599424L);
+        Task.Restriction restriction = new Task.Restriction(4, new Period(start, stop));
+        task.setRestriction(restriction);
+
+        // Call the method under test
+        taskRepository.addOrUpdate(task, false);
+
+        verify(sqLiteDatabase).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
+
+        Iterator<String> iterator = stringArgumentCaptor.getAllValues().iterator();
+        assertEquals(TASK_TABLE, iterator.next());
+        assertNull(iterator.next());
+
+        ContentValues contentValues = contentValuesArgumentCaptor.getValue();
+        assertEquals(24, contentValues.size());
+
+        assertEquals("tsk11231jh22", contentValues.getAsString("_id"));
+        assertEquals("IRS_2018_S1", contentValues.getAsString("plan_id"));
+        assertEquals("2018_IRS-3734", contentValues.getAsString("group_id"));
+        assertEquals(start.getMillis(), (long) contentValues.getAsLong("restriction_start"));
+        assertEquals(stop.getMillis(), (long) contentValues.getAsLong("restriction_end"));
+        assertEquals(4, (int) contentValues.getAsInteger("restriction_repeat"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -180,6 +267,17 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals("2018-10-31T0700", task.getLastModified().toString(formatter));
         assertEquals("demouser", task.getOwner());
 
+    }
+
+    @Test
+    public void testReadTask() {
+        List<Task> tasks = new ArrayList<>();
+        Consumer<Task> consumer = tasks::add;
+
+        when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any())).thenReturn(getCursor());
+        taskRepository.readTasks("IRS_2018_S1", "2018_IRS-3734", "CODE", consumer);
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+        assertEquals(1, tasks.size());
     }
 
     @Test
@@ -247,7 +345,6 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
     }
 
-
     public static MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(TaskRepository.COLUMNS);
         Task task = gson.fromJson(taskJson, Task.class);
@@ -279,13 +376,17 @@ public class TaskRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void updateTaskStructureIdFromStructure() throws Exception {
+    public void updateTaskStructureIdFromStructure() {
         List<Location> locations = new ArrayList<>();
         Location location = gson.fromJson(structureJson, Location.class);
         locations.add(location);
 
-        taskRepository.updateTaskStructureIdFromStructure(locations);
         assertTrue(taskRepository.updateTaskStructureIdFromStructure(locations));
+    }
+
+    @Test
+    public void updateTaskStructureIdFromStructureShouldReturnFalseWhenLocationsListIsNull(){
+        assertFalse(taskRepository.updateTaskStructureIdFromStructure(null));
     }
 
 
@@ -303,6 +404,54 @@ public class TaskRepositoryTest extends BaseUnitTest {
         taskRepository.cancelTasksForEntity(null);
         verify(sqLiteDatabase, never()).update(any(), any(), any(), any());
         verifyZeroInteractions(sqLiteDatabase);
+    }
+
+    @Test
+    public void testCancelTaskByIdentifierShouldDoNothingWhenTaskIdentifierIsNotExistent() {
+        String taskIdentifier = "my-task-identifier";
+
+        // Call the method under test
+        taskRepository.cancelTaskByIdentifier(taskIdentifier);
+
+        // Perform verifications
+        verify(taskRepository, never()).addOrUpdate(Mockito.any(Task.class), Mockito.eq(true));
+        verify(taskRepository).getTaskByIdentifier(taskIdentifier);
+    }
+
+    @Test
+    public void testCancelTaskByIdentifierShouldNotUpdateTaskWhenTaskIdentifierIsNull() {
+        String taskIdentifier = "my-task-identifier";
+
+        // Call the method under test
+        taskRepository.cancelTaskByIdentifier(null);
+
+        // Perform verifications
+        verify(taskRepository, never()).addOrUpdate(Mockito.any(Task.class), Mockito.eq(true));
+        verify(taskRepository, never()).getTaskByIdentifier(taskIdentifier);
+    }
+
+
+    @Test
+    public void testCancelTaskByIdentifierShouldCallAddOrUpdateTaskWhenTaskIdentifierExists() {
+        String taskIdentifier = "my-task-identifier";
+        Task task = new Task();
+        task.setIdentifier(taskIdentifier);
+        task.setStatus(READY);
+
+        ArgumentCaptor<Task> taskArgumentCaptor = ArgumentCaptor.forClass(Task.class);
+
+        Mockito.doReturn(task).when(taskRepository).getTaskByIdentifier(taskIdentifier);
+
+        // Call the method under test
+        taskRepository.cancelTaskByIdentifier(taskIdentifier);
+
+        // Perform verifications
+        verify(taskRepository).addOrUpdate(taskArgumentCaptor.capture(), Mockito.eq(true));
+        verify(taskRepository, Mockito.times(2)).getTaskByIdentifier(taskIdentifier);
+
+        Task actualTask = taskArgumentCaptor.getValue();
+        assertEquals(task, actualTask);
+        assertEquals(CANCELLED, actualTask.getStatus());
     }
 
 
@@ -533,7 +682,203 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals("2018-10-31T0700", task.getAuthoredOn().toString(formatter));
         assertEquals("2018-10-31T0700", task.getLastModified().toString(formatter));
         assertEquals("demouser", task.getOwner());
+    }
 
+    @Test
+    public void testGetUnsyncedCreatedTasksAndTaskStatusCount() {
+        MatrixCursor cursor = new MatrixCursor(new String[]{"count(*)"});
+        cursor.addRow(new Object[]{89});
+
+        String query = "SELECT count(*) FROM task WHERE sync_status =? OR server_version IS NULL OR sync_status = ?";
+        when(sqLiteDatabase.rawQuery(query,
+                new String[]{BaseRepository.TYPE_Created, BaseRepository.TYPE_Unsynced})).thenReturn(cursor);
+
+        // Call method under test
+        int totalTasks = taskRepository.getUnsyncedCreatedTasksAndTaskStatusCount();
+
+        // Verifications and assertions
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+
+        assertEquals(query, stringArgumentCaptor.getValue());
+        assertEquals(BaseRepository.TYPE_Created, argsCaptor.getValue()[0]);
+        assertEquals(BaseRepository.TYPE_Unsynced, argsCaptor.getValue()[1]);
+        assertEquals(89, totalTasks);
+    }
+
+    @Test
+    public void testGetUnsyncedCreatedTasksAndTaskStatusCountShouldReturn0WhenCursorIsNull() {
+        String query = "SELECT count(*) FROM task WHERE sync_status =? OR server_version IS NULL OR sync_status = ?";
+        when(sqLiteDatabase.rawQuery(query,
+                new String[]{BaseRepository.TYPE_Created, BaseRepository.TYPE_Unsynced})).thenReturn(null);
+
+        // Call method under test
+        int totalTasks = taskRepository.getUnsyncedCreatedTasksAndTaskStatusCount();
+
+        // Verifications and assertions
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+
+        assertEquals(query, stringArgumentCaptor.getValue());
+        assertEquals(BaseRepository.TYPE_Created, argsCaptor.getValue()[0]);
+        assertEquals(BaseRepository.TYPE_Unsynced, argsCaptor.getValue()[1]);
+        assertEquals(0, totalTasks);
+    }
+
+    @Test
+    public void testGetEntityIdsWithDuplicateTasks() {
+
+        String entityId = "entity-id-1";
+        MatrixCursor cursor = new MatrixCursor(new String[]{"for"});
+        cursor.addRow(new Object[]{entityId});
+        String query = "SELECT " +
+                "    DISTINCT(for) " +
+                "FROM " +
+                "    task " +
+                "WHERE status IN (?, ?) " +
+                "GROUP BY " +
+                "    plan_id, for, code " +
+                "HAVING " +
+                "    COUNT(*) > 1";
+
+        when(sqLiteDatabase.rawQuery(query, new String[]{Task.TaskStatus.READY.name(), Task.TaskStatus.COMPLETED.name()})).thenReturn(cursor);
+
+        List<String> entities = taskRepository.getEntityIdsWithDuplicateTasks();
+        assertEquals(1, entities.size());
+        assertEquals(entityId, entities.get(0));
+
+    }
+
+    @Test
+    public void testGetDuplicateTasksForEntity() {
+        MatrixCursor cursor = getCursor();
+        Task task = gson.fromJson(taskJson, Task.class);
+        task.setIdentifier("task-2-identifier");
+        String entityId = "structure-id-1";
+        List<String> taskIds = new ArrayList<>();
+        taskIds.add("tsk11231jh22");
+        taskIds.add("task-2-identifier");
+        cursor.addRow(new Object[]{2, task.getIdentifier(), task.getPlanIdentifier(), task.getGroupIdentifier(),
+                task.getStatus().name(), task.getBusinessStatus(), task.getPriority().name(), task.getCode(),
+                task.getDescription(), task.getFocus(), task.getForEntity(),
+                task.getExecutionPeriod().getStart().getMillis(),
+                null,
+                task.getAuthoredOn().getMillis(), task.getLastModified().getMillis(),
+                task.getOwner(), task.getSyncStatus(), task.getServerVersion(), task.getStructureId(), task.getReasonReference(), null, null, null, null, null});
+
+        String query = "SELECT t1.* " +
+                "FROM task t1 " +
+                "JOIN (SELECT " +
+                "plan_id, for, code, COUNT(*) as count " +
+                "FROM " +
+                "    task " +
+                "WHERE for = ? " +
+                "GROUP BY " +
+                "    plan_id, for, code " +
+                "HAVING  " +
+                "    COUNT(*) > 1) t2 " +
+                "ON t1.plan_id = t2.plan_id " +
+                "AND t1.for = t2.for " +
+                "AND t1.code = t2.code " +
+                "AND t1.for = ? " +
+                "ORDER BY t1.for";
+        when(sqLiteDatabase.rawQuery(query, new String[]{entityId, entityId})).thenReturn(cursor);
+
+        Set<Task> duplicateTasks = taskRepository.getDuplicateTasksForEntity(entityId);
+        assertEquals(2, duplicateTasks.size());
+        for (Task taskEntity : duplicateTasks) {
+            assertTrue(taskIds.contains(taskEntity.getIdentifier()));
+        }
+    }
+
+    @Test
+    public void testDeleteTasksByIds() {
+        List<String> taskIds = new ArrayList<>();
+        taskIds.add("taskId-1");
+        taskIds.add("taskId-2");
+        taskRepository.deleteTasksByIds(taskIds);
+        verify(sqLiteDatabase).delete(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), argsCaptor.capture());
+        assertEquals("task", stringArgumentCaptor.getAllValues().get(0));
+        assertEquals("_id in (? , ? )", stringArgumentCaptor.getAllValues().get(1));
+        assertEquals("taskId-1", argsCaptor.getAllValues().get(0)[0]);
+        assertEquals("taskId-2", argsCaptor.getAllValues().get(0)[1]);
+    }
+
+    @Test
+    public void testGetTasks() throws JSONException {
+        long lastRowId = 0L;
+        int limit = 10;
+        String jurisdictionId = "jurisdiction-id";
+
+        Task task = gson.fromJson(taskJson, Task.class);
+        MatrixCursor matrixCursor = getCursor();
+        matrixCursor.addRow(new Object[]{789, "identifier-2", task.getPlanIdentifier(), task.getGroupIdentifier(),
+                task.getStatus().name(), task.getBusinessStatus(), task.getPriority().name(), task.getCode(),
+                task.getDescription(), task.getFocus(), task.getForEntity(),
+                task.getExecutionPeriod().getStart().getMillis(),
+                null,
+                task.getAuthoredOn().getMillis(), task.getLastModified().getMillis(),
+                task.getOwner(), task.getSyncStatus(), task.getServerVersion(), task.getStructureId(), task.getReasonReference(), null, null, null, null, null});
+        ArgumentCaptor<Object[]> objectArrayCaptor = ArgumentCaptor.forClass(Object[].class);
+        when(sqLiteDatabase.rawQuery(Mockito.eq("SELECT rowid,* FROM task WHERE  group_id =? AND rowid > ?  ORDER BY rowid ASC LIMIT ?")
+                , objectArrayCaptor.capture())).thenReturn(matrixCursor);
+
+        // Call the actual method under test
+        JsonData jsonData = taskRepository.getTasks(lastRowId, limit, jurisdictionId);
+
+        // Perform assertions
+        assertEquals(789, jsonData.getHighestRecordId());
+        assertEquals(2, jsonData.getJsonArray().length());
+
+        JSONObject taskObject = jsonData.getJsonArray().getJSONObject(0);
+
+        assertEquals("Spray House", taskObject.getString("description"));
+        assertEquals("tsk11231jh22", taskObject.getString("identifier"));
+
+        assertEquals("identifier-2", jsonData.getJsonArray().getJSONObject(1).getString("identifier"));
+
+        Object[] queryArgs = objectArrayCaptor.getValue();
+        assertEquals(jurisdictionId, queryArgs[0]);
+        assertEquals(lastRowId, queryArgs[1]);
+        assertEquals(limit, queryArgs[2]);
+    }
+
+    @Test
+    public void testGetTasksByEntityShouldByForProperty() throws JSONException {
+        Task task = gson.fromJson(taskJson, Task.class);
+        MatrixCursor matrixCursor = getCursor();
+        matrixCursor.addRow(new Object[]{789, "identifier-2", task.getPlanIdentifier(), task.getGroupIdentifier(),
+                task.getStatus().name(), task.getBusinessStatus(), task.getPriority().name(), task.getCode(),
+                task.getDescription(), task.getFocus(), task.getForEntity(),
+                task.getExecutionPeriod().getStart().getMillis(),
+                null,
+                task.getAuthoredOn().getMillis(), task.getLastModified().getMillis(),
+                task.getOwner(), task.getSyncStatus(), task.getServerVersion(), task.getStructureId(), task.getReasonReference(), null, null, null, null, null});
+        ArgumentCaptor<String[]> stringArrayCaptor = ArgumentCaptor.forClass(String[].class);
+        when(sqLiteDatabase.rawQuery(Mockito.eq("SELECT * FROM task WHERE for =? AND status  NOT IN (?,?)")
+                , stringArrayCaptor.capture())).thenReturn(matrixCursor);
+
+        // Call the actual method under test
+        String forEntity = "location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc";
+        Set<Task> tasks = taskRepository.getTasksByEntity(forEntity);
+
+        // Perform assertions
+        assertEquals(2, tasks.size());
+        TreeSet<Task> taskTreeSet = new TreeSet<>((o1, o2) -> o1.getIdentifier().compareTo(o2.getIdentifier()));
+        taskTreeSet.addAll(tasks);
+
+        Iterator<Task> taskIterator = taskTreeSet.iterator();
+        Task resultTask1 = taskIterator.next();
+        Task resultTask2 = taskIterator.next();
+
+        assertEquals("identifier-2", resultTask1.getIdentifier());
+        assertEquals(task.getFocus(), resultTask1.getFocus());
+
+        assertEquals("Spray House", resultTask2.getDescription());
+        assertEquals("tsk11231jh22", resultTask2.getIdentifier());
+
+        Object[] queryArgs = stringArrayCaptor.getValue();
+        assertEquals(forEntity, queryArgs[0]);
+        assertEquals(Task.TaskStatus.CANCELLED.name(), queryArgs[1]);
+        assertEquals(Task.TaskStatus.ARCHIVED.name(), queryArgs[2]);
     }
 
 }

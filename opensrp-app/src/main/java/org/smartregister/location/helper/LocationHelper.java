@@ -19,6 +19,7 @@ import org.smartregister.util.Utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import timber.log.Timber;
-
 
 /**
  * Created by ndegwamartin on 09/04/2018.
@@ -218,8 +218,11 @@ public class LocationHelper {
         return response;
     }
 
-
     public List<String> generateDefaultLocationHierarchy(List<String> allowedLevels) {
+        return generateDefaultLocationHierarchy(allowedLevels, false);
+    }
+
+    public List<String> generateDefaultLocationHierarchy(List<String> allowedLevels, boolean idKeys) {
         if (Utils.isEmptyCollection(allowedLevels)) {
             return new ArrayList<>();
         }
@@ -230,7 +233,7 @@ public class LocationHelper {
             LinkedHashMap<String, TreeNode<String, Location>> map = map();
             if (!Utils.isEmptyMap(map)) {
                 for (Map.Entry<String, TreeNode<String, Location>> entry : map.entrySet()) {
-                    List<String> curResult = getDefaultLocationHierarchy(defaultLocationUuid, entry.getValue(), new ArrayList<>(), allowedLevels);
+                    List<String> curResult = getDefaultLocationHierarchy(defaultLocationUuid, entry.getValue(), new ArrayList<>(), allowedLevels, idKeys);
                     if (!Utils.isEmptyCollection(curResult)) {
                         return curResult;
                     }
@@ -244,10 +247,19 @@ public class LocationHelper {
 
     public List<FormLocation> generateLocationHierarchyTree(boolean withOtherOption, List<String> allowedLevels) {
         LinkedHashMap<String, TreeNode<String, Location>> map = map();
-        return generateLocationHierarchyTree(withOtherOption, allowedLevels, map);
+        return generateLocationHierarchyTree(withOtherOption, allowedLevels, map, false);
+    }
+
+    public List<FormLocation> generateLocationHierarchyTree(boolean withOtherOption, List<String> allowedLevels, boolean idKey) {
+        LinkedHashMap<String, TreeNode<String, Location>> map = map();
+        return generateLocationHierarchyTree(withOtherOption, allowedLevels, map, idKey);
     }
 
     public List<FormLocation> generateLocationHierarchyTree(boolean withOtherOption, List<String> allowedLevels, Map<String, TreeNode<String, Location>> map) {
+        return generateLocationHierarchyTree(withOtherOption,allowedLevels,map,false);
+    }
+
+    public List<FormLocation> generateLocationHierarchyTree(boolean withOtherOption, List<String> allowedLevels, Map<String, TreeNode<String, Location>> map, boolean idKey) {
         if (Utils.isEmptyCollection(allowedLevels)) {
             return new ArrayList<>();
         }
@@ -256,7 +268,7 @@ public class LocationHelper {
         try {
             if (!Utils.isEmptyMap(map)) {
                 for (Map.Entry<String, TreeNode<String, Location>> entry : map.entrySet()) {
-                    List<FormLocation> foundLocationList = getFormJsonData(entry.getValue(), allowedLevels);
+                    List<FormLocation> foundLocationList = getFormJsonData(entry.getValue(), allowedLevels,idKey);
                     if (!Utils.isEmptyCollection(foundLocationList)) {
                         formLocationList.addAll(foundLocationList);
                     }
@@ -414,6 +426,11 @@ public class LocationHelper {
 
     public List<String> getDefaultLocationHierarchy(String defaultLocationUuid, TreeNode<String,
             Location> openMrsLocationData, List<String> parents, List<String> allowedLevels) {
+        return getDefaultLocationHierarchy(defaultLocationUuid, openMrsLocationData, parents, allowedLevels, false);
+    }
+
+    public List<String> getDefaultLocationHierarchy(String defaultLocationUuid, TreeNode<String,
+            Location> openMrsLocationData, List<String> parents, List<String> allowedLevels, boolean idValue) {
         try {
             List<String> hierarchy = new ArrayList<>(parents);
             if (openMrsLocationData == null) {
@@ -429,7 +446,7 @@ public class LocationHelper {
             if (!Utils.isEmptyCollection(levels)) {
                 for (String level : levels) {
                     if (allowedLevels.contains(level)) {
-                        hierarchy.add(node.getName());
+                        hierarchy.add(idValue? node.getLocationId(): node.getName());
                     }
                 }
             }
@@ -441,7 +458,7 @@ public class LocationHelper {
             LinkedHashMap<String, TreeNode<String, Location>> childMap = childMap(openMrsLocationData);
             if (!Utils.isEmptyMap(childMap)) {
                 for (Map.Entry<String, TreeNode<String, Location>> childEntry : childMap.entrySet()) {
-                    List<String> curResult = getDefaultLocationHierarchy(defaultLocationUuid, childEntry.getValue(), hierarchy, allowedLevels);
+                    List<String> curResult = getDefaultLocationHierarchy(defaultLocationUuid, childEntry.getValue(), hierarchy, allowedLevels,idValue);
                     if (!Utils.isEmptyCollection(curResult)) {
                         return curResult;
                     }
@@ -454,7 +471,7 @@ public class LocationHelper {
     }
 
     private List<FormLocation> getFormJsonData(TreeNode<String, Location> openMrsLocationData,
-                                               List<String> allowedLevels) {
+                                               List<String> allowedLevels, boolean idKey) {
         List<FormLocation> allLocationData = new ArrayList<>();
         try {
             FormLocation formLocation = new FormLocation();
@@ -470,9 +487,9 @@ public class LocationHelper {
 
             String name = node.getName();
             formLocation.name = getOpenMrsReadableName(name);
-            formLocation.key = name;
+            formLocation.key = idKey ? node.getLocationId() : name;
 
-            Set<String> levels = node.getTags();
+            Set<String> levels =  node.getTags() == null ? new HashSet<>(allowedLevels) : node.getTags();
             formLocation.level = isLocationTagsShownEnabled() && levels != null && !levels.isEmpty() ? levels.iterator().next() : "";
 
 
@@ -480,7 +497,7 @@ public class LocationHelper {
             if (!Utils.isEmptyMap(childMap)) {
                 List<FormLocation> children = new ArrayList<>();
                 for (Map.Entry<String, TreeNode<String, Location>> childEntry : childMap.entrySet()) {
-                    List<FormLocation> childFormLocations = getFormJsonData(childEntry.getValue(), allowedLevels);
+                    List<FormLocation> childFormLocations = getFormJsonData(childEntry.getValue(), allowedLevels, idKey);
                     if (!Utils.isEmptyCollection(childFormLocations)) {
                         children.addAll(childFormLocations);
                     }
@@ -494,11 +511,9 @@ public class LocationHelper {
                     }
                 }
 
-                if (!allowed) {
-                    for (FormLocation childLocation : children) {
-                        allLocationData.add(childLocation);
-                    }
-                }
+                if (!allowed)
+                    allLocationData.addAll(children);
+
             }
 
             for (String level : levels) {
@@ -687,6 +702,16 @@ public class LocationHelper {
     public String getDefaultLocationLevel() {
         return DEFAULT_LOCATION_LEVEL;
     }
+
+
+    public List<String> getLocationIds() {
+        return locationIds;
+    }
+
+    public List<String> getLocationNames() {
+        return locationNames;
+    }
+
 
     /**
      * Gets list of values for display in the service locations helper for alternative data capture strategies

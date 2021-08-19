@@ -2,8 +2,6 @@ package org.smartregister.repository.dao;
 
 import android.content.Intent;
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.ibm.fhir.model.resource.QuestionnaireResponse;
 import com.ibm.fhir.model.resource.Task;
 
@@ -29,6 +27,8 @@ import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.List;
 import java.util.UUID;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.ibm.fhir.model.type.code.TaskStatus.READY;
 import static org.junit.Assert.assertEquals;
@@ -107,10 +107,27 @@ public class TaskDaoImplTest extends BaseUnitTest {
     }
 
     @Test
-    public void testFindTasksByJurisdiction() {
+    public void testFindTasksByJurisdictionAndPlanShouldReturnMatchingRecords() {
+        String jurisdictionId = "jurisdiction-id";
+        String planId = "plan-id";
+
+        String query = "SELECT * FROM task WHERE group_id =? AND plan_id =?"; // ensure query exactly matches what is in TaskDaoImpl
+        when(sqLiteDatabase.rawQuery(query, new String[]{jurisdictionId, planId})).thenReturn(getCursor());
+        taskDao = Mockito.spy(taskDao);
+
+        // Call the method under test
+        List<Task> allTasks = taskDao.findTasksByJurisdiction(jurisdictionId, planId);
+
+        // Perform verifications and assertions
+        verify(taskDao).getTasksByJurisdictionAndPlan(jurisdictionId, planId);
+        assertEquals(1, allTasks.size());
+    }
+
+    @Test
+    public void testFindTasksByJurisdictionShouldReturnMatchingRecords() {
         String jurisdictionId = "jurisdiction-id";
 
-        String query = "SELECT * FROM task WHERE group_id = ?";
+        String query = "SELECT * FROM task WHERE group_id =?"; // ensure query exactly matches what is in TaskDaoImpl
         when(sqLiteDatabase.rawQuery(query, new String[]{jurisdictionId})).thenReturn(getCursor());
         taskDao = Mockito.spy(taskDao);
 
@@ -121,6 +138,7 @@ public class TaskDaoImplTest extends BaseUnitTest {
         verify(taskDao).getTasksByJurisdiction(jurisdictionId);
         assertEquals(1, allTasks.size());
     }
+
 
     @Test
     public void testUpdateTaskShouldInvokeExpectedMethods() {

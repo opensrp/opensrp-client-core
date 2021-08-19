@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Consumer;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
@@ -232,6 +233,34 @@ public class TaskRepository extends BaseRepository {
         return tasks;
     }
 
+    /**
+     * Accepts a stream of tasks
+     *
+     * @param planId
+     * @param groupId
+     * @param consumer
+     */
+    public void readTasks(String planId, String groupId, String code, Consumer<Task> consumer) {
+        Cursor cursor = null;
+        try {
+            String[] params = new String[]{planId, groupId, code};
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =? AND %s NOT IN (%s)",
+                    TASK_TABLE, PLAN_ID, GROUP_ID, CODE, STATUS,
+                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                    ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
+            while (cursor.moveToNext()) {
+                Task task = readCursor(cursor);
+                consumer.accept(task);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+    }
+
+
 
     public Task getTaskByIdentifier(String identifier) {
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TASK_TABLE +
@@ -385,7 +414,7 @@ public class TaskRepository extends BaseRepository {
     }
 
     public List<Task> getAllUnsynchedCreatedTasks() {
-        return new ArrayList<>(getTasks(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL OR %s = 0", TASK_TABLE, SYNC_STATUS, SERVER_VERSION,SERVER_VERSION), new String[]{BaseRepository.TYPE_Created}));
+        return new ArrayList<>(getTasks(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL OR %s = 0", TASK_TABLE, SYNC_STATUS, SERVER_VERSION, SERVER_VERSION), new String[]{BaseRepository.TYPE_Created}));
     }
 
     /**
@@ -680,8 +709,69 @@ public class TaskRepository extends BaseRepository {
     }
 
     @NonNull
+    public Set<Task> getTasksByJurisdictionAndPlan(@NonNull String jurisdictionId, String planIdentifier) {
+        String query = TextUtils.join(" ",
+                new String[]{"SELECT * FROM", TASK_TABLE, "WHERE", GROUP_ID, "=?", "AND", PLAN_ID, "=?"});
+        return getTasks(query, new String[]{jurisdictionId, planIdentifier});
+    }
+
+    @NonNull
     public Set<Task> getTasksByJurisdiction(@NonNull String jurisdictionId) {
-        String query = "SELECT * FROM " + TASK_TABLE + " WHERE " + GROUP_ID + " = ?";
+        String query = TextUtils.join(" ",
+                new String[]{"SELECT * FROM", TASK_TABLE, "WHERE", GROUP_ID, "=?"});
         return getTasks(query, new String[]{jurisdictionId});
+    }
+
+    public List<String> getEntityIdsWithDuplicateTasks() {
+        List<String> entityIds = new ArrayList<>();
+        android.database.Cursor cursor = null;
+        String query = "SELECT " +
+                "    DISTINCT(for) " +
+                "FROM " +
+                "    task " +
+                "WHERE status IN (?, ?) " +
+                "GROUP BY " +
+                "    plan_id, for, code " +
+                "HAVING " +
+                "    COUNT(*) > 1";
+
+        try {
+            cursor = getReadableDatabase().rawQuery(query, new String[]{TaskStatus.READY.name(), TaskStatus.COMPLETED.name()});
+
+            while (cursor.moveToNext()) {
+                entityIds.add(cursor.getString(0));
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return entityIds;
+    }
+
+    public Set<Task> getDuplicateTasksForEntity(String entityId) {
+        String query = "SELECT t1.* " +
+                "FROM task t1 " +
+                "JOIN (SELECT " +
+                "plan_id, for, code, COUNT(*) as count " +
+                "FROM " +
+                "    task " +
+                "WHERE for = ? " +
+                "GROUP BY " +
+                "    plan_id, for, code " +
+                "HAVING  " +
+                "    COUNT(*) > 1) t2 " +
+                "ON t1.plan_id = t2.plan_id " +
+                "AND t1.for = t2.for " +
+                "AND t1.code = t2.code " +
+                "AND t1.for = ? " +
+                "ORDER BY t1.for";
+        return getTasks(query, new String[]{entityId, entityId});
+    }
+
+    public void deleteTasksByIds(List<String> taskIds) {
+        String taskIdsBinding = StringUtils.repeat("? ", ", ", taskIds.size());
+        getWritableDatabase().delete(TASK_TABLE, String.format("_id in (%s)", taskIdsBinding), taskIds.toArray(new String[0]));
     }
 }

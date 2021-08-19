@@ -22,11 +22,18 @@ public class AllConstants {
     public static final String DETAILS = "details";
     public static final String PLAN_IDENTIFIER = "planIdentifier";
     public static final String LOCATION_ID = "locationId";
+    public static final String CHILD_LOCATION_ID = "childLocationId";
+    public static final String LOCATION_UUID = "locationUUID";
+    public static final String LOCATION_VERSION = "locationVersion";
+    public static final String STRUCTURE_ID = "structure_id";
     public static final String RESIDENCE = "residence";
     public static final String CLIENT_TYPE = "clientType";
     public static final String ATTRIBUTES = "attributes";
     public static final String FAMILY = "Family";
     public static final String RELATIONSHIPS = "relationships";
+    public static final String TASK_IDENTIFIER = "taskIdentifier";
+    public static final String TASK_BUSINESS_STATUS = "taskBusinessStatus";
+    public static final String TASK_STATUS = "taskStatus";
 
 
     // Maximum time difference between server and client time in milliseconds
@@ -136,6 +143,7 @@ public class AllConstants {
 
     public static final String CLIENT_FORM_ASSET_VERSION = "base version";
     public static final String RETURN_COUNT = "return_count";
+    public static final String LIMIT = "limit";
     public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
 
     public static final String GPS = "gps";
@@ -472,6 +480,7 @@ public class AllConstants {
         public static final String DISABLE_LOCATION_PICKER_VIEW = "disable.location.picker.view";
         public static final String LOCATION_PICKER_TAG_SHOWN = "location.picker.tag.shown";
         public static final String ENCRYPT_SHARED_PREFERENCES = "encrypt.shared.preferences";
+        public static final String ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN = "allow.offline.login.with.invalid.token";
     }
 
     public interface FORCED_LOGOUT {
@@ -487,6 +496,7 @@ public class AllConstants {
             String IS_NEW = "is_new";
             String FORM_VERSION = "form_version";
             String CLIENT_FORM_ID = "client_form_id";
+            String APP_VERSION_NAME = "appVersionName";
         }
     }
 
@@ -559,5 +569,32 @@ public class AllConstants {
         String EVENT_SYNC = "event_sync";
         String LOCATION_SYNC = "location_sync";
         String CLIENT_PROCESSING = "client_processing";
+    }
+
+
+    public interface ClientProcessing {
+        String VARCHAR = "VARCHAR";
+        String NAME = "name";
+        String DATA_TYPES = "data_type";
+        String COLUMNS = "columns";
+
+    }
+
+    public interface DatabaseKeys {
+        String SYNC_STATUS = "syncStatus";
+        String VALIDATION_STATUS = "validationStatus";
+    }
+
+    public interface SyncInfo {
+        String SYNCED_EVENTS = "syncedEvents";
+        String SYNCED_CLIENTS = "syncedClients";
+        String UNSYNCED_EVENTS = "unsyncedEvents";
+        String UNSYNCED_CLIENTS = "unsyncedClients";
+        String VALID_EVENTS = "validEvents";
+        String INVALID_EVENTS = "invalidEvents";
+        String VALID_CLIENTS = "validClients";
+        String INVALID_CLIENTS = "INValidClients";
+        String TASK_UNPROCESSED_EVENTS = "taskUnprocessedEvents";
+        String NULL_EVENT_SYNC_STATUS = "nullEventSyncStatus";
     }
 }
