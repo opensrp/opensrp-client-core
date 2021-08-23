@@ -125,7 +125,7 @@ public class HTTPAgent {
      * @param setOauthToken  A boolean to flag whether to set the OAuth2 bearer access token in the Authorization header of request.
      * @return HttpURLConnection Http connection to the OpenSRP server.
      */
-    private HttpURLConnection initializeHttp(String requestURLPath, boolean setOauthToken) throws IOException, URISyntaxException {
+    private HttpURLConnection initializeHttp(String requestURLPath, boolean setOauthToken) throws IOException, URISyntaxException,IllegalArgumentException {
 
         HttpURLConnection urlConnection = getHttpURLConnection(requestURLPath);
 
@@ -144,7 +144,7 @@ public class HTTPAgent {
     }
 
     @VisibleForTesting
-    protected HttpURLConnection getHttpURLConnection(String requestURLPath) throws IOException, URISyntaxException {
+    protected HttpURLConnection getHttpURLConnection(String requestURLPath) throws IOException, URISyntaxException,IllegalArgumentException{
         URI inputURI = new URI(requestURLPath.replaceAll(" ", "%20"));
         URL url = inputURI.normalize().toURL();
         return (HttpURLConnection) url.openConnection();
@@ -170,7 +170,7 @@ public class HTTPAgent {
 
             return processResponse(urlConnection);
 
-        } catch (IOException | URISyntaxException ex) {
+        } catch (IOException | URISyntaxException | IllegalArgumentException ex ) {
             Timber.e(ex, "EXCEPTION %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
@@ -204,7 +204,7 @@ public class HTTPAgent {
 
             return processResponse(urlConnection);
 
-        } catch (IOException | URISyntaxException ex) {
+        } catch (IOException | URISyntaxException | IllegalArgumentException ex) {
             Timber.e(ex, "EXCEPTION: %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
@@ -212,7 +212,7 @@ public class HTTPAgent {
 
     @NonNull
     @VisibleForTesting
-    protected HttpURLConnection generatePostRequest(String postURLPath, String jsonPayload) throws IOException, URISyntaxException {
+    protected HttpURLConnection generatePostRequest(String postURLPath, String jsonPayload) throws IOException, URISyntaxException,IllegalArgumentException {
         HttpURLConnection urlConnection;
         urlConnection = initializeHttp(postURLPath, true);
 
@@ -285,7 +285,7 @@ public class HTTPAgent {
                 Timber.e("Bad response from Dristhi. Status code: %s username: %s using %s ", statusCode, userName, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
-        } catch (MalformedURLException | URISyntaxException e) {
+        } catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
             Timber.e(e, "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
         } catch (SocketTimeoutException e) {
@@ -329,7 +329,7 @@ public class HTTPAgent {
             }
             return processResponse(urlConnection);
 
-        } catch (IOException | URISyntaxException ex) {
+        } catch (IOException | URISyntaxException | IllegalArgumentException ex) {
             Timber.e(ex, "EXCEPTION %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
@@ -442,7 +442,7 @@ public class HTTPAgent {
             Timber.e(e, "Protocol exception %s", e.toString());
         } catch (SocketTimeoutException e) {
             Timber.e(e, "SocketTimeout %s %s", TIMEOUT, e.toString());
-        } catch (MalformedURLException | URISyntaxException e) {
+        } catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
             Timber.e(e, "MalformedUrl %s %s", MALFORMED_URL, e.toString());
         } catch (IOException e) {
             Timber.e(e, "IOException %s %s", NO_INTERNET_CONNECTIVITY, e.toString());
@@ -652,7 +652,7 @@ public class HTTPAgent {
                 return new AccountResponse(statusCode, accountError);
 
             }
-        } catch (MalformedURLException | URISyntaxException e) {
+        } catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
             Timber.e(e, "Failed to check credentials bad url %s", tokenEndpointURL);
             accountError = new AccountError(0, MALFORMED_URL.name());
 
@@ -738,7 +738,7 @@ public class HTTPAgent {
                 Timber.e("Bad response from Server. Status code: %s using %s ", statusCode, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
-        } catch (MalformedURLException | URISyntaxException e) {
+        } catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
             Timber.e(e, "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
         } catch (SocketTimeoutException e) {
@@ -837,7 +837,7 @@ public class HTTPAgent {
                 return new Response<DownloadStatus>(ResponseStatus.failure, DownloadStatus.failedDownloaded);
             }
 
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException | IllegalArgumentException e) {
             Timber.d(e, "DownloadFormService");
             return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.failedDownloaded);
         } finally {
@@ -941,7 +941,7 @@ public class HTTPAgent {
                 return false;
             }
 
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException | IllegalArgumentException e ) {
 
             Timber.e(e);
 
@@ -996,7 +996,7 @@ public class HTTPAgent {
                 Timber.i("User is Authorized");
             }
 
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException | IllegalArgumentException e) {
             Timber.e(e);
         } finally {
 
