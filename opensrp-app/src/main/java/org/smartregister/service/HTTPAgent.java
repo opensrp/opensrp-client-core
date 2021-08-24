@@ -170,8 +170,8 @@ public class HTTPAgent {
 
             return processResponse(urlConnection);
 
-        } catch (IOException | URISyntaxException  ex ) {
-            Timber.e(ex, "EXCEPTION %s", ex.toString());
+        } catch (IOException | URISyntaxException  exception ) {
+            Timber.e(exception, "EXCEPTION %s", exception.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
     }
@@ -204,8 +204,8 @@ public class HTTPAgent {
 
             return processResponse(urlConnection);
 
-        } catch (IOException | URISyntaxException  ex) {
-            Timber.e(ex, "EXCEPTION: %s", ex.toString());
+        } catch (IOException | URISyntaxException  exception) {
+            Timber.e(exception, "EXCEPTION: %s", exception.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
     }
@@ -285,15 +285,15 @@ public class HTTPAgent {
                 Timber.e("Bad response from Dristhi. Status code: %s username: %s using %s ", statusCode, userName, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
-        } catch (MalformedURLException | URISyntaxException  e) {
-            Timber.e(e, "Failed to check credentials bad url %s", url);
+        } catch (MalformedURLException | URISyntaxException  exception) {
+            Timber.e(exception, "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
-        } catch (SocketTimeoutException e) {
-            Timber.e(e, "SocketTimeoutException when authenticating %s", userName);
+        } catch (SocketTimeoutException exception) {
+            Timber.e(exception, "SocketTimeoutException when authenticating %s", userName);
             loginResponse = TIMEOUT;
-            Timber.e(e, "Failed to check credentials of: %s using %s . Error: %s", userName, url, e.toString());
-        } catch (IOException e) {
-            Timber.e(e, "Failed to check credentials of: %s  using %s . Error: %s", userName, url, e.toString());
+            Timber.e(exception, "Failed to check credentials of: %s using %s . Error: %s", userName, url, exception.toString());
+        } catch (IOException exception) {
+            Timber.e(exception, "Failed to check credentials of: %s  using %s . Error: %s", userName, url, exception.toString());
             loginResponse = NO_INTERNET_CONNECTIVITY;
         } finally {
             closeConnection(urlConnection);
@@ -329,8 +329,8 @@ public class HTTPAgent {
             }
             return processResponse(urlConnection);
 
-        } catch (IOException | URISyntaxException  ex) {
-            Timber.e(ex, "EXCEPTION %s", ex.toString());
+        } catch (IOException | URISyntaxException  exception) {
+            Timber.e(exception, "EXCEPTION %s", exception.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
 
@@ -356,16 +356,16 @@ public class HTTPAgent {
 
             Timber.d("response string: %s using url %s", responseString, urlConnection.getURL());
 
-        } catch (MalformedURLException e) {
-            Timber.e(e, "%s %s", MALFORMED_URL, e.toString());
+        } catch (MalformedURLException exception) {
+            Timber.e(exception, "%s %s", MALFORMED_URL, exception.toString());
             ResponseStatus.failure.setDisplayValue(ResponseErrorStatus.malformed_url.name());
             return new Response<>(ResponseStatus.failure, null);
-        } catch (SocketTimeoutException e) {
-            Timber.e(e, "%s %s", TIMEOUT, e.toString());
+        } catch (SocketTimeoutException exception) {
+            Timber.e(exception, "%s %s", TIMEOUT, exception.toString());
             ResponseStatus.failure.setDisplayValue(ResponseErrorStatus.timeout.name());
             return new Response<>(ResponseStatus.failure, null);
-        } catch (IOException e) {
-            Timber.e(e, "%s %s", NO_INTERNET_CONNECTIVITY, e.toString());
+        } catch (IOException exception) {
+            Timber.e(exception, "%s %s", NO_INTERNET_CONNECTIVITY, exception.toString());
             return new Response<>(ResponseStatus.failure, null);
         } finally {
             closeConnection(urlConnection);
@@ -438,14 +438,14 @@ public class HTTPAgent {
                 reader.close();
             }
 
-        } catch (ProtocolException e) {
-            Timber.e(e, "Protocol exception %s", e.toString());
-        } catch (SocketTimeoutException e) {
-            Timber.e(e, "SocketTimeout %s %s", TIMEOUT, e.toString());
-        } catch (MalformedURLException | URISyntaxException  e) {
-            Timber.e(e, "MalformedUrl %s %s", MALFORMED_URL, e.toString());
-        } catch (IOException e) {
-            Timber.e(e, "IOException %s %s", NO_INTERNET_CONNECTIVITY, e.toString());
+        } catch (ProtocolException exception) {
+            Timber.e(exception, "Protocol exception %s", exception.toString());
+        } catch (SocketTimeoutException exception) {
+            Timber.e(exception, "SocketTimeout %s %s", TIMEOUT, exception.toString());
+        } catch (MalformedURLException | URISyntaxException  exception) {
+            Timber.e(exception, "MalformedUrl %s %s", MALFORMED_URL, exception.toString());
+        } catch (IOException exception) {
+            Timber.e(exception, "IOException %s %s", NO_INTERNET_CONNECTIVITY, exception.toString());
         } finally {
 
             closeConnection(httpUrlConnection);
@@ -652,18 +652,18 @@ public class HTTPAgent {
                 return new AccountResponse(statusCode, accountError);
 
             }
-        } catch (MalformedURLException | URISyntaxException  e) {
-            Timber.e(e, "Failed to check credentials bad url %s", tokenEndpointURL);
+        } catch (MalformedURLException | URISyntaxException  exception) {
+            Timber.e(exception, "Failed to check credentials bad url %s", tokenEndpointURL);
             accountError = new AccountError(0, MALFORMED_URL.name());
 
-        } catch (SocketTimeoutException e) {
-            Timber.e(e, "SocketTimeoutException when authenticating");
+        } catch (SocketTimeoutException exception) {
+            Timber.e(exception, "SocketTimeoutException when authenticating");
 
             accountError = new AccountError(0, TIMEOUT.name());
 
-            Timber.e(e, "Failed to check credentials using %s . Error: %s", tokenEndpointURL, e.toString());
-        } catch (IOException e) {
-            Timber.e(e, "Failed to check credentials using %s . Error: %s", tokenEndpointURL, e.toString());
+            Timber.e(exception, "Failed to check credentials using %s . Error: %s", tokenEndpointURL, exception.toString());
+        } catch (IOException exception) {
+            Timber.e(exception, "Failed to check credentials using %s . Error: %s", tokenEndpointURL, exception.toString());
             accountError = new AccountError(0, NO_INTERNET_CONNECTIVITY.name());
 
         } finally {
@@ -738,14 +738,14 @@ public class HTTPAgent {
                 Timber.e("Bad response from Server. Status code: %s using %s ", statusCode, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
-        } catch (MalformedURLException | URISyntaxException  e) {
-            Timber.e(e, "Failed to check credentials bad url %s", url);
+        } catch (MalformedURLException | URISyntaxException  exception) {
+            Timber.e(exception, "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
-        } catch (SocketTimeoutException e) {
-            Timber.e(e, "SocketTimeoutException when authenticating");
+        } catch (SocketTimeoutException exception) {
+            Timber.e(exception, "SocketTimeoutException when authenticating");
             loginResponse = TIMEOUT;
-        } catch (IOException e) {
-            Timber.e(e, "Failed to connect to %s check, check internet connection. Error: %s", url, e.toString());
+        } catch (IOException exception) {
+            Timber.e(exception, "Failed to connect to %s check, check internet connection. Error: %s", url, exception.toString());
             loginResponse = NO_INTERNET_CONNECTIVITY;
         } finally {
 
@@ -837,8 +837,8 @@ public class HTTPAgent {
                 return new Response<DownloadStatus>(ResponseStatus.failure, DownloadStatus.failedDownloaded);
             }
 
-        } catch (IOException | URISyntaxException  e) {
-            Timber.d(e, "DownloadFormService");
+        } catch (IOException | URISyntaxException  exception) {
+            Timber.d(exception, "DownloadFormService");
             return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.failedDownloaded);
         } finally {
 
@@ -941,9 +941,9 @@ public class HTTPAgent {
                 return false;
             }
 
-        } catch (IOException | URISyntaxException  e ) {
+        } catch (IOException | URISyntaxException  exception ) {
 
-            Timber.e(e);
+            Timber.e(exception);
 
         } finally {
 
@@ -996,8 +996,8 @@ public class HTTPAgent {
                 Timber.i("User is Authorized");
             }
 
-        } catch (IOException | URISyntaxException  e) {
-            Timber.e(e);
+        } catch (IOException | URISyntaxException  exception) {
+            Timber.e(exception);
         } finally {
 
             closeConnection(urlConnection);
@@ -1032,8 +1032,8 @@ public class HTTPAgent {
                 return gson.fromJson(responseString, AccountConfiguration.class);
             }
 
-        } catch (Exception e) {
-            Timber.e(e);
+        } catch (Exception exception) {
+            Timber.e(exception);
         } finally {
 
             closeConnection(urlConnection);
@@ -1047,8 +1047,8 @@ public class HTTPAgent {
         if (urlConnection != null) {
             try {
                 urlConnection.disconnect();
-            } catch (Exception ex) {
-                Timber.e(ex, "Error closing input HttpUrlConnection");
+            } catch (Exception exception) {
+                Timber.e(exception, "Error closing input HttpUrlConnection");
             }
 
         }
@@ -1060,9 +1060,9 @@ public class HTTPAgent {
 
             try {
                 inputStream.close();
-            } catch (IOException ex) {
+            } catch (IOException exception) {
 
-                Timber.e(ex, "Error closing input stream");
+                Timber.e(exception, "Error closing input stream");
             }
 
         }
