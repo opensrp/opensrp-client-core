@@ -226,4 +226,14 @@ public abstract class SyncConfiguration {
     public boolean validateUserAssignments() {
         return true;
     }
+
+
+    /**
+     * Specifies whether to skip locally saved task marked as {@link org.smartregister.repository.BaseRepository#TYPE_Unsynced}
+     * when fetching tasks from the server, during sync
+     * @return {@link Boolean}
+     */
+    public boolean skipUnsyncedTasksOnFetchFromServer(){
+        return false;
+    }
 }
