@@ -164,6 +164,16 @@ public class TaskServiceHelper extends BaseHelper {
             if (tasks != null && tasks.size() > 0) {
                 for (Task task : tasks) {
                     try {
+                        boolean skipUnsynced = CoreLibrary.getInstance().getSyncConfiguration()
+                                .skipUnsyncedTasksOnFetchFromServer();
+
+                        if (skipUnsynced) {
+                            Task existingTask = taskRepository.getTaskByIdentifier(task.getIdentifier());
+                            if (existingTask.getSyncStatus().equals(BaseRepository.TYPE_Unsynced)
+                                    || existingTask.getSyncStatus().equals(BaseRepository.TYPE_Created)) {
+                                continue;
+                            }
+                        }
                         task.setSyncStatus(BaseRepository.TYPE_Synced);
                         task.setLastModified(new DateTime());
                         taskRepository.addOrUpdate(task);
