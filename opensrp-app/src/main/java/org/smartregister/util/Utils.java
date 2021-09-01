@@ -626,7 +626,7 @@ public class Utils {
             }
             return initials;
         }
-        catch (ArrayIndexOutOfBoundsException e)
+        catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException  e)
         {
             Timber.e("Index out of Bounds "+e.getMessage());
             return "";
