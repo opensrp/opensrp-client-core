@@ -152,10 +152,23 @@ public abstract class SyncConfiguration {
 
     /**
      * Allows the user to define extra settings sync parameters
+     * This returns the parameters as a string
+     *
      * @return
      */
-    public String getExtraSettingsParameters() {
+    public String getExtraStringSettingsParameters() {
         return "";
+    }
+
+
+    /**
+     * Allows the user to define extra settings sync parameters
+     * This returns the parameters as a string
+     *
+     * @return
+     */
+    public List<String> getExtraSettingsParameters() {
+        return new ArrayList<>();
     }
 
     public abstract List<String> getSynchronizedLocationTags();
