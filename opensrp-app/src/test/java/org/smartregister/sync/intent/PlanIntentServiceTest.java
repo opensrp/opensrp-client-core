@@ -23,7 +23,7 @@ public class PlanIntentServiceTest extends BaseUnitTest {
     public void testOnHandleIntentShouldSyncPlans() throws Exception {
         PlanIntentServiceHelper planIntentServiceHelper = Mockito.mock(PlanIntentServiceHelper.class);
         Whitebox.setInternalState(PlanIntentServiceHelper.class, "instance", planIntentServiceHelper);
-        Whitebox.invokeMethod(planIntentService, "onHandleIntent", null);
+        Whitebox.invokeMethod(planIntentService, "onHandleIntent", (Object) null);
         Mockito.verify(planIntentServiceHelper).syncPlans();
         Whitebox.setInternalState(PlanIntentServiceHelper.class, "instance", (PlanIntentServiceHelper) null);
     }

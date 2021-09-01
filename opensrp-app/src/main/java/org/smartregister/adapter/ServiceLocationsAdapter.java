@@ -73,7 +73,7 @@ public class ServiceLocationsAdapter extends BaseAdapter {
                 && views.containsKey(locationName)) {
             for (String curLocation : locationNames) {
                 View view = views.get(curLocation);
-                refreshView(view, curLocation.equals(locationName));
+                refreshView(view, curLocation != null ? curLocation.equals(locationName) : false);
             }
         }
     }

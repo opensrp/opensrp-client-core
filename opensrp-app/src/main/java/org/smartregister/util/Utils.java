@@ -613,18 +613,24 @@ public class Utils {
     public static String getUserInitials() {
         String initials = "Me";
         String preferredName = getPrefferedName();
-
-        if (StringUtils.isNotBlank(preferredName)) {
-            preferredName = preferredName.trim();
-            String[] preferredNameArray = preferredName.split(" ");
-            initials = "";
-            if (preferredNameArray.length > 1) {
-                initials = String.valueOf(preferredNameArray[0].charAt(0)) + String.valueOf(preferredNameArray[1].charAt(0));
-            } else if (preferredNameArray.length == 1) {
-                initials = String.valueOf(preferredNameArray[0].charAt(0));
+        try {
+            if (StringUtils.isNotBlank(preferredName)) {
+                preferredName = preferredName.trim();
+                String[] preferredNameArray = preferredName.split(" ");
+                initials = "";
+                if (preferredNameArray.length > 1) {
+                    initials = String.valueOf(preferredNameArray[0].charAt(0)) + String.valueOf(preferredNameArray[1].charAt(0));
+                } else if (preferredNameArray.length == 1) {
+                    initials = String.valueOf(preferredNameArray[0].charAt(0));
+                }
             }
+            return initials;
         }
-        return initials;
+        catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException  e)
+        {
+            Timber.e("Index out of Bounds "+e.getMessage());
+            return "";
+        }
     }
 
     public static AllSharedPreferences getAllSharedPreferences() {

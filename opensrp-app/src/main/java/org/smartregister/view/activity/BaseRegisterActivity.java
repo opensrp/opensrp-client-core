@@ -26,6 +26,7 @@ import org.smartregister.helper.BottomNavigationHelper;
 import org.smartregister.listener.BottomNavigationListener;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.util.AppExecutors;
+import org.smartregister.util.AppHealthUtils;
 import org.smartregister.util.PermissionUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseRegisterContract;
@@ -41,7 +42,7 @@ import timber.log.Timber;
  * Created by keyman on 26/06/2018.
  */
 
-public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity implements BaseRegisterContract.View {
+public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity implements BaseRegisterContract.View, AppHealthUtils.HealthStatsView {
 
     protected OpenSRPViewPager mPager;
 
@@ -354,4 +355,22 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     public void setSearchTerm(String searchTerm) {
         mBaseFragment.setSearchTerm(searchTerm);
     }
+
+    @Override
+    public void performDatabaseDownload() {
+        if (PermissionUtils.isPermissionGranted(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionUtils.WRITE_EXTERNAL_STORAGE_REQUEST_CODE)) {
+            try {
+                AppHealthUtils.triggerDBCopying(this);
+            } catch (SecurityException e) {
+                Utils.showToast(this, this.getString(org.smartregister.R.string.permission_write_external_storage_rationale));
+            }
+        }
+    }
+
+    @Override
+    public void showSyncStats() {
+        Intent statsActivityIntent = new Intent(this, StatsActivity.class);
+        this.startActivity(statsActivityIntent);
+    }
+
 }

@@ -32,7 +32,7 @@ public class LocationIntentServiceTest extends BaseUnitTest {
     @Test
     public void testOnHandleIntentShouldFetchLocations() throws Exception {
         ShadowLocationServiceHelper.setInstance(locationServiceHelper);
-        Whitebox.invokeMethod(locationIntentService, "onHandleIntent", null);
+        Whitebox.invokeMethod(locationIntentService, "onHandleIntent", (Object) null);
         Mockito.verify(locationServiceHelper).fetchLocationsStructures();
     }
 }
