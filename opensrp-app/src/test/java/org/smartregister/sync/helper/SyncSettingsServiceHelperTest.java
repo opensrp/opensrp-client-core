@@ -80,7 +80,7 @@ public class SyncSettingsServiceHelperTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(new ArrayList<Setting>()).when(settings).getUnsyncedSettings();
         Mockito.doReturn(SyncFilter.TEAM).when(syncSettingsServiceHelper).getSettingsSyncFilterParam();
 
-        Mockito.doReturn("locationId=location-uuid").when(syncConfiguration).getExtraSettingsParameters();
+        Mockito.doReturn("locationId=location-uuid").when(syncConfiguration).getExtraStringSettingsParameters();
         Mockito.doReturn(new Response<>(ResponseStatus.success, settingsResponse)).when(syncSettingsServiceHelper).getResponse(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
         Mockito.doReturn(SAMPLE_TEST_TOKEN).when(syncSettingsServiceHelper).getAccessToken();
 
