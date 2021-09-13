@@ -886,6 +886,37 @@ public class EventClientRepository extends BaseRepository {
 
         return ids;
     }
+    public List<String> getAllEventsFormSubmissionId(int limit,int offset) {
+        List<String> ids = new ArrayList<>();
+
+
+        String query = "select "
+                + event_column.formSubmissionId
+                + " from "
+                + Table.event.name()  + ORDER_BY
+                + client_column.updatedAt+" limit "+limit+" offset "+offset;
+        Log.v("COMPARE_DATE","getAllEventsFormSubmissionId>>"+query);
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery(query, null);
+            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    String id = cursor.getString(0);
+                    ids.add(id);
+
+                    cursor.moveToNext();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return ids;
+    }
 
     public List<String> getUnValidatedClientBaseEntityIds(int limit) {
         List<String> ids = new ArrayList<>();
@@ -925,6 +956,234 @@ public class EventClientRepository extends BaseRepository {
         }
 
         return ids;
+    }
+    public int getAllClientCount() {
+        int count = 0;
+
+
+        String query = "select "
+                + " count(*) as count"
+                + " from "
+                + Table.client.name();
+
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery(query,null);
+            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    String tcount = cursor.getString(0);
+                    count = Integer.parseInt(tcount);
+
+                    cursor.moveToNext();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return count;
+    }
+    public int getAllEventCount() {
+        int count = 0;
+
+
+        String query = "select "
+                + " count(*) as count"
+                + " from "
+                + Table.event.name();
+
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery(query,null);
+            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    String tcount = cursor.getString(0);
+                    count = Integer.parseInt(tcount);
+
+                    cursor.moveToNext();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return count;
+    }
+    public List<String> getAllClients(int limit,int offset) {
+        List<String> ids = new ArrayList<>();
+
+
+        String query = "select "
+                + client_column.baseEntityId
+                + " from "
+                + Table.client.name()+   ORDER_BY
+                + client_column.updatedAt+" limit "+limit+" offset "+offset;
+        Log.v("COMPARE_DATE","getAllClients>>"+query);
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery(query,null);
+            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    String id = cursor.getString(0);
+                    ids.add(id);
+
+                    cursor.moveToNext();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return ids;
+    }
+    public List<JSONObject> getClientsByBaseEntityIds(ArrayList<String> baseIds,boolean isClient) {
+        List<JSONObject> clients = new ArrayList<>();
+        if(baseIds.size()==0) return clients;
+        StringBuilder builder = new StringBuilder();
+        String key = " baseEntityId ";
+        for(int i=0;i<baseIds.size();i++){
+                if(builder.toString().isEmpty()){
+                   builder.append(" "+key+" = '"+baseIds.get(i)+"'");
+                }else {
+                    builder.append(" OR ");
+                    builder.append(" "+key+" = '"+baseIds.get(i)+"'");
+                }
+        }
+
+
+        final String validateFilter = " where ( " +builder.toString()+" ) ";
+
+        String query = "select "
+                + client_column.json
+                + " from "
+                + (isClient?Table.client.name():Table.event.name())
+                + validateFilter;
+        Log.v("MISSING_DATA","getClientsByBaseEntityIds>>"+query);
+
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery(query, null);
+            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    String jsonClientStr = (cursor.getString(0));
+                    if (StringUtils.isBlank(jsonClientStr)
+                            || jsonClientStr.equals("{}")) { // Skip blank/empty json string
+                        continue;
+                    }
+                    jsonClientStr = jsonClientStr.replaceAll("'", "");
+                    JSONObject jsonObectEvent = new JSONObject(jsonClientStr);
+                    clients.add(jsonObectEvent);
+
+                    cursor.moveToNext();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return clients;
+    }
+    public List<JSONObject> getUnValidatedClients(int limit) {
+        List<JSONObject> clients = new ArrayList<>();
+
+        final String validateFilter = " where ( " + client_column.validationStatus + " is NULL or "
+                + client_column.validationStatus + " != ? ) ";
+
+        String query = "select "
+                + client_column.json
+                + " from "
+                + Table.client.name()
+                + validateFilter
+                + ORDER_BY
+                + client_column.updatedAt
+                + " asc limit "
+                + limit;
+
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Valid});
+            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    String jsonClientStr = (cursor.getString(0));
+                    if (StringUtils.isBlank(jsonClientStr)
+                            || jsonClientStr.equals("{}")) { // Skip blank/empty json string
+                        continue;
+                    }
+                    jsonClientStr = jsonClientStr.replaceAll("'", "");
+                    JSONObject jsonObectEvent = new JSONObject(jsonClientStr);
+                    clients.add(jsonObectEvent);
+
+                    cursor.moveToNext();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return clients;
+    }
+    public List<JSONObject> getUnValidatedEvents(int limit) {
+        List<JSONObject> events = new ArrayList<>();
+
+        final String validateFilter = " where ( " + event_column.validationStatus + " is NULL or "
+                + event_column.validationStatus + " != ? ) ";
+
+        String query = "select "
+                + event_column.json
+                + " from "
+                + Table.event.name()
+                + validateFilter
+                + ORDER_BY
+                + event_column.updatedAt
+                + " asc limit "
+                + limit;
+
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Valid});
+            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    String jsonEventsStr = (cursor.getString(0));
+                    if (StringUtils.isBlank(jsonEventsStr)
+                            || jsonEventsStr.equals("{}")) { // Skip blank/empty json string
+                        continue;
+                    }
+                    jsonEventsStr = jsonEventsStr.replaceAll("'", "");
+                    JSONObject jsonObectEvent = new JSONObject(jsonEventsStr);
+                    events.add(jsonObectEvent);
+
+                    cursor.moveToNext();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return events;
     }
 
     public void markAllAsUnSynced() {
