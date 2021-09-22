@@ -160,17 +160,19 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Override
     public void displayToast(int resourceId) {
+        if(isFinishing()) return;
         try{
             displayToast(getString(resourceId));
-        }catch (Exception e){
+        }catch (WindowManager.BadTokenException e){
             e.printStackTrace();
         }
     }
 
     @Override
     public void displayToast(String message) {
+       if(isFinishing()) return;
        try{
-           Utils.showToast(getApplicationContext(), message);
+           Utils.showToast(this, message);
        }catch (WindowManager.BadTokenException e){
            e.printStackTrace();
        }
@@ -178,8 +180,9 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Override
     public void displayShortToast(int resourceId) {
+        if(isFinishing()) return;
        try{
-           Utils.showShortToast(getApplicationContext(), getString(resourceId));
+           Utils.showShortToast(this, getString(resourceId));
        }catch (WindowManager.BadTokenException e){
            e.printStackTrace();
        }

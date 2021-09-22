@@ -35,6 +35,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -519,7 +520,7 @@ public class Utils {
         if (context == null) return;
         if(context instanceof Activity){
             Activity activity = (Activity) context;
-            if(activity.isFinishing()) return;
+            if(activity == null || activity.isFinishing()) return;
         }
        try{
            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
@@ -533,11 +534,11 @@ public class Utils {
         if (context == null) return;
         if(context instanceof Activity){
             Activity activity = (Activity) context;
-            if(activity.isFinishing()) return;
+            if(activity ==null || activity.isFinishing()) return;
         }
         try{
             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-        }catch (Exception e){
+        }catch (WindowManager.BadTokenException e){
             e.printStackTrace();
         }
 

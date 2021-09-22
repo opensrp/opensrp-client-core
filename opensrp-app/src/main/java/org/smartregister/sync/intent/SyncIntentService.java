@@ -191,9 +191,13 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     protected void processClient(Pair<Long, Long> serverVersionPair) {
         try {
+            long startTime = System.currentTimeMillis();
             ECSyncHelper ecUpdater = ECSyncHelper.getInstance(context);
             List<EventClient> events = ecUpdater.allEventClients(serverVersionPair.first - 1, serverVersionPair.second);
+            Log.v("SYNC_URL", "processClient 1 timediff:"+(System.currentTimeMillis() - startTime));
+
             DrishtiApplication.getInstance().getClientProcessor().processClient(events);
+            Log.v("SYNC_URL", "processClient 2 timediff:"+(System.currentTimeMillis() - startTime));
             sendSyncStatusBroadcastMessage(FetchStatus.fetched);
         } catch (Exception e) {
             Timber.e(e, "Process Client Exception: %s", e.getMessage());

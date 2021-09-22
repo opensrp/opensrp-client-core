@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -401,7 +402,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
             if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
                 try{
                     Utils.showShortToast(getActivity(), getString(R.string.syncing));
-                }catch (Exception e){
+                }catch (WindowManager.BadTokenException e){
                     e.printStackTrace();
                 }
             } else {
@@ -438,7 +439,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
             }
 
             refreshSyncProgressSpinner();
-        }catch (Exception e){
+        }catch (WindowManager.BadTokenException e){
             e.printStackTrace();
         }
 
