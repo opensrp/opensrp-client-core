@@ -228,7 +228,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
-    implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-client-utils:0.0.4-SNAPSHOT'
 
     implementation 'org.smartregister:opensrp-plan-evaluator:1.6.0-SNAPSHOT'
 
