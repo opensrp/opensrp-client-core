@@ -26,7 +26,6 @@ import timber.log.Timber;
  */
 public class PeriodicTriggerEvaluationHelper {
 
-
     private DateTime timeNow;
 
     public void reschedulePeriodicPlanEvaluations(List<PlanDefinition> plans) {
