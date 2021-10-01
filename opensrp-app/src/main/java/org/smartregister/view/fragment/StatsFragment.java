@@ -1,6 +1,7 @@
 package org.smartregister.view.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ import static org.smartregister.AllConstants.SyncInfo.VALID_EVENTS;
 
 public class StatsFragment extends Fragment implements StatsFragmentContract.View {
 
+    Context context;
     private StatsFragmentPresenter presenter;
 
     private TextView tvSyncedEventsLabel;
@@ -59,6 +61,7 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = new StatsFragmentPresenter(this);
+        context = CoreLibrary.getInstance().context().applicationContext();
     }
 
     @Nullable
@@ -95,20 +98,13 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
             }
         });
 
+        setLabels();
         presenter.fetchSyncInfo();
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public void refreshECSyncInfo(Map<String, Integer> syncInfoMap) {
-
-        tvSyncedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.synced_events));
-        tvUnsyncedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.unsynced_events));
-        tvTaskUnprocessedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.task_unprocessed_events));
-        tvSyncedClientsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.synced_clients));
-        tvUnsyncedClientsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.unsynced_clients));
-        tvValidatedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.validated_events));
-        tvValidatedClientsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.validated_clients));
 
         tvSyncedEvents.setText(syncInfoMap.get(SYNCED_EVENTS) + "");
         tvUnSyncedEvents.setText(syncInfoMap.get(UNSYNCED_EVENTS) + "");
@@ -120,4 +116,19 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvValidatedEvents.setText(syncInfoMap.get(VALID_EVENTS) + "");
         tvValidatedClients.setText(syncInfoMap.get(VALID_CLIENTS) + "");
     }
+
+    private void setLabels() {
+        try {
+            tvSyncedEventsLabel.setText(context.getString(R.string.synced_events));
+            tvUnsyncedEventsLabel.setText(context.getString(R.string.unsynced_events));
+            tvTaskUnprocessedEventsLabel.setText(context.getString(R.string.task_unprocessed_events));
+            tvSyncedClientsLabel.setText(context.getString(R.string.synced_clients));
+            tvUnsyncedClientsLabel.setText(context.getString(R.string.unsynced_clients));
+            tvValidatedEventsLabel.setText(context.getString(R.string.validated_events));
+            tvValidatedClientsLabel.setText(context.getString(R.string.validated_clients));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 }
