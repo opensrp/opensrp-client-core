@@ -12,8 +12,11 @@ import androidx.viewpager.widget.ViewPager;
 
 import org.smartregister.R;
 import org.smartregister.adapter.PagerAdapter;
+import org.smartregister.util.LangUtils;
 import org.smartregister.view.contract.StatsContract;
 import org.smartregister.view.fragment.StatsFragment;
+
+import java.util.Locale;
 
 public class StatsActivity extends AppCompatActivity implements StatsContract.View {
 
@@ -27,7 +30,7 @@ public class StatsActivity extends AppCompatActivity implements StatsContract.Vi
         setContentView(R.layout.activity_stats);
 
         Toolbar toolbar = this.findViewById(R.id.summary_toolbar);
-        toolbar.setTitle(R.string.return_to_register);
+        toolbar.setTitle(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(StatsActivity.this)), R.string.return_to_register, StatsActivity.this));
         this.setSupportActionBar(toolbar);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -58,7 +61,7 @@ public class StatsActivity extends AppCompatActivity implements StatsContract.Vi
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setTitle(titleIdentifier);
-        progressDialog.setMessage(getString(R.string.please_wait_message));
+        progressDialog.setTitle(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(StatsActivity.this)), R.string.please_wait_message, StatsActivity.this));
 
         if (!isFinishing())
             progressDialog.show();

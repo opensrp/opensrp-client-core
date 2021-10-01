@@ -21,6 +21,7 @@
             android:weightSum="2">
 
             <TextView
+                android:id="@+id/synced_events_label"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -47,6 +48,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:id="@+id/unsynced_events_label"
                 android:layout_weight="1"
                 android:textSize="15sp"
                 android:textStyle="bold"
@@ -72,6 +74,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:id="@+id/task_unprocessed_events_label"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:text="@string/task_unprocessed_events"/>
@@ -97,6 +100,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:id="@+id/synced_clients_label"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:text="@string/synced_clients"/>
@@ -122,6 +126,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="15sp"
+                android:id="@+id/unsynced_clients_label"
                 android:textStyle="bold"
                 android:text="@string/unsynced_clients"/>
 
@@ -146,6 +151,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:id="@+id/validated_events_label"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:text="@string/validated_events"/>
@@ -171,6 +177,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="15sp"
+                android:id="@+id/validated_clients_label"
                 android:textStyle="bold"
                 android:text="@string/validated_clients"/>
 

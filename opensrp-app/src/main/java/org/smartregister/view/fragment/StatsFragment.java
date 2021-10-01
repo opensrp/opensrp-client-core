@@ -12,9 +12,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import org.smartregister.R;
+import org.smartregister.util.LangUtils;
 import org.smartregister.view.contract.StatsFragmentContract;
 import org.smartregister.view.presenter.StatsFragmentPresenter;
 
+import java.util.Locale;
 import java.util.Map;
 
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_CLIENTS;
@@ -28,6 +30,14 @@ import static org.smartregister.AllConstants.SyncInfo.VALID_EVENTS;
 public class StatsFragment extends Fragment implements StatsFragmentContract.View {
 
     private StatsFragmentPresenter presenter;
+
+    private TextView tvSyncedEventsLabel;
+    private TextView tvUnsyncedEventsLabel;
+    private TextView tvTaskUnprocessedEventsLabel;
+    private TextView tvSyncedClientsLabel;
+    private TextView tvUnsyncedClientsLabel;
+    private TextView tvValidatedEventsLabel;
+    private TextView tvValidatedClientsLabel;
 
     private TextView tvSyncedEvents;
     private TextView tvUnSyncedEvents;
@@ -60,6 +70,22 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
     }
 
     private void initializeViews(View view) {
+        tvSyncedEventsLabel = view.findViewById(R.id.synced_events_label);
+        tvUnsyncedEventsLabel = view.findViewById(R.id.unsynced_events_label);
+        tvTaskUnprocessedEventsLabel = view.findViewById(R.id.task_unprocessed_events_label);
+        tvSyncedClientsLabel = view.findViewById(R.id.synced_clients_label);
+        tvUnsyncedClientsLabel = view.findViewById(R.id.unsynced_clients_label);
+        tvValidatedEventsLabel = view.findViewById(R.id.validated_events_label);
+        tvValidatedClientsLabel = view.findViewById(R.id.validated_clients_label);
+
+        tvSyncedEventsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.synced_events, getActivity()));
+        tvUnsyncedEventsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.unsynced_events, getActivity()));
+        tvTaskUnprocessedEventsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.task_unprocessed_events, getActivity()));
+        tvSyncedClientsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.synced_clients, getActivity()));
+        tvUnsyncedClientsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.unsynced_clients, getActivity()));
+        tvValidatedEventsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.validated_events, getActivity()));
+        tvValidatedClientsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.validated_clients, getActivity()));
+
         tvSyncedEvents = view.findViewById(R.id.synced_events);
         tvUnSyncedEvents = view.findViewById(R.id.unsynced_events);
         tvSyncedClient = view.findViewById(R.id.synced_clients);
@@ -69,6 +95,8 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvTaskUnprocessedEvents = view.findViewById(R.id.task_unprocessed_events);
 
         Button btnRefreshStats = view.findViewById(R.id.refresh_button);
+        btnRefreshStats.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.refresh, getActivity()));
+
         btnRefreshStats.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 presenter.fetchSyncInfo();
@@ -80,6 +108,7 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
 
     @Override
     public void refreshECSyncInfo(Map<String, Integer> syncInfoMap) {
+
         tvSyncedEvents.setText(syncInfoMap.get(SYNCED_EVENTS) + "");
         tvUnSyncedEvents.setText(syncInfoMap.get(UNSYNCED_EVENTS) + "");
         tvTaskUnprocessedEvents.setText(syncInfoMap.get(TASK_UNPROCESSED_EVENTS) + "");
