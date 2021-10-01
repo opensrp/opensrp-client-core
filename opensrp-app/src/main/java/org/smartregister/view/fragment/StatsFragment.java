@@ -11,12 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
-import org.smartregister.util.LangUtils;
 import org.smartregister.view.contract.StatsFragmentContract;
 import org.smartregister.view.presenter.StatsFragmentPresenter;
 
-import java.util.Locale;
 import java.util.Map;
 
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_CLIENTS;
@@ -78,13 +77,13 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvValidatedEventsLabel = view.findViewById(R.id.validated_events_label);
         tvValidatedClientsLabel = view.findViewById(R.id.validated_clients_label);
 
-        tvSyncedEventsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.synced_events, getActivity()));
-        tvUnsyncedEventsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.unsynced_events, getActivity()));
-        tvTaskUnprocessedEventsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.task_unprocessed_events, getActivity()));
-        tvSyncedClientsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.synced_clients, getActivity()));
-        tvUnsyncedClientsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.unsynced_clients, getActivity()));
-        tvValidatedEventsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.validated_events, getActivity()));
-        tvValidatedClientsLabel.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.validated_clients, getActivity()));
+        tvSyncedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.synced_events));
+        tvUnsyncedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.unsynced_events));
+        tvTaskUnprocessedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.task_unprocessed_events));
+        tvSyncedClientsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.synced_clients));
+        tvUnsyncedClientsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.unsynced_clients));
+        tvValidatedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.validated_events));
+        tvValidatedClientsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.validated_clients));
 
         tvSyncedEvents = view.findViewById(R.id.synced_events);
         tvUnSyncedEvents = view.findViewById(R.id.unsynced_events);
@@ -95,7 +94,7 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvTaskUnprocessedEvents = view.findViewById(R.id.task_unprocessed_events);
 
         Button btnRefreshStats = view.findViewById(R.id.refresh_button);
-        btnRefreshStats.setText(LangUtils.getLocaleStringResource(new Locale(LangUtils.getLanguage(getActivity())), R.string.refresh, getActivity()));
+        btnRefreshStats.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.refresh));
 
         btnRefreshStats.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
