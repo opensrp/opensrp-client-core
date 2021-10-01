@@ -1,5 +1,6 @@
 package org.smartregister.view.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,14 +78,6 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvValidatedEventsLabel = view.findViewById(R.id.validated_events_label);
         tvValidatedClientsLabel = view.findViewById(R.id.validated_clients_label);
 
-        tvSyncedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.synced_events));
-        tvUnsyncedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.unsynced_events));
-        tvTaskUnprocessedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.task_unprocessed_events));
-        tvSyncedClientsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.synced_clients));
-        tvUnsyncedClientsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.unsynced_clients));
-        tvValidatedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.validated_events));
-        tvValidatedClientsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.validated_clients));
-
         tvSyncedEvents = view.findViewById(R.id.synced_events);
         tvUnSyncedEvents = view.findViewById(R.id.unsynced_events);
         tvSyncedClient = view.findViewById(R.id.synced_clients);
@@ -105,8 +98,17 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         presenter.fetchSyncInfo();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void refreshECSyncInfo(Map<String, Integer> syncInfoMap) {
+
+        tvSyncedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.synced_events));
+        tvUnsyncedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.unsynced_events));
+        tvTaskUnprocessedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.task_unprocessed_events));
+        tvSyncedClientsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.synced_clients));
+        tvUnsyncedClientsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.unsynced_clients));
+        tvValidatedEventsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.validated_events));
+        tvValidatedClientsLabel.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.validated_clients));
 
         tvSyncedEvents.setText(syncInfoMap.get(SYNCED_EVENTS) + "");
         tvUnSyncedEvents.setText(syncInfoMap.get(UNSYNCED_EVENTS) + "");
