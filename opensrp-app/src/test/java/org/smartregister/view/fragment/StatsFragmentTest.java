@@ -33,6 +33,7 @@ import org.smartregister.view.presenter.StatsFragmentPresenter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class StatsFragmentTest extends BaseUnitTest {
@@ -111,6 +112,49 @@ public class StatsFragmentTest extends BaseUnitTest {
         statsFragment.refreshECSyncInfo(syncInfoMap);
         Assert.assertEquals("2", tvSyncedEvents.getText());
         Assert.assertEquals("3", tvUnSyncedEvents.getText());
+    }
+
+    @Test
+    public void assertStatsFragmentInitsCorrectly() {
+        Assert.assertNotNull(statsFragment);
+    }
+
+    @Test
+    public void assertTestLabels() {
+        View rootView = LayoutInflater.from(RuntimeEnvironment.application).inflate(R.layout.fragment_stats, null);
+        TextView tvSyncedEventsLabel = rootView.findViewById(R.id.synced_events_label);
+        TextView tvUnsyncedEventsLabel = rootView.findViewById(R.id.unsynced_events_label);
+        TextView tvTaskUnprocessedEventsLabel = rootView.findViewById(R.id.task_unprocessed_events_label);
+        TextView tvSyncedClientsLabel = rootView.findViewById(R.id.synced_clients_label);
+        TextView tvUnsyncedClientsLabel = rootView.findViewById(R.id.unsynced_clients_label);
+        TextView tvValidatedEventsLabel = rootView.findViewById(R.id.validated_events_label);
+        TextView tvValidatedClientsLabel = rootView.findViewById(R.id.validated_clients_label);
+        Assert.assertNotNull(tvSyncedEventsLabel);
+        Assert.assertNotNull(tvUnsyncedEventsLabel);
+        Assert.assertNotNull(tvTaskUnprocessedEventsLabel);
+        Assert.assertNotNull(tvSyncedClientsLabel);
+        Assert.assertNotNull(tvUnsyncedClientsLabel);
+        Assert.assertNotNull(tvValidatedEventsLabel);
+        Assert.assertNotNull(tvValidatedClientsLabel);
+    }
+
+    @Test
+    public void assertTestLabelsNotNull() {
+        View rootView = LayoutInflater.from(RuntimeEnvironment.application).inflate(R.layout.fragment_stats, null);
+        TextView tvSyncedEventsLabel = rootView.findViewById(R.id.synced_events_label);
+        TextView tvUnsyncedEventsLabel = rootView.findViewById(R.id.unsynced_events_label);
+        TextView tvTaskUnprocessedEventsLabel = rootView.findViewById(R.id.task_unprocessed_events_label);
+        TextView tvSyncedClientsLabel = rootView.findViewById(R.id.synced_clients_label);
+        TextView tvUnsyncedClientsLabel = rootView.findViewById(R.id.unsynced_clients_label);
+        TextView tvValidatedEventsLabel = rootView.findViewById(R.id.validated_events_label);
+        TextView tvValidatedClientsLabel = rootView.findViewById(R.id.validated_clients_label);
+        Assert.assertNotNull(tvSyncedEventsLabel);
+        Assert.assertNotNull(tvUnsyncedEventsLabel);
+        Assert.assertNotNull(tvTaskUnprocessedEventsLabel);
+        Assert.assertNotNull(tvSyncedClientsLabel);
+        Assert.assertNotNull(tvUnsyncedClientsLabel);
+        Assert.assertNotNull(tvValidatedEventsLabel);
+        Assert.assertNotNull(tvValidatedClientsLabel);
     }
 
 }

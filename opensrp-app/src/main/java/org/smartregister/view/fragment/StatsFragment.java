@@ -117,7 +117,7 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvValidatedClients.setText(syncInfoMap.get(VALID_CLIENTS) + "");
     }
 
-    private void setLabels() {
+    public void setLabels() {
         try {
             tvSyncedEventsLabel.setText(context.getString(R.string.synced_events));
             tvUnsyncedEventsLabel.setText(context.getString(R.string.unsynced_events));
