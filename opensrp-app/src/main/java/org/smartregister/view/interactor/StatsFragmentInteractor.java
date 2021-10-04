@@ -15,6 +15,10 @@ import timber.log.Timber;
 
 import static org.smartregister.AllConstants.DatabaseKeys.SYNC_STATUS;
 import static org.smartregister.AllConstants.DatabaseKeys.VALIDATION_STATUS;
+import static org.smartregister.AllConstants.SyncInfo.CACHED_HEIGHTS;
+import static org.smartregister.AllConstants.SyncInfo.CACHED_RECURRING_SERVICE_RECORDS;
+import static org.smartregister.AllConstants.SyncInfo.CACHED_VACCINES;
+import static org.smartregister.AllConstants.SyncInfo.CACHED_WEIGHTS;
 import static org.smartregister.AllConstants.SyncInfo.INVALID_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.INVALID_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.NULL_EVENT_SYNC_STATUS;
@@ -54,13 +58,21 @@ public class StatsFragmentInteractor implements StatsFragmentContract.Interactor
         syncInfoMap.put(VALID_CLIENTS, 0);
         syncInfoMap.put(INVALID_CLIENTS, 0);
         syncInfoMap.put(TASK_UNPROCESSED_EVENTS, 0);
-        syncInfoMap.put(NULL_EVENT_SYNC_STATUS, 0);
+        syncInfoMap.put(CACHED_VACCINES, 0);
+        syncInfoMap.put(CACHED_RECURRING_SERVICE_RECORDS, 0);
+        syncInfoMap.put(CACHED_HEIGHTS, 0);
+        syncInfoMap.put(CACHED_WEIGHTS, 0);
 
         String eventSyncSql = "select count(*), syncStatus from event group by syncStatus";
         String clientSyncSql = "select count(*), syncStatus from client group by syncStatus";
 
         String validatedEventsSql = "select count(*), validationStatus from event group by validationStatus";
         String validatedClientsSql = "select count(*), validationStatus from client group by validationStatus";
+
+        String cachedVaccinesSql = "select count(*) vaccines WHERE sync_status != 'Synced'";
+        String cachedRecurringServiceRecordsSql = "select count(*) from recurring_service_records where WHERE sync_status != 'Synced'";
+        String cachedHeightsSql = "select count(*)  from heights WHERE sync_status != 'Synced'";
+        String cachedWeightsSql = "select count(*) from weights WHERE sync_status != 'Synced'";
 
         Cursor cursor = null;
 
@@ -88,6 +100,34 @@ public class StatsFragmentInteractor implements StatsFragmentContract.Interactor
                 populateValidatedClientsInfo(cursor);
             }
 
+            cursor.close();
+
+
+            cursor = database.rawQuery(cachedVaccinesSql, new String[]{});
+            while (cursor.moveToNext()) {
+
+            }
+            cursor.close();
+
+
+            cursor = database.rawQuery(cachedRecurringServiceRecordsSql, new String[]{});
+            while (cursor.moveToNext()) {
+
+            }
+            cursor.close();
+
+
+            cursor = database.rawQuery(cachedHeightsSql, new String[]{});
+            while (cursor.moveToNext()) {
+
+            }
+            cursor.close();
+
+
+            cursor = database.rawQuery(cachedWeightsSql, new String[]{});
+            while (cursor.moveToNext()) {
+
+            }
             cursor.close();
 
             appExecutors.mainThread().execute(new Runnable() {
@@ -144,4 +184,5 @@ public class StatsFragmentInteractor implements StatsFragmentContract.Interactor
             syncInfoMap.put(INVALID_CLIENTS, cursor.getInt(0));
         }
     }
+
 }
