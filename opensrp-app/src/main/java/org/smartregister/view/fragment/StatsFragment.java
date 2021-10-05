@@ -33,14 +33,6 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
     Context context;
     private StatsFragmentPresenter presenter;
 
-    private TextView tvSyncedEventsLabel;
-    private TextView tvUnsyncedEventsLabel;
-    private TextView tvTaskUnprocessedEventsLabel;
-    private TextView tvSyncedClientsLabel;
-    private TextView tvUnsyncedClientsLabel;
-    private TextView tvValidatedEventsLabel;
-    private TextView tvValidatedClientsLabel;
-
     private TextView tvSyncedEvents;
     private TextView tvUnSyncedEvents;
     private TextView tvSyncedClient;
@@ -62,6 +54,7 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         super.onCreate(savedInstanceState);
         presenter = new StatsFragmentPresenter(this);
         context = CoreLibrary.getInstance().context().applicationContext();
+
     }
 
     @Nullable
@@ -73,13 +66,6 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
     }
 
     private void initializeViews(View view) {
-        tvSyncedEventsLabel = view.findViewById(R.id.synced_events_label);
-        tvUnsyncedEventsLabel = view.findViewById(R.id.unsynced_events_label);
-        tvTaskUnprocessedEventsLabel = view.findViewById(R.id.task_unprocessed_events_label);
-        tvSyncedClientsLabel = view.findViewById(R.id.synced_clients_label);
-        tvUnsyncedClientsLabel = view.findViewById(R.id.unsynced_clients_label);
-        tvValidatedEventsLabel = view.findViewById(R.id.validated_events_label);
-        tvValidatedClientsLabel = view.findViewById(R.id.validated_clients_label);
 
         tvSyncedEvents = view.findViewById(R.id.synced_events);
         tvUnSyncedEvents = view.findViewById(R.id.unsynced_events);
@@ -90,15 +76,8 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvTaskUnprocessedEvents = view.findViewById(R.id.task_unprocessed_events);
 
         Button btnRefreshStats = view.findViewById(R.id.refresh_button);
-        btnRefreshStats.setText(CoreLibrary.getInstance().context().applicationContext().getString(R.string.refresh));
+        btnRefreshStats.setOnClickListener(v -> presenter.fetchSyncInfo());
 
-        btnRefreshStats.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                presenter.fetchSyncInfo();
-            }
-        });
-
-        setLabels();
         presenter.fetchSyncInfo();
     }
 
@@ -115,20 +94,6 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
 
         tvValidatedEvents.setText(syncInfoMap.get(VALID_EVENTS) + "");
         tvValidatedClients.setText(syncInfoMap.get(VALID_CLIENTS) + "");
-    }
-
-    public void setLabels() {
-        try {
-            tvSyncedEventsLabel.setText(context.getString(R.string.synced_events));
-            tvUnsyncedEventsLabel.setText(context.getString(R.string.unsynced_events));
-            tvTaskUnprocessedEventsLabel.setText(context.getString(R.string.task_unprocessed_events));
-            tvSyncedClientsLabel.setText(context.getString(R.string.synced_clients));
-            tvUnsyncedClientsLabel.setText(context.getString(R.string.unsynced_clients));
-            tvValidatedEventsLabel.setText(context.getString(R.string.validated_events));
-            tvValidatedClientsLabel.setText(context.getString(R.string.validated_clients));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
 }

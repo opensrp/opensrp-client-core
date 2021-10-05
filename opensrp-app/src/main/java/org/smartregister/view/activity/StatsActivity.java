@@ -1,6 +1,7 @@
 package org.smartregister.view.activity;
 
 import android.app.ProgressDialog;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 
@@ -13,6 +14,7 @@ import androidx.viewpager.widget.ViewPager;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.adapter.PagerAdapter;
+import org.smartregister.util.LangUtils;
 import org.smartregister.view.contract.StatsContract;
 import org.smartregister.view.fragment.StatsFragment;
 
@@ -20,6 +22,17 @@ public class StatsActivity extends AppCompatActivity implements StatsContract.Vi
 
     private ProgressDialog progressDialog;
     protected StatsFragment mBaseFragment = null;
+
+    @Override
+    protected void attachBaseContext(android.content.Context base) {
+        // get language from prefs
+        String lang = LangUtils.getLanguage(base.getApplicationContext());
+        Configuration newConfiguration = LangUtils.setAppLocale(base, lang);
+
+        super.attachBaseContext(base);
+
+        applyOverrideConfiguration(newConfiguration);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,7 +71,6 @@ public class StatsActivity extends AppCompatActivity implements StatsContract.Vi
     public void showProgressDialog(int titleIdentifier) {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-        progressDialog.setTitle(titleIdentifier);
         progressDialog.setTitle(CoreLibrary.getInstance().context().applicationContext().getString(R.string.please_wait_message));
 
         if (!isFinishing())
