@@ -18,6 +18,8 @@ import org.smartregister.util.LangUtils;
 import org.smartregister.view.contract.StatsContract;
 import org.smartregister.view.fragment.StatsFragment;
 
+import java.util.Objects;
+
 public class StatsActivity extends AppCompatActivity implements StatsContract.View {
 
     private ProgressDialog progressDialog;
@@ -43,13 +45,8 @@ public class StatsActivity extends AppCompatActivity implements StatsContract.Vi
         Toolbar toolbar = this.findViewById(R.id.summary_toolbar);
         toolbar.setTitle(CoreLibrary.getInstance().context().applicationContext().getString(R.string.return_to_register));
         this.setSupportActionBar(toolbar);
-        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        Objects.requireNonNull(this.getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         setupViews();
     }
@@ -68,7 +65,7 @@ public class StatsActivity extends AppCompatActivity implements StatsContract.Vi
     }
 
     @Override
-    public void showProgressDialog(int titleIdentifier) {
+    public void showProgressDialog() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setTitle(CoreLibrary.getInstance().context().applicationContext().getString(R.string.please_wait_message));

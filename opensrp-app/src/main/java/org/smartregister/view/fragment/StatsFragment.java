@@ -1,7 +1,6 @@
 package org.smartregister.view.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.view.contract.StatsFragmentContract;
 import org.smartregister.view.presenter.StatsFragmentPresenter;
@@ -30,7 +28,6 @@ import static org.smartregister.AllConstants.SyncInfo.VALID_EVENTS;
 
 public class StatsFragment extends Fragment implements StatsFragmentContract.View {
 
-    Context context;
     private StatsFragmentPresenter presenter;
 
     private TextView tvSyncedEvents;
@@ -53,7 +50,6 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = new StatsFragmentPresenter(this);
-        context = CoreLibrary.getInstance().context().applicationContext();
 
     }
 
