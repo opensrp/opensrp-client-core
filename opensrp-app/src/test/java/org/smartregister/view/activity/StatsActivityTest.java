@@ -43,7 +43,7 @@ public class StatsActivityTest extends BaseUnitTest {
     @Test
     public void canShowProgressDialog() {
         Assert.assertNull(ShadowDialog.getLatestDialog());
-        statsActivity.showProgressDialog(R.string.download_database);
+        statsActivity.showProgressDialog();
         Dialog progressDialog = ShadowDialog.getLatestDialog();
         Assert.assertNotNull(progressDialog);
         Assert.assertTrue(progressDialog.isShowing());
@@ -51,7 +51,7 @@ public class StatsActivityTest extends BaseUnitTest {
 
     @Test
     public void canHideProgressDialog() {
-        statsActivity.showProgressDialog(R.string.download_database);
+        statsActivity.showProgressDialog();
         Dialog progressDialog = ShadowDialog.getLatestDialog();
         Assert.assertNotNull(progressDialog);
         statsActivity.hideProgressDialog();
