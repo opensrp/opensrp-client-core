@@ -3,7 +3,6 @@ package org.smartregister.view.activity;
 import android.app.ProgressDialog;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
