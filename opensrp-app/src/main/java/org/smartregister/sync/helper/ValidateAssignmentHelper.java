@@ -181,8 +181,12 @@ public class ValidateAssignmentHelper extends BaseHelper {
     private boolean hasNewAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions) {
         if (existingJurisdictions.isEmpty()) {
             LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
-            for (String location : currentUserAssignment.getJurisdictions()) {
-                if (!locationTree.hasLocation(location)) return true;
+            if (locationTree != null) {
+                for (String location : currentUserAssignment.getJurisdictions()) {
+                    if (!locationTree.hasLocation(location)) return true;
+                }
+            } else {
+                Timber.e("hasNewAssignments(): The location Tree is Null");
             }
             return false;
         }
