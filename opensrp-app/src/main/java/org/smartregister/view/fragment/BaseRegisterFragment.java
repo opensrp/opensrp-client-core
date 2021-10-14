@@ -374,11 +374,11 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
     protected abstract void onViewClicked(View view);
 
-    private void registerSyncStatusBroadcastReceiver() {
+    protected void registerSyncStatusBroadcastReceiver() {
         SyncStatusBroadcastReceiver.getInstance().addSyncStatusListener(this);
     }
 
-    private void unregisterSyncStatusBroadcastReceiver() {
+    protected void unregisterSyncStatusBroadcastReceiver() {
         SyncStatusBroadcastReceiver.getInstance().removeSyncStatusListener(this);
     }
 
@@ -397,7 +397,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         refreshSyncStatusViews(fetchStatus);
     }
 
-    private void refreshSyncStatusViews(FetchStatus fetchStatus) {
+    protected void refreshSyncStatusViews(FetchStatus fetchStatus) {
         try{
             if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
                 try{
