@@ -600,5 +600,9 @@ public class AllConstants {
         String INVALID_CLIENTS = "INValidClients";
         String TASK_UNPROCESSED_EVENTS = "taskUnprocessedEvents";
         String NULL_EVENT_SYNC_STATUS = "nullEventSyncStatus";
+        String CACHED_VACCINES = "cachedVaccines";
+        String CACHED_RECURRING_SERVICE_RECORDS = "cachedRecurringServiceRecords";
+        String CACHED_HEIGHTS = "cachedHeights";
+        String CACHED_WEIGHTS = "cachedWeights";
     }
 }
