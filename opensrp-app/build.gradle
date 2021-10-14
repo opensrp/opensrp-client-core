@@ -230,7 +230,7 @@ dependencies {
 
     implementation 'org.smartregister:opensrp-client-utils:0.0.4-SNAPSHOT'
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:1.6.0-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-plan-evaluator:1.6.2-SNAPSHOT'
 
     implementation 'xerces:xercesImpl:2.12.0'
 
