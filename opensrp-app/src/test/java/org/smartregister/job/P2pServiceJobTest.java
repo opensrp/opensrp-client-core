@@ -22,7 +22,7 @@ public class P2pServiceJobTest extends BaseRobolectricUnitTest {
 
     @Test
     public void onRunJobShouldStartServiceAndReturnSuccess() {
-        P2pServiceJob p2pServiceJob = Mockito.spy(new P2pServiceJob());
+        P2PServiceWorkRequest p2pServiceJob = Mockito.spy(new P2PServiceWorkRequest());
         Mockito.doReturn(context).when(p2pServiceJob).getApplicationContext();
 
         // Assert the return value & execute method under test

@@ -1,21 +1,23 @@
 package org.smartregister.multitenant.check;
 
 import android.content.Context;
-import android.content.Intent;
-import androidx.annotation.NonNull;
 
-import org.smartregister.sync.intent.SyncIntentService;
+import androidx.annotation.NonNull;
+import androidx.work.WorkerParameters;
+
+import org.jetbrains.annotations.NotNull;
+import org.smartregister.sync.intent.SyncIntentWorker;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 09-04-2020.
  */
-public class EventClientSync extends SyncIntentService {
+public class EventClientSync extends SyncIntentWorker {
 
     private Context context;
 
-    public EventClientSync(@NonNull Context context) {
+    public EventClientSync(@NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
+        super(context, workerParams);
         this.context = context;
-        attachBaseContext(context);
     }
 
     protected void performSync() {

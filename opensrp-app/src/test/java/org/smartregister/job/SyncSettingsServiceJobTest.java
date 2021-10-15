@@ -22,7 +22,7 @@ public class SyncSettingsServiceJobTest extends BaseRobolectricUnitTest {
 
     @Test
     public void onRunJobShouldStartServiceAndReturnSuccess() {
-        SyncSettingsServiceJob syncSettingsServiceJob = Mockito.spy(new SyncSettingsServiceJob());
+        SyncSettingsServiceWorkRequest syncSettingsServiceJob = Mockito.spy(new SyncSettingsServiceWorkRequest());
         Mockito.doReturn(context).when(syncSettingsServiceJob).getApplicationContext();
 
         // Assert the return value & execute method under test

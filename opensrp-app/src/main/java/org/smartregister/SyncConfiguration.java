@@ -3,6 +3,7 @@ package org.smartregister;
 import android.util.Pair;
 
 import org.smartregister.account.AccountHelper;
+import org.smartregister.sync.intent.BaseSyncIntentWorker;
 import org.smartregister.view.activity.BaseLoginActivity;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public abstract class SyncConfiguration {
     /**
      * Returns the read timeout in milliseconds
      * <p>
-     * This value will be read when setting the default value for sync read timeout in {@link org.smartregister.sync.intent.BaseSyncIntentService}
+     * This value will be read when setting the default value for sync read timeout in {@link BaseSyncIntentWorker}
      *
      * @return read timeout value in milliseconds
      */
@@ -68,7 +69,7 @@ public abstract class SyncConfiguration {
     /**
      * Returns the connection timeout in milliseconds
      * <p>
-     * This value will be read when setting the default value for sync connection timeout in {@link org.smartregister.sync.intent.BaseSyncIntentService}
+     * This value will be read when setting the default value for sync connection timeout in {@link BaseSyncIntentWorker}
      *
      * @return connection timeout value in milliseconds
      */

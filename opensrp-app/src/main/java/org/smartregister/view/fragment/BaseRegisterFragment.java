@@ -27,9 +27,10 @@ import org.smartregister.R;
 import org.smartregister.cursoradapter.RecyclerViewFragment;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.ResponseErrorStatus;
-import org.smartregister.job.SyncSettingsServiceJob;
+import org.smartregister.job.SyncSettingsServiceWorkRequest;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.sync.intent.SettingsSyncIntentWorker;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.activity.BaseRegisterActivity;
@@ -232,7 +233,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         //Sync
         syncButton = view.findViewById(R.id.sync_refresh);
         if (syncButton != null) {
-            syncButton.setOnClickListener(view1 -> SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG));
+            syncButton.setOnClickListener(view1 -> SyncSettingsServiceWorkRequest.scheduleJobImmediately(SettingsSyncIntentWorker.class));
         }
     }
 

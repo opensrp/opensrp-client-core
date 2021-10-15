@@ -8,9 +8,10 @@ import android.os.Bundle;
 
 import org.joda.time.DateTime;
 import org.smartregister.domain.FetchStatus;
-import org.smartregister.job.ExtendedSyncServiceJob;
+import org.smartregister.job.ExtendedSyncServiceWorkRequest;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.DrishtiSyncScheduler;
+import org.smartregister.sync.intent.ExtendedSyncIntentWorker;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -137,7 +138,7 @@ public class SyncStatusBroadcastReceiver extends BroadcastReceiver {
     }
 
     protected void startExtendedSync() {
-        ExtendedSyncServiceJob.scheduleJobImmediately(ExtendedSyncServiceJob.TAG);
+        ExtendedSyncServiceWorkRequest.scheduleJobImmediately(ExtendedSyncIntentWorker.class);
     }
 
     public interface SyncStatusListener {

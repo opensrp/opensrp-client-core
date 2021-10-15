@@ -11,7 +11,7 @@ public class ValidateSyncDataServiceJobTest extends ServiceJobTest {
     }
 
     @Override
-    protected BaseJob getJob() {
-        return new ValidateSyncDataServiceJob();
+    protected BaseWorkRequest getJob() {
+        return new ValidateSyncDataServiceWorkRequest();
     }
 }

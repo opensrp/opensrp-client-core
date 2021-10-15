@@ -1,6 +1,6 @@
 package org.smartregister.job;
 
-import org.smartregister.sync.intent.DocumentConfigurationIntentService;
+import org.smartregister.sync.intent.DocumentConfigurationIntentWorker;
 
 /**
  * Created by cozej4 on 2020-04-16.
@@ -15,7 +15,7 @@ public class DocumentConfigurationServiceJobTest extends ServiceJobTest {
     }
 
     @Override
-    protected BaseJob getJob() {
-        return new DocumentConfigurationServiceJob(DocumentConfigurationIntentService.class);
+    protected BaseWorkRequest getJob() {
+        return new DocumentConfigurationServiceWorkRequest(DocumentConfigurationIntentWorker.class);
     }
 }

@@ -1,9 +1,12 @@
 package org.smartregister.sync.intent;
 
 import android.content.Context;
-import android.content.Intent;
+
+import androidx.annotation.NonNull;
+import androidx.work.WorkerParameters;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +19,7 @@ import org.smartregister.domain.Response;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
 
+import java.net.SocketException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,7 +32,7 @@ import timber.log.Timber;
 /**
  * Created by keyman on 11/10/2017.
  */
-public class ValidateIntentService extends BaseSyncIntentService {
+public class ValidateIntentWorker extends BaseSyncIntentWorker {
 
     private Context context;
     private HTTPAgent httpAgent;
@@ -38,22 +42,16 @@ public class ValidateIntentService extends BaseSyncIntentService {
 
     private EventClientRepository eventClientRepository = getOpenSRPContext().getEventClientRepository();
 
-    public ValidateIntentService() {
-        super("ValidateIntentService");
+    public ValidateIntentWorker(@NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
+        super(context, workerParams);
+        this.context = context;
+        this.httpAgent = getOpenSRPContext().getHttpAgent();
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        context = getBaseContext();
-        httpAgent = getOpenSRPContext().getHttpAgent();
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onRunWork() throws SocketException {
 
         try {
-            super.onHandleIntent(intent);
             int fetchLimit = FETCH_LIMIT;
 
             List<String> clientIds = eventClientRepository.getUnValidatedClientBaseEntityIds(fetchLimit);

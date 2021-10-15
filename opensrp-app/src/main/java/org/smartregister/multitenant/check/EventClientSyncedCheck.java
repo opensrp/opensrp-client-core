@@ -2,12 +2,17 @@ package org.smartregister.multitenant.check;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkerParameters;
 
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.view.activity.DrishtiApplication;
+
+import java.util.concurrent.Executors;
 
 import timber.log.Timber;
 
@@ -26,15 +31,18 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
 
     @WorkerThread
     @Override
-    public void performPreResetAppOperations(@NonNull DrishtiApplication application) throws PreResetAppOperationException {
+    public void performPreResetAppOperations(@NonNull DrishtiApplication application) {
         SyncStatusBroadcastReceiver.init(application.getBaseContext());
         SyncStatusBroadcastReceiver syncStatusBroadcastReceiver = SyncStatusBroadcastReceiver.getInstance();
         syncStatusBroadcastReceiver.addSyncStatusListener(this);
 
-        EventClientSync syncIntentService = new EventClientSync(application);
-        syncIntentService.performSync();
-
-        syncStatusBroadcastReceiver.removeSyncStatusListener(this);
+        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(EventClientSync.class)
+                .build();
+        WorkManager.getInstance(application.getApplicationContext())
+                .enqueue(request)
+                .getResult()
+                .addListener(() -> syncStatusBroadcastReceiver.removeSyncStatusListener(EventClientSyncedCheck.this),
+                        Executors.newSingleThreadExecutor());
     }
 
     public boolean isEventsClientSynced(@NonNull DrishtiApplication application) {

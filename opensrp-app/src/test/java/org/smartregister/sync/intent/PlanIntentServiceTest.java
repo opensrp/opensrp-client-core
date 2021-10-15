@@ -12,11 +12,11 @@ import org.smartregister.sync.helper.PlanIntentServiceHelper;
  */
 public class PlanIntentServiceTest extends BaseUnitTest {
 
-    private PlanIntentService planIntentService;
+    private PlanIntentWorker planIntentService;
 
     @Before
     public void setUp() {
-        planIntentService = new PlanIntentService();
+        planIntentService = new PlanIntentWorker();
     }
 
     @Test

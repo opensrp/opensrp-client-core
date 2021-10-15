@@ -32,7 +32,7 @@ import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.p2p.sync.data.JsonData;
-import org.smartregister.sync.intent.P2pProcessRecordsService;
+import org.smartregister.sync.intent.P2PProcessRecordsWorker;
 import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
@@ -857,7 +857,7 @@ public class EventClientRepository extends BaseRepository {
                 new String[]{String.valueOf(startServerVersion), String.valueOf(lastServerVersion)});
     }
 
-    public P2pProcessRecordsService.EventClientQueryResult fetchEventClientsByRowId(
+    public P2PProcessRecordsWorker.EventClientQueryResult fetchEventClientsByRowId(
             long lastProcessedRowId) {
         List<EventClient> list = new ArrayList<>();
         Cursor cursor = null;
@@ -900,7 +900,7 @@ public class EventClientRepository extends BaseRepository {
                 cursor.close();
             }
         }
-        return new P2pProcessRecordsService.EventClientQueryResult(maxRowId, list);
+        return new P2PProcessRecordsWorker.EventClientQueryResult(maxRowId, list);
     }
 
     /**

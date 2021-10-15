@@ -5,9 +5,9 @@ import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import android.widget.Toast;
+import androidx.work.WorkManager;
 
-import com.evernote.android.job.JobManager;
+import android.widget.Toast;
 
 import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
@@ -71,7 +71,8 @@ public class ResetAppHelper {
             resetAppDialog.showText(activity.getString(R.string.stopping_services));
         }
 
-        JobManager.create(application).cancelAll();
+        WorkManager.getInstance(application.getApplicationContext())
+                .cancelAllWork();
 
         if (resetAppDialog != null) {
             resetAppDialog.showText(activity.getString(R.string.performing_data_checks));

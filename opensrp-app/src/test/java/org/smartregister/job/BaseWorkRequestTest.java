@@ -20,13 +20,13 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 10-11-2020.
  */
-public class BaseJobTest extends BaseRobolectricUnitTest {
+public class BaseWorkRequestTest extends BaseRobolectricUnitTest {
 
     @Test
     public void scheduleJobShouldAddJobToJobManagerAndRescheduleWhenLessThan15Minutes() {
         ArgumentCaptor<JobRequest> jobRequestArgumentCaptor = ArgumentCaptor.forClass(JobRequest.class);
 
-        BaseJob.scheduleJob("my-job", TimeUnit.MINUTES.toMillis(10), TimeUnit.MINUTES.toMillis(5));
+        BaseWorkRequest.scheduleJob("my-job", TimeUnit.MINUTES.toMillis(10), TimeUnit.MINUTES.toMillis(5));
 
         Mockito.verify(ShadowJobManager.mockJobManager).schedule(jobRequestArgumentCaptor.capture());
 
@@ -37,8 +37,8 @@ public class BaseJobTest extends BaseRobolectricUnitTest {
 
     @Test
     public void getApplicationContextShouldReturnSameContextInstance() {
-        BaseJob baseJob =Mockito.mock(BaseJob.class, Mockito.CALLS_REAL_METHODS);
-        ReflectionHelpers.setField(baseJob, "mContextReference", new WeakReference<Context>(RuntimeEnvironment.application));
-        Assert.assertEquals(RuntimeEnvironment.application, baseJob.getApplicationContext());
+        BaseWorkRequest baseWorkRequest =Mockito.mock(BaseWorkRequest.class, Mockito.CALLS_REAL_METHODS);
+        ReflectionHelpers.setField(baseWorkRequest, "mContextReference", new WeakReference<Context>(RuntimeEnvironment.application));
+        Assert.assertEquals(RuntimeEnvironment.application, baseWorkRequest.getApplicationContext());
     }
 }

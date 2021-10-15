@@ -29,7 +29,7 @@ public abstract class ServiceJobTest extends BaseUnitTest {
     @Mock
     private ComponentName componentName;
 
-    private BaseJob jobSpy;
+    private BaseWorkRequest jobSpy;
 
     @Before
     public void setUp() {
@@ -44,9 +44,9 @@ public abstract class ServiceJobTest extends BaseUnitTest {
 
     protected abstract String getServiceId();
 
-    protected abstract BaseJob getJob();
+    protected abstract BaseWorkRequest getJob();
 
-    private BaseJob getJobSpy() {
+    private BaseWorkRequest getJobSpy() {
         if (jobSpy == null) {
             jobSpy = Mockito.spy(getJob());
         }

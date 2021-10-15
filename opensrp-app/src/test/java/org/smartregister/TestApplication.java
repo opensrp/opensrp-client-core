@@ -5,10 +5,10 @@ import com.evernote.android.job.JobCreator;
 import com.evernote.android.job.JobManager;
 
 import org.json.JSONObject;
-import org.smartregister.job.SyncServiceJob;
+import org.smartregister.job.SyncServiceWorkRequest;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.P2PClassifier;
-import org.smartregister.sync.intent.SyncIntentService;
+import org.smartregister.sync.intent.SyncIntentWorker;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import androidx.annotation.NonNull;
@@ -75,8 +75,8 @@ public class TestApplication extends DrishtiApplication {
         @Override
         public Job create(@NonNull String tag) {
             switch (tag) {
-                case SyncServiceJob.TAG:
-                    return new SyncServiceJob(SyncIntentService.class);
+                case SyncServiceWorkRequest.TAG:
+                    return new SyncServiceWorkRequest(SyncIntentWorker.class);
                 default:
                     break;
             }

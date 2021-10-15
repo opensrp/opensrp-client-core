@@ -11,7 +11,7 @@ public class PullUniqueIdsServiceJobTest extends ServiceJobTest {
     }
 
     @Override
-    protected BaseJob getJob() {
-        return new PullUniqueIdsServiceJob();
+    protected BaseWorkRequest getJob() {
+        return new PullUniqueIdsServiceWorkRequest();
     }
 }

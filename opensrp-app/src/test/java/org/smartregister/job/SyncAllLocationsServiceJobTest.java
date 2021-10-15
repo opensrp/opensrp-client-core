@@ -8,7 +8,7 @@ public class SyncAllLocationsServiceJobTest extends ServiceJobTest {
     }
 
     @Override
-    protected BaseJob getJob() {
-        return new SyncAllLocationsServiceJob();
+    protected BaseWorkRequest getJob() {
+        return new SyncAllLocationsServiceWorkRequest();
     }
 }

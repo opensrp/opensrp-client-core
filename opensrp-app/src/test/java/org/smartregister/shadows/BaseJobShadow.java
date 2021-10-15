@@ -3,13 +3,13 @@ package org.smartregister.shadows;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.shadow.api.Shadow;
-import org.smartregister.job.BaseJob;
+import org.smartregister.job.BaseWorkRequest;
 
 /**
  * Created by Vincent Karuri on 19/01/2021
  */
 
-@Implements(BaseJob.class)
+@Implements(BaseWorkRequest.class)
 public class BaseJobShadow extends Shadow {
 
     private static MockCounter mockCounter = new MockCounter();

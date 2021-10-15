@@ -17,15 +17,18 @@ import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.event.Listener;
-import org.smartregister.job.P2pServiceJob;
-import org.smartregister.job.PullUniqueIdsServiceJob;
-import org.smartregister.job.SyncSettingsServiceJob;
+import org.smartregister.job.P2PServiceWorkRequest;
+import org.smartregister.job.PullUniqueIdsServiceWorkRequest;
+import org.smartregister.job.SyncSettingsServiceWorkRequest;
 import org.smartregister.login.task.LocalLoginTask;
 import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.multitenant.ResetAppHelper;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.ServerSettingsHelper;
+import org.smartregister.sync.intent.P2PProcessRecordsWorker;
+import org.smartregister.sync.intent.PullUniqueIdsIntentWorker;
+import org.smartregister.sync.intent.SettingsSyncIntentWorker;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.BaseLoginContract;
@@ -258,12 +261,12 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         P2POptions p2POptions = CoreLibrary.getInstance().getP2POptions();
         if (p2POptions != null && p2POptions.isEnableP2PLibrary()) {
             // Finish processing any unprocessed sync records here
-            P2pServiceJob.scheduleJobImmediately(P2pServiceJob.TAG);
+            P2PServiceWorkRequest.scheduleJobImmediately(P2PProcessRecordsWorker.class);
         }
 
         if (NetworkUtils.isNetworkAvailable()) {
-            PullUniqueIdsServiceJob.scheduleJobImmediately(PullUniqueIdsServiceJob.TAG);
-            SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
+            PullUniqueIdsServiceWorkRequest.scheduleJobImmediately(PullUniqueIdsIntentWorker.class);
+            SyncSettingsServiceWorkRequest.scheduleJobImmediately(SettingsSyncIntentWorker.class);
         }
     }
 

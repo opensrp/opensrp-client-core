@@ -1,7 +1,5 @@
 package org.smartregister.sync.intent;
 
-import android.content.Intent;
-
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,7 +43,7 @@ import static org.mockito.Mockito.when;
  */
 public class ValidateIntentServiceTest extends BaseUnitTest {
 
-    private ValidateIntentService validateIntentService;
+    private ValidateIntentWorker validateIntentService;
 
     @Mock
     private HTTPAgent httpAgent;
@@ -58,7 +56,7 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMethods();
-        validateIntentService = Robolectric.buildIntentService(ValidateIntentService.class).get();
+        validateIntentService = Robolectric.buildIntentService(ValidateIntentWorker.class).get();
         ReflectionHelpers.setField(validateIntentService, "context", RuntimeEnvironment.application);
         ReflectionHelpers.setField(validateIntentService, "httpAgent", httpAgent);
         ReflectionHelpers.setField(validateIntentService, "openSRPContext", openSRPContext);
@@ -74,7 +72,11 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
         when(eventClientRepository.fetchClientByBaseEntityIds(any())).thenReturn(Collections.singletonList(client));
         when(eventClientRepository.getEventsByEventIds(any())).thenReturn(Collections.singletonList(event));
 
-        validateIntentService.onHandleIntent(new Intent());
+        try {
+            validateIntentService.onRunWork();
+        } catch (java.net.SocketException e) {
+            e.printStackTrace();
+        }
 
         Mockito.verify(eventClientRepository).markClientValidationStatus(getClientIds().get(0), false);
         Mockito.verify(eventClientRepository).markClientValidationStatus(getClientIds().get(1), true);
@@ -96,7 +98,11 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
         when(eventClientRepository.fetchClientByBaseEntityIds(any())).thenReturn(Collections.singletonList(client));
         when(eventClientRepository.getEventsByEventIds(any())).thenReturn(Collections.singletonList(event));
 
-        validateIntentService.onHandleIntent(new Intent());
+        try {
+            validateIntentService.onRunWork();
+        } catch (java.net.SocketException e) {
+            e.printStackTrace();
+        }
 
         Mockito.verify(eventClientRepository).markClientValidationStatus(getClientIds().get(0), true);
         Mockito.verify(eventClientRepository).markClientValidationStatus(getClientIds().get(1), true);

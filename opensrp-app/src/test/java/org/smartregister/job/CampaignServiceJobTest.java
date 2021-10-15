@@ -8,7 +8,7 @@ public class CampaignServiceJobTest extends ServiceJobTest {
     }
 
     @Override
-    protected BaseJob getJob() {
-        return new CampaignServiceJob();
+    protected BaseWorkRequest getJob() {
+        return new CampaignServiceWorkRequest();
     }
 }

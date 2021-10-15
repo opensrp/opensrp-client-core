@@ -22,7 +22,7 @@ public class PlanIntentServiceJobTest extends BaseRobolectricUnitTest {
 
     @Test
     public void onRunJobShouldStartServiceAndReturnSuccess() {
-        PlanIntentServiceJob planIntentServiceJob = Mockito.spy(new PlanIntentServiceJob());
+        PlanIntentServiceWorkRequest planIntentServiceJob = Mockito.spy(new PlanIntentServiceWorkRequest());
         Mockito.doReturn(context).when(planIntentServiceJob).getApplicationContext();
 
         // Assert the return value & execute method under test

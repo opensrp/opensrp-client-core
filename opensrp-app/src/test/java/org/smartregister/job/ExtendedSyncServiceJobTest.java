@@ -11,7 +11,7 @@ public class ExtendedSyncServiceJobTest extends ServiceJobTest {
     }
 
     @Override
-    protected BaseJob getJob() {
-        return new ExtendedSyncServiceJob();
+    protected BaseWorkRequest getJob() {
+        return new ExtendedSyncServiceWorkRequest();
     }
 }

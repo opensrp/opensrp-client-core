@@ -8,7 +8,7 @@ public class LocationServiceJobTest extends ServiceJobTest {
     }
 
     @Override
-    protected BaseJob getJob() {
-        return new LocationStructureServiceJob();
+    protected BaseWorkRequest getJob() {
+        return new LocationStructureServiceWorkRequest();
     }
 }

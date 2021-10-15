@@ -11,7 +11,7 @@ public class ImageUploadServiceJobTest extends ServiceJobTest {
     }
 
     @Override
-    protected BaseJob getJob() {
-        return new ImageUploadServiceJob();
+    protected BaseWorkRequest getJob() {
+        return new ImageUploadServiceWorkRequest();
     }
 }
