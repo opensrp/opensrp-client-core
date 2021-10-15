@@ -209,10 +209,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 
-    implementation('com.evernote:android-job:1.2.6') {
-        exclude group: 'com.google.android', module: 'android'
-    }
-
     implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
     implementation('de.hdodenhof:circleimageview:3.1.0') {
         exclude group: 'com.google.android', module: 'android'
@@ -251,13 +247,19 @@ dependencies {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 
-    implementation 'com.evernote:android-job:1.2.6'
     implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'xerces:xercesImpl:2.12.0'
 
     // Add the dependency for the Performance Monitoring library
     implementation 'com.google.firebase:firebase-perf:19.0.7'
+
+    // WorkManager
+    def work_version = "2.6.0"
+    implementation "androidx.work:work-runtime:$work_version"
+    implementation "androidx.work:work-gcm:$work_version"
+    implementation "androidx.work:work-multiprocess:$work_version"
+    implementation "com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava"
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 

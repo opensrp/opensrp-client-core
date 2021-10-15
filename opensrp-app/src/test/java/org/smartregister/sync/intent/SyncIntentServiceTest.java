@@ -46,7 +46,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.smartregister.sync.intent.SyncIntentService.EVENT_PUSH_LIMIT;
+import static org.smartregister.sync.intent.SyncIntentWorker.EVENT_PUSH_LIMIT;
 
 /**
  * Created by Richard Kareko on 7/21/20.
@@ -74,7 +74,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     private Context context = RuntimeEnvironment.application;
 
-    private SyncIntentService syncIntentService;
+    private SyncIntentWorker syncIntentService;
 
     private String eventSyncPayload = "{\n" +
             "  \"events\": [\n" +
@@ -164,7 +164,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         MockitoAnnotations.initMocks(this);
         Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
         CoreLibrary.getInstance().context().allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
-        syncIntentService = new SyncIntentService();
+        syncIntentService = new SyncIntentWorker();
         syncIntentService.init(context);
         Whitebox.setInternalState(syncIntentService, "mBase", RuntimeEnvironment.application);
     }
@@ -469,7 +469,11 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
     public void testOnHandleIntentCallsHandleSync() {
         Intent intent = Mockito.mock(Intent.class);
         syncIntentService = spy(syncIntentService);
-        syncIntentService.onHandleIntent(intent);
+        try {
+            syncIntentService.onRunWork();
+        } catch (java.net.SocketException e) {
+            e.printStackTrace();
+        }
 
         verify(syncIntentService).handleSync();
     }
@@ -495,7 +499,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(new Response<>(responseStatus, null))
                 .when(httpAgent).fetch(stringArgumentCaptor.capture());
         String removeParamKey = "some-other-param-to-remove";
-        BaseSyncIntentService.RequestParamsBuilder builder = new BaseSyncIntentService.RequestParamsBuilder().configureSyncFilter("locationId", "location-1")
+        RequestParamsBuilder builder = new RequestParamsBuilder().configureSyncFilter("locationId", "location-1")
                 .addServerVersion(0).addEventPullLimit(250).addParam("region", "au-west").addParam("is_enabled", true).addParam("some-other-param", 85l)
                 .addParam(removeParamKey, 745).removeParam(removeParamKey);
         syncIntentService.getUrlResponse("https://sample-stage.smartregister.org/opensrp/rest/event/sync", builder, syncConfiguration, false);
@@ -515,7 +519,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(new Response<>(responseStatus, null))
                 .when(httpAgent).postWithJsonResponse(ArgumentMatchers.anyString(), stringArgumentCaptor.capture());
 
-        BaseSyncIntentService.RequestParamsBuilder builder = new BaseSyncIntentService.RequestParamsBuilder().configureSyncFilter("locationId", "location-2")
+        RequestParamsBuilder builder = new RequestParamsBuilder().configureSyncFilter("locationId", "location-2")
                 .addServerVersion(0).addEventPullLimit(500).addParam("region", "au-east").addParam("is_enabled", false).addParam("some-other-param", 36);
         syncIntentService.getUrlResponse("https://sample-stage.smartregister.org/opensrp/rest/event/sync", builder, syncConfiguration, true);
 

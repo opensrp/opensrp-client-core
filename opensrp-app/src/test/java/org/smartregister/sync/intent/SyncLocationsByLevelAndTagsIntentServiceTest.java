@@ -12,11 +12,11 @@ import org.smartregister.sync.helper.LocationServiceHelper;
  */
 public class SyncLocationsByLevelAndTagsIntentServiceTest extends BaseUnitTest {
 
-    private SyncLocationsByLevelAndTagsIntentService syncLocationsByLevelAndTagsIntentService;
+    private SyncLocationsByLevelAndTagsIntentWorker syncLocationsByLevelAndTagsIntentService;
 
     @Before
     public void setUp() throws Exception {
-        syncLocationsByLevelAndTagsIntentService = new SyncLocationsByLevelAndTagsIntentService();
+        syncLocationsByLevelAndTagsIntentService = new SyncLocationsByLevelAndTagsIntentWorker();
     }
 
     @Test

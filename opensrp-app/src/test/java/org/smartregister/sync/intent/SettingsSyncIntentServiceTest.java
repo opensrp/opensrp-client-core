@@ -21,7 +21,7 @@ import org.smartregister.BaseRobolectricUnitTest;
  */
 public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
 
-    private SettingsSyncIntentService settingsSyncIntentService;
+    private SettingsSyncIntentWorker settingsSyncIntentService;
 
     @Before
     public void setUp() throws Exception {
@@ -30,7 +30,7 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
         ShadowJobManager.mockJobManager = null;
         ShadowJobManager.createMockJobManager();
 
-        settingsSyncIntentService = Robolectric.buildIntentService(SettingsSyncIntentService.class)
+        settingsSyncIntentService = Robolectric.buildIntentService(SettingsSyncIntentWorker.class)
                 .create()
                 .get();
     }
@@ -41,9 +41,9 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void onHandleIntentShouldScheduleJobRequestAndInvokeProcessSettingsWhenGivenNullIntent() {
+    public void onHandleIntentShouldScheduleJobRequestAndInvokeProcessSettingsWhenGivenNullIntent() throws Exception {
         settingsSyncIntentService = Mockito.spy(settingsSyncIntentService);
-        settingsSyncIntentService.onHandleIntent(null);
+        settingsSyncIntentService.onRunWork();
 
         Mockito.verify(ShadowJobManager.mockJobManager).schedule(Mockito.any(JobRequest.class));
         Mockito.verify(settingsSyncIntentService).processSettings(Mockito.nullable(Intent.class));
@@ -72,7 +72,7 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Test
     public void onCreateShouldCreateSyncSettingsServiceHelper() {
-        settingsSyncIntentService = Robolectric.buildIntentService(SettingsSyncIntentService.class)
+        settingsSyncIntentService = Robolectric.buildIntentService(SettingsSyncIntentWorker.class)
                 .get();
         Assert.assertNull(settingsSyncIntentService.syncSettingsServiceHelper);
 

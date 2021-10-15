@@ -149,11 +149,6 @@
             android:name=".service.intentservices.ReplicationIntentService"
             android:exported="false" />
 
-        <service
-            android:name=".sync.intent.P2pProcessRecordsService"
-            android:description="@string/component_desc_p2p_process_records_service"
-            android:exported="false" />
-
         <meta-data
             android:name="com.google.android.gms.vision.Dependencies"
             android:value="barcode" />

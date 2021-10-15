@@ -17,11 +17,11 @@ import org.smartregister.service.DocumentConfigurationService;
  */
 public class DocumentConfigurationIntentServiceTest extends BaseRobolectricUnitTest {
 
-    private DocumentConfigurationIntentService documentConfigurationIntentService;
+    private DocumentConfigurationIntentWorker documentConfigurationIntentService;
 
     @Before
     public void setUp() throws Exception {
-        documentConfigurationIntentService = Mockito.spy(Robolectric.buildIntentService(DocumentConfigurationIntentService.class)
+        documentConfigurationIntentService = Mockito.spy(Robolectric.buildIntentService(DocumentConfigurationIntentWorker.class)
                 .create()
                 .get());
     }
@@ -52,7 +52,11 @@ public class DocumentConfigurationIntentServiceTest extends BaseRobolectricUnitT
         DocumentConfigurationService documentConfigurationService = Mockito.mock(DocumentConfigurationService.class);
         Mockito.doReturn(documentConfigurationService).when(documentConfigurationIntentService).getDocumentConfigurationService();
 
-        documentConfigurationIntentService.onHandleIntent(null);
+        try {
+            documentConfigurationIntentService.onRunWork();
+        } catch (java.net.SocketException e) {
+            e.printStackTrace();
+        }
 
         Mockito.verify(documentConfigurationService).fetchManifest();
         Mockito.verify(documentConfigurationIntentService).getDocumentConfigurationService();

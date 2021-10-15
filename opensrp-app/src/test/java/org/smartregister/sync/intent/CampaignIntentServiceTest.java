@@ -44,12 +44,12 @@ public class CampaignIntentServiceTest extends BaseUnitTest {
     @Captor
     private ArgumentCaptor<Campaign> campaignArgumentCaptor;
 
-    private CampaignIntentService campaignIntentService;
+    private CampaignIntentWorker campaignIntentService;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        campaignIntentService = Mockito.spy(new CampaignIntentService());
+        campaignIntentService = Mockito.spy(new CampaignIntentWorker());
         Mockito.doNothing().when(campaignIntentService).sendBroadcast(ArgumentMatchers.any(Intent.class));
     }
 
@@ -87,7 +87,7 @@ public class CampaignIntentServiceTest extends BaseUnitTest {
         campaign.setIdentifier("campaign3");
         expectedCampaigns.add(campaign);
 
-        String payload = CampaignIntentService.gson.toJson(expectedCampaigns, new TypeToken<List<Campaign>>() {
+        String payload = CampaignIntentWorker.gson.toJson(expectedCampaigns, new TypeToken<List<Campaign>>() {
         }.getType());
 
         Context openSRPContext = CoreLibrary.getInstance().context();

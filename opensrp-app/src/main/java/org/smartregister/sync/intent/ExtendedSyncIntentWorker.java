@@ -1,27 +1,32 @@
 package org.smartregister.sync.intent;
 
-import android.content.Intent;
+import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.work.WorkerParameters;
+
+import org.jetbrains.annotations.NotNull;
 import org.smartregister.CoreLibrary;
-import org.smartregister.job.ValidateSyncDataServiceJob;
+import org.smartregister.job.ValidateSyncDataServiceWorkRequest;
 import org.smartregister.service.ActionService;
 import org.smartregister.util.NetworkUtils;
+
+import java.net.SocketException;
 
 import timber.log.Timber;
 
 
-public class ExtendedSyncIntentService extends BaseSyncIntentService {
+public class ExtendedSyncIntentWorker extends BaseSyncIntentWorker {
 
     private ActionService actionService = CoreLibrary.getInstance().context().actionService();
 
-    public ExtendedSyncIntentService() {
-        super("ExtendedSyncIntentService");
+    public ExtendedSyncIntentWorker(@NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
+        super(context, workerParams);
     }
 
     @Override
-    protected void onHandleIntent(Intent workIntent) {
+    protected void onRunWork() throws SocketException {
         try {
-            super.onHandleIntent(workIntent);
             if (NetworkUtils.isNetworkAvailable()) {
                 if (!CoreLibrary.getInstance().getSyncConfiguration().disableActionService()) {
                     actionService.fetchNewActions();
@@ -31,10 +36,11 @@ public class ExtendedSyncIntentService extends BaseSyncIntentService {
 
         } catch (Exception e) {
             Timber.e(e);
+            throw new RuntimeException(e);
         }
     }
 
     private void startSyncValidation() {
-        ValidateSyncDataServiceJob.scheduleJobImmediately(ValidateSyncDataServiceJob.TAG);
+        ValidateSyncDataServiceWorkRequest.scheduleJobImmediately(ValidateIntentWorker.class);
     }
 }

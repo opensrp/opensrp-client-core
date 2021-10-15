@@ -1,7 +1,5 @@
 package org.smartregister.sync.intent;
 
-import android.content.Intent;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.annotation.Config;
@@ -20,8 +18,8 @@ public class SyncLocationsByTeamIdsIntentServiceTest extends BaseUnitTest {
     public void testOnHandleIntentShouldSyncLocations() throws Exception {
         LocationServiceHelper locationServiceHelper = Mockito.mock(LocationServiceHelper.class);
         ShadowLocationServiceHelper.setInstance(locationServiceHelper);
-        SyncLocationsByTeamIdsIntentService syncLocationsByTeamIdsIntentService = new SyncLocationsByTeamIdsIntentService();
-        syncLocationsByTeamIdsIntentService.onHandleIntent(new Intent());
+        SyncLocationsByTeamIdsIntentWorker syncLocationsByTeamIdsIntentService = new SyncLocationsByTeamIdsIntentWorker();
+        syncLocationsByTeamIdsIntentService.onRunWork();
         Mockito.verify(locationServiceHelper).fetchOpenMrsLocationsByTeamIds();
     }
 }

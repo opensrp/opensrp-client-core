@@ -48,7 +48,7 @@ public class PullUniqueIdsIntentServiceTest extends BaseRobolectricUnitTest {
     @Captor
     private ArgumentCaptor<String> stringArgumentCaptor;
 
-    private PullUniqueIdsIntentService pullUniqueIdsIntentService;
+    private PullUniqueIdsIntentWorker pullUniqueIdsIntentService;
 
     private String identifiersJsonString = "{\n" +
             "    \"identifiers\": [\n" +
@@ -62,7 +62,7 @@ public class PullUniqueIdsIntentServiceTest extends BaseRobolectricUnitTest {
         MockitoAnnotations.initMocks(this);
         Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
         CoreLibrary.getInstance().context().allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
-        pullUniqueIdsIntentService = Mockito.spy(PullUniqueIdsIntentService.class);
+        pullUniqueIdsIntentService = Mockito.spy(PullUniqueIdsIntentWorker.class);
         Whitebox.setInternalState(pullUniqueIdsIntentService, "mBase", RuntimeEnvironment.application);
         Whitebox.setInternalState(pullUniqueIdsIntentService, "uniqueIdRepo", uniqueIdRepo);
         Mockito.doReturn(httpAgent).when(pullUniqueIdsIntentService).getHttpAgent();

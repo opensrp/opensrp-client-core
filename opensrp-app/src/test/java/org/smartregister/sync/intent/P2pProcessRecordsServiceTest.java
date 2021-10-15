@@ -28,7 +28,7 @@ import java.util.List;
 @Config(application = TestP2pApplication.class)
 public class P2pProcessRecordsServiceTest extends BaseRobolectricUnitTest {
 
-    private P2pProcessRecordsService p2pProcessRecordsService;
+    private P2PProcessRecordsWorker p2pProcessRecordsService;
 
 
     private EventClientRepository eventClientRepository;
@@ -37,7 +37,7 @@ public class P2pProcessRecordsServiceTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        p2pProcessRecordsService = Mockito.spy(Robolectric.buildService(P2pProcessRecordsService.class)
+        p2pProcessRecordsService = Mockito.spy(Robolectric.buildService(P2PProcessRecordsWorker.class)
                 .create()
                 .get());
 
@@ -65,12 +65,12 @@ public class P2pProcessRecordsServiceTest extends BaseRobolectricUnitTest {
         CoreLibrary.getInstance().context().allSharedPreferences().setLastPeerToPeerSyncProcessedEvent(maxEventClientRowId);
         List<EventClient> eventClientList = new ArrayList<>();
         eventClientList.add(new EventClient(null, null));
-        Mockito.doReturn(new P2pProcessRecordsService.EventClientQueryResult(maxEventClientRowId, eventClientList)).when(eventClientRepository).fetchEventClientsByRowId(maxEventClientRowId);
+        Mockito.doReturn(new P2PProcessRecordsWorker.EventClientQueryResult(maxEventClientRowId, eventClientList)).when(eventClientRepository).fetchEventClientsByRowId(maxEventClientRowId);
         Mockito.doReturn(maxEventClientRowId).when(eventClientRepository).getMaxRowId(EventClientRepository.Table.event);
         Mockito.doNothing().when(clientProcessorForJava).processClient(eventClientList);
 
         // Call method under test
-        p2pProcessRecordsService.onHandleIntent(null);
+        p2pProcessRecordsService.onRunWork();
 
         // Verifications and assertions
         Mockito.verify(eventClientRepository, Mockito.times(1)).getMaxRowId(EventClientRepository.Table.event);
@@ -85,7 +85,7 @@ public class P2pProcessRecordsServiceTest extends BaseRobolectricUnitTest {
     @Test
     public void onHandleIntentShouldProcessEventsIfPeerToPeerUnprocessedEventsReturnsTrue() throws Exception {
 
-        p2pProcessRecordsService.onHandleIntent(null);
+        p2pProcessRecordsService.onRunWork();
 
         Mockito.verify(eventClientRepository, Mockito.never()).getMaxRowId(Mockito.any(EventClientRepository.Table.class));
         Mockito.verify(clientProcessorForJava, Mockito.never()).processClient(ArgumentMatchers.<List< EventClient>>any());

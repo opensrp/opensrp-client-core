@@ -1,14 +1,19 @@
 package org.smartregister.sync.intent;
 
 import android.content.Intent;
-import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.work.WorkerParameters;
+
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.job.SyncServiceJob;
+import org.smartregister.job.SyncServiceWorkRequest;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
+
+import java.net.SocketException;
 
 import timber.log.Timber;
 
@@ -17,24 +22,26 @@ import static org.smartregister.util.Log.logError;
 /**
  * Created by ndegwamartin on 14/09/2018.
  */
-public class SettingsSyncIntentService extends BaseSyncIntentService {
+public class SettingsSyncIntentWorker extends BaseSyncIntentWorker {
     public static final String SETTINGS_URL = "/rest/settings/sync";
 
-    private static final String TAG = SettingsSyncIntentService.class.getCanonicalName();
+    private static final String TAG = SettingsSyncIntentWorker.class.getCanonicalName();
 
     protected SyncSettingsServiceHelper syncSettingsServiceHelper;
 
     public static final String EVENT_SYNC_COMPLETE = "event_sync_complete";
 
-    public SettingsSyncIntentService() {
-        super(TAG);
+    public SettingsSyncIntentWorker(@NonNull android.content.@NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
+        super(context, workerParams);
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        boolean isSuccessfulSync = processSettings(intent);
+    protected void onRunWork() throws SocketException {
+        Context context = CoreLibrary.getInstance().context();
+        syncSettingsServiceHelper = new SyncSettingsServiceHelper(context.configuration().dristhiBaseURL(), context.getHttpAgent());
+        boolean isSuccessfulSync = processSettings(new Intent());
         if (isSuccessfulSync) {
-            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
+            SyncServiceWorkRequest.scheduleJobImmediately(SyncIntentWorker.class);
         }
     }
 
@@ -43,7 +50,6 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
         boolean isSuccessfulSync = true;
         if (intent != null) {
             try {
-                super.onHandleIntent(intent);
                 int count = syncSettingsServiceHelper.processIntent();
                 if (count > 0) {
                     intent.putExtra(AllConstants.INTENT_KEY.SYNC_TOTAL_RECORDS, count);
@@ -55,13 +61,5 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
         }
         return isSuccessfulSync;
     }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Context context = CoreLibrary.getInstance().context();
-        syncSettingsServiceHelper = new SyncSettingsServiceHelper(context.configuration().dristhiBaseURL(), context.getHttpAgent());
-    }
-
 }
 

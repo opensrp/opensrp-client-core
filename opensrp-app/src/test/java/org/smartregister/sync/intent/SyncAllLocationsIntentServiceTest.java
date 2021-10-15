@@ -12,18 +12,19 @@ import org.smartregister.sync.helper.LocationServiceHelper;
  */
 public class SyncAllLocationsIntentServiceTest extends BaseUnitTest {
 
-    private SyncAllLocationsIntentService syncAllLocationsIntentService;
+    private SyncAllLocationsIntentWorker syncAllLocationsIntentService;
 
     @Before
     public void setUp() throws Exception {
-        syncAllLocationsIntentService = new SyncAllLocationsIntentService();
+        syncAllLocationsIntentService = new SyncAllLocationsIntentWorker();
     }
 
     @Test
-    public void onHandleIntent() {
+    public void onHandleIntent() throws Exception {
         LocationServiceHelper locationServiceHelper = Mockito.mock(LocationServiceHelper.class);
         Whitebox.setInternalState(LocationServiceHelper.class, "instance", locationServiceHelper);
-        syncAllLocationsIntentService.onHandleIntent(null);
+
+            syncAllLocationsIntentService.onRunWork();
         Mockito.verify(locationServiceHelper).fetchAllLocations();
         Whitebox.setInternalState(LocationServiceHelper.class, "instance", (LocationServiceHelper) null);
     }

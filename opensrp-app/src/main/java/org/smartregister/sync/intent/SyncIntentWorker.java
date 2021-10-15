@@ -7,10 +7,12 @@ import android.util.Pair;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.work.WorkerParameters;
 
 import com.google.firebase.perf.metrics.Trace;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +37,7 @@ import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 
+import java.net.SocketException;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
@@ -55,7 +58,7 @@ import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
-public class SyncIntentService extends BaseSyncIntentService {
+public class SyncIntentWorker extends BaseSyncIntentWorker {
     public static final String SYNC_URL = "/rest/event/sync";
     protected static final int EVENT_PULL_LIMIT = 250;
     protected static final int EVENT_PUSH_LIMIT = 50;
@@ -76,18 +79,14 @@ public class SyncIntentService extends BaseSyncIntentService {
     //this variable using to track the sync request goes along with add events/clients
     private boolean isEmptyToAdd = true;
 
-    public SyncIntentService() {
-        super("SyncIntentService");
-    }
-
-    public SyncIntentService(String name) {
-        super(name);
+    public SyncIntentWorker(@NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
+        super(context, workerParams);
     }
 
     protected void init(@NonNull Context context) {
         this.context = context;
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
-        syncUtils = new SyncUtils(getBaseContext());
+        syncUtils = new SyncUtils(context);
         eventSyncTrace = initTrace(EVENT_SYNC);
         processClientTrace = initTrace(CLIENT_PROCESSING);
         String providerId = allSharedPreferences.fetchRegisteredANM();
@@ -96,14 +95,8 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        init(getBaseContext());
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        super.onHandleIntent(intent);
+    protected void onRunWork() throws SocketException {
+        init(getApplicationContext());
         handleSync();
     }
 
@@ -168,7 +161,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             startEventTrace(FETCH, 0);
 
-            BaseSyncIntentService.RequestParamsBuilder syncParamBuilder = new BaseSyncIntentService.RequestParamsBuilder().
+            RequestParamsBuilder syncParamBuilder = new RequestParamsBuilder().
                     configureSyncFilter(configs.getSyncFilterParam().value(), configs.getSyncFilterValue()).addServerVersion(lastSyncDatetime).addEventPullLimit(getEventPullLimit());
 
             Response resp = getUrlResponse(baseUrl + SYNC_URL, syncParamBuilder, configs, returnCount);
@@ -214,7 +207,7 @@ public class SyncIntentService extends BaseSyncIntentService {
      * @param configs              the Sync Configuration object with various configurations
      * @param returnCount          a boolean flag, whether to return the total count of records as part of the response (field - total_records)
      */
-    protected Response getUrlResponse(@NonNull String baseURL, @NonNull BaseSyncIntentService.RequestParamsBuilder requestParamsBuilder, @NonNull SyncConfiguration configs, boolean returnCount) {
+    protected Response getUrlResponse(@NonNull String baseURL, @NonNull RequestParamsBuilder requestParamsBuilder, @NonNull SyncConfiguration configs, boolean returnCount) {
         Response response;
         String requestUrl = baseURL;
 
@@ -381,7 +374,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         Intent intent = new Intent();
         intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
-        sendBroadcast(intent);
+        getApplicationContext().sendBroadcast(intent);
     }
 
     protected void complete(FetchStatus fetchStatus) {
@@ -390,7 +383,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
 
-        sendBroadcast(intent);
+        getApplicationContext().sendBroadcast(intent);
 
         //sync time not update if sync is fail
         if (!fetchStatus.equals(FetchStatus.noConnection) && !fetchStatus.equals(FetchStatus.fetchedFailed)) {
@@ -405,7 +398,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     protected void updateProgress(@IntRange(from = 0) int progress, @IntRange(from = 1) int total) {
         FetchStatus uploadProgressStatus = FetchStatus.fetchProgress;
-        uploadProgressStatus.setDisplayValue(String.format(getString(R.string.sync_upload_progress_float), (progress * 100) / total));
+        uploadProgressStatus.setDisplayValue(String.format(getApplicationContext().getString(R.string.sync_upload_progress_float), (progress * 100) / total));
         sendSyncStatusBroadcastMessage(uploadProgressStatus);
     }
 

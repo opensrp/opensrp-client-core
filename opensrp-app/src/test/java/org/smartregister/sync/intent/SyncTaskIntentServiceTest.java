@@ -13,10 +13,14 @@ public class SyncTaskIntentServiceTest extends BaseUnitTest {
 
     @Test
     public void testOnHandleIntentShouldSyncTasks() {
-        SyncTaskIntentService syncTaskIntentService = new SyncTaskIntentService();
+        SyncTaskIntentWorker syncTaskIntentService = new SyncTaskIntentWorker();
         TaskServiceHelper taskServiceHelper = Mockito.mock(TaskServiceHelper.class);
         Whitebox.setInternalState(syncTaskIntentService, "taskServiceHelper", taskServiceHelper);
-        syncTaskIntentService.onHandleIntent(null);
+        try {
+            syncTaskIntentService.onRunWork();
+        } catch (java.net.SocketException e) {
+            e.printStackTrace();
+        }
         Mockito.verify(taskServiceHelper).syncTasks();
     }
 }

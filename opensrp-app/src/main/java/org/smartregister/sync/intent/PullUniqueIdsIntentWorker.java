@@ -4,10 +4,13 @@ package org.smartregister.sync.intent;
  * Created by ndegwamartin on 09/04/2018.
  */
 
-import android.content.Intent;
+import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.work.WorkerParameters;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
@@ -17,25 +20,25 @@ import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.service.HTTPAgent;
 
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
 import timber.log.Timber;
 
-public class PullUniqueIdsIntentService extends BaseSyncIntentService {
+public class PullUniqueIdsIntentWorker extends BaseSyncIntentWorker {
     public static final String ID_URL = "/uniqueids/get";
     public static final String IDENTIFIERS = "identifiers";
     private UniqueIdRepository uniqueIdRepo;
 
-
-    public PullUniqueIdsIntentService() {
-        super("PullUniqueOpenMRSUniqueIdsService");
+    public PullUniqueIdsIntentWorker(@NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
+        super(context, workerParams);
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onRunWork() throws SocketException {
         try {
-            super.onHandleIntent(intent);
+            uniqueIdRepo = CoreLibrary.getInstance().context().getUniqueIdRepository();
             SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
             int numberToGenerate;
             if (uniqueIdRepo.countUnUsedIds() == 0) { // first time pull no ids at all
@@ -87,12 +90,6 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
             }
             uniqueIdRepo.bulkInsertOpenmrsIds(ids);
         }
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        uniqueIdRepo = CoreLibrary.getInstance().context().getUniqueIdRepository();
-        return super.onStartCommand(intent, flags, startId);
     }
 
     @VisibleForTesting

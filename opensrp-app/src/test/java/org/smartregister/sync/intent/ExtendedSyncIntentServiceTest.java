@@ -1,7 +1,5 @@
 package org.smartregister.sync.intent;
 
-import android.content.Intent;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,16 +20,16 @@ public class ExtendedSyncIntentServiceTest extends BaseUnitTest {
 
     private final DrishtiService drishtiService = new DrishtiService(CoreLibrary.getInstance().context().httpAgent(), "http://localhost");
 
-    private ExtendedSyncIntentService extendedSyncIntentService;
+    private ExtendedSyncIntentWorker extendedSyncIntentService;
 
     @Before
     public void setUp() {
-        extendedSyncIntentService = new ExtendedSyncIntentService();
+        extendedSyncIntentService = new ExtendedSyncIntentWorker();
     }
 
     @Config(shadows = {ShadowNetworkUtils.class, BaseJobShadow.class})
     @Test
-    public void testOnHandleIntentShouldStartSyncValidation() {
+    public void testOnHandleIntentShouldStartSyncValidation() throws Exception {
         ShadowNetworkUtils.setIsNetworkAvailable(true);
 
         ActionService actionService = ReflectionHelpers.getField(extendedSyncIntentService, "actionService");
@@ -40,7 +38,7 @@ public class ExtendedSyncIntentServiceTest extends BaseUnitTest {
         ReflectionHelpers.setField(actionService, "drishtiService", drishtiService);
         Assert.assertEquals(0, BaseJobShadow.getMockCounter().getCount());
 
-        extendedSyncIntentService.onHandleIntent(new Intent());
+        extendedSyncIntentService.onRunWork();
 
         Mockito.verify(actionService).fetchNewActions();
         ShadowNetworkUtils.setIsNetworkAvailable(false);

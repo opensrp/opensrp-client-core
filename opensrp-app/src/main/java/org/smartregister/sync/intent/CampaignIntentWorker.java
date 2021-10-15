@@ -1,11 +1,13 @@
 package org.smartregister.sync.intent;
 
-import android.content.Intent;
+import androidx.annotation.NonNull;
+import androidx.work.WorkerParameters;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.smartregister.Context;
@@ -21,6 +23,7 @@ import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
 
+import java.net.SocketException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,7 +31,7 @@ import timber.log.Timber;
 
 import static org.smartregister.AllConstants.CAMPAIGNS;
 
-public class CampaignIntentService extends BaseSyncIntentService {
+public class CampaignIntentWorker extends BaseSyncIntentWorker {
     public static final String CAMPAIGN_URL = "/rest/campaign/";
     private static final String TAG = "CampaignIntentService";
     private CampaignRepository campaignRepository;
@@ -36,13 +39,13 @@ public class CampaignIntentService extends BaseSyncIntentService {
     public static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm"))
             .registerTypeAdapter(LocalDate.class, new DateTypeConverter()).create();
 
-    public CampaignIntentService() {
-        super(TAG);
+    public CampaignIntentWorker(@NonNull android.content.@NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
+        super(context, workerParams);
+        campaignRepository = CoreLibrary.getInstance().context().getCampaignRepository();
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        super.onHandleIntent(intent);
+    protected void onRunWork() throws SocketException {
         syncCampaigns();
     }
 
@@ -73,7 +76,7 @@ public class CampaignIntentService extends BaseSyncIntentService {
 
         HTTPAgent httpAgent = opensrpContext.getHttpAgent();
         if (httpAgent == null) {
-            sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
+            getApplicationContext().sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
             throw new IllegalArgumentException(CAMPAIGN_URL + " http agent is null");
         }
 
@@ -86,16 +89,10 @@ public class CampaignIntentService extends BaseSyncIntentService {
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
-            sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
+            getApplicationContext().sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(CAMPAIGN_URL + " not returned data");
         }
 
         return resp.payload().toString();
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        campaignRepository = CoreLibrary.getInstance().context().getCampaignRepository();
-        return super.onStartCommand(intent, flags, startId);
     }
 }

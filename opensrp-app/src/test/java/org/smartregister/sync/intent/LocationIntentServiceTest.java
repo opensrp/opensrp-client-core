@@ -21,12 +21,12 @@ public class LocationIntentServiceTest extends BaseUnitTest {
     @Mock
     private LocationServiceHelper locationServiceHelper;
 
-    private LocationIntentService locationIntentService;
+    private LocationIntentWorker locationIntentService;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        locationIntentService = new LocationIntentService();
+        locationIntentService = new LocationIntentWorker();
     }
 
     @Test
