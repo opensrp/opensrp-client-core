@@ -24,6 +24,11 @@ import java.util.List;
  */
 public class ValidateIntentService extends BaseSyncIntentService {
 
+    public static final String ACTION_VALIDATION = "validation_action";
+    public static final String EXTRA_VALIDATION = "validation_extra";
+    public static final String STATUS_FAILED = "failed";
+    public static final String STATUS_NOTHING = "nothing";
+    public static final String STATUS_SUCCESS = "success";
     private Context context;
     private HTTPAgent httpAgent;
     private static final int FETCH_LIMIT = 100;
@@ -61,6 +66,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
 
             JSONObject request = request(clientIds, eventIds);
             if (request == null) {
+                broadcastStatus(STATUS_NOTHING);
                 return;
             }
 
@@ -75,8 +81,12 @@ public class ValidateIntentService extends BaseSyncIntentService {
                             baseUrl,
                             VALIDATE_SYNC_PATH),
                     jsonPayload);
-            if (response.isFailure() || response.isTimeoutError() || StringUtils.isBlank(response.payload())) {
-                Log.e(getClass().getName(), "Validation sync failed.");
+            if (response.isFailure() || response.isTimeoutError()) {
+                broadcastStatus(STATUS_FAILED);
+                return;
+            }
+            if(StringUtils.isBlank(response.payload())){
+                broadcastStatus(STATUS_NOTHING);
                 return;
             }
 
@@ -108,7 +118,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
                     db.markEventValidationStatus(eventId, true);
                 }
             }
-
+            broadcastStatus(STATUS_SUCCESS);
         } catch (Exception e) {
             Log.e(getClass().getName(), "", e);
         }
@@ -145,6 +155,11 @@ public class ValidateIntentService extends BaseSyncIntentService {
             Log.e(getClass().getName(), "", e);
         }
         return null;
+    }
+    private void broadcastStatus(String message){
+        Intent broadcastIntent = new Intent(ACTION_VALIDATION);
+        broadcastIntent.putExtra(EXTRA_VALIDATION, message);
+        sendBroadcast(broadcastIntent);
     }
 
 }

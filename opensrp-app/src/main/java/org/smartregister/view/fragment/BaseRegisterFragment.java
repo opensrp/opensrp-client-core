@@ -259,7 +259,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         renderView();
     }
 
-    private void renderView() {
+    protected void renderView() {
         getDefaultOptionsProvider();
         if (isPausedOrRefreshList()) {
             presenter.initializeQueries(getMainCondition());

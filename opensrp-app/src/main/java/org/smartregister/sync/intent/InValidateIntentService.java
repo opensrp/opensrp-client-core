@@ -50,6 +50,10 @@ public class InValidateIntentService extends BaseSyncIntentService {
 
             List<JSONObject> clients = db.getUnValidatedClients(fetchLimit);
             List<JSONObject> events = db.getUnValidatedEvents(fetchLimit);
+            if(clients.size() == 0 && events.size() == 0){
+                broadcastStatus("No invalid data found");
+                return;
+            }
 
             JSONObject request = new JSONObject();
             if(clients.size()>0){
@@ -71,19 +75,16 @@ public class InValidateIntentService extends BaseSyncIntentService {
                             VALIDATE_SYNC_PATH),
                     jsonPayload);
             if (response.isFailure() || response.isTimeoutError() || StringUtils.isBlank(response.payload())) {
-                Log.v("INVALID_DATA", "Validation sync failed.");
                 broadcastStatus("Invalid data Syncing fail");
                 return;
             }
 
             JSONObject results = new JSONObject(response.payload());
-            Log.v("INVALID_DATA","results:"+results);
             if (results.has(AllConstants.KEY.CLIENTS)) {
                 JSONArray validClient = results.getJSONArray(AllConstants.KEY.CLIENTS);
 
                 for (int i = 0; i < validClient.length(); i++) {
                     String validClientString = validClient.getString(i);
-                    Log.v("INVALID_DATA","validClientString:"+validClientString);
                     db.markClientValidationStatus(validClientString, true);
                 }
             }
@@ -92,7 +93,6 @@ public class InValidateIntentService extends BaseSyncIntentService {
                 JSONArray validEvents = results.getJSONArray(AllConstants.KEY.EVENTS);
                 for (int i = 0; i < validEvents.length(); i++) {
                     String validEventId = validEvents.getString(i);
-                    Log.v("INVALID_DATA","formsubmissionid:"+validEventId);
                     db.markEventValidationStatus(validEventId, true);
                 }
 
