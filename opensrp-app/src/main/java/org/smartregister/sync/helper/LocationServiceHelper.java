@@ -467,22 +467,29 @@ public class LocationServiceHelper extends BaseHelper {
                     }.getType()
             );
 
-            for (Location location : locations) {
-                try {
-                    location.setSyncStatus(BaseRepository.TYPE_Synced);
+            if (locations != null) {
+                for (Location location : locations) {
+                    try {
+                        location.setSyncStatus(BaseRepository.TYPE_Synced);
 
-                    locationRepository.addOrUpdate(location);
+                        locationRepository.addOrUpdate(location);
+                        if (locations != null) {
+                            for (LocationTag tag : location.getLocationTags()) {
+                                LocationTag locationTag = new LocationTag();
+                                locationTag.setLocationId(location.getId());
+                                locationTag.setName(tag.getName());
 
-                    for (LocationTag tag : location.getLocationTags()) {
-                        LocationTag locationTag = new LocationTag();
-                        locationTag.setLocationId(location.getId());
-                        locationTag.setName(tag.getName());
-
-                        locationTagRepository.addOrUpdate(locationTag);
+                                locationTagRepository.addOrUpdate(locationTag);
+                            }
+                        } else {
+                            Timber.e("Location is null");
+                        }
+                    } catch (Exception e) {
+                        Timber.e(e, "EXCEPTION %s", e.toString());
                     }
-                } catch (Exception e) {
-                    Timber.e(e, "EXCEPTION %s", e.toString());
                 }
+            }else {
+                Timber.e("Locations are null");
             }
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
