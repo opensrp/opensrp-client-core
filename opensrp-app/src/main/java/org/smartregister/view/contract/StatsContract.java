@@ -4,7 +4,7 @@ public interface StatsContract {
 
     interface View {
 
-        void showProgressDialog(int titleIdentifier);
+        void showProgressDialog();
 
         void hideProgressDialog();
 
