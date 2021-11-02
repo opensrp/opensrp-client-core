@@ -1,5 +1,6 @@
 package org.smartregister.view.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +50,7 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = new StatsFragmentPresenter(this);
+
     }
 
     @Nullable
@@ -60,6 +62,7 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
     }
 
     private void initializeViews(View view) {
+
         tvSyncedEvents = view.findViewById(R.id.synced_events);
         tvUnSyncedEvents = view.findViewById(R.id.unsynced_events);
         tvSyncedClient = view.findViewById(R.id.synced_clients);
@@ -69,17 +72,15 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvTaskUnprocessedEvents = view.findViewById(R.id.task_unprocessed_events);
 
         Button btnRefreshStats = view.findViewById(R.id.refresh_button);
-        btnRefreshStats.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                presenter.fetchSyncInfo();
-            }
-        });
+        btnRefreshStats.setOnClickListener(v -> presenter.fetchSyncInfo());
 
         presenter.fetchSyncInfo();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void refreshECSyncInfo(Map<String, Integer> syncInfoMap) {
+
         tvSyncedEvents.setText(syncInfoMap.get(SYNCED_EVENTS) + "");
         tvUnSyncedEvents.setText(syncInfoMap.get(UNSYNCED_EVENTS) + "");
         tvTaskUnprocessedEvents.setText(syncInfoMap.get(TASK_UNPROCESSED_EVENTS) + "");
@@ -90,4 +91,5 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvValidatedEvents.setText(syncInfoMap.get(VALID_EVENTS) + "");
         tvValidatedClients.setText(syncInfoMap.get(VALID_CLIENTS) + "");
     }
+
 }
