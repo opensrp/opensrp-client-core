@@ -30,6 +30,7 @@ import org.smartregister.domain.ResponseErrorStatus;
 import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.util.AppExecutors;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.activity.BaseRegisterActivity;
@@ -59,6 +60,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     protected TextView headerTextDisplay;
     protected TextView filterStatus;
     protected RelativeLayout filterRelativeLayout;
+    protected AppExecutors appExecutors = new AppExecutors();
     protected View.OnKeyListener hideKeyboard = new View.OnKeyListener() {
 
         @Override
@@ -82,7 +84,12 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
         @Override
         public void onTextChanged(final CharSequence cs, int start, int before, int count) {
-            filter(cs.toString(), "", getMainCondition(), false);
+            appExecutors.mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    filter(cs.toString(), "", getMainCondition(), false);
+                }
+            });
         }
 
         @Override
