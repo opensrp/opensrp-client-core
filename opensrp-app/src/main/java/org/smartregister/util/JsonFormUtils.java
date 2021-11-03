@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.DateUtil;
@@ -1111,7 +1112,8 @@ public class JsonFormUtils {
     }
 
     public static String generateRandomUUIDString() {
-        return UUID.randomUUID().toString();
+        String userName = CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM();
+        return UUID.randomUUID().toString()+"-"+userName;
     }
 
     public static void addToJSONObject(JSONObject jsonObject, String key, String value) {
