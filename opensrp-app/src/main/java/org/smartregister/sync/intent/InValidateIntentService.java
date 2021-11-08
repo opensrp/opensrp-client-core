@@ -27,6 +27,11 @@ public class InValidateIntentService extends BaseSyncIntentService {
     private HTTPAgent httpAgent;
     private static final int FETCH_LIMIT = 100;
     private static final String VALIDATE_SYNC_PATH = "rest/event/invalid";
+    public static final String ACTION_INVALIDATION = "INVALID_SYNC";
+    public static final String EXTRA_INVALIDATION = "EXTRA_INVALID_SYNC";
+    public static final String STATUS_FAILED = "failed";
+    public static final String STATUS_NOTHING = "nothing";
+    public static final String STATUS_SUCCESS = "success";
 
     public InValidateIntentService() {
         super("InValidateIntentService");
@@ -51,7 +56,7 @@ public class InValidateIntentService extends BaseSyncIntentService {
             List<JSONObject> clients = db.getUnValidatedClients(fetchLimit);
             List<JSONObject> events = db.getUnValidatedEvents(fetchLimit);
             if(clients.size() == 0 && events.size() == 0){
-                broadcastStatus("No invalid data found");
+                broadcastStatus(STATUS_NOTHING);
                 return;
             }
 
@@ -75,7 +80,7 @@ public class InValidateIntentService extends BaseSyncIntentService {
                             VALIDATE_SYNC_PATH),
                     jsonPayload);
             if (response.isFailure() || response.isTimeoutError() || StringUtils.isBlank(response.payload())) {
-                broadcastStatus("Invalid data Syncing fail");
+                broadcastStatus(STATUS_FAILED);
                 return;
             }
 
@@ -97,7 +102,7 @@ public class InValidateIntentService extends BaseSyncIntentService {
                 }
 
             }
-           broadcastStatus("Invalid data Sync complete");
+           broadcastStatus(STATUS_SUCCESS);
 
         } catch (Exception e) {
             Log.e(getClass().getName(), "", e);
