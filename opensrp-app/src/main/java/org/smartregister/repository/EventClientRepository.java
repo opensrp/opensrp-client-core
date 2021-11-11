@@ -1116,7 +1116,7 @@ public class EventClientRepository extends BaseRepository {
     public List<JSONObject> getUnSyncedClientForceSync(int limit) {
         List<JSONObject> clients = new ArrayList<>();
 
-        final String validateFilter = " where ( " +client_column.syncStatus+" != ? ) ";
+        final String validateFilter = " where ( " +client_column.syncStatus+" != ? or ( " + client_column.validationStatus + " is NULL or " +  client_column.validationStatus + " != ? )) ";
 
         String query = "select "
                 + client_column.json
@@ -1140,7 +1140,7 @@ public class EventClientRepository extends BaseRepository {
 
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced});
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced,BaseRepository.TYPE_Valid});
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     String jsonClientStr = (cursor.getString(0));
@@ -1254,7 +1254,7 @@ public class EventClientRepository extends BaseRepository {
     public List<JSONObject> getUnSyncedEventsForceSync(int limit) {
         List<JSONObject> events = new ArrayList<>();
 
-        final String validateFilter = " where ( " + event_column.syncStatus + " != ? ) ";
+        final String validateFilter = " where ( " +event_column.syncStatus+" != ? or ( " + event_column.validationStatus + " is NULL or " +  event_column.validationStatus + " != ? )) ";
 
         String query = "select "
                 + event_column.json
@@ -1278,7 +1278,7 @@ public class EventClientRepository extends BaseRepository {
 
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced});
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced,BaseRepository.TYPE_Valid});
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     String jsonEventsStr = (cursor.getString(0));

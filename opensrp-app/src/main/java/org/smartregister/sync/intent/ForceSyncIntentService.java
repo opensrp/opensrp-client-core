@@ -26,7 +26,11 @@ public class ForceSyncIntentService extends BaseSyncIntentService {
     private HTTPAgent httpAgent;
     private static final int FETCH_LIMIT = 100;
     private static final String VALIDATE_SYNC_PATH = "rest/event/invalid";
-
+    public static final String ACTION_SYNC = "FORCE_SYNC";
+    public static final String EXTRA_SYNC = "EXTRA_FORCE_SYNC";
+    public static final String STATUS_FAILED = "failed";
+    public static final String STATUS_NOTHING = "nothing";
+    public static final String STATUS_SUCCESS = "success";
     public ForceSyncIntentService() {
         super("ForceSyncIntentService");
     }
@@ -50,7 +54,7 @@ public class ForceSyncIntentService extends BaseSyncIntentService {
             List<JSONObject> clients = db.getUnSyncedClientForceSync(fetchLimit);
             List<JSONObject> events = db.getUnSyncedEventsForceSync(fetchLimit);
             if(clients.size() == 0 && events.size() == 0){
-                broadcastStatus("No data found");
+                broadcastStatus(STATUS_NOTHING);
                 return;
             }
 
@@ -74,7 +78,7 @@ public class ForceSyncIntentService extends BaseSyncIntentService {
                             VALIDATE_SYNC_PATH),
                     jsonPayload);
             if (response.isFailure() || response.isTimeoutError() || StringUtils.isBlank(response.payload())) {
-                broadcastStatus("Force data Syncing fail");
+                broadcastStatus(STATUS_FAILED);
                 return;
             }
 
@@ -96,15 +100,15 @@ public class ForceSyncIntentService extends BaseSyncIntentService {
                 }
 
             }
-           broadcastStatus("Force data Sync complete");
+           broadcastStatus(STATUS_SUCCESS);
 
         } catch (Exception e) {
             Log.e(getClass().getName(), "", e);
         }
     }
     private void broadcastStatus(String message){
-        Intent broadcastIntent = new Intent("FORCE_SYNC");
-        broadcastIntent.putExtra("EXTRA_FORCE_SYNC", message);
+        Intent broadcastIntent = new Intent(ACTION_SYNC);
+        broadcastIntent.putExtra(EXTRA_SYNC, message);
         sendBroadcast(broadcastIntent);
     }
 
