@@ -15,26 +15,24 @@ import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by keyman on 11/10/2017.
  */
-public class InValidateIntentService extends BaseSyncIntentService {
+public class ForceSyncIntentService extends BaseSyncIntentService {
 
     private Context context;
     private HTTPAgent httpAgent;
     private static final int FETCH_LIMIT = 100;
     private static final String VALIDATE_SYNC_PATH = "rest/event/invalid";
-    public static final String ACTION_INVALIDATION = "INVALID_SYNC";
-    public static final String EXTRA_INVALIDATION = "EXTRA_INVALID_SYNC";
+    public static final String ACTION_SYNC = "FORCE_SYNC";
+    public static final String EXTRA_SYNC = "EXTRA_FORCE_SYNC";
     public static final String STATUS_FAILED = "failed";
     public static final String STATUS_NOTHING = "nothing";
     public static final String STATUS_SUCCESS = "success";
-
-    public InValidateIntentService() {
-        super("InValidateIntentService");
+    public ForceSyncIntentService() {
+        super("ForceSyncIntentService");
     }
 
     @Override
@@ -53,8 +51,8 @@ public class InValidateIntentService extends BaseSyncIntentService {
             int fetchLimit = FETCH_LIMIT;
             EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
 
-            List<JSONObject> clients = db.getUnValidatedClients(fetchLimit);
-            List<JSONObject> events = db.getUnValidatedEvents(fetchLimit);
+            List<JSONObject> clients = db.getUnSyncedClientForceSync(fetchLimit);
+            List<JSONObject> events = db.getUnSyncedEventsForceSync(fetchLimit);
             if(clients.size() == 0 && events.size() == 0){
                 broadcastStatus(STATUS_NOTHING);
                 return;
@@ -109,8 +107,8 @@ public class InValidateIntentService extends BaseSyncIntentService {
         }
     }
     private void broadcastStatus(String message){
-        Intent broadcastIntent = new Intent("INVALID_SYNC");
-        broadcastIntent.putExtra("EXTRA_INVALID_SYNC", message);
+        Intent broadcastIntent = new Intent(ACTION_SYNC);
+        broadcastIntent.putExtra(EXTRA_SYNC, message);
         sendBroadcast(broadcastIntent);
     }
 
