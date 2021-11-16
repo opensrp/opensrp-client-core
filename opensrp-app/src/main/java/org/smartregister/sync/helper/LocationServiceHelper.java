@@ -473,20 +473,16 @@ public class LocationServiceHelper extends BaseHelper {
                         location.setSyncStatus(BaseRepository.TYPE_Synced);
 
                         locationRepository.addOrUpdate(location);
-                        if (location != null) {
-                            if (location.getLocationTags() != null) {
-                                for (LocationTag tag : location.getLocationTags()) {
-                                    LocationTag locationTag = new LocationTag();
-                                    locationTag.setLocationId(location.getId());
-                                    locationTag.setName(tag.getName());
+                        if (location.getLocationTags() != null) {
+                            for (LocationTag tag : location.getLocationTags()) {
+                                LocationTag locationTag = new LocationTag();
+                                locationTag.setLocationId(location.getId());
+                                locationTag.setName(tag.getName());
 
-                                    locationTagRepository.addOrUpdate(locationTag);
-                                }
-                            } else {
-                                Timber.e("Location tag is null");
+                                locationTagRepository.addOrUpdate(locationTag);
                             }
                         } else {
-                            Timber.e("Location is null");
+                            Timber.e("Location tag is null");
                         }
                     } catch (Exception e) {
                         Timber.e(e, "EXCEPTION %s", e.toString());
