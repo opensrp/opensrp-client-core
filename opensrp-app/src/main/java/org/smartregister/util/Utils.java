@@ -16,6 +16,8 @@
 
 package org.smartregister.util;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -99,8 +101,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import timber.log.Timber;
-
-import static android.content.Context.INPUT_METHOD_SERVICE;
 
 
 /**
@@ -995,5 +995,29 @@ public class Utils {
                     .append(apiParamsPair.second);
         }
         return apiCallParamsString.toString();
+    }
+
+    public static String getTranslatedLocation(String locationName) {
+        String key = getLocationKeyFromName(locationName);
+        String translatedLocationName = getTranslatedIdentifier(key);
+
+        return StringUtils.isNotEmpty(translatedLocationName) ? translatedLocationName : locationName;
+    }
+
+    /**
+     * Clean up location name string to remove special characters and replace spaces with underscores to ge the identifier
+     *
+     * @param locationName
+     * @return
+     */
+    private static String getLocationKeyFromName(@NonNull String locationName) {
+        return locationName.toLowerCase().trim()
+                .replace(" ", "_")
+                .replace("(", "")
+                .replace(")", "")
+                .replace("-", "_")
+                .replace(":", "_")
+                .replace("'", "")
+                .replace("’", "_");
     }
 }
