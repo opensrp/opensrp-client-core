@@ -127,11 +127,11 @@ public class ClientProcessorForJava {
                 processClientClass(clientClass, event, client);
             }
 
-//            // Incase the details have not been updated
-//            String updatedString = event.getDetails() != null ? event.getDetails().get(detailsUpdated) : null;
-//            if (StringUtils.isBlank(updatedString) || !Boolean.TRUE.toString().equals(updatedString)) {
-//                updateClientDetailsTable(event, client);
-//            }
+            // Incase the details have not been updated
+            String updatedString = event.getDetails() != null ? event.getDetails().get(detailsUpdated) : null;
+            if (StringUtils.isBlank(updatedString) || !Boolean.TRUE.toString().equals(updatedString)) {
+                updateClientDetailsTable(event, client);
+            }
 
             return true;
         } catch (Exception e) {

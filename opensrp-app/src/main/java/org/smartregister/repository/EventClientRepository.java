@@ -1165,6 +1165,20 @@ public class EventClientRepository extends BaseRepository {
 
         return clients;
     }
+    public int getInvalidClientsCount(){
+        List<JSONObject> list = getUnValidatedClients(0);
+        if(list !=null){
+            return list.size();
+        }
+        return 0;
+    }
+    public int getInvalidEventsCount(){
+        List<JSONObject> list = getUnValidatedEvents(0);
+        if(list !=null){
+            return list.size();
+        }
+        return 0;
+    }
     public List<JSONObject> getUnValidatedClients(int limit) {
         List<JSONObject> clients = new ArrayList<>();
 
@@ -1180,6 +1194,15 @@ public class EventClientRepository extends BaseRepository {
                 + client_column.updatedAt
                 + " asc limit "
                 + limit;
+        if(limit == 0){
+            query = "select "
+                    + client_column.json
+                    + " from "
+                    + Table.client.name()
+                    + validateFilter
+                    + ORDER_BY
+                    + client_column.updatedAt;
+        }
 
         Cursor cursor = null;
         try {
@@ -1223,6 +1246,15 @@ public class EventClientRepository extends BaseRepository {
                 + event_column.updatedAt
                 + " asc limit "
                 + limit;
+        if(limit ==0){
+            query = "select "
+                    + event_column.json
+                    + " from "
+                    + Table.event.name()
+                    + validateFilter
+                    + ORDER_BY
+                    + event_column.updatedAt;
+        }
 
         Cursor cursor = null;
         try {
@@ -1863,8 +1895,8 @@ public class EventClientRepository extends BaseRepository {
 
             getWritableDatabase().update(Table.event.name(),
                     values,
-                    event_column.formSubmissionId.name() + " = ? and " + event_column.syncStatus.name() + " = ? ",
-                    new String[]{formSubmissionId, BaseRepository.TYPE_Unprocessed});
+                    event_column.formSubmissionId.name() + " = ? and " + event_column.syncStatus.name() + " = ? and "+event_column.validationStatus + " != ?",
+                    new String[]{formSubmissionId, BaseRepository.TYPE_Unprocessed,BaseRepository.TYPE_Valid});
 
         } catch (Exception e) {
             Timber.e(e);
