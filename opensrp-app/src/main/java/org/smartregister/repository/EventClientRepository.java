@@ -811,22 +811,27 @@ public class EventClientRepository extends BaseRepository {
             cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_Unprocessed});
 
             while (cursor.moveToNext()) {
-                String jsonEventStr = (cursor.getString(0));
-                if (StringUtils.isBlank(jsonEventStr)
-                        || jsonEventStr.equals("{}")) { // Skip blank/empty json string
-                    continue;
-                }
-                jsonEventStr = jsonEventStr.replaceAll("'", "");
-                JSONObject jsonObectEvent = new JSONObject(jsonEventStr);
-                events.add(jsonObectEvent);
-                if (jsonObectEvent.has(event_column.baseEntityId.name())) {
-                    String baseEntityId = jsonObectEvent.getString(event_column.baseEntityId.name
-                            ());
-                    JSONObject cl = getUnSyncedClientByBaseEntityId(baseEntityId);
-                    if (cl != null) {
-                        clients.add(cl);
+                try{
+                    String jsonEventStr = (cursor.getString(0));
+                    if (StringUtils.isBlank(jsonEventStr)
+                            || jsonEventStr.equals("{}")) { // Skip blank/empty json string
+                        continue;
                     }
+                    jsonEventStr = jsonEventStr.replaceAll("'", "");
+                    JSONObject jsonObectEvent = new JSONObject(jsonEventStr);
+                    events.add(jsonObectEvent);
+                    if (jsonObectEvent.has(event_column.baseEntityId.name())) {
+                        String baseEntityId = jsonObectEvent.getString(event_column.baseEntityId.name
+                                ());
+                        JSONObject cl = getUnSyncedClientByBaseEntityId(baseEntityId);
+                        if (cl != null) {
+                            clients.add(cl);
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+
 
             }
             if (!clients.isEmpty()) {
@@ -1143,15 +1148,20 @@ public class EventClientRepository extends BaseRepository {
             cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced,BaseRepository.TYPE_Valid});
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
-                    String jsonClientStr = (cursor.getString(0));
-                    if (StringUtils.isBlank(jsonClientStr)
-                            || jsonClientStr.equals("{}")) { // Skip blank/empty json string
-                        continue;
-                    }
-                    jsonClientStr = jsonClientStr.replaceAll("'", "");
-                    JSONObject jsonObectEvent = new JSONObject(jsonClientStr);
-                    clients.add(jsonObectEvent);
+                    try{
+                        String jsonClientStr = (cursor.getString(0));
+                        if (StringUtils.isBlank(jsonClientStr)
+                                || jsonClientStr.equals("{}")) { // Skip blank/empty json string
+                            continue;
+                        }
+                        jsonClientStr = jsonClientStr.replaceAll("'", "");
+                        JSONObject jsonObectEvent = new JSONObject(jsonClientStr);
+                        clients.add(jsonObectEvent);
 
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                     cursor.moveToNext();
                 }
             }
@@ -1166,18 +1176,51 @@ public class EventClientRepository extends BaseRepository {
         return clients;
     }
     public int getInvalidClientsCount(){
-        List<JSONObject> list = getUnValidatedClients(0);
-        if(list !=null){
-            return list.size();
+        String query = "select count(*) as count from client where (validationStatus is null or validationStatus !='Valid')";
+        Cursor cursor = null;
+        int cCount = 0;
+        try{
+            cursor = getWritableDatabase().rawQuery(query, null);
+            if(cursor!=null && cursor.getCount()>0){
+                cursor.moveToFirst();
+                cCount = cursor.getInt(0);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        return 0;
+        finally {
+            if(cursor!=null) cursor.close();
+        }
+//        List<JSONObject> list = getUnValidatedClients(0);
+//        if(list !=null){
+//            return list.size();
+//        }
+        return cCount;
     }
     public int getInvalidEventsCount(){
-        List<JSONObject> list = getUnValidatedEvents(0);
-        if(list !=null){
-            return list.size();
+        String query = "select count(*) as count from event where (validationStatus is null or validationStatus !='Valid')";
+        Cursor cursor = null;
+        int eCount = 0;
+        try{
+            cursor = getWritableDatabase().rawQuery(query, null);
+            if(cursor!=null && cursor.getCount()>0){
+                cursor.moveToFirst();
+                eCount = cursor.getInt(0);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        return 0;
+        finally {
+            if(cursor!=null) cursor.close();
+        }
+
+//        List<JSONObject> list = getUnValidatedEvents(0);
+//        if(list !=null){
+//            return list.size();
+//        }
+        return eCount;
     }
     public List<JSONObject> getUnValidatedClients(int limit) {
         List<JSONObject> clients = new ArrayList<>();
@@ -1209,14 +1252,19 @@ public class EventClientRepository extends BaseRepository {
             cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Valid});
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
-                    String jsonClientStr = (cursor.getString(0));
-                    if (StringUtils.isBlank(jsonClientStr)
-                            || jsonClientStr.equals("{}")) { // Skip blank/empty json string
-                        continue;
+                    try{
+                        String jsonClientStr = (cursor.getString(0));
+                        if (StringUtils.isBlank(jsonClientStr)
+                                || jsonClientStr.equals("{}")) { // Skip blank/empty json string
+                            continue;
+                        }
+                        jsonClientStr = jsonClientStr.replaceAll("'", "");
+                        JSONObject jsonObectEvent = new JSONObject(jsonClientStr);
+                        clients.add(jsonObectEvent);
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
-                    jsonClientStr = jsonClientStr.replaceAll("'", "");
-                    JSONObject jsonObectEvent = new JSONObject(jsonClientStr);
-                    clients.add(jsonObectEvent);
+
 
                     cursor.moveToNext();
                 }
@@ -1259,17 +1307,21 @@ public class EventClientRepository extends BaseRepository {
         Cursor cursor = null;
         try {
             cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Valid});
+
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
-                    String jsonEventsStr = (cursor.getString(0));
-                    if (StringUtils.isBlank(jsonEventsStr)
-                            || jsonEventsStr.equals("{}")) { // Skip blank/empty json string
-                        continue;
+                    try{
+                        String jsonEventsStr = (cursor.getString(0));
+                        if (StringUtils.isBlank(jsonEventsStr)
+                                || jsonEventsStr.equals("{}")) { // Skip blank/empty json string
+                            continue;
+                        }
+                        jsonEventsStr = jsonEventsStr.replaceAll("'", "");
+                        JSONObject jsonObectEvent = new JSONObject(jsonEventsStr);
+                        events.add(jsonObectEvent);
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
-                    jsonEventsStr = jsonEventsStr.replaceAll("'", "");
-                    JSONObject jsonObectEvent = new JSONObject(jsonEventsStr);
-                    events.add(jsonObectEvent);
-
                     cursor.moveToNext();
                 }
             }
@@ -1313,15 +1365,18 @@ public class EventClientRepository extends BaseRepository {
             cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced,BaseRepository.TYPE_Valid});
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
-                    String jsonEventsStr = (cursor.getString(0));
-                    if (StringUtils.isBlank(jsonEventsStr)
-                            || jsonEventsStr.equals("{}")) { // Skip blank/empty json string
-                        continue;
+                    try{
+                        String jsonEventsStr = (cursor.getString(0));
+                        if (StringUtils.isBlank(jsonEventsStr)
+                                || jsonEventsStr.equals("{}")) { // Skip blank/empty json string
+                            continue;
+                        }
+                        jsonEventsStr = jsonEventsStr.replaceAll("'", "");
+                        JSONObject jsonObectEvent = new JSONObject(jsonEventsStr);
+                        events.add(jsonObectEvent);
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
-                    jsonEventsStr = jsonEventsStr.replaceAll("'", "");
-                    JSONObject jsonObectEvent = new JSONObject(jsonEventsStr);
-                    events.add(jsonObectEvent);
-
                     cursor.moveToNext();
                 }
             }
