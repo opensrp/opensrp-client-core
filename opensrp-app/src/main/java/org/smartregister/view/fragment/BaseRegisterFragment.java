@@ -23,6 +23,7 @@ import com.github.ybq.android.spinkit.style.FadingCircle;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.cursoradapter.RecyclerViewFragment;
 import org.smartregister.domain.FetchStatus;
@@ -30,7 +31,6 @@ import org.smartregister.domain.ResponseErrorStatus;
 import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
-import org.smartregister.util.AppExecutors;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.activity.BaseRegisterActivity;
@@ -39,6 +39,7 @@ import org.smartregister.view.contract.BaseRegisterFragmentContract;
 import org.smartregister.view.dialog.DialogOption;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -60,7 +61,6 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     protected TextView headerTextDisplay;
     protected TextView filterStatus;
     protected RelativeLayout filterRelativeLayout;
-    protected AppExecutors appExecutors = new AppExecutors();
     protected View.OnKeyListener hideKeyboard = new View.OnKeyListener() {
 
         @Override
@@ -84,12 +84,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
         @Override
         public void onTextChanged(final CharSequence cs, int start, int before, int count) {
-            appExecutors.mainThread().execute(new Runnable() {
-                @Override
-                public void run() {
-                    filter(cs.toString(), "", getMainCondition(), false);
-                }
-            });
+            if(Objects.requireNonNull(CoreLibrary.getInstance().getSyncConfiguration()).fastPatientRegisterSearch())
+                filter(cs.toString(), "", getMainCondition(), false);
         }
 
         @Override
