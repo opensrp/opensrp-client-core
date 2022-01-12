@@ -236,13 +236,4 @@ public abstract class SyncConfiguration {
     public boolean skipUnsyncedTasksOnFetchFromServer(){
         return false;
     }
-
-    /**
-     * Specifies whether to trigger search after each character is typed (return true). Alternatively return false after clicking
-     * a button or pressing the Return key.
-     * @return {@link Boolean}
-     */
-    public boolean fastPatientRegisterSearch(){
-        return true;
-    }
 }

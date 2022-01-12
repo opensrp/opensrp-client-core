@@ -485,6 +485,7 @@ public class AllConstants {
         public static final String LOCATION_PICKER_TAG_SHOWN = "location.picker.tag.shown";
         public static final String ENCRYPT_SHARED_PREFERENCES = "encrypt.shared.preferences";
         public static final String ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN = "allow.offline.login.with.invalid.token";
+        public static final String ENABLE_FAST_SEARCH="enable.first.search";
     }
 
     public interface FORCED_LOGOUT {
