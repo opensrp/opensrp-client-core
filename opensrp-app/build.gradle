@@ -130,6 +130,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
+    jacoco.excludes = ['jdk.internal.*']
     testLogging {
         // Enables easier debugging of tests in Github Actions CI
         events TestLogEvent.FAILED
