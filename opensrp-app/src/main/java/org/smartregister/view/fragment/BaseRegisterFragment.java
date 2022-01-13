@@ -84,7 +84,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         @Override
         public void onTextChanged(final CharSequence cs, int start, int before, int count) {
             org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
-          if(!opensrpContext.getAppProperties().isTrue(AllConstants.PROPERTY.ENABLE_FAST_SEARCH))
+          if(opensrpContext.getAppProperties().isTrue(AllConstants.PROPERTY.ENABLE_SEARCH_BUTTON))
               return;
           filter(cs.toString(), "", getMainCondition(), false);
         }
