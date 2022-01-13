@@ -39,7 +39,6 @@ import org.smartregister.view.contract.BaseRegisterFragmentContract;
 import org.smartregister.view.dialog.DialogOption;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -85,9 +84,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         @Override
         public void onTextChanged(final CharSequence cs, int start, int before, int count) {
             org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
-          if(opensrpContext.getAppProperties().hasProperty(AllConstants.PROPERTY.ENABLE_FAST_SEARCH) && !opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ENABLE_FAST_SEARCH))
+          if(!opensrpContext.getAppProperties().isTrue(AllConstants.PROPERTY.ENABLE_FAST_SEARCH))
               return;
-
           filter(cs.toString(), "", getMainCondition(), false);
         }
 
