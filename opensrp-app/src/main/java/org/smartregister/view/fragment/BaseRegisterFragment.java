@@ -23,6 +23,7 @@ import com.github.ybq.android.spinkit.style.FadingCircle;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.cursoradapter.RecyclerViewFragment;
 import org.smartregister.domain.FetchStatus;
@@ -82,7 +83,10 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
         @Override
         public void onTextChanged(final CharSequence cs, int start, int before, int count) {
-            filter(cs.toString(), "", getMainCondition(), false);
+            org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
+          if(opensrpContext.getAppProperties().isTrue(AllConstants.PROPERTY.ENABLE_SEARCH_BUTTON))
+              return;
+          filter(cs.toString(), "", getMainCondition(), false);
         }
 
         @Override
