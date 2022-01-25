@@ -12,22 +12,17 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.XML;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormAttributeParser;
-import org.smartregister.clientandeventmodel.FormData;
 import org.smartregister.clientandeventmodel.FormEntityConverter;
 import org.smartregister.clientandeventmodel.FormField;
-import org.smartregister.clientandeventmodel.FormInstance;
 import org.smartregister.clientandeventmodel.SubFormData;
-import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.domain.form.SubForm;
 import org.smartregister.service.intentservices.ReplicationIntentService;
-import org.smartregister.sync.CloudantDataHandler;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -72,15 +67,12 @@ public class FormUtils {
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ENGLISH);
     private Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
     private FormEntityConverter formEntityConverter;
-    private CloudantDataHandler mCloudantDataHandler;
 
     public FormUtils(Context context) throws Exception {
         mContext = context;
         theAppContext = CoreLibrary.getInstance().context();
         FormAttributeParser formAttributeParser = new FormAttributeParser(context);
         formEntityConverter = new FormEntityConverter(formAttributeParser, mContext);
-        // Protect creation of static variable.
-        mCloudantDataHandler = CloudantDataHandler.getInstance(context.getApplicationContext());
     }
 
     public static FormUtils getInstance(Context ctx) throws Exception {
@@ -157,141 +149,6 @@ public class FormUtils {
         }
 
         return -1;
-    }
-
-    public FormSubmission generateFormSubmisionFromXMLString(String entity_id, String formData,
-                                                             String formName, JSONObject
-                                                                     overrides) throws Exception {
-        JSONObject formSubmission = XML.toJSONObject(formData);
-
-        //FileUtilities fu = new FileUtilities();
-        //fu.write("xmlform.txt", formData);
-        //fu.write("xmlformsubmission.txt", formSubmission.toString());
-        System.out.println(formSubmission);
-
-        // use the form_definition.json to iterate through fields
-        String formDefinitionJson = readFileFromAssetsFolder(
-                "www/form/" + formName + "/form_definition.json");
-        JSONObject formDefinition = new JSONObject(formDefinitionJson);
-
-        String rootNodeKey = formSubmission.keys().next();
-
-        // retrieve the id, if it fails use the provided value by the param
-        entity_id = formSubmission.getJSONObject(rootNodeKey).has(databaseIdKey) ? formSubmission
-                .getJSONObject(rootNodeKey).getString(databaseIdKey) : generateRandomUUIDString();
-
-        //String bindPath = formDefinition.getJSONObject("form").getString("bind_type");
-        JSONObject fieldsDefinition = formDefinition.getJSONObject("form");
-        JSONArray populatedFieldsArray = getPopulatedFieldsForArray(fieldsDefinition, entity_id,
-                formSubmission, overrides);
-
-        // replace all the fields in the form
-        formDefinition.getJSONObject("form").put("fields", populatedFieldsArray);
-
-        //get the subforms
-        if (formDefinition.getJSONObject("form").has("sub_forms")) {
-            JSONObject subFormDefinition = formDefinition.getJSONObject("form").
-                    getJSONArray("sub_forms").getJSONObject(0);
-            // get the bind path for the sub-form, helps us to locate the node that holds the data
-            // in the corresponding data json
-            String bindPath = subFormDefinition.getString("default_bind_path");
-
-            // get the actual sub-form data
-            JSONArray subFormDataArray = new JSONArray();
-            Object subFormDataObject = getObjectAtPath(bindPath.split("/"), formSubmission);
-
-            if (subFormDataObject instanceof JSONObject) {
-                JSONObject subFormData = (JSONObject) subFormDataObject;
-                subFormDataArray.put(0, subFormData);
-            } else if (subFormDataObject instanceof JSONArray) {
-                subFormDataArray = (JSONArray) subFormDataObject;
-            }
-
-            JSONArray subForms = getSubForms(subFormDataArray, entity_id, subFormDefinition,
-                    overrides);
-
-            // replace the subforms field with real data
-            formDefinition.getJSONObject("form").put("sub_forms", subForms);
-            //throw new Exception();
-        }
-
-        String instanceId = generateRandomUUIDString();
-        String entityId = retrieveIdForSubmission(formDefinition);
-        String formDefinitionVersionString = formDefinition
-                .getString("form_data_definition_version");
-
-        String clientVersion = String.valueOf(new Date().getTime());
-        String instance = formDefinition.toString();
-        FormSubmission fs = new FormSubmission(instanceId, entityId, formName, instance,
-                clientVersion, SyncStatus.PENDING, formDefinitionVersionString);
-
-        generateClientAndEventModelsForFormSubmission(fs, formName);
-
-        return fs;
-    }
-
-    private void generateClientAndEventModelsForFormSubmission(FormSubmission formSubmission,
-                                                               String formName) {
-        org.smartregister.clientandeventmodel.FormSubmission v2FormSubmission;
-
-        String anmId = CoreLibrary.getInstance().context().anmService().fetchDetails().name();
-        String instanceId = formSubmission.instanceId();
-        String entityId = formSubmission.entityId();
-        Long clientVersion = new Date().getTime();
-        String formDataDefinitionVersion = formSubmission.formDataDefinitionVersion();
-
-        String bind_type = formSubmission.getFormInstance().getForm().getBind_type();
-        String default_bind_path = formSubmission.getFormInstance().getForm()
-                .getDefault_bind_path();
-
-        List<FormField> fields = convertFormFields(formSubmission.getFormInstance().getForm().
-                getFields());
-
-        List<SubFormData> sub_forms = getSubFormList(formSubmission);
-        FormData formData = new FormData(bind_type, default_bind_path, fields, sub_forms);
-
-        FormInstance formInstance = new FormInstance(formData);
-        formInstance.setForm_data_definition_version(formDataDefinitionVersion);
-
-        v2FormSubmission = new org.smartregister.clientandeventmodel.FormSubmission(anmId,
-                instanceId, formName, entityId, clientVersion, formDataDefinitionVersion,
-                formInstance, clientVersion);
-
-        // retrieve client and events
-        Client c = formEntityConverter.getClientFromFormSubmission(v2FormSubmission);
-        printClient(c);
-        Event e = formEntityConverter.getEventFromFormSubmission(v2FormSubmission);
-        printEvent(e);
-        org.smartregister.cloudant.models.Event event = new org.smartregister.cloudant.models.Event(
-                e);
-        createNewEventDocument(event);
-        if (c != null) {
-            org.smartregister.cloudant.models.Client client = new org.smartregister.cloudant
-                    .models.Client(
-                    c);
-            createNewClientDocument(client);
-        }
-
-        Map<String, Map<String, Object>> dep = formEntityConverter.
-                getDependentClientsFromFormSubmission(v2FormSubmission);
-        for (Map<String, Object> cm : dep.values()) {
-            Client cin = (Client) cm.get("client");
-            Event evin = (Event) cm.get("event");
-            event = new org.smartregister.cloudant.models.Event(evin);
-            createNewEventDocument(event);
-
-            if (cin != null) {
-                org.smartregister.cloudant.models.Client client = new org.smartregister.cloudant
-                        .models.Client(
-                        cin);
-                createNewClientDocument(client);
-                printClient(cin);
-            }
-            printEvent(evin);
-
-        }
-
-        startReplicationIntentService();
     }
 
     private void printClient(Client client) {
@@ -1110,14 +967,6 @@ public class FormUtils {
             }
         }
         return null;
-    }
-
-    private void createNewEventDocument(org.smartregister.cloudant.models.Event event) {
-        mCloudantDataHandler.createEventDocument(event);
-    }
-
-    private void createNewClientDocument(org.smartregister.cloudant.models.Client client) {
-        mCloudantDataHandler.createClientDocument(client);
     }
 
 }

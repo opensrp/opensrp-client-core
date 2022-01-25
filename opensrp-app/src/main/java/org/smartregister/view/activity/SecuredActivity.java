@@ -1,12 +1,18 @@
 package org.smartregister.view.activity;
 
+import static org.smartregister.AllConstants.ALERT_NAME_PARAM;
+import static org.smartregister.AllConstants.CloudantSync;
+import static org.smartregister.AllConstants.ENTITY_ID;
+import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
+import static org.smartregister.AllConstants.FIELD_OVERRIDES_PARAM;
+import static org.smartregister.AllConstants.FORM_NAME_PARAM;
+import static org.smartregister.AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE;
+import static org.smartregister.event.Event.ON_LOGOUT;
+import static org.smartregister.util.Log.logInfo;
+
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +20,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -25,7 +36,6 @@ import org.smartregister.R;
 import org.smartregister.broadcastreceivers.OpenSRPClientBroadCastReceiver;
 import org.smartregister.event.Listener;
 import org.smartregister.receiver.P2pProcessingStatusBroadcastReceiver;
-import org.smartregister.service.ZiggyService;
 import org.smartregister.util.Utils;
 import org.smartregister.view.controller.ANMController;
 import org.smartregister.view.controller.FormController;
@@ -36,16 +46,6 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static org.smartregister.AllConstants.ALERT_NAME_PARAM;
-import static org.smartregister.AllConstants.CloudantSync;
-import static org.smartregister.AllConstants.ENTITY_ID;
-import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
-import static org.smartregister.AllConstants.FIELD_OVERRIDES_PARAM;
-import static org.smartregister.AllConstants.FORM_NAME_PARAM;
-import static org.smartregister.AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE;
-import static org.smartregister.event.Event.ON_LOGOUT;
-import static org.smartregister.util.Log.logInfo;
-
 public abstract class SecuredActivity extends MultiLanguageActivity implements P2pProcessingStatusBroadcastReceiver.StatusUpdate {
     public static final String LOG_TAG = "SecuredActivity";
     protected final int MENU_ITEM_LOGOUT = 2312;
@@ -53,7 +53,6 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
     protected FormController formController;
     protected ANMController anmController;
     protected NavigationController navigationController;
-    protected ZiggyService ziggyService;
     private String metaData;
     private OpenSRPClientBroadCastReceiver openSRPClientBroadCastReceiver;
 
@@ -63,8 +62,6 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        ziggyService = context().ziggyService();
 
         logoutListener = new Listener<Boolean>() {
             public void onEvent(Boolean data) {
@@ -236,7 +233,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
      * TasksModel takes care of calling this on the main thread.
      */
     public void replicationError() {
-        Timber.e(LOG_TAG, "error()");
+        Timber.e("%s error()", LOG_TAG);
         //Toast.makeText(getApplicationContext(), "Replication Error", Toast.LENGTH_LONG).show();
     }
 

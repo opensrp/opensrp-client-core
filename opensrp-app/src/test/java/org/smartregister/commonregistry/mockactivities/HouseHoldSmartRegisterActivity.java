@@ -1,25 +1,24 @@
 package org.smartregister.commonregistry.mockactivities;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import android.util.Log;
 
-import org.json.JSONObject;
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.commonregistry.mockactivities.pageradapter.BaseRegisterActivityPagerAdapter;
 import org.smartregister.domain.Alert;
-import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.sync.ClientProcessor;
 import org.smartregister.util.FormUtils;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.dialog.DialogOption;
@@ -30,8 +29,6 @@ import org.smartregister.view.viewpager.OpenSRPViewPager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterActivity {
 
@@ -68,8 +65,6 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
                 onPageChanged(position);
             }
         });
-
-        ziggyService = context().ziggyService();
     }
 
     public void onPageChanged(int page) {
@@ -136,28 +131,6 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
             return alertstate;
         } catch (Exception e) {
             return "";
-        }
-    }
-
-    @Override
-    public void saveFormSubmission(String formSubmission, String id, String formName, JSONObject fieldOverrides) {
-        Log.v("fieldoverride", fieldOverrides.toString());
-        // save the form
-        try {
-            FormUtils formUtils = FormUtils.getInstance(getApplicationContext());
-            FormSubmission submission = formUtils.generateFormSubmisionFromXMLString(id, formSubmission, formName, fieldOverrides);
-            ziggyService.saveForm(getParams(submission), submission.instance());
-            ClientProcessor.getInstance(getApplicationContext()).processClient();
-
-            context().formSubmissionService().updateFTSsearch(submission);
-            context().formSubmissionRouter().handleSubmission(submission, formName);
-            //switch to forms list fragment
-            switchToBaseFragment(formSubmission); // Unnecessary!! passing on data
-
-        } catch (Exception e) {
-            // TODO: show error dialog on the formfragment if the submission fails
-
-            e.printStackTrace();
         }
     }
 
