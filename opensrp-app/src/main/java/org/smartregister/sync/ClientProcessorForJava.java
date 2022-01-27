@@ -3,16 +3,24 @@ package org.smartregister.sync;
 import android.content.ContentValues;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
+import com.ibm.fhir.model.resource.QuestionnaireResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.json.JSONArray;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonRepository;
-import org.smartregister.domain.db.Address;
-import org.smartregister.domain.db.Client;
-import org.smartregister.domain.db.Event;
+import org.smartregister.converters.ClientConverter;
+import org.smartregister.converters.EventConverter;
+import org.smartregister.domain.Address;
+import org.smartregister.domain.Client;
+import org.smartregister.domain.Event;
+import org.smartregister.domain.Obs;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.db.EventClient;
-import org.smartregister.domain.db.Obs;
 import org.smartregister.domain.jsonmapping.ClassificationRule;
 import org.smartregister.domain.jsonmapping.ClientClassification;
 import org.smartregister.domain.jsonmapping.ClientField;
@@ -21,7 +29,9 @@ import org.smartregister.domain.jsonmapping.ColumnType;
 import org.smartregister.domain.jsonmapping.JsonMapping;
 import org.smartregister.domain.jsonmapping.Rule;
 import org.smartregister.domain.jsonmapping.Table;
+import org.smartregister.pathevaluator.plan.PlanEvaluator;
 import org.smartregister.repository.DetailsRepository;
+import org.smartregister.util.AppExecutors;
 import org.smartregister.util.AssetHandler;
 
 import java.lang.reflect.Field;
@@ -31,6 +41,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -41,17 +52,21 @@ import static org.smartregister.event.Event.FORM_SUBMITTED;
 
 public class ClientProcessorForJava {
 
+    public static final String JSON_ARRAY = "json_array";
     protected static final String VALUES_KEY = "values";
     protected static final String detailsUpdated = "detailsUpdated";
-
+    protected static ClientProcessorForJava instance;
+    protected HashMap<String, MiniClientProcessorForJava> processorMap = new HashMap<>();
+    protected HashMap<MiniClientProcessorForJava, List<Event>> unsyncEventsPerProcessor = new HashMap<>();
     private String[] openmrsGenIds = {};
     private Map<String, Object> jsonMap = new HashMap<>();
-
-    protected static ClientProcessorForJava instance;
     private Context mContext;
+
+    private AppExecutors appExecutors;
 
     public ClientProcessorForJava(Context context) {
         mContext = context;
+        appExecutors = new AppExecutors();
     }
 
     public static ClientProcessorForJava getInstance(Context context) {
@@ -62,7 +77,12 @@ public class ClientProcessorForJava {
         return instance;
     }
 
+
     public synchronized void processClient(List<EventClient> eventClientList) throws Exception {
+        processClient(eventClientList, false);
+    }
+
+    public synchronized void processClient(List<EventClient> eventClientList, boolean localSubmission) throws Exception {
 
         final String EC_CLIENT_CLASSIFICATION = "ec_client_classification.json";
         ClientClassification clientClassification = assetJsonToJava(EC_CLIENT_CLASSIFICATION, ClientClassification.class);
@@ -73,11 +93,48 @@ public class ClientProcessorForJava {
         if (!eventClientList.isEmpty()) {
             for (EventClient eventClient : eventClientList) {
                 // Iterate through the events
-                if (eventClient.getClient() != null) {
-                    processEvent(eventClient.getEvent(), eventClient.getClient(), clientClassification);
+                Client client = eventClient.getClient();
+                if (client != null) {
+                    Event event = eventClient.getEvent();
+                    String eventType = event.getEventType();
+
+                    if (processorMap.containsKey(eventType)) {
+                        try {
+                            processEventUsingMiniProcessor(clientClassification, eventClient, eventType);
+                        } catch (Exception ex) {
+                            Timber.e(ex);
+                        }
+                    } else {
+                        processEvent(event, client, clientClassification);
+                    }
+                }
+
+                if (localSubmission && CoreLibrary.getInstance().getSyncConfiguration().runPlanEvaluationOnClientProcessing()) {
+                    processPlanEvaluation(eventClient);
                 }
             }
         }
+    }
+
+    /**
+     * Process plan evaluation for an event client
+     *
+     * @param eventClient
+     */
+    public void processPlanEvaluation(EventClient eventClient) {
+        appExecutors.diskIO().execute(() -> {
+            String planIdentifier = eventClient.getEvent().getDetails().get("planIdentifier");
+
+            if (StringUtils.isNotBlank(planIdentifier)) {
+                PlanDefinition plan = CoreLibrary.getInstance().context().getPlanDefinitionRepository().findPlanDefinitionById(planIdentifier);
+                PlanEvaluator planEvaluator = new PlanEvaluator(eventClient.getEvent().getProviderId());
+                QuestionnaireResponse questionnaireResponse = EventConverter.convertEventToEncounterResource(eventClient.getEvent());
+                if (eventClient.getClient() != null) {
+                    questionnaireResponse = questionnaireResponse.toBuilder().contained(ClientConverter.convertClientToPatientResource(eventClient.getClient())).build();
+                }
+                planEvaluator.evaluatePlan(plan, questionnaireResponse);
+            }
+        });
     }
 
     /**
@@ -212,7 +269,7 @@ public class ClientProcessorForJava {
                             Object values = getValue(segment, responseKey);
                             List<String> docSegmentResponseValues = new ArrayList<>();
                             if (values instanceof List) {
-                                docSegmentResponseValues = getValues((List) value);
+                                docSegmentResponseValues = getValues((List) values);
                             }
 
                             if (docSegmentFieldValue.equalsIgnoreCase(fieldValue) && (!Collections
@@ -267,7 +324,7 @@ public class ClientProcessorForJava {
 
             for (String tableName : closesCase) {
                 closeCase(tableName, baseEntityId);
-                updateFTSsearch(tableName, baseEntityId, null);
+                updateFTSsearch(tableName, client.getClientType(), baseEntityId, null);
             }
 
             return true;
@@ -283,27 +340,28 @@ public class ClientProcessorForJava {
             if (createsCase == null || createsCase.isEmpty()) {
                 return false;
             }
-            for (String clientType : createsCase) {
-                Table table = getColumnMappings(clientType);
+            for (String tableName : createsCase) {
+                Table table = getColumnMappings(tableName);
                 List<Column> columns = table.columns;
-                String baseEntityId = client != null ? client.getBaseEntityId() : event != null ? event.getBaseEntityId() : null;
+                String baseEntityId = getBaseEntityId(event, client, tableName);
 
                 ContentValues contentValues = new ContentValues();
                 //Add the base_entity_id
-                contentValues.put("base_entity_id", baseEntityId);
-                contentValues.put("is_closed", 0);
+                contentValues.put(CommonRepository.BASE_ENTITY_ID_COLUMN, baseEntityId);
+                contentValues.put(CommonRepository.IS_CLOSED_COLUMN, 0);
 
                 for (Column colObject : columns) {
                     processCaseModel(event, client, colObject, contentValues);
                 }
 
                 // Modify openmrs generated identifier, Remove hyphen if it exists
-                updateIdenitifier(contentValues);
+                updateIdentifier(contentValues);
 
                 // save the values to db
-                executeInsertStatement(contentValues, clientType);
+                executeInsertStatement(contentValues, tableName);
 
-                updateFTSsearch(clientType, baseEntityId, contentValues);
+                String entityId = contentValues.getAsString(CommonRepository.BASE_ENTITY_ID_COLUMN);
+                updateFTSsearch(tableName, client.getClientType(), entityId, contentValues);
                 Long timestamp = getEventDate(event.getEventDate());
                 addContentValuesToDetailsTable(contentValues, timestamp);
                 updateClientDetailsTable(event, client);
@@ -315,6 +373,18 @@ public class ClientProcessorForJava {
 
             return null;
         }
+    }
+
+    /***
+     * Method for retrieving baseEntityId used when processing Case Models
+     * Allows customizing the baseEntityId for different cases
+     * @param event event object
+     * @param client client object
+     * @param clientType client classification type
+     * @return base entity id
+     */
+    protected String getBaseEntityId(Event event, Client client, String clientType) {
+        return client != null ? client.getBaseEntityId() : event != null ? event.getBaseEntityId() : null;
     }
 
     public void processCaseModel(Event event, Client client, Column column, ContentValues contentValues) {
@@ -411,10 +481,7 @@ public class ClientProcessorForJava {
                             if (columnValue == null) {
                                 Object values = getValue(segment, responseKey);
                                 if (values instanceof List) {
-                                    List<String> li = getValues((List) values);
-                                    if (!li.isEmpty()) {
-                                        columnValue = li.get(0);
-                                    }
+                                    columnValue = getValuesStr(segment, getValues((List) values), column.saveFormat);
                                 }
                             }
                         }
@@ -459,6 +526,38 @@ public class ClientProcessorForJava {
         } catch (Exception e) {
             Timber.e(e);
         }
+    }
+
+    /**
+     * Formats values from {@param values} into a string based on {@param segment} properties
+     *
+     * @param segment
+     * @param values
+     * @return @return A formatted values String
+     */
+    private String getValuesStr(Object segment, List<String> values, String saveFormat) {
+        String columnValue = null;
+        if (values.isEmpty()) {
+            return columnValue;
+        }
+
+        // save obs as json array string e.g ["val1","val2"] if specified by the developer
+        if ((saveFormat != null && JSON_ARRAY.equals(saveFormat))
+                || ((segment instanceof Obs) && ((Obs) segment).isSaveObsAsArray())) {
+            columnValue = getValuesAsArray(values);
+        } else {
+            columnValue = values.get(0);
+        }
+
+        return columnValue;
+    }
+
+    private String getValuesAsArray(List<String> values) {
+        JSONArray jsonArray = new JSONArray();
+        for (String value : values) {
+            jsonArray.put(value);
+        }
+        return jsonArray.toString();
     }
 
     /**
@@ -513,7 +612,7 @@ public class ClientProcessorForJava {
                 saveClientDetails(baseEntityId, key, value, eventDate);
             }
         } catch (Exception e) {
-            Timber.e(e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -552,7 +651,7 @@ public class ClientProcessorForJava {
             Timber.d("Finished updateClientDetailsTable");
             // save the other misc, client info date of birth...
         } catch (Exception e) {
-            Timber.e(e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -598,7 +697,7 @@ public class ClientProcessorForJava {
                     attributes.put(key, value.toString());
                 }
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             Timber.e(e);
         }
 
@@ -613,7 +712,7 @@ public class ClientProcessorForJava {
             if (StringUtils.isNotBlank(gender)) {
                 map.put(GENDER, gender);
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             Timber.e(e);
         }
 
@@ -843,6 +942,17 @@ public class ClientProcessorForJava {
         return getField(clazz.getSuperclass(), fieldName);
     }
 
+    /**
+     * Update the fts table with the provided values. This overloaded method adds the parameter entityType to uniquely distiguish the client types being processed
+     *
+     * @param tableName     the case table
+     * @param entityType    the client type or bind type
+     * @param entityId      the entity identifier
+     * @param contentValues the fields to update and corresponding values
+     */
+    public void updateFTSsearch(String tableName, String entityType, String entityId, ContentValues contentValues) {
+        updateFTSsearch(tableName, entityId, contentValues);
+    }
 
     public void updateFTSsearch(String tableName, String entityId, ContentValues contentValues) {
         Timber.d("Starting updateFTSsearch table: " + tableName);
@@ -866,7 +976,7 @@ public class ClientProcessorForJava {
      *
      * @param values
      */
-    private void updateIdenitifier(ContentValues values) {
+    private void updateIdentifier(ContentValues values) {
         try {
             for (String identifier : getOpenmrsGenIds()) {
                 Object value = values.get(identifier); //TODO
@@ -889,5 +999,31 @@ public class ClientProcessorForJava {
 
     protected String[] getOpenmrsGenIds() {
         return openmrsGenIds;
+    }
+
+    protected void addMiniProcessors(MiniClientProcessorForJava... miniClientProcessorsForJava) {
+        for (MiniClientProcessorForJava miniClientProcessorForJava : miniClientProcessorsForJava) {
+            unsyncEventsPerProcessor.put(miniClientProcessorForJava, new ArrayList<Event>());
+
+            HashSet<String> eventTypes = miniClientProcessorForJava.getEventTypes();
+
+            for (String eventType : eventTypes) {
+                processorMap.put(eventType, miniClientProcessorForJava);
+            }
+        }
+    }
+
+    protected void processEventUsingMiniProcessor(@NonNull ClientClassification clientClassification, @NonNull EventClient eventClient, @NonNull String eventType) throws Exception {
+        MiniClientProcessorForJava miniClientProcessorForJava = processorMap.get(eventType);
+        if (miniClientProcessorForJava != null) {
+            List<Event> processorUnsyncEvents = unsyncEventsPerProcessor.get(miniClientProcessorForJava);
+            if (processorUnsyncEvents == null) {
+                processorUnsyncEvents = new ArrayList<>();
+                unsyncEventsPerProcessor.put(miniClientProcessorForJava, processorUnsyncEvents);
+            }
+
+            completeProcessing(eventClient.getEvent());
+            miniClientProcessorForJava.processEventClient(eventClient, processorUnsyncEvents, clientClassification);
+        }
     }
 }

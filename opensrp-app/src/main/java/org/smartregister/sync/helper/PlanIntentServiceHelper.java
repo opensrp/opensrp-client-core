@@ -2,61 +2,103 @@ package org.smartregister.sync.helper;
 
 import android.content.Context;
 
+import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.SyncEntity;
+import org.smartregister.domain.SyncProgress;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
+import org.smartregister.utils.TimingRepeatTimeTypeConverter;
 
+import java.sql.Time;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PLAN_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
+
 /**
  * Created by Vincent Karuri on 08/05/2019
  */
-public class PlanIntentServiceHelper {
+public class PlanIntentServiceHelper extends BaseHelper {
 
-    private PlanDefinitionRepository planDefinitionRepository;
-    private LocationRepository locationRepository;
-    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
-    private static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new DateTypeConverter()).create();
+    private final PlanDefinitionRepository planDefinitionRepository;
+    private final AllSharedPreferences allSharedPreferences;
+    protected static Gson gson = new GsonBuilder()
+            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd"))
+            .registerTypeAdapter(LocalDate.class, new DateTypeConverter())
+            .registerTypeAdapter(Time.class, new TimingRepeatTimeTypeConverter())
+            .disableHtmlEscaping()
+            .create();
 
     protected final Context context;
     protected static PlanIntentServiceHelper instance;
 
     public static final String SYNC_PLANS_URL = "/rest/plans/sync";
     public static final String PLAN_LAST_SYNC_DATE = "plan_last_sync_date";
+    private long totalRecords;
+    private SyncProgress syncProgress;
+
+    private Trace planSyncTrace;
+    private ArrayList<PlanDefinition> planIdsToEvaluate = new ArrayList<>();
+    private PeriodicTriggerEvaluationHelper periodicTriggerEvaluationHelper;
 
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
-            instance = new PlanIntentServiceHelper(CoreLibrary.getInstance().context().getPlanDefinitionRepository(),
-                    CoreLibrary.getInstance().context().getLocationRepository());
+            instance = new PlanIntentServiceHelper(CoreLibrary.getInstance().context().getPlanDefinitionRepository());
         }
         return instance;
     }
 
-    private PlanIntentServiceHelper(PlanDefinitionRepository planRepository, LocationRepository locationRepository) {
+    private PlanIntentServiceHelper(PlanDefinitionRepository planRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.planDefinitionRepository = planRepository;
-        this.locationRepository = locationRepository;
+        this.planSyncTrace  = initTrace(PLAN_SYNC);
+        this.allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+        periodicTriggerEvaluationHelper = new PeriodicTriggerEvaluationHelper();
     }
 
     public void syncPlans() {
+        syncProgress = new SyncProgress();
+        syncProgress.setSyncEntity(SyncEntity.PLANS);
+        syncProgress.setTotalRecords(totalRecords);
+
+        int batchFetchCount = batchFetchPlansFromServer(true);
+
+        syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchFetchCount));
+        sendSyncProgressBroadcast(syncProgress, context);
+    }
+
+    private int batchFetchPlansFromServer(boolean returnCount) {
+        int batchFetchCount = 0;
         try {
             long serverVersion = 0;
             try {
@@ -70,28 +112,58 @@ public class PlanIntentServiceHelper {
             // fetch and save plans
             Long maxServerVersion = 0l;
 
-            List<String> jurisdictions = locationRepository.getAllLocationIds();
-            String plansResponse = fetchPlans(jurisdictions, serverVersion);
+            String organizationIds = allSharedPreferences.getPreference(AllConstants.ORGANIZATION_IDS);
+
+            startPlanTrace(FETCH);
+
+            String plansResponse = fetchPlans(Arrays.asList(organizationIds.split(",")), serverVersion, returnCount);
             List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {
             }.getType());
+
+            addAttribute(planSyncTrace, COUNT, String.valueOf(plans.size()));
+            stopTrace(planSyncTrace);
             for (PlanDefinition plan : plans) {
                 try {
                     planDefinitionRepository.addOrUpdate(plan);
+                    planIdsToEvaluate.add(plan);
                 } catch (Exception e) {
                     Timber.e(e, "EXCEPTION %s", e.toString());
                 }
             }
+
             // update most recent server version
             if (!Utils.isEmptyCollection(plans)) {
+                batchFetchCount = plans.size();
                 allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, String.valueOf(getPlanDefinitionMaxServerVersion(plans, maxServerVersion)));
+
+                syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchFetchCount));
+                sendSyncProgressBroadcast(syncProgress, context);
+
+                // retry fetch since there were items synced from the server
+                batchFetchPlansFromServer(false);
+            }
+
+            if (!planIdsToEvaluate.isEmpty()) {
+                periodicTriggerEvaluationHelper.reschedulePeriodicPlanEvaluations(plans);
             }
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
+
+        return batchFetchCount;
     }
 
-    private String fetchPlans(List<String> operationalAreaId, long serverVersion) throws Exception {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+
+    private void startPlanTrace(String action) {
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        String team = allSharedPreferences.fetchDefaultTeam(providerId);
+        addAttribute(planSyncTrace, TEAM, team);
+        addAttribute(planSyncTrace, ACTION, action);
+        startTrace(planSyncTrace);
+    }
+
+    private String fetchPlans(List<String> organizationIds, long serverVersion, boolean returnCount) throws Exception {
+        HTTPAgent httpAgent = getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
         if (baseUrl.endsWith(endString)) {
@@ -99,8 +171,11 @@ public class PlanIntentServiceHelper {
         }
 
         JSONObject request = new JSONObject();
-        request.put("operational_area_id", new JSONArray(operationalAreaId));
+        if (!organizationIds.isEmpty()) {
+            request.put("organizations", new JSONArray(organizationIds));
+        }
         request.put("serverVersion", serverVersion);
+        request.put(AllConstants.RETURN_COUNT, returnCount);
 
         if (httpAgent == null) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
@@ -117,6 +192,9 @@ public class PlanIntentServiceHelper {
             context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
         }
+        if (returnCount) {
+            totalRecords = resp.getTotalRecords();
+        }
         return resp.payload().toString();
     }
 
@@ -128,5 +206,9 @@ public class PlanIntentServiceHelper {
             }
         }
         return maxServerVersion;
+    }
+
+    private HTTPAgent getHttpAgent() {
+        return CoreLibrary.getInstance().context().getHttpAgent();
     }
 }

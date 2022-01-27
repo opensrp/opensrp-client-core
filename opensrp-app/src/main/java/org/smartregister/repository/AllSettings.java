@@ -2,15 +2,12 @@ package org.smartregister.repository;
 
 import org.smartregister.domain.Setting;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AllSettings {
     public static final String APPLIED_VILLAGE_FILTER_SETTING_KEY = "appliedVillageFilter";
     public static final String PREVIOUS_FETCH_INDEX_SETTING_KEY = "previousFetchIndex";
     public static final String PREVIOUS_FORM_SYNC_INDEX_SETTING_KEY = "previousFormSyncIndex";
-    private static final String ANM_PASSWORD_PREFERENCE_KEY = "anmPassword";
     private static final String ANM_LOCATION = "anmLocation";
     private static final String ANM_TEAM = "anmTeam";
     private static final String USER_INFORMATION = "userInformation";
@@ -23,9 +20,8 @@ public class AllSettings {
         this.settingsRepository = settingsRepository;
     }
 
-    public void registerANM(String userName, String password) {
+    public void registerANM(String userName) {
         preferences.updateANMUserName(userName);
-        settingsRepository.updateSetting(ANM_PASSWORD_PREFERENCE_KEY, password);
     }
 
     public void savePreviousFetchIndex(String value) {
@@ -43,10 +39,6 @@ public class AllSettings {
     public String appliedVillageFilter(String defaultFilterValue) {
         return settingsRepository
                 .querySetting(APPLIED_VILLAGE_FILTER_SETTING_KEY, defaultFilterValue);
-    }
-
-    public String fetchANMPassword() {
-        return settingsRepository.querySetting(ANM_PASSWORD_PREFERENCE_KEY, "");
     }
 
     public String fetchPreviousFormSyncIndex() {
@@ -77,19 +69,16 @@ public class AllSettings {
         return settingsRepository.querySetting(USER_INFORMATION, "");
     }
 
-    public Map<String, String> getAuthParams() {
-        Map<String, String> authParams = new HashMap<String, String>();
-        authParams.put("username", preferences.fetchRegisteredANM());
-        authParams.put("password", fetchANMPassword());
-        return authParams;
-    }
-
     public void put(String key, String value) {
         settingsRepository.updateSetting(key, value);
     }
 
     public String get(String key) {
-        return settingsRepository.querySetting(key, null);
+        return get(key, null);
+    }
+
+    public String get(String key, String defaultValue) {
+        return settingsRepository.querySetting(key, defaultValue);
     }
 
     public Setting getSetting(String key) {
@@ -108,4 +97,27 @@ public class AllSettings {
         return settingsRepository.queryUnsyncedSettings();
     }
 
+    public int getUnsyncedSettingsCount() {
+        return settingsRepository.queryUnsyncedSettingsCount();
+    }
+
+    public String fetchRegisteredANM() {
+        return preferences.fetchRegisteredANM();
+    }
+
+    public String fetchDefaultTeamId(String username) {
+        return preferences.fetchDefaultTeamId(username);
+    }
+
+    public String fetchDefaultTeam(String username) {
+        return preferences.fetchDefaultTeam(username);
+    }
+
+    public String fetchDefaultLocalityId(String username) {
+        return preferences.fetchDefaultLocalityId(username);
+    }
+
+    public AllSharedPreferences getPreferences() {
+        return preferences;
+    }
 }

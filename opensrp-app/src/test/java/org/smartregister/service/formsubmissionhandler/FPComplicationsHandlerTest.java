@@ -2,9 +2,7 @@ package org.smartregister.service.formsubmissionhandler;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.robolectric.RobolectricTestRunner;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.service.EligibleCoupleService;

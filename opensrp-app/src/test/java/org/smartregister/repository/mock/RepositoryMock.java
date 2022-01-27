@@ -50,13 +50,8 @@ public class RepositoryMock extends Repository {
     }
 
     @Override
-    public boolean canUseThisPassword(String password) {
+    public boolean canUseThisPassword(byte[] password) {
         return super.canUseThisPassword(password);
-    }
-
-    @Override
-    public void deleteRepository() {
-        super.deleteRepository();
     }
 
     public Repository getInstance1() {

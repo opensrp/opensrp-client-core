@@ -24,22 +24,28 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
+import android.os.Environment;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
+import android.view.Gravity;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -55,8 +61,11 @@ import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.R;
 import org.smartregister.SyncFilter;
+import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
@@ -68,9 +77,13 @@ import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -88,7 +101,6 @@ import java.util.Map;
 import timber.log.Timber;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
-import static org.smartregister.util.Log.logError;
 
 
 /**
@@ -96,9 +108,9 @@ import static org.smartregister.util.Log.logError;
  * Class containing some static utility methods.
  */
 public class Utils {
-    private static final String TAG = "Utils";
-    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+
+    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Utils.getDefaultLocale());
+    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Utils.getDefaultLocale());
 
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
@@ -357,20 +369,8 @@ public class Utils {
         return Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
     }
 
-    public static String getName(String firstName, String lastName) {
-        firstName = firstName.trim();
-        lastName = lastName.trim();
-        if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
-            return firstName + " " + lastName;
-        } else {
-            if (StringUtils.isNotBlank(firstName)) {
-                return firstName;
-            } else if (StringUtils.isNotBlank(lastName)) {
-                return lastName;
-            }
-        }
-
-        return "";
+    public static String getName(@NonNull String firstName, @NonNull String lastName) {
+        return (firstName.trim() + " " + lastName.trim()).trim();
     }
 
     public static String readAssetContents(Context context, String path) {
@@ -383,7 +383,7 @@ public class Utils {
             is.close();
             fileContents = new String(buffer, "UTF-8");
         } catch (IOException ex) {
-            Log.e(TAG, Log.getStackTraceString(ex));
+            Timber.e(ex);
         }
 
         return fileContents;
@@ -395,7 +395,7 @@ public class Utils {
             is = context.getAssets().open(path);
 
         } catch (IOException ex) {
-            Log.e(TAG, Log.getStackTraceString(ex));
+            Timber.e(ex);
         }
 
         return is;
@@ -459,19 +459,19 @@ public class Utils {
                     result.add(csvValues);
                 }
             } catch (IOException e) {
-                Log.e(TAG, "populateTableFromCSV: error reading csv file " + e.getMessage());
+                Timber.e(e, "populateTableFromCSV: error reading csv file ");
 
             } finally {
                 try {
                     is.close();
                     reader.close();
                 } catch (Exception e) {
-                    Log.e(TAG, "populateTableFromCSV: unable to close inputstream/bufferedreader " + e.getMessage());
+                    Timber.e(e, "populateTableFromCSV: unable to close inputstream/bufferedreader ");
                 }
             }
 
         } catch (Exception e) {
-            Log.e(TAG, "populateTableFromCSV " + e.getMessage());
+            Timber.e(e, "populateTableFromCSV ");
         }
         return result;
     }
@@ -516,32 +516,27 @@ public class Utils {
         return pc;
     }
 
-    public static void showToast(Context context, String message) {
-        if (context == null) return;
-        if(context instanceof Activity){
-            Activity activity = (Activity) context;
-            if(activity == null || activity.isFinishing()) return;
-        }
-       try{
-           Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-       }catch (Exception e){
-        e.printStackTrace();
-       }
+    public static boolean getBooleanProperty(String key) {
+        return CoreLibrary.getInstance().context().getAppProperties().isTrue(key);
+    }
 
+    public static void showToast(Context context, String message) {
+        showToastCore(context, message, Toast.LENGTH_LONG);
     }
 
     public static void showShortToast(Context context, String message) {
-        if (context == null) return;
-        if(context instanceof Activity){
-            Activity activity = (Activity) context;
-            if(activity ==null || activity.isFinishing()) return;
-        }
-        try{
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-        }catch (WindowManager.BadTokenException e){
-            e.printStackTrace();
+        showToastCore(context, message, Toast.LENGTH_SHORT);
+
+    }
+
+    public static void showToastCore(Context context, String message, int duration) {
+        Toast toast = Toast.makeText(context, message, duration);
+
+        if (getBooleanProperty(AllConstants.PROPERTY.SYSTEM_TOASTER_CENTERED)) {
+            toast.setGravity(Gravity.CENTER, 0, 0);
         }
 
+        toast.show();
     }
 
     public static void hideKeyboard(Context context, View view) {
@@ -552,7 +547,7 @@ public class Utils {
                 inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         } catch (Exception e) {
-            logError("Error encountered while hiding keyboard " + e);
+            Timber.e(e, "Error encountered while hiding keyboard");
         }
     }
 
@@ -576,15 +571,17 @@ public class Utils {
         return packageInfo.versionName;
     }
 
+    public static long getVersionCode(Context context) throws PackageManager.NameNotFoundException {
+        PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        return packageInfo.versionCode;
+    }
+
     public static String getBuildDate(Boolean isShortMonth) {
         String simpleDateFormat;
         if (isShortMonth) {
-            simpleDateFormat =
-                    new SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-                            .format(new Date(CoreLibrary.getBuildTimeStamp()));
+            simpleDateFormat = new SimpleDateFormat("dd MMM yyyy", getDefaultLocale()).format(new Date(CoreLibrary.getBuildTimeStamp()));
         } else {
-            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-                    .format(new Date(CoreLibrary.getBuildTimeStamp()));
+            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", getDefaultLocale()).format(new Date(CoreLibrary.getBuildTimeStamp()));
         }
         return simpleDateFormat;
     }
@@ -616,17 +613,24 @@ public class Utils {
     public static String getUserInitials() {
         String initials = "Me";
         String preferredName = getPrefferedName();
-
-        if (StringUtils.isNotBlank(preferredName)) {
-            String[] preferredNameArray = preferredName.split(" ");
-            initials = "";
-            if (preferredNameArray.length > 1) {
-                initials = String.valueOf(preferredNameArray[0].charAt(0)) + String.valueOf(preferredNameArray[1].charAt(0));
-            } else if (preferredNameArray.length == 1) {
-                initials = String.valueOf(preferredNameArray[0].charAt(0));
+        try {
+            if (StringUtils.isNotBlank(preferredName)) {
+                preferredName = preferredName.trim();
+                String[] preferredNameArray = preferredName.split(" ");
+                initials = "";
+                if (preferredNameArray.length > 1) {
+                    initials = String.valueOf(preferredNameArray[0].charAt(0)) + String.valueOf(preferredNameArray[1].charAt(0));
+                } else if (preferredNameArray.length == 1) {
+                    initials = String.valueOf(preferredNameArray[0].charAt(0));
+                }
             }
+            return initials;
         }
-        return initials;
+        catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException  e)
+        {
+            Timber.e("Index out of Bounds "+e.getMessage());
+            return "";
+        }
     }
 
     public static AllSharedPreferences getAllSharedPreferences() {
@@ -640,7 +644,7 @@ public class Utils {
                 duration = new DateTime(date);
                 return DateUtil.getDuration(duration);
             } catch (Exception e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e(e);
             }
         }
         return "";
@@ -764,5 +768,232 @@ public class Utils {
             myKey = key;
         }
         return myKey;
+    }
+
+    /**
+     * copyDatabase function moves database file created by the app is the apps private folder to Downloads folder. From Downloads folder, it's easy to share
+     *
+     * @param dbName     name of the database that was created by the app e.g. drishti.db
+     * @param copyDbName name of the database file once copied to Downloads folder e.g. reveal.db
+     * @param context    application context when calling the function
+     */
+    public static void copyDatabase(String dbName, String copyDbName, Context context) {
+        try {
+            final String inFileName = context.getDatabasePath(dbName).getPath();
+            final String outFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + copyDbName;
+            File dbFile = new File(inFileName);
+            FileInputStream fis = new FileInputStream(dbFile);
+
+            OutputStream output = new FileOutputStream(outFileName);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) > 0) {
+                output.write(buffer, 0, length);
+            }
+
+            output.flush();
+            output.close();
+            fis.close();
+
+        } catch (Exception e) {
+            Timber.e("copyDatabase: backup error " + e.toString());
+        }
+    }
+
+    public static Locale getDefaultLocale() {
+        return Locale.getDefault().toString().startsWith("ar") ? Locale.ENGLISH : Locale.getDefault();
+    }
+
+    public static boolean deleteRoomDb(@NonNull Context context, @NonNull String databaseName) {
+        boolean operationSuccessful;
+        File databasesFolder = new File(context.getApplicationInfo().dataDir + "/databases");
+        File db = new File(databasesFolder, databaseName);
+        if (!db.exists()) {
+            Timber.i("Room database %s does not exist", databaseName);
+            return false;
+        }
+
+        if (db.delete()) {
+            Timber.i("Room database %s deleted", databaseName);
+        } else {
+            Timber.i("Failed to delete database %s", databaseName);
+            return false;
+        }
+
+        // Delete the journal file
+        operationSuccessful = deleteDbJournal(databasesFolder, databaseName);
+
+        // Delete the db shm & wal file
+        return operationSuccessful && deleteDbTemporaryFiles(databaseName, databasesFolder);
+    }
+
+    /**
+     * Deletes the wal & shm temporary files for a DB
+     *
+     * @param databaseName
+     * @param databasesFolder
+     * @return
+     */
+    protected static boolean deleteDbTemporaryFiles(@NonNull String databaseName, File databasesFolder) {
+        boolean operationSuccessful = true;
+        File walFile = new File(databasesFolder, databaseName + "-wal");
+        if (walFile.exists()) {
+            if (walFile.delete()) {
+                Timber.i("Database %s-wal deleted", databaseName);
+            } else {
+                Timber.e("Failed to delete database %s-wal", databaseName);
+                operationSuccessful = false;
+            }
+        }
+
+        File shmFile = new File(databasesFolder, databaseName + "-shm");
+        if (shmFile.exists()) {
+            if (shmFile.delete()) {
+                Timber.i("Database %s-shm deleted", databaseName);
+            } else {
+                Timber.e("Failed to delete database %s-shm", databaseName);
+                return false;
+            }
+        }
+
+        return operationSuccessful;
+    }
+
+    protected static boolean deleteDbJournal(File databases, @NonNull String databaseName) {
+        File journal = new File(databases, databaseName + "-journal");
+        if (journal.exists()) {
+            if (journal.delete()) {
+                Timber.i("Database %s journal deleted", databaseName);
+            } else {
+                Timber.e("Failed to delete database %s journal", databaseName);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Nullable
+    public static String getAppId(@NonNull Context context) {
+        PackageInfo packageInfo = getPackageInfo(context);
+
+        return packageInfo != null ? packageInfo.packageName : null;
+    }
+
+    @Nullable
+    public static String getAppVersion(@NonNull Context context) {
+        PackageInfo packageInfo = getPackageInfo(context);
+        return packageInfo != null ? packageInfo.versionName : null;
+    }
+
+    @Nullable
+    private static PackageInfo getPackageInfo(@NonNull Context context) {
+
+        try {
+            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            return pInfo;
+        } catch (PackageManager.NameNotFoundException e) {
+            Timber.e(e);
+            return null;
+        }
+    }
+
+    public static Long tryParseLong(String value, long defaultValue) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    public static int calculatePercentage(long totalCount, long partialCount) {
+        if (totalCount < 1) {
+            return 100;
+        } else if (partialCount < 1) {
+            return 0;
+        } else {
+            return Math.round((partialCount * 100f) / totalCount);
+        }
+    }
+
+    protected static String safeArrayToString(char[] array) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (char c : array) {
+            stringBuilder.append(c);
+        }
+        return stringBuilder.toString();
+    }
+
+    public static AccountAuthenticatorXml parseAuthenticatorXMLConfigData(Context context) {
+        try {
+            int eventType = -1;
+            String namespace = "http://schemas.android.com/apk/res/android";
+            AccountAuthenticatorXml authenticatorXml = new AccountAuthenticatorXml();
+            XmlResourceParser parser = context.getResources().getXml(R.xml.authenticator);
+
+            while (eventType != XmlResourceParser.END_DOCUMENT) {
+                if (eventType == XmlResourceParser.START_TAG) {
+                    String element = parser.getName();
+
+                    if ("account-authenticator".equals(element)) {
+                        //Account type id
+                        String accountType = parser.getAttributeValue(namespace, "accountType");
+                        authenticatorXml.setAccountType(accountType);
+
+                        //Account Name
+                        int labelId = parser.getAttributeResourceValue(namespace, "label", 0);
+                        authenticatorXml.setAccountLabel(context.getResources().getString(labelId));
+
+                        //Icon
+                        int iconImageResourceId = parser.getAttributeResourceValue(namespace, "icon", 0);
+                        authenticatorXml.setIcon(iconImageResourceId);
+                    }
+                }
+                eventType = parser.next();
+            }
+            return authenticatorXml;
+        } catch (Exception e) {
+            Timber.e(e);
+            return null;
+        }
+    }
+
+    public static void logoutUser(org.smartregister.Context context, String message) {
+        Intent intent = new Intent(context.applicationContext(), CoreLibrary.getInstance().getSyncConfiguration().getAuthenticationActivity());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        if (StringUtils.isNotBlank(message))
+            intent.putExtra(AllConstants.INTENT_KEY.DIALOG_MESSAGE, message);
+
+        context.applicationContext().startActivity(intent);
+        context.userService().forceRemoteLogin(context.allSharedPreferences().fetchRegisteredANM());
+        context.userService().logoutSession();
+    }
+
+    /**
+     * This method takes in a list of API call parameters and value pairs,
+     * combines them and returns a single string to be appended to a GET API call
+     *
+     * @param apiParams a list of pairs containing API call parameters and values
+     *
+     * @return a string having all the parameters and values combined
+     */
+    public static String composeApiCallParamsString(List <Pair<String,String>> apiParams) {
+        StringBuilder apiCallParamsString = new StringBuilder("");
+        String paramsSeparator = "&";
+        String equalsSign = "=";
+        if (apiParams == null || apiParams.isEmpty()) {
+            return apiCallParamsString.toString();
+        }
+        for (Pair<String,String> apiParamsPair: apiParams) {
+            apiCallParamsString.append(paramsSeparator)
+                    .append(apiParamsPair.first)
+                    .append(equalsSign)
+                    .append(apiParamsPair.second);
+        }
+        return apiCallParamsString.toString();
     }
 }

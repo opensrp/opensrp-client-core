@@ -4,7 +4,7 @@
 [![Dristhi](opensrp-app/res/drawable-mdpi/login_logo.png)](https://smartregister.atlassian.net/wiki/dashboard.action)
 
 
-# Table of Contents 
+# Table of Contents
 
 * [Introduction](#introduction)
 * [Features](#features)
@@ -75,7 +75,7 @@ This section will provide a brief description on how to build and install the ap
     * Install VirtualBox
     * Download Genymotion & Install it
     * Sign in to the genymotion app
-    * Create a new Genymotion Virtual Device 
+    * Create a new Genymotion Virtual Device
         * **Preferrable & Stable Choice** - API 22(Android 5.1.0), Screen size of around 800 X 1280, 1024 MB Memory --> eg. Google Nexus 7, Google Nexus 5
 
 ## How to install
@@ -173,7 +173,7 @@ This app provides the following networking capabilities:
 Class | Represents
 ----- | --------------
 `OpensrpSSLHelper` | SSL Connection helper
-`OpenSRPImageLoader` | Asynchronous image downloder
+`OpenSRPImageLoader` | Asynchronous image downloader
 `HttpAgent` | Synchronous networking class with username\password ([Basic Auth](https://tools.ietf.org/html/rfc2617)) access support
 `ConnectivityChangeReceiver` | Network status detection by a broadcast receiver
 `GZipEncodingHttpClient` | GZip encoding and decoding capabilities
@@ -221,7 +221,7 @@ Class | Represents
 `ServiceProvided` | It represents a service that was provided to a patient
 `TimelineEvent` | It represents an event within a patient's life eg. birth
 
-The domain object classes can be found in `org.smartregister.domain`. There are several domains namely: global domain, form and database domain. 
+The domain object classes can be found in `org.smartregister.domain`. There are several domains namely: global domain, form and database domain.
 
 
 ## 5. Sync
@@ -233,9 +233,9 @@ This app provides the following sync capabilities:
 
 The sync classes can be found in `org.smartregister.sync`
 
-## 6. Utitiles
+## 6. Utilities
 
-This app provides the following utilties:
+This app provides the following utilities:
 
 Class | Provides
 ----- | --------
@@ -252,6 +252,7 @@ Class | Provides
 `StringUtil` | String manipulation utility
 `TimelineEventComparator` | Timeline event comparator
 `Utils` | Date conversion, android preference manipulator, view generator, metrics humanizer among other basic utility functions.
+`AppExecutors` | Provides implementation of the executor interface that allows grouping request. Grouping tasks like this avoids the effects of task starvation (e.g. disk reads don't wait behind webservice requests)
 
 
 The utility classes can be found under `org.smartregister.util`
@@ -297,3 +298,26 @@ Methods in the ICompression interface are
 
 *__void decompress(String compressedInputFilePath, String decompressedOutputFilePath)__* Decompress file in file path `compressedInputFilePath` and output to location `decompressedOutputFilePath`
 
+## 10. Bootstrap View Generation
+
+You can quickly bootstrap view generation that take the format of a `Register` or `Profile` using the package `org.smartregister.view`. Views that render a Register can extend the `BaseRegisterFragment`
+that implements basic register functionality such as searching, listing, sorting and counting number of records on the generic base view whilst reading a `cursor` object.
+
+For views that display a generic List of items but require heavier customization, using the `org.smartregister.view.fragment.BaseListFragment<T>` allows you to render any generic list while providing a context
+aware background executor and error handling that only requires provisioning or `Callable` function to act as a data source.
+Check the Sample app's `ReportFragment` that consumes a `Retrofit` response and renders a list of objects.
+
+## Configurability
+
+By placing a file named `app.properties` in your implementation assets folder (See sample app) , one can configure certain aspects of the app
+
+### Configurable Settings
+
+| Configuration                       | Type    | Default  | Description                                                              |
+| ----------------------------------- | ------- | -------- | -------------------------------------------------------------------------|
+| `system.toaster.centered`           | Boolean | false    | Position toaster(s) at the center of the view(s)                         |
+| `disable.location.picker.view`      | Boolean | false    | Disables LocationPicker View                                             |
+| `location.picker.tag.shown`         | Boolean | false    | Hides/Shows the location tag in the location picker tree view            |
+| `encrypt.shared.preferences`        | Boolean | false    | Enable/disables encrypting SharedPreferences                          |
+| `allow.offline.login.with.invalid.token`   | Boolean | false   | Allow offline login when token is no longer valid after a successful login when online and user is forcefully logged out  |
+| `enable.search.button`   | Boolean | false   | Enable/Disable search to be triggered only after clicking the search icon in `org.smartregister.view.fragment.BaseRegisterFragment`  or its subclass|

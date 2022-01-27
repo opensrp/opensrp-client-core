@@ -2,7 +2,6 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.util.Log;
 import android.webkit.JavascriptInterface;
 
 import com.google.gson.Gson;
@@ -19,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.asList;
@@ -53,25 +54,25 @@ public class FormDataRepository extends DrishtiRepository {
     private static final String FORM_SUBMISSION_TABLE_NAME = "form_submission";
     private static final String DETAILS_COLUMN_NAME = "details";
     private static final String FORM_NAME_PARAM = "formName";
-    private static final String TAG = "FormDataRepository";
     private Map<String, String[]> TABLE_COLUMN_MAP;
 
     public FormDataRepository() {
         TABLE_COLUMN_MAP = new HashMap<String, String[]>();
+
         TABLE_COLUMN_MAP.put(EligibleCoupleRepository.EC_TABLE_NAME,
                 EligibleCoupleRepository.EC_TABLE_COLUMNS);
         TABLE_COLUMN_MAP
                 .put(MotherRepository.MOTHER_TABLE_NAME, MotherRepository.MOTHER_TABLE_COLUMNS);
         TABLE_COLUMN_MAP.put(ChildRepository.CHILD_TABLE_NAME, ChildRepository.CHILD_TABLE_COLUMNS);
 
-        if (CoreLibrary.getInstance().context().configuration().appName().equals(APP_NAME_INDONESIA)) {
+        if (APP_NAME_INDONESIA.equals(CoreLibrary.getInstance().context().configuration().appName())) {
             return;
         }
 
         for (int i = 0; i < Context.bindtypes.size(); i++) {
             TABLE_COLUMN_MAP.put(Context.bindtypes.get(i).getBindtypename(), CoreLibrary.getInstance().context()
                     .commonrepository(
-                            Context.bindtypes.get(i).getBindtypename()).common_TABLE_COLUMNS);
+                            Context.bindtypes.get(i).getBindtypename()).getTableColumns());
         }
     }
 
@@ -86,7 +87,7 @@ public class FormDataRepository extends DrishtiRepository {
 
     @JavascriptInterface
     public String queryUniqueResult(String sql, String[] selectionArgs) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = database.rawQuery(sql, selectionArgs);
 
         cursor.moveToFirst();
@@ -98,7 +99,7 @@ public class FormDataRepository extends DrishtiRepository {
 
     @JavascriptInterface
     public String queryList(String sql, String[] selectionArgs) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = database.rawQuery(sql, selectionArgs);
         List<Map<String, String>> results = new ArrayList<Map<String, String>>();
         cursor.moveToFirst();
@@ -113,7 +114,7 @@ public class FormDataRepository extends DrishtiRepository {
     @JavascriptInterface
     public String saveFormSubmission(String paramsJSON, String data, String
             formDataDefinitionVersion) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         Map<String, String> params = new Gson()
                 .fromJson(paramsJSON, new TypeToken<Map<String, String>>() {
                 }.getType());
@@ -124,33 +125,33 @@ public class FormDataRepository extends DrishtiRepository {
 
     @JavascriptInterface
     public void saveFormSubmission(FormSubmission formSubmission) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         database.insert(FORM_SUBMISSION_TABLE_NAME, null,
                 createValuesForFormSubmission(formSubmission));
     }
 
     public FormSubmission fetchFromSubmission(String instanceId) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = database.query(FORM_SUBMISSION_TABLE_NAME, FORM_SUBMISSION_TABLE_COLUMNS,
                 INSTANCE_ID_COLUMN + " = ?", new String[]{instanceId}, null, null, null);
         return readFormSubmission(cursor).get(0);
     }
 
     public List<FormSubmission> getPendingFormSubmissions() {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = database.query(FORM_SUBMISSION_TABLE_NAME, FORM_SUBMISSION_TABLE_COLUMNS,
                 SYNC_STATUS_COLUMN + " = ?", new String[]{PENDING.value()}, null, null, null);
         return readFormSubmission(cursor);
     }
 
     public long getPendingFormSubmissionsCount() {
-        return longForQuery(masterRepository.getReadableDatabase(),
+        return longForQuery(masterRepository().getReadableDatabase(),
                 "SELECT COUNT(1) FROM " + FORM_SUBMISSION_TABLE_NAME + " " + "" + "WHERE "
                         + SYNC_STATUS_COLUMN + " = ? ", new String[]{PENDING.value()});
     }
 
     public void markFormSubmissionsAsSynced(List<FormSubmission> formSubmissions) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         for (FormSubmission submission : formSubmissions) {
             FormSubmission updatedSubmission = new FormSubmission(submission.instanceId(),
                     submission.entityId(), submission.formName(), submission.instance(),
@@ -162,7 +163,7 @@ public class FormDataRepository extends DrishtiRepository {
     }
 
     public void updateServerVersion(String instanceId, String serverVersion) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(SERVER_VERSION_COLUMN, serverVersion);
         database.update(FORM_SUBMISSION_TABLE_NAME, values, INSTANCE_ID_COLUMN + " = ?",
@@ -170,7 +171,7 @@ public class FormDataRepository extends DrishtiRepository {
     }
 
     public boolean submissionExists(String instanceId) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = database.query(FORM_SUBMISSION_TABLE_NAME, new String[]{INSTANCE_ID_COLUMN},
                 INSTANCE_ID_COLUMN + " = ?", new String[]{instanceId}, null, null, null);
         boolean isThere = cursor.moveToFirst();
@@ -180,7 +181,7 @@ public class FormDataRepository extends DrishtiRepository {
 
     @JavascriptInterface
     public String saveEntity(String entityType, String fields) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         Map<String, String> updatedFieldsMap = new Gson()
                 .fromJson(fields, new TypeToken<Map<String, String>>() {
                 }.getType());
@@ -329,11 +330,11 @@ public class FormDataRepository extends DrishtiRepository {
         Map<String, String> map = new HashMap<String, String>();
         Cursor cursor = null;
         try {
-            SQLiteDatabase database = masterRepository.getReadableDatabase();
+            SQLiteDatabase database = masterRepository().getReadableDatabase();
             cursor = database.rawQuery(sql, selectionArgs);
             map = sqliteRowToMap(cursor);
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -351,7 +352,7 @@ public class FormDataRepository extends DrishtiRepository {
                     try {
                         rowObject.put(cursor.getColumnName(i), cursor.getString(i));
                     } catch (Exception e) {
-                        Log.d(TAG, e.getMessage());
+                        Timber.d(e.getMessage());
                     }
                 }
             }

@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -20,11 +19,15 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.VisibleForTesting;
+
 import org.joda.time.LocalDate;
 import org.smartregister.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.domain.ReportMonth;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.util.PaginationHolder;
+import org.smartregister.util.ViewHelper;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.customcontrols.CustomFontTextView;
@@ -132,8 +135,8 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
         populateClientListHeaderView(getDefaultOptionsProvider().serviceMode().getHeaderProvider(),
                 view);
 
-        clientsProgressView = (ProgressBar) view.findViewById(R.id.client_list_progress);
-        clientsView = (ListView) view.findViewById(R.id.list);
+        clientsProgressView = view.findViewById(R.id.client_list_progress);
+        clientsView = view.findViewById(R.id.list);
 
         setupStatusBarViews(view);
         paginationViewHandler.addPagination(clientsView);
@@ -178,8 +181,8 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
     }
 
     private void setupStatusBarViews(View view) {
-        appliedSortView = (TextView) view.findViewById(R.id.sorted_by);
-        appliedVillageFilterView = (TextView) view.findViewById(R.id.village);
+        appliedSortView = view.findViewById(R.id.sorted_by);
+        appliedVillageFilterView = view.findViewById(R.id.village);
     }
 
     private void setupNavBarViews(View view) {
@@ -193,7 +196,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
         View sortView = view.findViewById(R.id.sort_selection);
         sortView.setOnClickListener(navBarActionsHandler);
 
-        serviceModeView = (TextView) view.findViewById(R.id.service_mode_selection);
+        serviceModeView = view.findViewById(R.id.service_mode_selection);
         serviceModeView.setOnClickListener(navBarActionsHandler);
 
         view.findViewById(R.id.register_client).setOnClickListener(navBarActionsHandler);
@@ -206,17 +209,17 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
     }
 
     private void setupTitleView(View view) {
-        ViewGroup titleLayout = (ViewGroup) view.findViewById(R.id.title_layout);
+        ViewGroup titleLayout = view.findViewById(R.id.title_layout);
         titleLayout.setOnClickListener(navBarActionsHandler);
 
-        titleLabelView = (TextView) view.findViewById(R.id.txt_title_label);
+        titleLabelView = view.findViewById(R.id.txt_title_label);
 
-        TextView reportMonthStartView = (TextView) view.findViewById(R.id.btn_report_month);
+        TextView reportMonthStartView = view.findViewById(R.id.btn_report_month);
         setReportDates(reportMonthStartView);
     }
 
     public void setupSearchView(View view) {
-        searchView = (EditText) view.findViewById(R.id.edt_search);
+        searchView = view.findViewById(R.id.edt_search);
         searchView.setHint(getNavBarOptionsProvider().searchHint());
         searchView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -263,7 +266,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
     private void populateClientListHeaderView(SecuredNativeSmartRegisterActivity
                                                       .ClientsHeaderProvider headerProvider, View
                                                       view) {
-        LinearLayout clientsHeaderLayout = (LinearLayout) view
+        LinearLayout clientsHeaderLayout = view
                 .findViewById(R.id.clients_header_layout);
         clientsHeaderLayout.removeAllViewsInLayout();
         int columnCount = headerProvider.count();
@@ -277,8 +280,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
     }
 
     private View getColumnHeaderView(int i, int[] weights, int[] headerTxtResIds) {
-        CustomFontTextView header = new CustomFontTextView(getActivity(), null,
-                R.style.CustomFontTextViewStyle_Header_Black);
+        CustomFontTextView header = getCustomFontTextViewHeader();
         header.setFontVariant(FontVariant.BLACK);
         header.setTextSize(16);
         header.setTextColor(getResources().getColor(R.color.client_list_header_text_color));
@@ -288,6 +290,10 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
         header.setLayoutParams(lp);
         header.setText(headerTxtResIds[i]);
         return header;
+    }
+
+    protected CustomFontTextView getCustomFontTextViewHeader() {
+        return new CustomFontTextView(getActivity(), null, R.style.CustomFontTextViewStyle_Header_Black);
     }
 
     private void setupAdapter() {
@@ -414,30 +420,18 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
         }
     }
 
-    private class PaginationViewHandler implements View.OnClickListener {
+    @VisibleForTesting
+    protected class PaginationViewHandler implements View.OnClickListener {
         private Button nextPageView;
         private Button previousPageView;
         private TextView pageInfoView;
 
         private void addPagination(ListView clientsView) {
-            ViewGroup footerView = getPaginationView();
-            nextPageView = (Button) footerView.findViewById(R.id.btn_next_page);
-            previousPageView = (Button) footerView.findViewById(R.id.btn_previous_page);
-            pageInfoView = (TextView) footerView.findViewById(R.id.txt_page_info);
 
-            nextPageView.setOnClickListener(this);
-            previousPageView.setOnClickListener(this);
-
-            footerView.setLayoutParams(
-                    new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
-                            (int) getResources().getDimension(R.dimen.pagination_bar_height)));
-
-            clientsView.addFooterView(footerView);
-        }
-
-        private ViewGroup getPaginationView() {
-            return (ViewGroup) getActivity().getLayoutInflater()
-                    .inflate(R.layout.smart_register_pagination, null);
+            PaginationHolder paginationHolder = ViewHelper.addPaginationCore(this, clientsView);
+            nextPageView = paginationHolder.getNextPageView();
+            previousPageView = paginationHolder.getPreviousPageView();
+            pageInfoView = paginationHolder.getPageInfoView();
         }
 
         private int getCurrentPageCount() {
@@ -446,8 +440,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
         }
 
         public void refresh() {
-            pageInfoView.setText(format(getResources().getString(R.string.str_page_info),
-                    (getCurrentPageCount()), (clientsAdapter.pageCount())));
+            pageInfoView.setText(getFormattedPaginationInfoText(getCurrentPageCount(), clientsAdapter.pageCount()));
             nextPageView.setVisibility(clientsAdapter.hasNextPage() ? VISIBLE : INVISIBLE);
             previousPageView.setVisibility(clientsAdapter.hasPreviousPage() ? VISIBLE : INVISIBLE);
         }
@@ -485,7 +478,6 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
 
             } else if (i == R.id.service_mode_selection) {
                 showFragmentDialog(new ServiceModeDialogOptionModel());
-
             }
         }
     }
@@ -501,5 +493,9 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
             searchView.setText("");
         }
 
+    }
+
+    protected String getFormattedPaginationInfoText(int currentPage, int pageCount) {
+        return format(getResources().getString(R.string.str_page_info), currentPage, pageCount);
     }
 }

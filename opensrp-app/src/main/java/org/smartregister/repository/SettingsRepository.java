@@ -2,7 +2,6 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.util.Log;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -11,6 +10,8 @@ import org.smartregister.domain.SyncStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class SettingsRepository extends DrishtiRepository {
     public static final String SETTINGS_TABLE_NAME = "settings";
@@ -70,14 +71,14 @@ public class SettingsRepository extends DrishtiRepository {
         Cursor cursor = null;
         String value = defaultValue;
         try {
-            SQLiteDatabase database = masterRepository.getReadableDatabase();
+            SQLiteDatabase database = masterRepository().getReadableDatabase();
             cursor = database.query(SETTINGS_TABLE_NAME, new String[]{SETTINGS_VALUE_COLUMN},
                     SETTINGS_KEY_COLUMN + " = ?", new String[]{key}, null, null, null, "1");
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 value = cursor.getString(0);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -90,14 +91,14 @@ public class SettingsRepository extends DrishtiRepository {
         byte[] value = null;
         Cursor cursor = null;
         try {
-            SQLiteDatabase database = masterRepository.getReadableDatabase();
+            SQLiteDatabase database = masterRepository().getReadableDatabase();
             cursor = database.query(SETTINGS_TABLE_NAME, new String[]{SETTINGS_VALUE_COLUMN},
                     SETTINGS_KEY_COLUMN + " = ?", new String[]{key}, null, null, null, "1");
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 value = cursor.getBlob(0);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -107,7 +108,7 @@ public class SettingsRepository extends DrishtiRepository {
     }
 
     private void replace(ContentValues values) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         database.replace(SETTINGS_TABLE_NAME, null, values);
     }
 
@@ -115,7 +116,7 @@ public class SettingsRepository extends DrishtiRepository {
         Cursor cursor = null;
         Setting value = null;
         try {
-            SQLiteDatabase database = masterRepository.getReadableDatabase();
+            SQLiteDatabase database = masterRepository().getReadableDatabase();
 
             cursor = database.query(SETTINGS_TABLE_NAME, SETTINGS_PROJECTION
                     ,
@@ -125,7 +126,7 @@ public class SettingsRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -138,7 +139,7 @@ public class SettingsRepository extends DrishtiRepository {
         Cursor cursor = null;
         List<Setting> values = new ArrayList<>();
         try {
-            SQLiteDatabase database = masterRepository.getReadableDatabase();
+            SQLiteDatabase database = masterRepository().getReadableDatabase();
 
             cursor = database.query(SETTINGS_TABLE_NAME, SETTINGS_PROJECTION
                     ,
@@ -149,7 +150,7 @@ public class SettingsRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -162,7 +163,7 @@ public class SettingsRepository extends DrishtiRepository {
         Cursor cursor = null;
         List<Setting> values = new ArrayList<>();
         try {
-            SQLiteDatabase database = masterRepository.getReadableDatabase();
+            SQLiteDatabase database = masterRepository().getReadableDatabase();
 
             cursor = database.query(SETTINGS_TABLE_NAME, SETTINGS_PROJECTION, SETTINGS_SYNC_STATUS_COLUMN + " = ?", new String[]{SyncStatus.PENDING.name()}, null, null, null, null);
 
@@ -171,7 +172,7 @@ public class SettingsRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -190,5 +191,28 @@ public class SettingsRepository extends DrishtiRepository {
         value.setSyncStatus(cursor.getString(cursor.getColumnIndex(SETTINGS_SYNC_STATUS_COLUMN)));
 
         return value;
+    }
+
+    public int queryUnsyncedSettingsCount() {
+        Cursor cursor = null;
+        int rowCount = 0;
+        try {
+            SQLiteDatabase database = masterRepository().getReadableDatabase();
+
+            cursor = database.query(SETTINGS_TABLE_NAME, new String[]{"count(*)"}, SETTINGS_SYNC_STATUS_COLUMN + " = ?", new String[]{SyncStatus.PENDING.name()}, null, null, null, null);
+
+            if (cursor != null && cursor.moveToNext()) {
+                rowCount = cursor.getInt(0);
+            }
+
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return rowCount;
     }
 }

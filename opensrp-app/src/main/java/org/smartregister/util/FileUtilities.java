@@ -5,7 +5,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
-import android.util.Log;
 
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
@@ -19,6 +18,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 
+import timber.log.Timber;
+
 import static java.text.MessageFormat.format;
 
 /**
@@ -26,7 +27,6 @@ import static java.text.MessageFormat.format;
  */
 public class FileUtilities {
     //    private final Context context;
-    private final static String TAG = FileUtilities.class.getCanonicalName();
     private static String mUserAgent = null;
     private Writer writer;
     private String absolutePath;
@@ -51,18 +51,17 @@ public class FileUtilities {
             is = null;
             return result;
         } catch (FileNotFoundException e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
             return null;
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
             return null;
         } finally {
             if (is != null) {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    Log.e(TAG, "Failed to close static images input stream after attempting to "
-                            + "retrieve image");
+                    Timber.e("Failed to close static images input stream after attempting to retrieve image");
                 }
             }
             System.gc();
@@ -89,17 +88,15 @@ public class FileUtilities {
                         .getPackageInfo(packageName, 0).versionName;
                 mUserAgent = mUserAgent + " (" + packageName + "/" + version + ")";
             } catch (PackageManager.NameNotFoundException e) {
-                Log.e(TAG, "Unable to find self by package name", e);
+                Timber.e(e, "Unable to find self by package name");
             }
         }
         return mUserAgent;
     }
 
     public static String getImageUrl(String entityID) {
-        String url = format("{0}/{1}/{2}",
-                CoreLibrary.getInstance().context().allSharedPreferences().fetchBaseURL(""),
-                AllConstants.PROFILE_IMAGES_DOWNLOAD_PATH, entityID);
-        return url;
+        String baseUrl = CoreLibrary.getInstance().context().allSharedPreferences().fetchBaseURL("");
+        return format("{0}{1}/{2}", baseUrl, AllConstants.PROFILE_IMAGES_DOWNLOAD_PATH, entityID);
     }
 
     public void write(String fileName, String data) {
@@ -121,7 +118,7 @@ public class FileUtilities {
 //                    Toast.LENGTH_LONG).show();
             writer.close();
         } catch (IOException e) {
-            Log.w("eztt", e.getMessage(), e);
+            Timber.w(e);
 //            Toast.makeText(context, e.getMessage() + " Unable to write to external storage.",
 //                    Toast.LENGTH_LONG).show();
         }

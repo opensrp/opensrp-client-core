@@ -2,6 +2,7 @@ package org.smartregister.view.viewpager;
 
 import junit.framework.Assert;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
@@ -20,6 +21,7 @@ public class OpenSRPViewPagerTest extends BaseUnitTest {
     }
 
     @Test
+    @Ignore
     public void assertOpenSRPViewPagerInitializationTest2() {
         OpenSRPViewPager openSRPViewPager = new OpenSRPViewPager(RuntimeEnvironment.application, ViewAttributes.attrs);
         Assert.assertNotNull(openSRPViewPager);

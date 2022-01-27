@@ -2,7 +2,6 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.util.Log;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -12,12 +11,13 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import java.util.HashMap;
 import java.util.Map;
 
+import timber.log.Timber;
+
 /**
  * Created by koros on 4/19/16.
  */
 public class DetailsRepository extends DrishtiRepository {
 
-    private static final String TAG = "DetailsRepository";
     private static final String SQL =
             "CREATE virtual table ec_details using fts4 " + "" + "(base_entity_id"
                     + " VARCHAR, key VARCHAR, value VARCHAR, event_date datetime)";
@@ -33,7 +33,7 @@ public class DetailsRepository extends DrishtiRepository {
     }
 
     public void add(String baseEntityId, String key, String value, Long timestamp) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         Boolean exists = getIdForDetailsIfExists(baseEntityId, key, value);
         if (exists == null) { // Value has not changed, no need to update
             return;
@@ -59,7 +59,7 @@ public class DetailsRepository extends DrishtiRepository {
     private Boolean getIdForDetailsIfExists(String baseEntityId, String key, String value) {
         Cursor mCursor = null;
         try {
-            SQLiteDatabase db = masterRepository.getWritableDatabase();
+            SQLiteDatabase db = masterRepository().getWritableDatabase();
             String query = "SELECT " + VALUE_COLUMN + " FROM " + TABLE_NAME + " WHERE "
                     + BASE_ENTITY_ID_COLUMN + " = ? AND " + KEY_COLUMN + " MATCH ? ";
             mCursor = db.rawQuery(query, new String[]{baseEntityId, key});
@@ -73,7 +73,7 @@ public class DetailsRepository extends DrishtiRepository {
                 return true;
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         } finally {
             if (mCursor != null) {
                 mCursor.close();
@@ -86,7 +86,7 @@ public class DetailsRepository extends DrishtiRepository {
         Cursor cursor = null;
         Map<String, String> clientDetails = new HashMap<String, String>();
         try {
-            SQLiteDatabase db = masterRepository.getReadableDatabase();
+            SQLiteDatabase db = masterRepository().getReadableDatabase();
             String query =
                     "SELECT * FROM " + TABLE_NAME + " WHERE " + BASE_ENTITY_ID_COLUMN + " =?";
             cursor = db.rawQuery(query, new String[]{baseEntityId});
@@ -99,7 +99,7 @@ public class DetailsRepository extends DrishtiRepository {
             }
             return clientDetails;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -134,14 +134,14 @@ public class DetailsRepository extends DrishtiRepository {
 
     public boolean deleteDetails(String baseEntityId) {
         try {
-            SQLiteDatabase db = masterRepository.getWritableDatabase();
+            SQLiteDatabase db = masterRepository().getWritableDatabase();
             int afftectedRows = db
                     .delete(TABLE_NAME, BASE_ENTITY_ID_COLUMN + " = ?", new String[]{baseEntityId});
             if (afftectedRows > 0) {
                 return true;
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return false;
     }

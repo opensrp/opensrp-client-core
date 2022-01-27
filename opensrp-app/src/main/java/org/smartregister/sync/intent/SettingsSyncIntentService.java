@@ -3,10 +3,14 @@ package org.smartregister.sync.intent;
 import android.content.Intent;
 import android.util.Log;
 
+import org.json.JSONException;
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
+import org.smartregister.job.SyncServiceJob;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
+
+import timber.log.Timber;
 
 import static org.smartregister.util.Log.logError;
 
@@ -28,7 +32,15 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d("ssssssss", "In Settings Sync Intent Service...");
+        boolean isSuccessfulSync = processSettings(intent);
+        if (isSuccessfulSync) {
+            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
+        }
+    }
+
+    protected boolean processSettings(Intent intent) {
+        Timber.d("In Settings Sync Intent Service...");
+        boolean isSuccessfulSync = true;
         if (intent != null) {
             try {
                 super.onHandleIntent(intent);
@@ -36,11 +48,12 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
                 if (count > 0) {
                     intent.putExtra(AllConstants.INTENT_KEY.SYNC_TOTAL_RECORDS, count);
                 }
-
-            } catch (Exception e) {
+            } catch (JSONException e) {
+                isSuccessfulSync = false;
                 logError(TAG + " Error fetching client settings");
             }
         }
+        return isSuccessfulSync;
     }
 
     @Override
@@ -48,11 +61,6 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
         super.onCreate();
         Context context = CoreLibrary.getInstance().context();
         syncSettingsServiceHelper = new SyncSettingsServiceHelper(context.configuration().dristhiBaseURL(), context.getHttpAgent());
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
 }

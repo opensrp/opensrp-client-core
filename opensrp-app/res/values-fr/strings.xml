@@ -6,12 +6,12 @@
     <string name="passwordEditText">Mot de passe</string>
     <string name="login_text">Connection</string>
     <string name="logout_text">Déconnection</string>
-    <string name="image_description">logo</string>
+    <string name="image_description">Logo</string>
     <string name="spacer">Espacement</string>
     <string name="loggin_in_dialog_title">Connection en cours...</string>
-    <string name="loggin_in_dialog_message">Veuillez patienter</string>
-    <string name="login_failed_dialog_title">Connection échouée</string>
-    <string name="login_failed_dialog_message">Veuillez vérifier vos informations d\'accès</string>
+    <string name="loggin_in_dialog_message">Veuillez Patienter</string>
+    <string name="login_failed_dialog_title">Connection Échouée</string>
+    <string name="login_failed_dialog_message">Veuillez vérifier vos informations d\'accès.</string>
     <string name="form_back_confirm_dialog_message">Êtes-vous certain de vouloir retourner? Toutes les données que vous avez entré dans le formulaire seront effacées.</string>
     <string name="form_back_confirm_dialog_title">Confirmez la fermeture du formulaire</string>
     <string name="yes_button_label">Oui</string>
@@ -29,12 +29,12 @@
     <string name="videos_cannot_play_video_dialog_title">La vidéo ne peut pas être affichée.</string>
     <string name="videos_IEC_not_installed_dialog_message">Veuillez installer une application CEI pour lire les vidéos.</string>
     <string name="videos_unknown_error_dialog_message">La vidéo ne peut pas être affiché en raison d\'une erreur technique.</string>
-    <string name="settings_logout_confirm_title">Confirmer la déconnection</string>
+    <string name="settings_logout_confirm_title">Confirmer la Déconnection</string>
     <string name="settings_logout_confirm_dialog_message">Êtes-vous certain de vouloir se déconnecter? Tous les données seront effacées.</string>
     <string name="unsynced_forms_count_message">Formulaires non-synchronisés</string>
 
-    <string name="str_next">Prochain &gt;&gt;</string>
-    <string name="str_previous">&lt;&lt; Dernier</string>
+    <string name="str_next">Suivante &gt;&gt;</string>
+    <string name="str_previous">&lt;&lt; Précédente</string>
     <string name="str_page_info">Page {0} de {1}</string>
 
     <string name="header_name">Nom</string>
@@ -133,7 +133,7 @@
     <string name="mother_ec_label">EC Mère</string>
     <string name="sort_by_child_age">Âge</string>
     <string name="sort_by_child_hr">FC</string>
-    <string name="str_child_immunizations">Vaccinations infantile</string>
+    <string name="str_child_immunizations">Vaccinations Infantile</string>
     <string name="str_child_illness">Maladies de l\'Enfance</string>
     <string name="str_child_close">Fermer Enfant</string>
     <string name="str_vitamin_a">Vitamine A</string>
@@ -230,17 +230,17 @@
 
     <string name="str_referred">Réferé</string>
     <string name="str_referral">Référence</string>
-    <string name="str_follow_up">suivi</string>
-    <string name="str_refill">recharge</string>
+    <string name="str_follow_up">Suivi</string>
+    <string name="str_refill">Recharge</string>
     <string name="str_update">Mise à jour</string>
-    <string name="str_side_effects">Effets secondaires</string>
+    <string name="str_side_effects">Effets Secondaires</string>
 
     <string name="anc_label">CPN:</string>
     <string name="hb_test_label">Test Hb</string>
     <string name="edd_label">DPA:</string>
-    <string name="str_days_past_due">jour(s) de retard</string>
+    <string name="str_days_past_due">Jour(s) de retard</string>
     <string name="lmp_label">DDR:</string>
-    <string name="str_weeks">semaines</string>
+    <string name="str_weeks">Semaines</string>
     <string name="anc_register_title_in_short">CPN:</string>
     <string name="str_bp">PA:</string>
     <string name="str_weight">Pds.</string>
@@ -305,10 +305,10 @@
     <string name="client_fields_extractor">{       \"property\": [         {\"name\":\"father_name\"}       ],       \"attributes\" : [        ]     }</string>
     <string name="string_global">Globale</string>
     <string name="str_provider_profile">Profile</string>
-    <string name="device_time_ok">L\'heure de l\'appareil est exacte</string>
-    <string name="timezone_mismatch">Veuillez changer le fuseau d\'horaire à  \'%1$s\' dans les paramètres de l\'appareil avant de se connecter</string>
-    <string name="time_mismatch">Il est possible que l\'heure de cet appareil ne soit pas à jour. Veuillez le corriger avant de procéder</string>
-    <string name="time_error">Impossible de vérifier si l\'heure de l\'appareil est exacte</string>
+    <string name="device_time_ok">L\'heure de l\'appareil est exacte.</string>
+    <string name="timezone_mismatch">Veuillez changer le fuseau d\'horaire à  \'%1$s\' dans les paramètres de l\'appareil avant de se connecter.</string>
+    <string name="time_mismatch">Il est possible que l\'heure de cet appareil ne soit pas à jour. Veuillez le corriger avant de procéder.</string>
+    <string name="time_error">Impossible de vérifier si l\'heure de l\'appareil est exacte.</string>
 
     <!-- bottom navigation menu -->
     <string name="clients_menu">Clients</string>
@@ -320,8 +320,8 @@
 
     <!-- sync -->
     <string name="url_separator">/</string>
-    <string name="clients_key">clients</string>
-    <string name="events_key">évenéments</string>
+    <string name="clients_key">Clients</string>
+    <string name="events_key">Évenéments</string>
 
     <string name="loading_client_settings">Chargement des paramètres du client&#8230;</string>
     <!-- login -->
@@ -364,7 +364,7 @@
 
     <!--The barcode strings-->
     <string name="ok">OK</string>
-    <string name="permission_camera_rationale">Accès à la caméra requise pour la détection</string>
+    <string name="permission_camera_rationale">Accès à la caméra requise pour la détection.</string>
     <string name="no_camera_permission">Cette application ne peut pas démarrer sans permission d\'utiliser la caméra. L\'application va fermer.</string>
     <string name="low_storage_error">Les dépendences requises pour la détection des visages ne peuvent pas êtres téléchargés à cause d\'une manque d\'espace dans l\'appareil.</string>
     <string name="title_activity_main">Échantillon lecteur code-barre</string>
@@ -376,15 +376,15 @@
     <string name="barcode_failure">Aucun code de barre enregistré</string>
     <string name="barcode_error">Erreur dans l\'enrégistration du code barre: %1$s</string>
 
-    <string name="allow_camera_management">Vous avez besoin de permettre à l\'application d\'utiliser la caméra pour scanner le code QR&#8230;</string>
-    <string name="unauthorized_group">Votre groupe d\'utilisateurs n\'est pas autorisé à accéder à cet appareil</string>
+    <string name="allow_camera_management">Vous avez besoin de permettre à l\'application d\'utiliser la caméra pour scanner le code QR&#8230;.</string>
+    <string name="unauthorized_group">Votre groupe d\'utilisateurs n\'est pas autorisé à accéder à cet appareil.</string>
     <string name="opensrp_url">http://27.147.129.50:9979</string>
     <string name="no_internet_connectivity">Pas de connexion Internet. Veuillez verifier la connexion.</string>
-    <string name="unknown_response">Connexion échouée. Veuillez essayer à nouveau</string>
+    <string name="unknown_response">Connexion échouée. Veuillez essayer à nouveau.</string>
     <string name="unauthorized">Veuillez vérifier les identifiants.</string>
 
     <string name="account_disabled">Compte désactivé</string>
-    <string name="account_disabled_logged_off">Vous avez été déconnecté et votre compte a été désactivé. Veuillez contacter votre administrateur</string>
+    <string name="account_disabled_logged_off">Vous avez été déconnecté et votre compte a été désactivé. Veuillez contacter votre administrateur.</string>
 
     <!--Alerts-->
     <string name="invalid_url_massage">Veuillez entrer une URL valide</string>
@@ -392,10 +392,10 @@
     <string name="language_change_append_message">Veuillez redémarrer l\'application</string>
     <string name="photo_captured">Photo capturée</string>
 
-    <string name="log_data_type_provided_does_not_exist_in_the_sender">Le type de données %s fourni n\'existe pas chez le récepteur</string>
+    <string name="log_data_type_provided_does_not_exist_in_the_sender">Le type de données %s fourni n\'existe pas chez le récepteur.</string>
 
-    <string name="currently_processing_transferred_records">En train de traiter les données traitées</string>
-    <string name="do_not_edit_client_records_until_complete">N\'editez pas les enregistrements du client jusqu\'à la fin de la procédure</string>
+    <string name="currently_processing_transferred_records">En train de traiter les données traitées.</string>
+    <string name="do_not_edit_client_records_until_complete">N\'editez pas les enregistrements du client jusqu\'à la fin de la procédure.</string>
     <string name="processing_disclaimer">Les enregistrements seront traités pour 10 minutes avant que vos enregistrements ne soient mis à jour. N\'éditez pas les enregistrements médicaux tant que le processus n\'est pas terminé. </string>
 
     <!-- Duration -->
@@ -409,8 +409,22 @@
     <string name="x_months_weeks">%1$dm %2$ds</string>
     <string name="x_years">%1$da</string>
     <string name="x_years_months"> %1$da %2$dm</string>
-    <string name="msg_empty_url">l\'addresse URL ne peut pas être vide</string>
-    <string name="sync_failed_malformed_url">Synchronisation échouée. Vérifier configuration URL</string>
-    <string name="sync_failed_timeout_error">Synchronisation échouée. Impossible de connecter au serveur</string>
+    <string name="msg_empty_url">l\'addresse URL ne peut pas être vide.</string>
+    <string name="sync_failed_malformed_url">Synchronisation échouée. Vérifier configuration URL.</string>
+    <string name="sync_failed_timeout_error">Synchronisation échouée. Impossible de connecter au serveur.</string>
+    <string name="account_removed">Vous avez été déconnecté car votre compte a été supprimé du gestionnaire de compte.</string>
+
+
+    <!-- Sync Statistics View -->
+    <string name="download_database">Télécharger la base de données</string>
+    <string name="view_sync_stats">Afficher l\'état de la synchronisation</string>
+    <string name="synced_events">Événements synchronisés:</string>
+    <string name="unsynced_events">Événements non synchronisés:</string>
+    <string name="synced_clients">Clients synchronisés:</string>
+    <string name="unsynced_clients">Clients non synchronisés:</string>
+    <string name="validated_events">Événements validés:</string>
+    <string name="validated_clients">Clients validés:</string>
+    <string name="task_unprocessed_events">Événements avec tâches non traités:</string>
+    <string name="refresh">Rafraîchir</string>
 
 </resources>

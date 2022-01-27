@@ -3,7 +3,6 @@ package org.smartregister.repository;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.util.Log;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -16,12 +15,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 /**
  * Created by ndegwamartin on 09/04/2018.
  */
 
 public class UniqueIdRepository extends BaseRepository {
-    private static final String TAG = UniqueIdRepository.class.getCanonicalName();
     private static final String UniqueIds_SQL = "CREATE TABLE unique_ids(_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,openmrs_id VARCHAR NOT NULL,status VARCHAR NULL, used_by VARCHAR NULL,synced_by VARCHAR NULL,created_at DATETIME NULL,updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP )";
     private static final String UniqueIds_TABLE_NAME = "unique_ids";
     private static final String ID_COLUMN = "_id";
@@ -35,12 +35,8 @@ public class UniqueIdRepository extends BaseRepository {
 
     private static final String STATUS_USED = "used";
     private static final String STATUS_NOT_USED = "not_used";
+    private static final String STATUS_RESERVED = "reserved";
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-
-
-    public UniqueIdRepository(Repository repository) {
-        super(repository);
-    }
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(UniqueIds_SQL);
@@ -52,7 +48,7 @@ public class UniqueIdRepository extends BaseRepository {
             database.insert(UniqueIds_TABLE_NAME, null, createValuesFor(uniqueId));
             //database.close();
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
     }
 
@@ -61,7 +57,11 @@ public class UniqueIdRepository extends BaseRepository {
      *
      * @param ids
      */
-    public void bulkInserOpenmrsIds(List<String> ids) {
+    public void bulkInsertOpenmrsIds(List<String> ids) {
+
+        if (ids == null || ids.isEmpty()){
+            return;
+        }
         SQLiteDatabase database = getWritableDatabase();
 
         try {
@@ -78,7 +78,7 @@ public class UniqueIdRepository extends BaseRepository {
             }
             database.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         } finally {
             database.endTransaction();
         }
@@ -89,14 +89,14 @@ public class UniqueIdRepository extends BaseRepository {
         Cursor cursor = null;
         try {
             cursor = getWritableDatabase().rawQuery("SELECT COUNT (*) FROM " + UniqueIds_TABLE_NAME + " WHERE " + STATUS_COLUMN + "=?",
-                    new String[]{String.valueOf(STATUS_NOT_USED)});
+                    new String[]{STATUS_NOT_USED});
             if (null != cursor && cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 count = cursor.getInt(0);
             }
 
         } catch (SQLException e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -117,21 +117,50 @@ public class UniqueIdRepository extends BaseRepository {
             List<UniqueId> ids = readAll(cursor);
             uniqueId = ids.isEmpty() ? null : ids.get(0);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
             }
         }
+        if (uniqueId != null) {
+            reserve(uniqueId.getOpenmrsId());
+        }
         return uniqueId;
     }
 
     /**
-     * mark and openmrsid as used
+     * mark an openmrsid as used
      *
      * @param openmrsId
      */
-    public void close(String openmrsId) {
+    public int close(String openmrsId) {
+        return reserveOrClose(openmrsId, STATUS_USED);
+    }
+
+    /**
+     * reserve a uniqueId so that its not used again
+     *
+     * @param uniqueId
+     */
+    public int reserve(String uniqueId) {
+        return reserveOrClose(uniqueId, STATUS_RESERVED);
+    }
+
+    /**
+     * Release reserved ids so that they can be reused
+     *
+     * @return the number of opened ids
+     */
+    public int releaseReservedIds() {
+        ContentValues values = new ContentValues();
+        values.put(STATUS_COLUMN, STATUS_NOT_USED);
+        values.put(USED_BY_COLUMN, "");
+        values.put(UPDATED_AT_COLUMN, dateFormat.format(new Date()));
+        return getWritableDatabase().update(UniqueIds_TABLE_NAME, values, STATUS_COLUMN + " = ?", new String[]{STATUS_RESERVED});
+    }
+
+    private int reserveOrClose(String openmrsId, String status) {
         try {
             String id;
             String userName = CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM();
@@ -141,20 +170,40 @@ public class UniqueIdRepository extends BaseRepository {
                 id = openmrsId;
             }
             ContentValues values = new ContentValues();
-            values.put(STATUS_COLUMN, STATUS_USED);
+            values.put(STATUS_COLUMN, status);
             values.put(USED_BY_COLUMN, userName);
-            getWritableDatabase().update(UniqueIds_TABLE_NAME, values, OPENMRS_ID_COLUMN + " = ?", new String[]{id});
+            values.put(UPDATED_AT_COLUMN, dateFormat.format(new Date()));
+
+            return updateOpenMRSIdentifierStatus(id, values);
+
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
+            return 0;
         }
     }
 
+    private int updateOpenMRSIdentifierStatus(String id, ContentValues values) {
+
+        int closed = getWritableDatabase().update(UniqueIds_TABLE_NAME, values, OPENMRS_ID_COLUMN + " = ?", new String[]{id});
+
+        if (closed == 0 && id.contains("-")) {
+
+            closed = getWritableDatabase().update(UniqueIds_TABLE_NAME, values, OPENMRS_ID_COLUMN + " = ?", new String[]{id.replace("-", "")});
+        }
+
+        if (closed == 0) {
+            Timber.e("Error processing OpenSRP ID %s. NO SUCH ID FOUND", id);
+        }
+
+        return closed;
+    }
+
     /**
-     * mark and openmrsid as NOT used
+     * mark an openmrsid as NOT used
      *
      * @param openmrsId
      */
-    public void open(String openmrsId) {
+    public int open(String openmrsId) {
         try {
 
             String openmrsId_ = !openmrsId.contains("-") ? formatId(openmrsId) : openmrsId;
@@ -162,9 +211,11 @@ public class UniqueIdRepository extends BaseRepository {
             ContentValues values = new ContentValues();
             values.put(STATUS_COLUMN, STATUS_NOT_USED);
             values.put(USED_BY_COLUMN, "");
-            getWritableDatabase().update(UniqueIds_TABLE_NAME, values, OPENMRS_ID_COLUMN + " = ?", new String[]{openmrsId_});
+            values.put(UPDATED_AT_COLUMN, dateFormat.format(new Date()));
+            return updateOpenMRSIdentifierStatus(openmrsId_, values);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
+            return 0;
         }
     }
 

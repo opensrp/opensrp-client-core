@@ -18,10 +18,12 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Campaign;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.Iterator;
 import java.util.List;
@@ -59,7 +61,7 @@ public class CampaignRepositoryTest extends BaseUnitTest {
     @Captor
     private ArgumentCaptor<String[]> argsCaptor;
 
-    private String campaignJson = "{\"identifier\":\"IRS_2018_S1\",\"title\":\"2019 IRS Season 1\",\"description\":\"IRS_2018_S1 Campaign for Zambia for the first spray season dated 1 Jan 2019 - 31 Mar 2019.\",\"status\":\"In Progress\",\"executionPeriod\":{\"start\":\"2019-01-01\",\"end\":\"2019-03-31\"},\"authoredOn\":\"2018-10-01T0900\",\"lastModified\":\"2018-10-01T0900\",\"owner\":\"jdoe\",\"serverVersion\":0}";
+    private String campaignJson = "{\"identifier\":\"IRS_2018_S1\",\"title\":\"2019 IRS Season 1\",\"description\":\"IRS_2018_S1 Campaign for Zambia for the first spray season dated 1 Jan 2019 - 31 Mar 2019.\",\"status\":\"In Progress\",\"executionPeriod\":{\"start\":\"2019-01-01T0000\",\"end\":\"2019-03-31T0000\"},\"authoredOn\":\"2018-10-01T0900\",\"lastModified\":\"2018-10-01T0900\",\"owner\":\"jdoe\",\"serverVersion\":0}";
 
     private static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm"))
             .registerTypeAdapter(LocalDate.class, new DateTypeConverter())
@@ -67,9 +69,10 @@ public class CampaignRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        campaignRepository = new CampaignRepository(repository);
+        campaignRepository = new CampaignRepository();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
     }
 
     @Test

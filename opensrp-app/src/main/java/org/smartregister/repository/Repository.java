@@ -1,28 +1,27 @@
 package org.smartregister.repository;
 
 import android.content.Context;
-
+import androidx.annotation.VisibleForTesting;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteDatabaseHook;
 import net.sqlcipher.database.SQLiteException;
 import net.sqlcipher.database.SQLiteOpenHelper;
-
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.exception.DatabaseMigrationException;
+import org.smartregister.repository.helper.OpenSRPDatabaseErrorHandler;
 import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
-
 import timber.log.Timber;
 
 public class Repository extends SQLiteOpenHelper {
@@ -65,6 +64,7 @@ public class Repository extends SQLiteOpenHelper {
         this.databasePath = context != null ? context.getDatabasePath(dbName)
                 : new File("/data/data/org.smartregister" + ".indonesia/databases/" + AllConstants.DATABASE_NAME);
 
+        assert context != null;
         SQLiteDatabase.loadLibs(context);
         for (DrishtiRepository repository : repositories) {
             repository.updateMasterRepository(this);
@@ -87,6 +87,7 @@ public class Repository extends SQLiteOpenHelper {
         this.databasePath = context != null ? context.getDatabasePath(dbName)
                 : new File("/data/data/org.smartregister" + ".indonesia/databases/" + AllConstants.DATABASE_NAME);
 
+        assert context != null;
         SQLiteDatabase.loadLibs(context);
         for (DrishtiRepository repository : repositories) {
             repository.updateMasterRepository(this);
@@ -102,7 +103,7 @@ public class Repository extends SQLiteOpenHelper {
 
         if (this.commonFtsObject != null) {
             for (String ftsTable : commonFtsObject.getTables()) {
-                Set<String> searchColumns = new LinkedHashSet<String>();
+                Set<String> searchColumns = new LinkedHashSet<>();
                 searchColumns.add(CommonFtsObject.idColumn);
                 searchColumns.add(CommonFtsObject.relationalIdColumn);
                 searchColumns.add(CommonFtsObject.phraseColumn);
@@ -156,20 +157,21 @@ public class Repository extends SQLiteOpenHelper {
         return getWritableDatabase(password());
     }
 
-    private boolean isDatabaseWritable(String password) {
+    @VisibleForTesting
+    protected boolean isDatabaseWritable(byte[] password) {
         SQLiteDatabase database = SQLiteDatabase
                 .openDatabase(databasePath.getPath(), password, null,
-                        SQLiteDatabase.OPEN_READONLY, hook);
+                        SQLiteDatabase.OPEN_READONLY, hook, new OpenSRPDatabaseErrorHandler());
         database.close();
         return true;
     }
 
-    public boolean canUseThisPassword(String password) {
+    public boolean canUseThisPassword(byte[] password) {
         try {
             return isDatabaseWritable(password);
         } catch (SQLiteException e) {
             Timber.e(e);
-            if (e.getMessage().contains("attempt to write a readonly database")) {
+            if (Objects.requireNonNull(e.getMessage()).contains("attempt to write a readonly database")) {
                 File journal = new File(databasePath.getPath() + "-journal");
                 Timber.w("Journal exists: %s", journal.exists());
                 if (journal.exists() && journal.canWrite()) {
@@ -190,14 +192,16 @@ public class Repository extends SQLiteOpenHelper {
         }
     }
 
-    private String password() {
+    private byte[] password() {
         return DrishtiApplication.getInstance().getPassword();
     }
 
-    public void deleteRepository() {
+    public boolean deleteRepository() {
         close();
-        context.deleteDatabase(dbName);
-        context.getDatabasePath(dbName).delete();
+        boolean deleteTry1 = context.deleteDatabase(dbName);
+        boolean deleteTry2 = context.getDatabasePath(dbName).delete();
+
+        return deleteTry1 || deleteTry2;
     }
 
 }

@@ -1,6 +1,7 @@
 package org.smartregister.util;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -41,6 +42,18 @@ public class DatabaseMigrationUtils {
             }
             cursor.close();
         }
+        return false;
+    }
+
+    public static boolean addColumnIfNotExists(SQLiteDatabase db, String table, String column, String dataType) {
+        if (!isColumnExists(db, table, column)) {
+            db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s %s", table, column, dataType));
+        }
+        return false;
+    }
+
+    public static boolean addIndexIfNotExists(SQLiteDatabase db, String table, String columm) {
+        db.execSQL(String.format("CREATE INDEX IF NOT EXISTS  %s_%s_idx  ON %s(%s)", table, columm, table, columm));
         return false;
     }
 
@@ -119,27 +132,59 @@ public class DatabaseMigrationUtils {
 
 
     public static void recreateSyncTableWithExistingColumnsOnly(SQLiteDatabase database, EventClientRepository.Table table) {
+
         database.beginTransaction();
-        //rename original table
-        database.execSQL("ALTER TABLE " + table.name() + " RENAME TO " + TABLE_PREFIX + table.name());
-        //recreate table
-        EventClientRepository.createTable(database, table, table.columns());
-        //
-        String insertQuery = "INSERT INTO "
-                + table.name()
-                + " (" + StringUtils.join(table.columns(), ", ") + ")"
-                + " SELECT " + StringUtils.join(table.columns(), ", ") + " FROM "
-                + TABLE_PREFIX + table.name();
+        try {
+            //rename original table
+            database.execSQL("ALTER TABLE " + table.name() + " RENAME TO " + TABLE_PREFIX + table.name());
+            //recreate table
+            EventClientRepository.createTable(database, table, table.columns());
+            //
+            String insertQuery = "INSERT INTO "
+                    + table.name()
+                    + " (" + StringUtils.join(table.columns(), ", ") + ")"
+                    + " SELECT " + StringUtils.join(table.columns(), ", ") + " FROM "
+                    + TABLE_PREFIX + table.name();
 
-        Log.d(TAG, "Insert query is\n---------------------------\n" + insertQuery);
+            Log.d(TAG, "Insert query is\n---------------------------\n" + insertQuery);
 
-        database.execSQL(insertQuery);
+            database.execSQL(insertQuery);
 
-        database.execSQL("DROP TABLE " + TABLE_PREFIX + table.name());
+            database.execSQL("DROP TABLE " + TABLE_PREFIX + table.name());
 
-        database.setTransactionSuccessful();
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
 
-        database.endTransaction();
+    }
+
+
+    public static void recreateSyncTableWithExistingColumnsOnly(SQLiteDatabase database, String table, String[] columns, String createTableDDL) {
+        database.beginTransaction();
+        try {
+            //rename original table
+            database.execSQL("ALTER TABLE " + table + " RENAME TO " + TABLE_PREFIX + table);
+            //recreate table
+            database.execSQL(createTableDDL);
+            //
+            String insertQuery = "INSERT INTO "
+                    + table
+                    + " (" + StringUtils.join(columns, ", ") + ")"
+                    + " SELECT " + StringUtils.join(columns, ", ") + " FROM "
+                    + TABLE_PREFIX + table;
+
+            Log.d(TAG, "Insert query is\n---------------------------\n" + insertQuery);
+
+            database.execSQL(insertQuery);
+
+            database.execSQL("DROP TABLE " + TABLE_PREFIX + table);
+
+            database.setTransactionSuccessful();
+
+        } finally {
+            database.endTransaction();
+        }
 
     }
 
@@ -205,16 +250,19 @@ public class DatabaseMigrationUtils {
 
     public static boolean performCipherMigrationToV4(@NonNull SQLiteDatabase database) {
         if (!CoreLibrary.getInstance().context().allSharedPreferences().isMigratedToSqlite4()) {
-            Cursor cursor = database.rawQuery("PRAGMA cipher_migrate", new Object[]{});
+            Cursor cursor = null;
+            try {
+                cursor = database.rawQuery("PRAGMA cipher_migrate", new Object[]{});
 
-            if (cursor != null && cursor.moveToFirst()) {
-                String value = cursor.getString(0);
+                if (cursor != null && cursor.moveToFirst()) {
+                    String value = cursor.getString(0);
 
+                    return (!TextUtils.isEmpty(value) && "0".equals(value));
+                }
+            } finally {
                 if (cursor != null) {
                     cursor.close();
                 }
-
-                return (!TextUtils.isEmpty(value) && "0".equals(value));
             }
 
             return false;

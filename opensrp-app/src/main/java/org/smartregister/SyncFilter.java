@@ -1,7 +1,7 @@
 package org.smartregister;
 
 public enum SyncFilter {
-    PROVIDER("providerId"), LOCATION("locationId"), TEAM("team"), TEAM_ID("teamId");
+    PROVIDER("providerId"), LOCATION("locationId"), LOCATION_ID("locationId"), TEAM("team"), TEAM_ID("teamId");
 
     private String value;
 

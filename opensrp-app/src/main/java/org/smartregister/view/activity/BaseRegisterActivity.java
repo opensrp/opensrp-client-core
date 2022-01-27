@@ -6,15 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.view.Menu;
 import android.view.WindowManager;
 
@@ -28,6 +26,8 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.helper.BottomNavigationHelper;
 import org.smartregister.listener.BottomNavigationListener;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.util.AppExecutors;
+import org.smartregister.util.AppHealthUtils;
 import org.smartregister.util.PermissionUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseRegisterContract;
@@ -35,14 +35,16 @@ import org.smartregister.view.fragment.BaseRegisterFragment;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 
 import java.util.List;
+import java.util.Map;
+
+import timber.log.Timber;
 
 /**
  * Created by keyman on 26/06/2018.
  */
 
-public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity implements BaseRegisterContract.View {
+public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity implements BaseRegisterContract.View, AppHealthUtils.HealthStatsView {
 
-    public static final String TAG = BaseRegisterActivity.class.getCanonicalName();
     protected OpenSRPViewPager mPager;
 
     protected BaseRegisterContract.Presenter presenter;
@@ -63,6 +65,8 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     public static int SORT_FILTER_POSITION;
     public static int LIBRARY_POSITION;
     public static int ME_POSITION;
+
+    private AppExecutors appExecutors = new AppExecutors();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -217,8 +221,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
     @Override
-    public abstract void startFormActivity(String formName, String entityId, String metaData);
-
+    public abstract void startFormActivity(String formName, String entityId, Map<String, String> metaData);
 
     @Override
     public abstract void startFormActivity(JSONObject form);
@@ -228,11 +231,11 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         if (requestCode == AllConstants.BARCODE.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
             if (data != null) {
                 Barcode barcode = data.getParcelableExtra(AllConstants.BARCODE.BARCODE_KEY);
-                Log.d("Scanned QR Code", barcode.displayValue);
+                Timber.d("Scanned QR Code %s", barcode.displayValue);
                 mBaseFragment.onQRCodeSucessfullyScanned(barcode.displayValue);
                 mBaseFragment.setSearchTerm(barcode.displayValue);
             } else
-                Log.i("", "NO RESULT FOR QR CODE");
+                Timber.i("NO RESULT FOR QR CODE");
         } else {
             onActivityResultExtended(requestCode, resultCode, data);
         }
@@ -247,8 +250,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
                 registerFragment.refreshListView();
             }
         } else {
-            Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new Runnable() {
+            appExecutors.mainThread().execute(new Runnable() {
                 @Override
                 public void run() {
                     BaseRegisterFragment registerFragment = (BaseRegisterFragment) findFragmentByPosition(0);
@@ -344,12 +346,12 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
     public void switchToFragment(final int position) {
-        Log.v("we are here", "switchtofragragment");
+        Timber.v("we are here switchtofragragment");
         try {
             if (Looper.myLooper() == Looper.getMainLooper()) {
                 mPager.setCurrentItem(position, false);
             } else {
-                runOnUiThread(new Runnable() {
+                appExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
                         mPager.setCurrentItem(position, false);
@@ -357,7 +359,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
                 });
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
     }
 
@@ -379,4 +381,22 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     public void setSearchTerm(String searchTerm) {
         mBaseFragment.setSearchTerm(searchTerm);
     }
+
+    @Override
+    public void performDatabaseDownload() {
+        if (PermissionUtils.isPermissionGranted(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionUtils.WRITE_EXTERNAL_STORAGE_REQUEST_CODE)) {
+            try {
+                AppHealthUtils.triggerDBCopying(this);
+            } catch (SecurityException e) {
+                Utils.showToast(this, this.getString(org.smartregister.R.string.permission_write_external_storage_rationale));
+            }
+        }
+    }
+
+    @Override
+    public void showSyncStats() {
+        Intent statsActivityIntent = new Intent(this, StatsActivity.class);
+        this.startActivity(statsActivityIntent);
+    }
+
 }

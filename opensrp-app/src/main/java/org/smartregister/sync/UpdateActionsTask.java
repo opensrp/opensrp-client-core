@@ -1,9 +1,6 @@
 package org.smartregister.sync;
 
 import android.content.Context;
-import android.util.Log;
-import android.view.WindowManager;
-import android.widget.Toast;
 
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.DownloadStatus;
@@ -11,6 +8,7 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.service.ActionService;
 import org.smartregister.service.AllFormVersionSyncService;
 import org.smartregister.service.FormSubmissionSyncService;
+import org.smartregister.util.Utils;
 import org.smartregister.view.BackgroundAction;
 import org.smartregister.view.LockingBackgroundTask;
 import org.smartregister.view.ProgressIndicator;
@@ -53,7 +51,7 @@ public class UpdateActionsTask {
             public FetchStatus actionToDoInBackgroundThread() {
 
                 FetchStatus fetchStatusForForms = formSubmissionSyncService.sync();
-                FetchStatus fetchStatusForActions =  CoreLibrary.getInstance().getSyncConfiguration().disableActionService()? nothingFetched: actionService.fetchNewActions();
+                FetchStatus fetchStatusForActions = CoreLibrary.getInstance().getSyncConfiguration().disableActionService() ? nothingFetched : actionService.fetchNewActions();
                 FetchStatus fetchStatusAdditional = additionalSyncService == null ? nothingFetched
                         : additionalSyncService.sync();
 
@@ -84,17 +82,10 @@ public class UpdateActionsTask {
             }
 
             public void postExecuteInUIThread(FetchStatus result) {
-                Log.v("SYNC_URL","postExecuteInUIThread");
                 if (result != null && context != null && result != nothingFetched) {
-                   try{
-                       Toast.makeText(context, result.displayValue(), Toast.LENGTH_SHORT).show();
-                       afterFetchListener.afterFetch(result);
-                   }catch (Exception e){
-                       e.printStackTrace();
-
-                   }
+                    Utils.showShortToast(context, result.displayValue());
                 }
-
+                afterFetchListener.afterFetch(result);
             }
         });
     }

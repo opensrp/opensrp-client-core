@@ -1,7 +1,5 @@
 package org.smartregister.service;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -28,6 +26,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static org.smartregister.util.Log.logError;
 
 /**
@@ -35,7 +35,6 @@ import static org.smartregister.util.Log.logError;
  */
 public class AllFormVersionSyncService {
 
-    public static final String TAG = "AllFormVersionSyncServ";
     private static final String FORM_DEF_VERSION_FIELD = "form_data_definition_version";
     private static final String FORM_DEF_JSON_FILENAME = "form_definition.json";
     private final HTTPAgent httpAgent;
@@ -104,6 +103,7 @@ public class AllFormVersionSyncService {
                         }
                     }
                 } catch (Exception e) {
+                    Timber.e(e);
                 }
             }
         }
@@ -193,7 +193,7 @@ public class AllFormVersionSyncService {
                     FormDefinitionVersion form = getFormDefinitionFromFile(f);
                     formsVersionRepository.addFormVersionFromObject(form);
                 } catch (Exception ex) {
-                    Log.e(TAG, ex.toString(), ex);
+                    Timber.e(ex);
                 }
             }
         }
@@ -216,7 +216,7 @@ public class AllFormVersionSyncService {
             JSONObject jsonObject = new JSONObject(jsonString);
             version = (String) jsonObject.get(FORM_DEF_VERSION_FIELD);
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return new FormDefinitionVersion(f.getName(), f.getName(), version)

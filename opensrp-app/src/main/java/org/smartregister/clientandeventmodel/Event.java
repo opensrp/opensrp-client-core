@@ -63,6 +63,9 @@ public class Event extends BaseDataObject {
     @JsonProperty
     private String teamId;
 
+    @JsonProperty
+    private String syncStatus;
+
     public Event() {
         this.version = System.currentTimeMillis();
     }
@@ -107,7 +110,10 @@ public class Event extends BaseDataObject {
      * @return
      */
     public void setObs(List<Obs> obs) {
-        this.obs = obs;
+        if (obs != null)
+            this.obs = new ArrayList<>(obs);
+         else
+            this.obs = obs;
     }
 
     public void addObs(Obs observation) {
@@ -247,6 +253,14 @@ public class Event extends BaseDataObject {
         return this;
     }
 
+    public Event addIdentifier(String key, String value) {
+        if (identifiers == null) {
+            identifiers = new HashMap<>();
+        }
+        identifiers.put(key, value);
+        return this;
+    }
+
     public Event withLocationId(String locationId) {
         this.locationId = locationId;
         return this;
@@ -292,6 +306,20 @@ public class Event extends BaseDataObject {
         return this;
     }
 
+    public String getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(String syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
+    public Event withSyncStatus(String syncStatus) {
+        setSyncStatus(syncStatus);
+        return this;
+    }
+
+
     /**
      * WARNING: Overrides all existing obs
      *
@@ -299,7 +327,7 @@ public class Event extends BaseDataObject {
      * @return
      */
     public Event withObs(List<Obs> obs) {
-        this.obs = obs;
+        this.obs = new ArrayList<>(obs);
         return this;
     }
 
@@ -313,12 +341,12 @@ public class Event extends BaseDataObject {
 
     @Override
     public boolean equals(Object o) {
-        return EqualsBuilder.reflectionEquals(this, o, "id", "revision");
+        return EqualsBuilder.reflectionEquals(this, o, "_id", "_rev");
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this, "id", "revision");
+        return HashCodeBuilder.reflectionHashCode(this, "_id", "_rev");
     }
 
     @Override

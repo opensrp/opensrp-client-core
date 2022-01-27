@@ -2,7 +2,6 @@ package org.smartregister.clientandeventmodel.populateform;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -35,6 +34,8 @@ import java.util.Map;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import timber.log.Timber;
+
 import static org.smartregister.clientandeventmodel.FormEntityConstants.FieldType.person;
 import static org.smartregister.clientandeventmodel.FormEntityConstants.FieldType.person_address;
 import static org.smartregister.clientandeventmodel.FormEntityConstants.FieldType.person_attribute;
@@ -47,8 +48,6 @@ import static org.smartregister.util.JsonFormUtils.gson;
  */
 
 public class PopulateEnketoFormUtils {
-
-    private static String TAG = PopulateEnketoFormUtils.class.getCanonicalName();
 
     private static PopulateEnketoFormUtils instance;
 
@@ -123,7 +122,7 @@ public class PopulateEnketoFormUtils {
                 }
             }
         } catch (JSONException e) {
-            Log.e(TAG, "populateFormOverrides: Error Parsing Json ", e);
+            Timber.e(e, "populateFormOverrides: Error Parsing Json ");
         }
         JSONObject fieldOverridesJson = new JSONObject(fields);
         FieldOverrides fieldOverrides = new FieldOverrides(fieldOverridesJson.toString());
@@ -223,7 +222,7 @@ public class PopulateEnketoFormUtils {
     private List<Model> parseXML(ModelXMLHandler modelXMLHandler, String xmlInput) {
         List<Model> modelTags = new ArrayList<>();
         try {
-            Log.w(TAG, "Start Parsing ModelXML");
+            Timber.i("Start Parsing ModelXML");
             SAXParserFactory spf = SAXParserFactory.newInstance();
             SAXParser sp = spf.newSAXParser();
             XMLReader xr = sp.getXMLReader();
@@ -238,9 +237,9 @@ public class PopulateEnketoFormUtils {
             modelTags = modelXMLHandler.getTags();
         } catch (SAXTerminationException e) {
             modelTags = modelXMLHandler.getTags();
-            Log.i(TAG, "Finished Parsing the Model");
+            Timber.i("Finished Parsing the Model");
         } catch (Exception e) {
-            Log.w(e.getMessage(), e);
+            Timber.w(e);
         }
         return modelTags;
     }
@@ -255,7 +254,7 @@ public class PopulateEnketoFormUtils {
             is.close();
             fileContents = new String(buffer, "UTF-8");
         } catch (IOException ex) {
-            Log.e(TAG, ex.toString(), ex);
+            Timber.e(ex);
             return null;
         }
         return fileContents;

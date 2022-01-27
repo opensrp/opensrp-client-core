@@ -3,8 +3,8 @@ package org.smartregister.domain;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.util.Utils;
 
-import java.util.Locale;
 import java.util.Map;
 
 import static org.smartregister.domain.TimelineEvent.forFPCondomRenew;
@@ -148,7 +148,7 @@ public enum FPMethod {
     public static FPMethod tryParse(String method, FPMethod defaultMethod) {
         try {
             return StringUtils.isBlank(method) ? defaultMethod
-                    : FPMethod.valueOf(method.toUpperCase(Locale.getDefault()));
+                    : FPMethod.valueOf(method.toUpperCase(Utils.getDefaultLocale()));
         } catch (IllegalArgumentException e) {
             logWarn("Unknown current FP method : " + method + " Exception : " + e);
             return defaultMethod;

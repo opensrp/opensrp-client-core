@@ -2,8 +2,6 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
-import junit.framework.Assert;
-
 import net.sqlcipher.MatrixCursor;
 
 import org.junit.Before;
@@ -21,12 +19,17 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
+import org.smartregister.domain.ColumnDetails;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.repository.mock.SQLiteDatabaseMock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
@@ -34,13 +37,20 @@ import java.util.List;
 @PrepareForTest({CoreLibrary.class})
 public class FormDataRepositoryTest extends BaseUnitTest {
 
+    public static final String INSTANCE_ID_COLUMN = "instanceId";
+    public static final String ENTITY_ID_COLUMN = "entityId";
+    private static final String FORM_NAME_COLUMN = "formName";
+    private static final String INSTANCE_COLUMN = "instance";
+    private static final String VERSION_COLUMN = "version";
+    private static final String SERVER_VERSION_COLUMN = "serverVersion";
+    private static final String SYNC_STATUS_COLUMN = "syncStatus";
+    private static final String FORM_DATA_DEFINITION_VERSION_COLUMN = "formDataDefinitionVersion";
+    private static final String DETAILS_COLUMN_NAME = "details";
     @Rule
     public PowerMockRule rule = new PowerMockRule();
-
     @Mock
     private Context context;
     private FormDataRepository formDataRepository;
-
     @Mock
     private SQLiteDatabaseMock sqLiteDatabase;
     @Mock
@@ -49,15 +59,6 @@ public class FormDataRepositoryTest extends BaseUnitTest {
     private CoreLibrary coreLibrary;
     @Mock
     private Repository repository;
-    private static final String FORM_NAME_COLUMN = "formName";
-    private static final String INSTANCE_COLUMN = "instance";
-    private static final String VERSION_COLUMN = "version";
-    private static final String SERVER_VERSION_COLUMN = "serverVersion";
-    private static final String SYNC_STATUS_COLUMN = "syncStatus";
-    private static final String FORM_DATA_DEFINITION_VERSION_COLUMN = "formDataDefinitionVersion";
-    public static final String INSTANCE_ID_COLUMN = "instanceId";
-    public static final String ENTITY_ID_COLUMN = "entityId";
-    private static final String DETAILS_COLUMN_NAME = "details";
 
     @Before
     public void setUp() {
@@ -65,7 +66,7 @@ public class FormDataRepositoryTest extends BaseUnitTest {
         PowerMockito.mockStatic(CoreLibrary.class);
         CoreLibrary.init(context);
         Context.bindtypes = new ArrayList<CommonRepositoryInformationHolder>();
-        CommonRepositoryInformationHolder bt = new CommonRepositoryInformationHolder("BINDTYPENAME", new String[]{"A", "B"});
+        CommonRepositoryInformationHolder bt = new CommonRepositoryInformationHolder("BINDTYPENAME", new ColumnDetails[2]);
         Context.bindtypes.add(bt);
         PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
         PowerMockito.when(coreLibrary.context()).thenReturn(context);
@@ -82,23 +83,23 @@ public class FormDataRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertqueryUniqueResult() {
-        Assert.assertNotNull(formDataRepository.queryUniqueResult("sql",new String[0]));
+        assertNotNull(formDataRepository.queryUniqueResult("sql", new String[0]));
     }
 
     @Test
     public void assertqueryList() {
-        Assert.assertNotNull(formDataRepository.queryList("sql",new String[0]));
+        assertNotNull(formDataRepository.queryList("sql", new String[0]));
     }
 
     @Test
     public void assertqueryListWithdetails() {
         Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getCursor2());
-        Assert.assertNotNull(formDataRepository.queryList("sql", new String[0]));
+        assertNotNull(formDataRepository.queryList("sql", new String[0]));
     }
 
     @Test
     public void assertsaveFormSubmission() {
-        Assert.assertEquals(formDataRepository.saveFormSubmission(getJsonObject(), "data", "1.0"), "1");
+        assertEquals(formDataRepository.saveFormSubmission(getJsonObject(), "data", "1.0"), "1");
     }
 
     @Test
@@ -109,12 +110,12 @@ public class FormDataRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertfetchFromSubmission() {
-        Assert.assertNotNull(formDataRepository.fetchFromSubmission(""));
+        assertNotNull(formDataRepository.fetchFromSubmission(""));
     }
 
     @Test
     public void assertgetPendingFormSubmissions() {
-        Assert.assertNotNull(formDataRepository.getPendingFormSubmissions());
+        assertNotNull(formDataRepository.getPendingFormSubmissions());
     }
 
     @Test
@@ -127,18 +128,18 @@ public class FormDataRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertsubmissionExists() {
-        Assert.assertEquals(formDataRepository.submissionExists("1"), true);
+        assertEquals(formDataRepository.submissionExists("1"), true);
     }
 
     @Test
     public void assertsaveEntity() {
 
-        Assert.assertEquals(formDataRepository.saveEntity(EligibleCoupleRepository.EC_TABLE_NAME, "{\"id\":\"1\"}"), "1");
+        assertEquals(formDataRepository.saveEntity(EligibleCoupleRepository.EC_TABLE_NAME, "{\"id\":\"1\"}"), "1");
     }
 
     @Test
     public void assertgetMapFromSQLQuery() {
-        Assert.assertNotNull(formDataRepository.getMapFromSQLQuery("",null));
+        assertNotNull(formDataRepository.getMapFromSQLQuery("", null));
     }
 
     @Test
@@ -151,6 +152,20 @@ public class FormDataRepositoryTest extends BaseUnitTest {
     public void assertOnCreateCallsDatabaseExec() {
         formDataRepository.onCreate(sqLiteDatabase);
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).execSQL(Mockito.anyString());
+    }
+
+    @Test
+    public void testSqliteRowToMap() {
+        Map<String, String> rowObject = formDataRepository.sqliteRowToMap(getCursor());
+
+        assertEquals("1", rowObject.get(INSTANCE_ID_COLUMN));
+        assertEquals("2", rowObject.get(ENTITY_ID_COLUMN));
+        assertEquals("FORM", rowObject.get(FORM_NAME_COLUMN));
+        assertEquals(getJsonObject(), rowObject.get(INSTANCE_COLUMN));
+        assertEquals("1.0", rowObject.get(VERSION_COLUMN));
+        assertEquals("1.1", rowObject.get(SERVER_VERSION_COLUMN));
+        assertEquals("0.1", rowObject.get(FORM_DATA_DEFINITION_VERSION_COLUMN));
+        assertEquals(SyncStatus.PENDING.value(), rowObject.get(SYNC_STATUS_COLUMN));
     }
 
     public String getJsonObject() {
@@ -182,6 +197,6 @@ public class FormDataRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertFormDataRepositoryInitiaization() throws Exception {
-        org.junit.Assert.assertNotNull(formDataRepository);
+        assertNotNull(formDataRepository);
     }
 }

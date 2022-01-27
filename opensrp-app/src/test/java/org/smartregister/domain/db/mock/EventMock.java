@@ -1,8 +1,8 @@
 package org.smartregister.domain.db.mock;
 
 import org.joda.time.DateTime;
-import org.smartregister.domain.db.Event;
-import org.smartregister.domain.db.Obs;
+import org.smartregister.domain.Event;
+import org.smartregister.domain.Obs;
 
 import java.util.List;
 import java.util.Map;
@@ -12,12 +12,10 @@ import java.util.Map;
  */
 
 public class EventMock extends Event {
-    public EventMock() {
-        super();
-    }
+
 
     public EventMock(String baseEntityId, String eventId, String eventType, DateTime eventDate, String entityType, String providerId, String locationId, String formSubmissionId) {
-        super(baseEntityId, eventId, eventType, eventDate, entityType, providerId, locationId, formSubmissionId);
+        super(baseEntityId, eventId,eventType, eventDate, entityType, providerId, locationId, formSubmissionId,null,null);
     }
 
     @Override
@@ -180,7 +178,6 @@ public class EventMock extends Event {
         return super.withEntityType(entityType);
     }
 
-    @Override
     public Event withObs(List<Obs> obs) {
         return super.withObs(obs);
     }

@@ -1,18 +1,19 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.util.Log;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Campaign;
-import org.smartregister.domain.ExecutionPeriod;
+import org.smartregister.domain.Period;
 import org.smartregister.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 import static org.smartregister.domain.Task.TaskStatus;
 
@@ -49,10 +50,6 @@ public class CampaignRepository extends BaseRepository {
                     OWNER + " VARCHAR , " +
                     SERVER_VERSION + " INTEGER ) ";
 
-
-    public CampaignRepository(Repository repository) {
-        super(repository);
-    }
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_CAMPAIGN_TABLE);
@@ -93,7 +90,7 @@ public class CampaignRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Log.e(CampaignRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -111,7 +108,7 @@ public class CampaignRepository extends BaseRepository {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Log.e(CampaignRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -127,9 +124,9 @@ public class CampaignRepository extends BaseRepository {
         if (cursor.getString(cursor.getColumnIndex(STATUS)) != null) {
             campaign.setStatus(TaskStatus.valueOf(cursor.getString(cursor.getColumnIndex(STATUS))));
         }
-        ExecutionPeriod executionPeriod = new ExecutionPeriod();
-        executionPeriod.setStart(DateUtil.getDateFromMillis(cursor.getLong(cursor.getColumnIndex(START))));
-        executionPeriod.setEnd(DateUtil.getDateFromMillis(cursor.getLong(cursor.getColumnIndex(END))));
+        Period executionPeriod = new Period();
+        executionPeriod.setStart(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(START))));
+        executionPeriod.setEnd(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(END))));
         campaign.setExecutionPeriod(executionPeriod);
 
         campaign.setAuthoredOn(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(AUTHORED_ON))));

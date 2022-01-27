@@ -1,7 +1,7 @@
 package org.smartregister.view.activity.mock;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.Menu;
 
 import org.smartregister.R;
@@ -30,6 +30,7 @@ public class NativeHomeActivityMock extends NativeHomeActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.smart_registers_home);
     }
 
     @Override

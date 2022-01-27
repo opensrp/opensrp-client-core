@@ -4,9 +4,9 @@ package org.smartregister.sync.intent;
  * Created by ndegwamartin on 09/04/2018.
  */
 
-import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
+
+import androidx.annotation.VisibleForTesting;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,10 +20,11 @@ import org.smartregister.service.HTTPAgent;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class PullUniqueIdsIntentService extends BaseSyncIntentService {
     public static final String ID_URL = "/uniqueids/get";
     public static final String IDENTIFIERS = "identifiers";
-    private static final String TAG = PullUniqueIdsIntentService.class.getCanonicalName();
     private UniqueIdRepository uniqueIdRepo;
 
 
@@ -49,12 +50,12 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
                 parseResponse(ids);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
     }
 
     private JSONObject fetchOpenMRSIds(int source, int numberToGenerate) throws Exception {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        HTTPAgent httpAgent = getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
         String endString = "/";
@@ -63,7 +64,7 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
         }
 
         String url = baseUrl + ID_URL + "?source=" + source + "&numberToGenerate=" + numberToGenerate;
-        Log.i(PullUniqueIdsIntentService.class.getName(), "URL: " + url);
+        Timber.i("URL: %s", url);
 
         if (httpAgent == null) {
             throw new IllegalArgumentException(ID_URL + " http agent is null");
@@ -84,7 +85,7 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
             for (int i = 0; i < jsonArray.length(); i++) {
                 ids.add(jsonArray.getString(i));
             }
-            uniqueIdRepo.bulkInserOpenmrsIds(ids);
+            uniqueIdRepo.bulkInsertOpenmrsIds(ids);
         }
     }
 
@@ -92,6 +93,11 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         uniqueIdRepo = CoreLibrary.getInstance().context().getUniqueIdRepository();
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @VisibleForTesting
+    protected HTTPAgent getHttpAgent() {
+        return CoreLibrary.getInstance().context().getHttpAgent();
     }
 
 }

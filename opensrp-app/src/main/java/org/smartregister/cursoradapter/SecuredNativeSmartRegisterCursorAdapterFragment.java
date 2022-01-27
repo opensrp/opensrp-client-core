@@ -4,22 +4,21 @@ import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
@@ -27,6 +26,8 @@ import org.smartregister.R;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.domain.ReportMonth;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.util.PaginationHolder;
+import org.smartregister.util.ViewHelper;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.customcontrols.CustomFontTextView;
@@ -42,6 +43,8 @@ import org.smartregister.view.dialog.SortOption;
 import org.smartregister.view.fragment.SecuredNativeSmartRegisterFragment;
 
 import java.util.List;
+
+import timber.log.Timber;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -397,9 +400,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     }
 
     public void refresh() {
-        pageInfoView.setText(
-                format(getResources().getString(R.string.str_page_info), (getCurrentPageCount()),
-                        getTotalcount()));
+        pageInfoView.setText(getFormattedPaginationInfoText(getCurrentPageCount(), getTotalcount()));
         nextPageView.setVisibility(hasNextPage() ? VISIBLE : INVISIBLE);
         previousPageView.setVisibility(hasPreviousPage() ? VISIBLE : INVISIBLE);
     }
@@ -496,7 +497,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
 
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         }
 
         return query;
@@ -510,10 +511,10 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
             String query = "";
             if (isValidFilterForFts(commonRepository())) {
                 String sql = sqb.countQueryFts(tablename, joinTable, mainCondition, filters);
-                Log.i(getClass().getName(), query);
+                Timber.i(query);
 
                 totalcount = commonRepository().countSearchIds(sql);
-                Log.v("total count here", "" + totalcount);
+                Timber.v("total count here %d", totalcount);
 
 
             } else {
@@ -521,18 +522,18 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
                 query = sqb.orderbyCondition(Sortqueries);
                 query = sqb.Endquery(query);
 
-                Log.i(getClass().getName(), query);
+                Timber.i(query);
                 c = commonRepository().rawCustomQueryForAdapter(query);
                 c.moveToFirst();
                 totalcount = c.getInt(0);
-                Log.v("total count here", "" + totalcount);
+                Timber.v("total count here %d", totalcount);
             }
 
             currentlimit = 20;
             currentoffset = 0;
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         } finally {
             if (c != null) {
                 c.close();
@@ -649,25 +650,12 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     private class PaginationViewHandler implements View.OnClickListener {
 
         private void addPagination(ListView clientsView) {
-            ViewGroup footerView = getPaginationView();
-            nextPageView = footerView.findViewById(R.id.btn_next_page);
-            previousPageView = footerView.findViewById(R.id.btn_previous_page);
-            pageInfoView = footerView.findViewById(R.id.txt_page_info);
 
-            nextPageView.setOnClickListener(this);
-            previousPageView.setOnClickListener(this);
-
-            footerView.setLayoutParams(
-                    new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
-                            (int) getResources().getDimension(R.dimen.pagination_bar_height)));
-
-            clientsView.addFooterView(footerView);
+            PaginationHolder paginationHolder = ViewHelper.addPaginationCore(this, clientsView);
+            nextPageView = paginationHolder.getNextPageView();
+            previousPageView = paginationHolder.getPreviousPageView();
+            pageInfoView = paginationHolder.getPageInfoView();
             refresh();
-        }
-
-        private ViewGroup getPaginationView() {
-            return (ViewGroup) getActivity().getLayoutInflater()
-                    .inflate(R.layout.smart_register_pagination, null);
         }
 
         @Override
@@ -718,5 +706,9 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
         private void clearSearchText() {
             searchView.setText("");
         }
+    }
+
+    protected String getFormattedPaginationInfoText(int currentPage, int pageCount) {
+        return format(getResources().getString(R.string.str_page_info), currentPage, pageCount);
     }
 }

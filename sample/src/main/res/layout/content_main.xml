@@ -33,14 +33,14 @@
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
     </LinearLayout>
 
-
-    <TextView android:visibility="gone"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/lang_spinner_layout"
         android:layout_marginTop="30dp"
         android:text="@string/sample"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/time"
@@ -49,5 +49,47 @@
         android:layout_below="@+id/lang_spinner_layout"
         android:layout_marginTop="30dp"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+    <DatePicker
+        android:id="@+id/datePicker1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner" />/>
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/datePicker1"
+        android:layout_marginLeft="100dp"
+        android:text="Get Date" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button1"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="10dp"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/sync_stats_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView1"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/show_sync_stats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sync_stats_label" />
+
+    </LinearLayout>
 
 </RelativeLayout>

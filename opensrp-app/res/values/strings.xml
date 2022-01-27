@@ -2,20 +2,18 @@
 <resources>
     <string name="empty_string"></string>
     <string name="app_name">OpenSRP</string>
-    <string name="userNameEditText">Enter user name</string>
-    <string name="passwordEditText">Enter password</string>
+    <string name="userNameEditText">Enter Username</string>
+    <string name="passwordEditText">Enter Password</string>
     <string name="login_text">Log In</string>
     <string name="logout_text">Logout</string>
-    <string name="image_description">logo</string>
-    <string name="spacer">spacer</string>
+    <string name="image_description">Logo</string>
+    <string name="spacer">Spacer</string>
     <string name="loggin_in_dialog_title">Logging in…</string>
-    <string name="loggin_in_dialog_message">Please wait</string>
-    <string name="login_failed_dialog_title">Log in failed</string>
-    <string name="login_failed_dialog_message">Please check the credentials</string>
-    <string name="form_back_confirm_dialog_message">Are you sure you want to go back? All the data you have entered in
-        this form will be cleared.
-    </string>
-    <string name="form_back_confirm_dialog_title">Confirm form close</string>
+    <string name="loggin_in_dialog_message">Please Wait</string>
+    <string name="login_failed_dialog_title">Log In Failed</string>
+    <string name="login_failed_dialog_message">Please Check The Credentials</string>
+    <string name="form_back_confirm_dialog_message">Are you sure you want to go back? All the data you have entered in this form will be cleared.</string>
+    <string name="form_back_confirm_dialog_title">Confirm Form Close</string>
     <string name="yes_button_label">Yes</string>
     <string name="no_button_label">No</string>
 
@@ -28,18 +26,15 @@
     <string name="register_label">Register</string>
     <string name="home_videos_label">Videos</string>
 
-    <string name="videos_cannot_play_video_dialog_title">Cannot play video.</string>
-    <string name="videos_IEC_not_installed_dialog_message">Please install IEC application to play the videos.
-    </string>
-    <string name="videos_unknown_error_dialog_message">Unable to play video due to technical error.</string>
-    <string name="settings_logout_confirm_title">Confirm Log out</string>
-    <string name="settings_logout_confirm_dialog_message">Are you sure you want to log out? All the data will be
-        cleared.
-    </string>
-    <string name="unsynced_forms_count_message">forms unsynced</string>
+    <string name="videos_cannot_play_video_dialog_title">Cannot Play Video</string>
+    <string name="videos_IEC_not_installed_dialog_message">Please install the IEC application to play the videos.</string>
+    <string name="videos_unknown_error_dialog_message">Unable to play the video due to a technical error.</string>
+    <string name="settings_logout_confirm_title">Confirm Logout</string>
+    <string name="settings_logout_confirm_dialog_message">Are you sure you want to log out? All the data will be cleared.</string>
+    <string name="unsynced_forms_count_message">Forms Unsynced</string>
 
-    <string name="str_next">"Next &gt;&gt;"</string>
-    <string name="str_previous">"&lt;&lt; Previous"</string>
+    <string name="str_next">Next &gt;&gt;</string>
+    <string name="str_previous">&lt;&lt; Previous</string>
     <string name="str_page_info">Page {0} of {1}</string>
 
     <string name="header_name">NAME</string>
@@ -69,7 +64,7 @@
     <string name="str_anc">ANC</string>
     <string name="str_pnc">PNC</string>
     <string name="str_fp">FP</string>
-    <string name="str_number_of_strips">No. strips:</string>
+    <string name="str_number_of_strips">No. Strips:</string>
     <string name="str_number_given">No. Given:</string>
     <string name="str_gravida">G</string>
     <string name="str_parity">P</string>
@@ -234,18 +229,18 @@
     <string name="str_pnc_close_form">PNC Close</string>
 
     <string name="str_referred">Referred</string>
-    <string name="str_referral">referral</string>
-    <string name="str_follow_up">follow-up</string>
-    <string name="str_refill">refill</string>
+    <string name="str_referral">Referral</string>
+    <string name="str_follow_up">Follow-up</string>
+    <string name="str_refill">Refill</string>
     <string name="str_update">Update</string>
     <string name="str_side_effects">Side Effects</string>
 
     <string name="anc_label">ANC:</string>
     <string name="hb_test_label">Hb Test</string>
     <string name="edd_label">"EDD: "</string>
-    <string name="str_days_past_due">day (s) past due</string>
+    <string name="str_days_past_due">day(s) past due</string>
     <string name="lmp_label">LMP:</string>
-    <string name="str_weeks">weeks</string>
+    <string name="str_weeks">Weeks</string>
     <string name="anc_register_title_in_short">ANC:</string>
     <string name="str_bp">BP</string>
     <string name="str_weight">Wt.</string>
@@ -275,7 +270,7 @@
     <string name="header_delivery_plan">DELIVERY PLAN</string>
     <string name="str_delivery_at">Delivery At</string>
     <string name="str_transport">Transport:</string>
-    <string name="str_has_companion">Has companion:</string>
+    <string name="str_has_companion">Has Companion:</string>
     <string name="str_asha">Asha:</string>
     <string name="str_contact">Contact:</string>
     <string name="str_risks_reviewed">Risks reviewed:</string>
@@ -311,9 +306,9 @@
     <string name="string_global">Global</string>
     <string name="str_provider_profile">Profile</string>
     <string name="device_time_ok">This device\'s time is correct</string>
-    <string name="timezone_mismatch">Please change timezone to \'%1$s\' in the device settings before logging in</string>
-    <string name="time_mismatch">This device\'s time seems to be wrong. Please correct it before continuing</string>
-    <string name="time_error">Couldn\'t determine if this device\'s time is correct</string>
+    <string name="timezone_mismatch">Please change timezone to \'%1$s\' in the device settings before logging in.</string>
+    <string name="time_mismatch">This device\'s time seems to be wrong. Please correct it before continuing.</string>
+    <string name="time_error">Couldn\'t determine if this device\'s time is correct.</string>
 
     <!-- bottom navigation menu -->
     <string name="clients_menu">Clients</string>
@@ -338,16 +333,18 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="registration_info">Registration info</string>
-    <string name="app_version">App version: %1$s (built on %2$s)</string>
-    <string name="show_password_text">Show password</string>
+    <string name="app_version">App Version: %1$s (built on %2$s)</string>
+    <string name="show_password_text">Show Password</string>
     <string name="application_module_text">OpenSRP \n Application</string>
     <string name="error_field_required">This field is required</string>
-    <string name="please_wait_message">Please wait</string>
+    <string name="please_wait_message">Please Wait</string>
     <string name="sync_failed_no_internet">Sync failed. Check your internet connection.</string>
     <string name="syncing">Syncing...</string>
-    <string name="sync_failed">Sync failed</string>
-    <string name="sync_complete">Sync complete</string>
-    <string name="manual_sync_triggered">Manual Sync triggered&#8230;</string>
+    <string name="sync_failed">Sync Failed</string>
+    <string name="sync_complete">Sync Complete</string>
+    <string name="manual_sync_triggered">Manual Sync Triggered&#8230;</string>
+    <string name="remote_login_generic_error">Error occurred during Login in with server. Please try again...</string>
+    <string name="remote_login_base_url_missing_error">OpenSRP Base URL is missing. Please add it in Setting and try again</string>
 
     <!-- base register -->
     <string name="filter">Filter</string>
@@ -363,14 +360,14 @@
     <string name="me_page_location_text">Location: </string>
     <string name="right_arrow">Right Arrow</string>
     <string name="settings">Settings</string>
-    <string name="log_out_text">Log out</string>
+    <string name="log_out_text">Logout</string>
     <string name="data_synced">Data synced: %1$s at %2$s</string>
     <string name="scan_qr_code_title">Scan QR Code</string>
 
     <!--The barcode strings-->
     <string name="ok">OK</string>
-    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
-    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection.</string>
+    <string name="no_camera_permission">This application cannot run because it does not have permission to access the camera. The application will now exit.</string>
     <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
     <string name="title_activity_main">Barcode Reader Sample</string>
     <string name="barcode_header">Click &quot;Read Barcode&quot; to read a barcode</string>
@@ -382,22 +379,24 @@
     <string name="barcode_error">"Error reading barcode: %1$s"</string>
 
     <string name="allow_camera_management">You need to allow the app to use the camera to scan QR codes&#8230;</string>
-    <string name="unauthorized_group">Your user group is not allowed to access this device</string>
+    <string name="unauthorized_group">Your user group is not allowed to access this device.</string>
     <string name="opensrp_url">http://27.147.129.50:9979</string>
-    <string name="no_internet_connectivity">No internet connection. Please ensure data connectivity</string>
-    <string name="unknown_response">login failed. Try later</string>
-    <string name="unauthorized">Please check the credentials</string>
+    <string name="no_internet_connectivity">No internet connection. Please ensure data connectivity.</string>
+    <string name="unknown_response">Login Failed. Please try later.</string>
+    <string name="unauthorized">Please check the credentials.</string>
 
     <string name="account_disabled">Account Disabled</string>
-    <string name="account_disabled_logged_off">You have been logged off as your account has been disabled. Contact your administrator</string>
+    <string name="account_disabled_logged_off">You have been logged off as your account has been disabled. Please contact your administrator.</string>
+    <string name="account_new_assignment_logged_off">You have been logged off as your account has new assignments. Log in again so that new assignments take effect</string>
+    <string name="default_location_revoked_logged_off">You have been logged off as access to your default location has been revoked</string>
 
     <!--Alerts-->
-    <string name="invalid_url_massage">Please enter a valid url!</string>
+    <string name="invalid_url_massage">Please enter a valid url.</string>
     <string name="language_change_prepend_message">Language preference set to</string>
-    <string name="language_change_append_message">Please restart the application</string>
-    <string name="photo_captured">Photo captured</string>
+    <string name="language_change_append_message">Please restart the application.</string>
+    <string name="photo_captured">Photo Captured</string>
 
-    <string name="log_data_type_provided_does_not_exist_in_the_sender">The data type %s provided does not exist in the sender</string>
+    <string name="log_data_type_provided_does_not_exist_in_the_sender">The data type %s provided does not exist in the sender.</string>
 
     <string name="currently_processing_transferred_records">Currently processing transferred records.</string>
     <string name="do_not_edit_client_records_until_complete">Do not edit client records until complete.</string>
@@ -414,11 +413,47 @@
     <string name="x_months_weeks">%1$dm %2$dw</string>
     <string name="x_years">%1$dy</string>
     <string name="x_years_months">%1$dy %2$dm</string>
-    <string name="msg_empty_url">URL cannot be empty</string>
-    <string name="sync_failed_malformed_url">Sync failed. Check Url Configuration</string>
-    <string name="sync_failed_timeout_error">Sync Failed. Could not connect to the server</string>
-    <string name="response_null">Sorry, your loginWithLocalFlag failed. Please try again</string>
-    <string name="url_missing">OpenSRP Base URL is missing. Please add it in Setting and try again</string>
-    <string name="exception_login">Error occurred trying to loginWithLocalFlag in. Please try again...</string>
+    <string name="msg_empty_url">The URL cannot be empty</string>
+    <string name="sync_failed_malformed_url">Sync Failed. Please check the URL configuration.</string>
+    <string name="sync_failed_timeout_error">Sync Failed. Could not connect to the server.</string>
 
+    <string name="outdated_app">This is an outdated app. Please update to the latest version to continue.</string>
+    <string name="sync_upload_progress_float">Sync upload progress %d%%</string>
+    <string name="cancelling">Cancelling...</string>
+    <string name="stopping_services">Stopping services..</string>
+    <string name="performing_data_checks">Performing data checks...</string>
+    <string name="app_reset_status">App Reset Status</string>
+    <string name="clearing_application_data">Clearing application data...</string>
+    <string name="clear_data_dialog_title">Do you want to clear data to login with a different team/location</string>
+    <string name="clear_data_dialog_message">You are trying to login with a user in a different team/location. Upload of pending data and clearing of data for user %s in Team %s is required. Do you want to continue?</string>
+    <string name="replication_error_occurred">Replication error occurred</string>
+    <string name="form_update_title">Form Update</string>
+    <string name="form_update_message">This form has content updates</string>
+    <string name="current_corrupted_form">(Current Corrupted Form)</string>
+    <string name="rollback_dialog_title">Select a rollback form</string>
+    <string name="cannot_select_corrupted_form_rollback">You cannot select this form because it\'s corrupted!</string>
+    <string name="form_changed_reopen_to_take_effect">Form has been successfully selected! Reopen this form for the changes to take effect</string>
+    <string name="component_desc_image_upload_service">Uploads images to the OpenSRP server</string>
+    <string name="component_desc_account_service"> Manages user authentication and authorization</string>
+    <string name="component_desc_p2p_process_records_service">Processes the records when using peer to peer for file sharing</string>
+    <string name="new_db_encryption_version_migration">You have been logged off as your application database encryption version has changed. Please login in again to complete the upgrade.</string>
+    <string name="account_removed">You have been logged off as your account has been removed from the accounts manager.</string>
+    <string name="no_client_available_for_url">No auth client available for the URL</string>
+
+    <!-- Sync Statistics View -->
+    <string name="download_database">Download Database</string>
+    <string name="view_sync_stats">Show Sync Stats</string>
+    <string name="export_db_notification">Exporting Database…</string>
+    <string name="database_download_success">Database download successful</string>
+    <string name="synced_events">Synced events:</string>
+    <string name="unsynced_events">Unsynced events:</string>
+    <string name="synced_clients">Synced clients:</string>
+    <string name="unsynced_clients">Unsynced clients:</string>
+    <string name="validated_events">Validated events:</string>
+    <string name="validated_clients">Validated clients:</string>
+    <string name="task_unprocessed_events">Task unprocessed events:</string>
+    <string name="refresh">Refresh</string>
+    <string name="return_to_register">Return</string>
+    <string name="summary_forms">Other Forms</string>
+    <string name="permission_write_external_storage_rationale">Write access to the device internal storage is required for database download.</string>
 </resources>

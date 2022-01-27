@@ -1,7 +1,5 @@
 package org.smartregister.clientandeventmodel;
 
-import android.util.Log;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -13,6 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 interface DateUtility {
     LocalDate today();
 
@@ -20,7 +20,6 @@ interface DateUtility {
 }
 
 public class DateUtil {
-    private static final String TAG = "DateUtil";
     public static DateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     public static DateFormat yyyyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
     public static DateFormat yyyyMMddTHHmmssSSSZ = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss" + ".SSS'Z'", Locale.ENGLISH);
@@ -88,7 +87,7 @@ public class DateUtil {
                 parsed = yyyyMMddTHHmmssSSSZ.parse(dateString.trim());
             }
         } catch (ParseException e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.w(e);
         }
         return parsed;
     }

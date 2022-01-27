@@ -1,38 +1,42 @@
 package org.smartregister.sync.intent;
 
-import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.domain.Client;
+import org.smartregister.domain.Event;
 import org.smartregister.domain.Response;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import timber.log.Timber;
 
 /**
  * Created by keyman on 11/10/2017.
  */
 public class ValidateIntentService extends BaseSyncIntentService {
 
-    public static final String ACTION_VALIDATION = "validation_action";
-    public static final String EXTRA_VALIDATION = "validation_extra";
-    public static final String STATUS_FAILED = "failed";
-    public static final String STATUS_NOTHING = "nothing";
-    public static final String STATUS_SUCCESS = "success";
     private Context context;
     private HTTPAgent httpAgent;
     private static final int FETCH_LIMIT = 100;
     private static final String VALIDATE_SYNC_PATH = "rest/validate/sync";
+    private org.smartregister.Context openSRPContext = CoreLibrary.getInstance().context();
+
+    private EventClientRepository eventClientRepository = getOpenSRPContext().getEventClientRepository();
 
     public ValidateIntentService() {
         super("ValidateIntentService");
@@ -41,9 +45,8 @@ public class ValidateIntentService extends BaseSyncIntentService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         context = getBaseContext();
-        httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        httpAgent = getOpenSRPContext().getHttpAgent();
         return super.onStartCommand(intent, flags, startId);
-
     }
 
     @Override
@@ -52,25 +55,23 @@ public class ValidateIntentService extends BaseSyncIntentService {
         try {
             super.onHandleIntent(intent);
             int fetchLimit = FETCH_LIMIT;
-            EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
 
-            List<String> clientIds = db.getUnValidatedClientBaseEntityIds(fetchLimit);
+            List<String> clientIds = eventClientRepository.getUnValidatedClientBaseEntityIds(fetchLimit);
             if (!clientIds.isEmpty()) {
                 fetchLimit -= clientIds.size();
             }
 
             List<String> eventIds = new ArrayList<>();
             if (fetchLimit > 0) {
-                eventIds = db.getUnValidatedEventFormSubmissionIds(fetchLimit);
+                eventIds = eventClientRepository.getUnValidatedEventFormSubmissionIds(fetchLimit);
             }
 
             JSONObject request = request(clientIds, eventIds);
             if (request == null) {
-                broadcastStatus(STATUS_NOTHING);
                 return;
             }
 
-            String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+            String baseUrl = getOpenSRPContext().configuration().dristhiBaseURL();
             if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
                 baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
             }
@@ -81,12 +82,8 @@ public class ValidateIntentService extends BaseSyncIntentService {
                             baseUrl,
                             VALIDATE_SYNC_PATH),
                     jsonPayload);
-            if (response.isFailure() || response.isTimeoutError()) {
-                broadcastStatus(STATUS_FAILED);
-                return;
-            }
-            if(StringUtils.isBlank(response.payload())){
-                broadcastStatus(STATUS_NOTHING);
+            if (response.isFailure() || StringUtils.isBlank(response.payload())) {
+                Timber.e("Validation sync failed.");
                 return;
             }
 
@@ -94,34 +91,57 @@ public class ValidateIntentService extends BaseSyncIntentService {
 
             if (results.has(AllConstants.KEY.CLIENTS)) {
                 JSONArray inValidClients = results.getJSONArray(AllConstants.KEY.CLIENTS);
-
-                for (int i = 0; i < inValidClients.length(); i++) {
-                    String inValidClientId = inValidClients.getString(i);
-                    clientIds.remove(inValidClientId);
-                    db.markClientValidationStatus(inValidClientId, false);
+                Set<String> invalidClientIds = filterArchivedClients(extractIds(inValidClients));
+                for (String id : invalidClientIds) {
+                    clientIds.remove(id);
+                    eventClientRepository.markClientValidationStatus(id, false);
                 }
 
                 for (String clientId : clientIds) {
-                    db.markClientValidationStatus(clientId, true);
+                    eventClientRepository.markClientValidationStatus(clientId, true);
                 }
             }
 
             if (results.has(AllConstants.KEY.EVENTS)) {
                 JSONArray inValidEvents = results.getJSONArray(AllConstants.KEY.EVENTS);
-                for (int i = 0; i < inValidEvents.length(); i++) {
-                    String inValidEventId = inValidEvents.getString(i);
+                Set<String> inValidEventIds = filterArchivedEvents(extractIds(inValidEvents));
+                for (String inValidEventId : inValidEventIds) {
                     eventIds.remove(inValidEventId);
-                    db.markEventValidationStatus(inValidEventId, false);
+                    eventClientRepository.markEventValidationStatus(inValidEventId, false);
                 }
 
                 for (String eventId : eventIds) {
-                    db.markEventValidationStatus(eventId, true);
+                    eventClientRepository.markEventValidationStatus(eventId, true);
                 }
             }
-            broadcastStatus(STATUS_SUCCESS);
-        } catch (Exception e) {
-            Log.e(getClass().getName(), "", e);
+
+        } catch (JSONException e) {
+            Timber.e(e);
         }
+    }
+
+    private Set<String> extractIds(JSONArray inValidClients) {
+        Set<String> ids = new HashSet<>();
+        for (int i = 0; i < inValidClients.length(); i++) {
+            ids.add(inValidClients.optString(i));
+        }
+        return ids;
+    }
+
+    private Set<String> filterArchivedClients(Set<String> ids) {
+        return eventClientRepository.fetchClientByBaseEntityIds(ids)
+                .stream()
+                .filter(c -> c.getDateVoided() == null)
+                .map(Client::getBaseEntityId)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<String> filterArchivedEvents(Set<String> ids) {
+        return eventClientRepository.getEventsByEventIds(ids)
+                .stream()
+                .filter(e -> e.getDateVoided() == null)
+                .map(Event::getEventId)
+                .collect(Collectors.toSet());
     }
 
     private JSONObject request(List<String> clientIds, List<String> eventIds) {
@@ -152,14 +172,12 @@ public class ValidateIntentService extends BaseSyncIntentService {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), "", e);
+            Timber.e(e);
         }
         return null;
     }
-    private void broadcastStatus(String message){
-        Intent broadcastIntent = new Intent(ACTION_VALIDATION);
-        broadcastIntent.putExtra(EXTRA_VALIDATION, message);
-        sendBroadcast(broadcastIntent);
-    }
 
+    private org.smartregister.Context getOpenSRPContext() {
+        return openSRPContext;
+    }
 }
