@@ -1,8 +1,8 @@
 package org.smartregister.view.activity;
 
 import android.app.ProgressDialog;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,15 +10,30 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.adapter.PagerAdapter;
+import org.smartregister.util.LangUtils;
 import org.smartregister.view.contract.StatsContract;
 import org.smartregister.view.fragment.StatsFragment;
+
+import java.util.Objects;
 
 public class StatsActivity extends AppCompatActivity implements StatsContract.View {
 
     private ProgressDialog progressDialog;
     protected StatsFragment mBaseFragment = null;
+
+    @Override
+    protected void attachBaseContext(android.content.Context base) {
+        // get language from prefs
+        String lang = LangUtils.getLanguage(base.getApplicationContext());
+        Configuration newConfiguration = LangUtils.setAppLocale(base, lang);
+
+        super.attachBaseContext(base);
+
+        applyOverrideConfiguration(newConfiguration);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,15 +42,10 @@ public class StatsActivity extends AppCompatActivity implements StatsContract.Vi
         setContentView(R.layout.activity_stats);
 
         Toolbar toolbar = this.findViewById(R.id.summary_toolbar);
-        toolbar.setTitle(R.string.return_to_register);
+        toolbar.setTitle(CoreLibrary.getInstance().context().applicationContext().getString(R.string.return_to_register));
         this.setSupportActionBar(toolbar);
-        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        Objects.requireNonNull(this.getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         setupViews();
     }
@@ -54,11 +64,10 @@ public class StatsActivity extends AppCompatActivity implements StatsContract.Vi
     }
 
     @Override
-    public void showProgressDialog(int titleIdentifier) {
+    public void showProgressDialog() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-        progressDialog.setTitle(titleIdentifier);
-        progressDialog.setMessage(getString(R.string.please_wait_message));
+        progressDialog.setTitle(CoreLibrary.getInstance().context().applicationContext().getString(R.string.please_wait_message));
 
         if (!isFinishing())
             progressDialog.show();

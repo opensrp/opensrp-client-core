@@ -34,11 +34,13 @@
         android:largeHeap="true"
         android:requestLegacyExternalStorage="true">
         <service
+            android:name=".sync.intent.PlanPeriodicPlanEvaluationService"
+            android:exported="false"></service>
+        <service
             android:name=".service.ImageUploadSyncService"
             android:description="@string/component_desc_image_upload_service"
             android:enabled="true"
             android:exported="false" />
-
         <service
             android:name=".account.AccountService"
             android:description="@string/component_desc_account_service"
@@ -46,6 +48,7 @@
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
@@ -106,12 +109,10 @@
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".view.activity.NativeHomeActivity"
             android:exported="false"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".view.activity.SettingsActivity"
             android:exported="false"
@@ -127,7 +128,6 @@
         <receiver
             android:name=".view.receiver.SyncBroadcastReceiver"
             android:exported="false" />
-
         <receiver
             android:name=".view.receiver.ConnectivityChangeReceiver"
             android:exported="false">
@@ -135,7 +135,6 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".view.receiver.TimeChangedBroadcastReceiver"
             android:exported="false">
@@ -149,13 +148,17 @@
             android:name=".service.intentservices.ReplicationIntentService"
             android:exported="false" />
 
+        <service
+            android:name=".sync.intent.P2pProcessRecordsService"
+            android:description="@string/component_desc_p2p_process_records_service"
+            android:exported="false" />
+
         <meta-data
             android:name="com.google.android.gms.vision.Dependencies"
             android:value="barcode" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
     </application>
+
 </manifest>

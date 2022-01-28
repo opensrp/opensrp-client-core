@@ -1,5 +1,6 @@
 package org.smartregister.view.fragment;
 
+import static org.mockito.Mockito.doReturn;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.TASK_UNPROCESSED_EVENTS;
@@ -34,8 +35,13 @@ import org.smartregister.view.presenter.StatsFragmentPresenter;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class StatsFragmentTest extends BaseUnitTest {
+
+    @Mock
+    private LayoutInflater layoutInflater;
+
+    @Mock
+    private ViewGroup container;
 
     private StatsFragment statsFragment;
 
@@ -111,6 +117,87 @@ public class StatsFragmentTest extends BaseUnitTest {
         statsFragment.refreshECSyncInfo(syncInfoMap);
         Assert.assertEquals("2", tvSyncedEvents.getText());
         Assert.assertEquals("3", tvUnSyncedEvents.getText());
+    }
+
+    @Test
+    public void assertStatsFragmentInitsCorrectly() {
+        Assert.assertNotNull(statsFragment);
+    }
+
+    @Test
+    public void assertTestLabels() {
+        View rootView = LayoutInflater.from(RuntimeEnvironment.application).inflate(R.layout.fragment_stats, null);
+        TextView tvSyncedEventsLabel = rootView.findViewById(R.id.synced_events_label);
+        TextView tvUnsyncedEventsLabel = rootView.findViewById(R.id.unsynced_events_label);
+        TextView tvTaskUnprocessedEventsLabel = rootView.findViewById(R.id.task_unprocessed_events_label);
+        TextView tvSyncedClientsLabel = rootView.findViewById(R.id.synced_clients_label);
+        TextView tvUnsyncedClientsLabel = rootView.findViewById(R.id.unsynced_clients_label);
+        TextView tvValidatedEventsLabel = rootView.findViewById(R.id.validated_events_label);
+        TextView tvValidatedClientsLabel = rootView.findViewById(R.id.validated_clients_label);
+        Assert.assertNotNull(tvSyncedEventsLabel);
+        Assert.assertNotNull(tvUnsyncedEventsLabel);
+        Assert.assertNotNull(tvTaskUnprocessedEventsLabel);
+        Assert.assertNotNull(tvSyncedClientsLabel);
+        Assert.assertNotNull(tvUnsyncedClientsLabel);
+        Assert.assertNotNull(tvValidatedEventsLabel);
+        Assert.assertNotNull(tvValidatedClientsLabel);
+    }
+
+    @Test
+    public void assertTestLabelsNotNull() {
+        View rootView = LayoutInflater.from(RuntimeEnvironment.application).inflate(R.layout.fragment_stats, null);
+        TextView tvSyncedEventsLabel = rootView.findViewById(R.id.synced_events_label);
+        TextView tvUnsyncedEventsLabel = rootView.findViewById(R.id.unsynced_events_label);
+        TextView tvTaskUnprocessedEventsLabel = rootView.findViewById(R.id.task_unprocessed_events_label);
+        TextView tvSyncedClientsLabel = rootView.findViewById(R.id.synced_clients_label);
+        TextView tvUnsyncedClientsLabel = rootView.findViewById(R.id.unsynced_clients_label);
+        TextView tvValidatedEventsLabel = rootView.findViewById(R.id.validated_events_label);
+        TextView tvValidatedClientsLabel = rootView.findViewById(R.id.validated_clients_label);
+        Assert.assertNotNull(tvSyncedEventsLabel);
+        Assert.assertNotNull(tvUnsyncedEventsLabel);
+        Assert.assertNotNull(tvTaskUnprocessedEventsLabel);
+        Assert.assertNotNull(tvSyncedClientsLabel);
+        Assert.assertNotNull(tvUnsyncedClientsLabel);
+        Assert.assertNotNull(tvValidatedEventsLabel);
+        Assert.assertNotNull(tvValidatedClientsLabel);
+    }
+
+    @Test
+    public void testUpdatedLabels() {
+        View parentLayout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_stats, null, false);
+        doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
+
+        TextView tvSyncedEventsLabel = parentLayout.findViewById(R.id.synced_events_label);
+        TextView tvUnsyncedEventsLabel = parentLayout.findViewById(R.id.unsynced_events_label);
+        TextView tvTaskUnprocessedEventsLabel = parentLayout.findViewById(R.id.task_unprocessed_events_label);
+        TextView tvSyncedClientsLabel = parentLayout.findViewById(R.id.synced_clients_label);
+        TextView tvUnsyncedClientsLabel = parentLayout.findViewById(R.id.unsynced_clients_label);
+        TextView tvValidatedEventsLabel = parentLayout.findViewById(R.id.validated_events_label);
+        TextView tvValidatedClientsLabel = parentLayout.findViewById(R.id.validated_clients_label);
+
+        Assert.assertNotNull(tvSyncedEventsLabel);
+        Assert.assertNotNull(tvUnsyncedEventsLabel);
+        Assert.assertNotNull(tvTaskUnprocessedEventsLabel);
+        Assert.assertNotNull(tvSyncedClientsLabel);
+        Assert.assertNotNull(tvUnsyncedClientsLabel);
+        Assert.assertNotNull(tvValidatedEventsLabel);
+        Assert.assertNotNull(tvValidatedClientsLabel);
+
+        String synced_events = RuntimeEnvironment.application.getResources().getString(R.string.synced_events);
+        String unsynced_events = RuntimeEnvironment.application.getResources().getString(R.string.unsynced_events);
+        String task_unprocessed_events = RuntimeEnvironment.application.getResources().getString(R.string.task_unprocessed_events);
+        String synced_clients = RuntimeEnvironment.application.getResources().getString(R.string.synced_clients);
+        String unsynced_clients = RuntimeEnvironment.application.getResources().getString(R.string.unsynced_clients);
+        String validated_events = RuntimeEnvironment.application.getResources().getString(R.string.validated_events);
+        String validated_clients = RuntimeEnvironment.application.getResources().getString(R.string.validated_clients);
+
+        Assert.assertEquals(synced_events, tvSyncedEventsLabel.getText().toString());
+        Assert.assertEquals(unsynced_events, tvUnsyncedEventsLabel.getText().toString());
+        Assert.assertEquals(task_unprocessed_events, tvTaskUnprocessedEventsLabel.getText().toString());
+        Assert.assertEquals(synced_clients, tvSyncedClientsLabel.getText().toString());
+        Assert.assertEquals(unsynced_clients, tvUnsyncedClientsLabel.getText().toString());
+        Assert.assertEquals(validated_events, tvValidatedEventsLabel.getText().toString());
+        Assert.assertEquals(validated_clients, tvValidatedClientsLabel.getText().toString());
     }
 
 }
