@@ -1199,7 +1199,7 @@ public class EventClientRepository extends BaseRepository {
         return cCount;
     }
     public int getInvalidEventsCount(){
-        String query = "select count(*) as count from event where (validationStatus is null or validationStatus !='Valid')";
+        String query = "select count(*) as count from event where (validationStatus is null or validationStatus !='Valid' or serverVersion is null)";
         Cursor cursor = null;
         int eCount = 0;
         try{
@@ -1283,7 +1283,7 @@ public class EventClientRepository extends BaseRepository {
         List<JSONObject> events = new ArrayList<>();
 
         final String validateFilter = " where ( " + event_column.validationStatus + " is NULL or "
-                + event_column.validationStatus + " != ? ) ";
+                + event_column.validationStatus + " != ? or "+event_column.serverVersion+" is null) ";
 
         String query = "select "
                 + event_column.json
