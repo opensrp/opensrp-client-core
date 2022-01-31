@@ -625,10 +625,8 @@ public class Utils {
                 }
             }
             return initials;
-        }
-        catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException  e)
-        {
-            Timber.e("Index out of Bounds "+e.getMessage());
+        } catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException e) {
+            Timber.e("Index out of Bounds " + e.getMessage());
             return "";
         }
     }
@@ -978,17 +976,16 @@ public class Utils {
      * combines them and returns a single string to be appended to a GET API call
      *
      * @param apiParams a list of pairs containing API call parameters and values
-     *
      * @return a string having all the parameters and values combined
      */
-    public static String composeApiCallParamsString(List <Pair<String,String>> apiParams) {
+    public static String composeApiCallParamsString(List<Pair<String, String>> apiParams) {
         StringBuilder apiCallParamsString = new StringBuilder("");
         String paramsSeparator = "&";
         String equalsSign = "=";
         if (apiParams == null || apiParams.isEmpty()) {
             return apiCallParamsString.toString();
         }
-        for (Pair<String,String> apiParamsPair: apiParams) {
+        for (Pair<String, String> apiParamsPair : apiParams) {
             apiCallParamsString.append(paramsSeparator)
                     .append(apiParamsPair.first)
                     .append(equalsSign)
@@ -1011,13 +1008,17 @@ public class Utils {
      * @return
      */
     private static String getLocationKeyFromName(@NonNull String locationName) {
-        return locationName.toLowerCase().trim()
-                .replace(" ", "_")
-                .replace("(", "")
-                .replace(")", "")
-                .replace("-", "_")
-                .replace(":", "_")
-                .replace("'", "")
-                .replace("’", "_");
+        if (StringUtils.isNotEmpty(locationName)) {
+            return locationName.toLowerCase().trim()
+                    .replace(" ", "_")
+                    .replace("(", "")
+                    .replace(")", "")
+                    .replace("-", "_")
+                    .replace(":", "_")
+                    .replace("'", "")
+                    .replace("’", "_");
+        } else {
+            return locationName;
+        }
     }
 }
