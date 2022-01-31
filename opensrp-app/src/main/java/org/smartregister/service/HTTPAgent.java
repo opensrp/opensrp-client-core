@@ -40,6 +40,7 @@ import org.smartregister.util.Utils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -234,9 +235,9 @@ public class HTTPAgent {
 
             urlConnection.connect();
 
-            return handleResponse(urlConnection);
+            return processResponse(urlConnection);
 
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             Timber.e(ex,  "EXCEPTION: %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }

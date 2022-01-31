@@ -530,13 +530,23 @@ public class Utils {
     }
 
     public static void showToastCore(Context context, String message, int duration) {
-        Toast toast = Toast.makeText(context, message, duration);
+        if (context == null) return;
+        if(context instanceof Activity){
+            Activity activity = (Activity) context;
+            if(activity.isFinishing()) return;
+        }
+        try{
+            Toast toast = Toast.makeText(context, message, duration);
 
-        if (getBooleanProperty(AllConstants.PROPERTY.SYSTEM_TOASTER_CENTERED)) {
-            toast.setGravity(Gravity.CENTER, 0, 0);
+            if (getBooleanProperty(AllConstants.PROPERTY.SYSTEM_TOASTER_CENTERED)) {
+                toast.setGravity(Gravity.CENTER, 0, 0);
+            }
+
+            toast.show();
+        }catch (Exception e){
+            Timber.e(e, "Error showing toast");
         }
 
-        toast.show();
     }
 
     public static void hideKeyboard(Context context, View view) {

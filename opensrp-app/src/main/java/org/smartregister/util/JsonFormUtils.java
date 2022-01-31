@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.BuildConfig;
+import org.smartregister.CoreLibrary;
 import org.smartregister.NativeFormFieldProcessor;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
@@ -1236,8 +1237,13 @@ public class JsonFormUtils {
         return null;
     }
 
+    /**
+     * Append username with generated id for more uniqueness.
+     * @return
+     */
     public static String generateRandomUUIDString() {
-        return UUID.randomUUID().toString();
+        String userName = CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM();
+        return UUID.randomUUID().toString()+"-"+userName;
     }
 
     public static void addToJSONObject(JSONObject jsonObject, String key, String value) {
