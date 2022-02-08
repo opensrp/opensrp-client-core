@@ -1,5 +1,7 @@
 package org.smartregister.view.activity;
 
+import static org.robolectric.util.ReflectionHelpers.ClassParameter.from;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -24,6 +26,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
@@ -37,8 +41,6 @@ import org.smartregister.R;
 import org.smartregister.util.SyncUtils;
 import org.smartregister.view.contract.BaseLoginContract;
 
-import static org.robolectric.util.ReflectionHelpers.ClassParameter.from;
-
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 23-06-2020.
  */
@@ -47,6 +49,8 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
     private BaseLoginActivity baseLoginActivity;
 
     private ActivityController<BaseLoginActivityImpl> controller;
+    @Captor
+    private ArgumentCaptor<String> stringArgumentCaptor;
 
     @BeforeClass
     public static void resetCoreLibrary() {
@@ -108,6 +112,18 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
         Mockito.verify(baseLoginActivity).renderBuildInfo();
         Assert.assertNotNull((SyncUtils) ReflectionHelpers.getField(baseLoginActivity, "syncUtils"));
         Assert.assertNotNull((ProgressDialog) ReflectionHelpers.getField(baseLoginActivity, "progressDialog"));
+    }
+
+    @Test
+    public void testAttemptLoginInvokesLoginPresenterWithCorrectCaseUserName() {
+        String username = "JANE";
+        EditText userNameEditText = ReflectionHelpers.getField(baseLoginActivity, "userNameEditText");
+        ReflectionHelpers.setField(baseLoginActivity, "userNameEditText", userNameEditText);
+        userNameEditText.setText(username);
+        baseLoginActivity.attemptLogin();
+        Mockito.verify(baseLoginActivity.mLoginPresenter).attemptLogin(stringArgumentCaptor.capture(), Mockito.any(char[].class));
+        Assert.assertNotEquals("JANE", stringArgumentCaptor.getValue());
+        Assert.assertEquals("jane", stringArgumentCaptor.getValue());
     }
 
     @Test

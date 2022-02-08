@@ -1,5 +1,7 @@
 package org.smartregister.view.activity;
 
+import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -8,9 +10,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -25,6 +24,10 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.joda.time.DateTime;
 import org.smartregister.AllConstants;
 import org.smartregister.R;
@@ -34,15 +37,15 @@ import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
-import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
+import java.util.Locale;
 
 /**
  * Created by manu on 01/11/2018.
  */
 
 public abstract class BaseLoginActivity extends MultiLanguageActivity implements BaseLoginContract.View, TextView.OnEditorActionListener, View.OnClickListener {
-    private ProgressDialog progressDialog;
     protected BaseLoginContract.Presenter mLoginPresenter;
+    private ProgressDialog progressDialog;
     private EditText userNameEditText;
     private EditText passwordEditText;
     private TextView showPasswordCheckBoxText;
@@ -231,7 +234,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     }
 
     protected void attemptLogin() {
-        String username = userNameEditText.getText().toString().trim();
+        String username = userNameEditText.getText().toString().trim().toLowerCase(Locale.ENGLISH);
         char[] password = SecurityHelper.readValue(passwordEditText.getText());
         mLoginPresenter.attemptLogin(username, password);
     }

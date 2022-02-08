@@ -2,8 +2,8 @@ package org.smartregister.repository;
 
 import android.content.SharedPreferences;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
@@ -34,6 +34,7 @@ public class AllSharedPreferences {
     private static final String ENCRYPTED_PASSPHRASE_KEY = "ENCRYPTED_PASSPHRASE_KEY";
     private static final String DB_ENCRYPTION_VERSION = "DB_ENCRYPTION_VERSION";
     private SharedPreferences preferences;
+    private String LAST_AUTHENTICATION_HTTP_STATUS = "LAST_AUTHENTICATION_HTTP_STATUS";
 
     public AllSharedPreferences(SharedPreferences preferences) {
         this.preferences = preferences;
@@ -384,6 +385,18 @@ public class AllSharedPreferences {
 
     public void setDBEncryptionVersion(int encryptionVersion) {
         preferences.edit().putInt(DB_ENCRYPTION_VERSION, encryptionVersion).commit();
+    }
+
+    /**
+     * Used for logic with allowOfflineLoginWithInvalidToken
+     * @param httpStatus
+     */
+    public void updateLastAuthenticationHttpStatus(int httpStatus) {
+        preferences.edit().putInt(LAST_AUTHENTICATION_HTTP_STATUS, httpStatus).apply();
+    }
+
+    public int getLastAuthenticationHttpStatus() {
+        return preferences.getInt(LAST_AUTHENTICATION_HTTP_STATUS, 0);
     }
 }
 

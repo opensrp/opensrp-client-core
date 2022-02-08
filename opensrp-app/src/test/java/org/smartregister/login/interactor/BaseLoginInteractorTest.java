@@ -47,6 +47,7 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.service.UserService;
 import org.smartregister.shadows.LoginInteractorShadow;
 import org.smartregister.shadows.ShadowNetworkUtils;
+import org.smartregister.util.AppProperties;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
@@ -144,6 +145,9 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
     @Mock
     private AccountResponse accountResponse;
 
+    @Mock
+    private AppProperties appProperties;
+
     private String username = "johndoe";
     private char[] qwertyPassword = "qwerty".toCharArray();
     private char[] password = "password".toCharArray();
@@ -155,6 +159,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         when(allSharedPreferences.getPreferences()).thenReturn(sharedPreferences);
         when(context.allSharedPreferences()).thenReturn(allSharedPreferences);
         when(context.userService()).thenReturn(userService);
+        when(context.getAppProperties()).thenReturn(appProperties);
         when(presenter.getLoginView()).thenReturn(view);
         when(presenter.getPassword()).thenReturn(qwertyPassword);
 

@@ -414,4 +414,17 @@
     <string name="sync_failed_timeout_error">Synchronisation échouée. Impossible de connecter au serveur.</string>
     <string name="account_removed">Vous avez été déconnecté car votre compte a été supprimé du gestionnaire de compte.</string>
 
+
+    <!-- Sync Statistics View -->
+    <string name="download_database">Télécharger la base de données</string>
+    <string name="view_sync_stats">Afficher l\'état de la synchronisation</string>
+    <string name="synced_events">Événements synchronisés:</string>
+    <string name="unsynced_events">Événements non synchronisés:</string>
+    <string name="synced_clients">Clients synchronisés:</string>
+    <string name="unsynced_clients">Clients non synchronisés:</string>
+    <string name="validated_events">Événements validés:</string>
+    <string name="validated_clients">Clients validés:</string>
+    <string name="task_unprocessed_events">Événements avec tâches non traités:</string>
+    <string name="refresh">Rafraîchir</string>
+
 </resources>
