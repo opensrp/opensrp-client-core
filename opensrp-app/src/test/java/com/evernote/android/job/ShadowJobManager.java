@@ -27,6 +27,12 @@ public class ShadowJobManager {
         return mockJobManager;
     }
 
+    public static void resetJobManagerInstance() {
+        mockJobManager = null;
+        jobStorage = null;
+        createMockJobManager();
+    }
+
     public static JobManager createMockJobManager() {
         if (mockJobManager == null) {
             mockJobManager = Mockito.mock(JobManager.class);

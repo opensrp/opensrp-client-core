@@ -81,6 +81,16 @@
                 android:textSize="17sp" />
 
             <ImageButton
+                android:id="@+id/btn_search_done"
+                android:layout_width="@dimen/ec_main_header_search_cancel_button_width"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/search_view_cancel_image_margin_right"
+                android:background="@android:color/transparent"
+                android:src="@drawable/icon_search"
+                android:visibility="invisible" />
+
+            <ImageButton
                 android:id="@+id/btn_search_cancel"
                 android:layout_width="@dimen/ec_main_header_search_cancel_button_width"
                 android:layout_height="fill_parent"
@@ -91,18 +101,6 @@
                 android:visibility="invisible" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/global_search"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:drawableEnd="@drawable/icon_search"
-            android:gravity="center"
-            android:text="@string/string_global"
-            android:textAllCaps="false"
-            android:textColor="@color/status_bar_text_almost_white"
-            android:textSize="17sp"
-            android:visibility="gone" />
     </LinearLayout>
 
     <ImageButton
