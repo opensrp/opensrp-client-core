@@ -1082,6 +1082,85 @@ public class JsonFormUtilsTest {
     }
 
     @Test
+    public void assertMergeRecursiveMergeJson() throws Exception {
+        String original = "{\n" +
+                "  \"birthdate\": \"2011-05-27T00:00:00.000Z\",\n" +
+                "  \"birthdateApprox\": false,\n" +
+                "  \"deathdateApprox\": false,\n" +
+                "  \"firstName\": \"Baby\",\n" +
+                "  \"gender\": \"Male\",\n" +
+                "  \"lastName\": \"Robert\",\n" +
+                "  \"relationships\": {},\n" +
+                "  \"addresses\": [],\n" +
+                "  \"attributes\": {\n" +
+                "    \"grade_class\": \"2B\",\n" +
+                "    \"age_entered\": \"10y\",\n" +
+                "  },\n" +
+                "  \"baseEntityId\": \"c659f922-9292-455e-8206-1c71562a4a3b\",\n" +
+                "  \"identifiers\": {\n" +
+                "    \"opensrp_id\": \"4380884-9\",\n" +
+                "    \"reveal_id\": \"2011052743808849\"\n" +
+                "  },\n" +
+                "  \"clientApplicationVersion\": 34,\n" +
+                "  \"clientDatabaseVersion\": 14,\n" +
+                "  \"dateCreated\": \"2021-05-27T15:17:24.483Z\",\n" +
+                "  \"type\": \"Client\"\n" +
+                "}";
+
+        String updated = "{\n" +
+                "  \"gender\": \"Male\",\n" +
+                "  \"lastName\": null,\n" + // updated
+                "  \"attributes\": {\n" +
+                "    \"grade_class\": \"2A\",\n" + // updated
+                "    \"age_entered\": \"10y\",\n" +
+                "    \"default_residence\": \"f0de23e0-1e42-49e1-a60f-58d92040dddd\"\n" + // added
+                "  },\n" +
+                "  \"baseEntityId\": \"c659f922-9292-455e-8206-1c71562a4a3b\",\n" +
+                "  \"identifiers\": {\n" +
+                "    \"opensrp_id\": \"4380884-9\",\n" +
+                "    \"reveal_id\": \"2011052743808849\"\n" +
+                "  },\n" +
+                "  \"clientApplicationVersion\": 34,\n" +
+                "  \"type\": \"Client\"\n" +
+                "}";
+
+        String expected = "{\n" +
+                "  \"birthdate\": \"2011-05-27T00:00:00.000Z\",\n" +
+                "  \"birthdateApprox\": false,\n" +
+                "  \"deathdateApprox\": false,\n" +
+                "  \"firstName\": \"Baby\",\n" +
+                "  \"gender\": \"Male\",\n" +
+                "  \"lastName\": null,\n" +
+                "  \"relationships\": {},\n" +
+                "  \"addresses\": [],\n" +
+                "  \"attributes\": {\n" +
+                "    \"grade_class\": \"2A\",\n" +
+                "    \"age_entered\": \"10y\",\n" +
+                "    \"default_residence\": \"f0de23e0-1e42-49e1-a60f-58d92040dddd\"\n" +
+                "  },\n" +
+                "  \"baseEntityId\": \"c659f922-9292-455e-8206-1c71562a4a3b\",\n" +
+                "  \"identifiers\": {\n" +
+                "    \"opensrp_id\": \"4380884-9\",\n" +
+                "    \"reveal_id\": \"2011052743808849\"\n" +
+                "  },\n" +
+                "  \"clientApplicationVersion\": 34,\n" +
+                "  \"clientDatabaseVersion\": 14,\n" +
+                "  \"dateCreated\": \"2021-05-27T15:17:24.483Z\",\n" +
+                "  \"type\": \"Client\"\n" +
+                "}";
+
+
+        JSONObject jsonOriginal = new JSONObject(original);
+        JSONObject jsonUpdated = new JSONObject(updated);
+        JSONObject jsonExpected = new JSONObject(expected);
+
+        JSONObject newJson = JsonFormUtils.merge(jsonOriginal, jsonUpdated);
+
+        assertTrue(areEqual(newJson, jsonExpected));
+
+    }
+
+    @Test
     public void testGetMultiStepFormFields() throws JSONException {
         assertNotNull(multiStepForm);
 

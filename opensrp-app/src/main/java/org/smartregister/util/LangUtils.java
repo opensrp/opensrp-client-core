@@ -6,11 +6,8 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.LocaleList;
 import android.preference.PreferenceManager;
-
 import org.smartregister.repository.AllSharedPreferences;
-
 import java.util.Locale;
-
 import timber.log.Timber;
 
 public class LangUtils {
