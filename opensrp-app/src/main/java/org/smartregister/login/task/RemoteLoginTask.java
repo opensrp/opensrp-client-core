@@ -23,6 +23,7 @@ import org.smartregister.account.AccountResponse;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.event.Listener;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
@@ -72,7 +73,8 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
             boolean isKeycloakConfigured = accountConfiguration != null;
 
             //Persist config resources
-            SharedPreferences.Editor sharedPrefEditor = getOpenSRPContext().allSharedPreferences().getPreferences().edit();
+            AllSharedPreferences allSharedPreferences =  getOpenSRPContext().allSharedPreferences();
+            SharedPreferences.Editor sharedPrefEditor = allSharedPreferences.getPreferences().edit();
             sharedPrefEditor.putBoolean(AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED, isKeycloakConfigured);
             sharedPrefEditor.apply();
 
@@ -141,6 +143,8 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                         }
 
                     }
+
+                    allSharedPreferences.updateLastAuthenticationHttpStatus(0);
                 } else {
                     if (response.getAccountError() != null && response.getAccountError().getError() != null) {
                         return LoginResponse.valueOf(response.getAccountError().getError().toUpperCase(Locale.ENGLISH));

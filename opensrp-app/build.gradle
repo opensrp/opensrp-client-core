@@ -130,6 +130,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
+    jacoco.excludes = ['jdk.internal.*']
     testLogging {
         // Enables easier debugging of tests in Github Actions CI
         events TestLogEvent.FAILED
@@ -228,9 +229,9 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
-    implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-client-utils:0.0.4-SNAPSHOT'
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:1.5.1-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-plan-evaluator:1.6.6-SNAPSHOT'
 
     implementation 'xerces:xercesImpl:2.12.0'
 
