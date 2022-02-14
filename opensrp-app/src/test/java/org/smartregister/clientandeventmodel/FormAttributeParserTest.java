@@ -2,6 +2,7 @@ package org.smartregister.clientandeventmodel;
 
 import android.content.res.AssetManager;
 
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.junit.Assert;
@@ -218,7 +219,8 @@ public class FormAttributeParserTest extends BaseUnitTest {
         String stringOfFormDefinition = getStringFromStream(formDefinitionIS);
 
         Object obj = JsonParser.parseString(stringOfFormDefinition);
-        PowerMockito.doReturn(obj).when(spyparser).getFormDefinitionData(FORMNAME);
+        Mockito.when(spyparser.getFormDefinitionData(FORMNAME)).thenReturn((JsonObject) obj);
+        Mockito.when(spyparser.getFormDefinitionData(FORMNAME)).thenReturn((JsonObject) obj);
         Mockito.when(assetManager.open(model)).thenReturn(new FileInputStream(getFileFromPath(this, model)));
         Mockito.when(assetManager.open(formJSON)).thenReturn(new FileInputStream(getFileFromPath(this, formMultiJSON)));
 
