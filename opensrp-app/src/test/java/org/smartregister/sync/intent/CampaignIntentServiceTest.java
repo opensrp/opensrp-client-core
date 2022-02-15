@@ -93,10 +93,11 @@ public class CampaignIntentServiceTest extends BaseUnitTest {
         }.getType());
 
         Context openSRPContext = CoreLibrary.getInstance().context();
-        AllSharedPreferences mockAllSharedPreferences = Mockito.mock(AllSharedPreferences.class);
-        Mockito.when(mockAllSharedPreferences.getPreference(AllConstants.DRISHTI_BASE_URL)).thenReturn( "http//:dummy-url");
-        Mockito.when(mockAllSharedPreferences.getPreference(AllConstants.CAMPAIGNS)).thenReturn(TextUtils.join(",", Arrays.asList(CAMPAIGN1, CAMPAIGN2)));
-        Whitebox.setInternalState(campaignIntentService, "allSharedPreferences", mockAllSharedPreferences);
+        AllSharedPreferences allSharedPreferences = Mockito.mock(AllSharedPreferences.class);
+        Mockito.when(allSharedPreferences.getPreference(AllConstants.DRISHTI_BASE_URL)).thenReturn( "http//:dummy-url");
+        Mockito.when(allSharedPreferences.getPreference(AllConstants.CAMPAIGNS)).thenReturn(TextUtils.join(",", Arrays.asList(CAMPAIGN1, CAMPAIGN2)));
+        Whitebox.setInternalState(openSRPContext, "allSharedPreferences", allSharedPreferences);
+        Whitebox.setInternalState(campaignIntentService, "allSharedPreferences", allSharedPreferences);
         HTTPAgent httpAgent = Mockito.mock(HTTPAgent.class);
         Mockito.doReturn(new Response<>(ResponseStatus.success, payload)).when(httpAgent).fetch(ArgumentMatchers.anyString());
         ReflectionHelpers.setField(openSRPContext, "httpAgent", httpAgent);
