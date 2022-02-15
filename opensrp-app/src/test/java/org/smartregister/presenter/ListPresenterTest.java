@@ -44,7 +44,7 @@ public class ListPresenterTest {
     }
 
     @Test
-    public void testOnFetchRequestError() {
+    public void testOnItemsFetchShouldInvokeRefreshView() {
         listPresenter.with(view);
         List<ListContract.Identifiable> identifiables = new ArrayList<>();
         listPresenter.onItemsFetched(identifiables);
@@ -55,7 +55,7 @@ public class ListPresenterTest {
     }
 
     @Test
-    public void testOnFetchRequestErrorWithException() {
+    public void testOnFetchRequestErrorWithExceptionShouldInvokeViewOnFetchError() {
         listPresenter.with(view);
         Exception e = new Exception();
         listPresenter.onFetchRequestError(e);
