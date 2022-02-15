@@ -44,7 +44,7 @@ public class ListPresenterTest {
     }
 
     @Test
-    public void testOnItemsFetchShouldInvokeRefreshView() {
+public void testOnItemsFetchShouldInvokeRefreshView() {
         listPresenter.with(view);
         List<ListContract.Identifiable> identifiables = new ArrayList<>();
         listPresenter.onItemsFetched(identifiables);
