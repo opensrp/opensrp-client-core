@@ -14,6 +14,7 @@ import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
@@ -92,6 +93,7 @@ public class CampaignIntentServiceTest extends BaseUnitTest {
         }.getType());
 
         Context openSRPContext = CoreLibrary.getInstance().context();
+        openSRPContext.updateApplicationContext(RuntimeEnvironment.application);
         AppProperties mockAppProperties = Mockito.mock(AppProperties.class);
         Whitebox.setInternalState(openSRPContext, "appProperties", mockAppProperties);
         AllSharedPreferences allSharedPreferences = openSRPContext.allSharedPreferences();
