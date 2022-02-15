@@ -14,7 +14,6 @@ import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
-import org.powermock.reflect.internal.WhiteboxImpl;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
@@ -28,6 +27,7 @@ import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.CampaignRepository;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.util.AppProperties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,9 +90,10 @@ public class CampaignIntentServiceTest extends BaseUnitTest {
 
         String payload = CampaignIntentService.gson.toJson(expectedCampaigns, new TypeToken<List<Campaign>>() {
         }.getType());
-        AllSharedPreferences mockAllSharedPreference = null;
+
         Context openSRPContext = CoreLibrary.getInstance().context();
-        Whitebox.setInternalState(openSRPContext,"allSharedPreferences", mockAllSharedPreference);
+        AppProperties mockAppProperties = Mockito.mock(AppProperties.class);
+        Whitebox.setInternalState(openSRPContext, "appProperties", mockAppProperties);
         AllSharedPreferences allSharedPreferences = openSRPContext.allSharedPreferences();
         allSharedPreferences.savePreference(AllConstants.DRISHTI_BASE_URL, "http//:dummy-url");
         allSharedPreferences.savePreference(AllConstants.CAMPAIGNS, TextUtils.join(",", Arrays.asList(CAMPAIGN1, CAMPAIGN2)));
