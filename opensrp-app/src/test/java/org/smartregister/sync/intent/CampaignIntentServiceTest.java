@@ -14,9 +14,9 @@ import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -28,7 +28,6 @@ import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.CampaignRepository;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.util.AppProperties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +38,7 @@ import java.util.Set;
 /**
  * Created by Vincent Karuri on 02/03/2021
  */
-public class CampaignIntentServiceTest extends BaseUnitTest {
+public class CampaignIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Captor
     private ArgumentCaptor<Intent> intentArgumentCaptor;
@@ -93,11 +92,10 @@ public class CampaignIntentServiceTest extends BaseUnitTest {
         }.getType());
 
         Context openSRPContext = CoreLibrary.getInstance().context();
-        AllSharedPreferences allSharedPreferences = Mockito.mock(AllSharedPreferences.class);
-        Mockito.when(allSharedPreferences.getPreference(AllConstants.DRISHTI_BASE_URL)).thenReturn( "http//:dummy-url");
-        Mockito.when(allSharedPreferences.getPreference(AllConstants.CAMPAIGNS)).thenReturn(TextUtils.join(",", Arrays.asList(CAMPAIGN1, CAMPAIGN2)));
-        Whitebox.setInternalState(openSRPContext, "allSharedPreferences", allSharedPreferences);
-        Whitebox.setInternalState(campaignIntentService, "allSharedPreferences", allSharedPreferences);
+        AllSharedPreferences allSharedPreferences = openSRPContext.allSharedPreferences();
+        allSharedPreferences.savePreference(AllConstants.DRISHTI_BASE_URL, "http//:dummy-url");
+        allSharedPreferences.savePreference(AllConstants.CAMPAIGNS, TextUtils.join(",", Arrays.asList(CAMPAIGN1, CAMPAIGN2)));
+
         HTTPAgent httpAgent = Mockito.mock(HTTPAgent.class);
         Mockito.doReturn(new Response<>(ResponseStatus.success, payload)).when(httpAgent).fetch(ArgumentMatchers.anyString());
         ReflectionHelpers.setField(openSRPContext, "httpAgent", httpAgent);
