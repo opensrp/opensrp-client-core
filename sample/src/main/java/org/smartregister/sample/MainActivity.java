@@ -9,9 +9,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -30,6 +32,8 @@ import org.smartregister.view.activity.MultiLanguageActivity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 public class MainActivity extends MultiLanguageActivity {
 
@@ -140,6 +144,15 @@ public class MainActivity extends MultiLanguageActivity {
         ((TextView) findViewById(R.id.time)).setText(DateUtil.getDuration(new DateTime().minusYears(4).minusMonths(3).minusWeeks(2).minusDays(1)));
 
         new AppHealthUtils(findViewById(R.id.show_sync_stats));
+        ToggleButton toggle = (ToggleButton) findViewById(R.id.encrypt_decrypt_toggle);
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                } else {
+                }
+            }
+        });
+
     }
 
     @Override

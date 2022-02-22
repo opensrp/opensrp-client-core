@@ -7,4 +7,7 @@
     <string name="action_report_sample">Sample Reports</string>
     <string name="action_sync_stats">Sync Statistics</string>
     <string name="sync_stats_label">Show Sync Stats (Long Press for Dialog)</string>
+    <string name="encrypt_decrypt_string">Please encrypt or decrypt me by hitting clicking on the switch below</string>
+    <string name="encrypt">Encrypt</string>
+    <string name="decrypt">Decrypt</string>
 </resources>
