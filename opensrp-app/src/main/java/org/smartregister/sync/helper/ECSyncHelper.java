@@ -89,7 +89,7 @@ public class ECSyncHelper {
 
     public void batchSave(JSONArray events, JSONArray clients) {
         eventClientRepository.batchInsertClients(clients);
-        eventClientRepository.batchInsertEvents(events, getLastSyncTimeStamp());
+        eventClientRepository.batchInsertEvents(events);
     }
 
 
@@ -158,7 +158,7 @@ public class ECSyncHelper {
     }
 
     public void batchInsertEvents(JSONArray events) {
-        eventClientRepository.batchInsertEvents(events, getLastSyncTimeStamp());
+        eventClientRepository.batchInsertEvents(events);
     }
 
     public <T> T convert(JSONObject jo, Class<T> t) {

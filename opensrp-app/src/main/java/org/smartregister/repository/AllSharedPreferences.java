@@ -210,7 +210,7 @@ public class AllSharedPreferences {
         return Integer.parseInt(preferences.getString(PORT, "" + port));
     }
 
-    public Long fetchLastSyncDate(long lastSyncDate) {
+    public long fetchLastSyncDate(long lastSyncDate) {
 
         return preferences.getLong(LAST_SYNC_DATE, lastSyncDate);
     }

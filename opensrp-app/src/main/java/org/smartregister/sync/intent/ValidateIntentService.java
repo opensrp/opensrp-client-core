@@ -14,6 +14,7 @@ import org.smartregister.R;
 import org.smartregister.domain.Response;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -63,12 +64,15 @@ public class ValidateIntentService extends BaseSyncIntentService {
             if (fetchLimit > 0) {
                 eventIds = db.getUnValidatedEventFormSubmissionIds(fetchLimit);
             }
+            Utils.appendLog("SYNC_URL","ValidateIntentService>clientIds.size():"+clientIds.size()+":event size:"+eventIds.size());
+
 
             JSONObject request = request(clientIds, eventIds);
             if (request == null) {
                 broadcastStatus(STATUS_NOTHING);
                 return;
             }
+            Utils.appendLog("SYNC_URL","ValidateIntentService>request:"+request);
 
             String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
             if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
@@ -89,6 +93,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
                 broadcastStatus(STATUS_NOTHING);
                 return;
             }
+            Utils.appendLog("SYNC_URL","ValidateIntentService>response:"+response.payload());
 
             JSONObject results = new JSONObject(response.payload());
 

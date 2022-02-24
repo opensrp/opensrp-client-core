@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import net.sqlcipher.database.SQLiteDatabase;
@@ -20,11 +21,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.DateUtil;
+import org.smartregister.domain.db.Address;
 import org.smartregister.domain.db.Client;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.Event;
 import org.smartregister.domain.db.EventClient;
+import org.smartregister.location.SSLocations;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.util.JsonFormUtils;
@@ -43,6 +46,7 @@ import java.util.Map;
 import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ROWID;
+import static org.smartregister.util.JsonFormUtils.gson;
 
 /**
  * Created by keyman on 27/07/2017.
@@ -328,7 +332,7 @@ public class EventClientRepository extends BaseRepository {
         return rowId;
     }
 
-    public boolean batchInsertEvents(JSONArray array, long serverVersion) {
+    public boolean batchInsertEvents(JSONArray array) {
         if (array == null || array.length() == 0) {
             return false;
         }
@@ -800,15 +804,15 @@ public class EventClientRepository extends BaseRepository {
                 + Table.event.name()
                 + " where "
                 + event_column.syncStatus
-                + " in (? , ?)  and length("
+                + " != ?  and length("
                 + event_column.json
-                + ")>2 order by "
+                + ")>2 and "+event_column.baseEntityId+" not null order by "
                 + event_column.updatedAt
                 + " asc limit "
                 + limit;
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_Unprocessed});
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced});
 
             while (cursor.moveToNext()) {
                 try{
@@ -1104,20 +1108,7 @@ public class EventClientRepository extends BaseRepository {
 
         return clients;
     }
-    public int getUnSyncClientsCount(){
-        List<JSONObject> list = getUnSyncedClientForceSync(0);
-        if(list !=null){
-            return list.size();
-        }
-        return 0;
-    }
-    public int getUnSyncEventsCount(){
-        List<JSONObject> list = getUnSyncedEventsForceSync(0);
-        if(list !=null){
-            return list.size();
-        }
-        return 0;
-    }
+
     public List<JSONObject> getUnSyncedClientForceSync(int limit) {
         List<JSONObject> clients = new ArrayList<>();
 
@@ -1175,8 +1166,55 @@ public class EventClientRepository extends BaseRepository {
 
         return clients;
     }
+
+    public int getUnSyncClientsCount(){
+        String query = "select count(*) as count from client where (syncStatus is null or syncStatus !='Synced') and baseEntityId not null";
+        Cursor cursor = null;
+        int cCount = 0;
+        try{
+            cursor = getWritableDatabase().rawQuery(query, null);
+            if(cursor!=null && cursor.getCount()>0){
+                cursor.moveToFirst();
+                cCount = cursor.getInt(0);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            if(cursor!=null) cursor.close();
+        }
+
+        Utils.appendLog("SYNC_URL","getUnSyncClientsCount>>"+cCount);
+
+        return cCount;
+    }
+    public int getUnSyncEventsCount(){
+        String query = "select count(*) as count from event where ((syncStatus is null or syncStatus !='Synced') and baseEntityId not null)";
+        Cursor cursor = null;
+        int eCount = 0;
+        try{
+            cursor = getWritableDatabase().rawQuery(query, null);
+            if(cursor!=null && cursor.getCount()>0){
+                cursor.moveToFirst();
+                eCount = cursor.getInt(0);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            if(cursor!=null) cursor.close();
+        }
+
+        Utils.appendLog("SYNC_URL","getUnSyncEventsCount>>"+eCount);
+
+        return eCount;
+    }
+
+
     public int getInvalidClientsCount(){
-        String query = "select count(*) as count from client where (validationStatus is null or validationStatus !='Valid')";
+        String query = "select count(*) as count from client where validationStatus =='Invalid'";
         Cursor cursor = null;
         int cCount = 0;
         try{
@@ -1196,37 +1234,14 @@ public class EventClientRepository extends BaseRepository {
 //        if(list !=null){
 //            return list.size();
 //        }
+        Utils.appendLog("SYNC_URL","getInvalidClientsCount>>"+cCount);
+
         return cCount;
-    }
-    public int getInvalidEventsCount(){
-        String query = "select count(*) as count from event where (validationStatus is null or validationStatus !='Valid' or serverVersion is null)";
-        Cursor cursor = null;
-        int eCount = 0;
-        try{
-            cursor = getWritableDatabase().rawQuery(query, null);
-            if(cursor!=null && cursor.getCount()>0){
-                cursor.moveToFirst();
-                eCount = cursor.getInt(0);
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        finally {
-            if(cursor!=null) cursor.close();
-        }
-
-//        List<JSONObject> list = getUnValidatedEvents(0);
-//        if(list !=null){
-//            return list.size();
-//        }
-        return eCount;
     }
     public List<JSONObject> getUnValidatedClients(int limit) {
         List<JSONObject> clients = new ArrayList<>();
 
-        final String validateFilter = " where ( " + client_column.validationStatus + " is NULL or "
-                + client_column.validationStatus + " != ? ) ";
+        final String validateFilter = " where "+ client_column.validationStatus + " == ? ";
 
         String query = "select "
                 + client_column.json
@@ -1246,10 +1261,9 @@ public class EventClientRepository extends BaseRepository {
                     + ORDER_BY
                     + client_column.updatedAt;
         }
-
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Valid});
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_InValid});
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     try{
@@ -1259,13 +1273,40 @@ public class EventClientRepository extends BaseRepository {
                             continue;
                         }
                         jsonClientStr = jsonClientStr.replaceAll("'", "");
-                        JSONObject jsonObectEvent = new JSONObject(jsonClientStr);
+                        Client client = gson.fromJson(jsonClientStr, Client.class);
+
+                        try{
+                            if(client.getAddresses().size() ==0){
+                                if(client.getLastName()!=null && client.getLastName().equalsIgnoreCase("family")){
+                                    List<Address> listAddress = getAddressFromSS((String)client.getAttribute("SS_Name"));
+                                    client.setAddresses(listAddress);
+                                }else{
+                                    if(client.getLastName()==null){
+                                        String hhId = "";
+                                        try{
+                                            hhId = client.getRelationships().get("family").get(0);
+                                        }catch (Exception e){
+
+                                        }
+                                        if(hhId.isEmpty()){
+                                            hhId = getHHIdFromHH(client.getBaseEntityId());
+                                        }
+                                        Log.v("INVALID_REQ","hhId>>"+hhId);
+                                        client.setAddresses(getAddressFromHH(hhId));
+                                    }
+                                }
+
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+
+                        }
+
+                        JSONObject jsonObectEvent = new JSONObject(gson.toJson(client));
                         clients.add(jsonObectEvent);
                     }catch (Exception e){
                         e.printStackTrace();
                     }
-
-
                     cursor.moveToNext();
                 }
             }
@@ -1279,12 +1320,108 @@ public class EventClientRepository extends BaseRepository {
 
         return clients;
     }
+    public List<Client> getInvalidClientList() {
+        List<Client> clients = new ArrayList<>();
+
+        final String validateFilter = " where "+ client_column.validationStatus + " == ? ";
+
+           String query = "select "
+                    + client_column.json
+                    + " from "
+                    + Table.client.name()
+                    + validateFilter
+                    + ORDER_BY
+                    + client_column.updatedAt;
+
+        Log.v("INVALID_REQ","getInvalidClientList>>"+query);
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_InValid});
+            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    try{
+                        String jsonClientStr = (cursor.getString(0));
+                        if (StringUtils.isBlank(jsonClientStr)
+                                || jsonClientStr.equals("{}")) { // Skip blank/empty json string
+                            continue;
+                        }
+                        jsonClientStr = jsonClientStr.replaceAll("'", "");
+                        Client client = gson.fromJson(jsonClientStr, Client.class);
+                        clients.add(client);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    cursor.moveToNext();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return clients;
+    }
+
+
+    public List<Event> getInvalidEventList() {
+        List<Event> events = new ArrayList<>();
+
+        String validateFilter;
+        validateFilter = " where ( (" + event_column.validationStatus + " == ?) or (" + event_column.validationStatus + " == ? and "+event_column.serverVersion+" is null)) ";
+
+           String query = "select "
+                    + event_column.json
+                    + " from "
+                    + Table.event.name()
+                    + validateFilter
+                    + ORDER_BY
+                    + event_column.updatedAt;
+
+
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_InValid,BaseRepository.TYPE_Valid});
+
+            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    try{
+                        String jsonEventsStr = (cursor.getString(0));
+                        if (StringUtils.isBlank(jsonEventsStr)
+                                || jsonEventsStr.equals("{}")) { // Skip blank/empty json string
+                            continue;
+                        }
+                        jsonEventsStr = jsonEventsStr.replaceAll("'", "");
+                        Event event = gson.fromJson(jsonEventsStr,Event.class);
+                        events.add(event);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    cursor.moveToNext();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return events;
+    }
     public List<JSONObject> getUnValidatedEvents(int limit) {
         List<JSONObject> events = new ArrayList<>();
 
-        final String validateFilter = " where ( " + event_column.validationStatus + " is NULL or "
-                + event_column.validationStatus + " != ? or "+event_column.serverVersion+" is null) ";
+        String validateFilter;
+        validateFilter = " where ( ("+ event_column.validationStatus + " == ?) or (" + event_column.validationStatus + " == ? and "+event_column.serverVersion+" is null) and baseEntityId not null) ";
 
+//        if(isServerVersionCheck){
+//            validateFilter = " where ( (" + event_column.validationStatus + " == ? and "+event_column.serverVersion+" is null) and baseEntityId not null) ";
+//
+//        }
         String query = "select "
                 + event_column.json
                 + " from "
@@ -1303,10 +1440,11 @@ public class EventClientRepository extends BaseRepository {
                     + ORDER_BY
                     + event_column.updatedAt;
         }
+        Log.v("INVALID_REQ","getUnValidatedEvents>>"+query);
 
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Valid});
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_InValid,BaseRepository.TYPE_Valid});
 
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
@@ -1335,6 +1473,121 @@ public class EventClientRepository extends BaseRepository {
 
         return events;
     }
+    public int getInvalidEventsCount(){
+        String query= "select count(*) as count from event where (((validationStatus =='Invalid') or(validationStatus =='Valid' and serverVersion is null)) and baseEntityId not null)";
+
+        Cursor cursor = null;
+        int eCount = 0;
+        try{
+            cursor = getWritableDatabase().rawQuery(query, null);
+            if(cursor!=null && cursor.getCount()>0){
+                cursor.moveToFirst();
+                eCount = cursor.getInt(0);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            if(cursor!=null) cursor.close();
+        }
+        Utils.appendLog("SYNC_URL","getInvalidEventsCount>>"+eCount);
+
+//        List<JSONObject> list = getUnValidatedEvents(0);
+//        if(list !=null){
+//            return list.size();
+//        }
+        return eCount;
+    }
+
+
+    private List<Address> getAddressFromSS(String ss_name) {
+        Log.v("INVALID_REQ","getAddressFromSS>>ss_name:"+ss_name);
+        if(TextUtils.isEmpty(ss_name)) return new ArrayList<>();
+        SSLocations ssLocations = getSSLocationStr(ss_name);
+        List<Address> addressList;
+        addressList = new ArrayList<>();
+        addressList.add(getSSAddress(ssLocations));
+        return addressList;
+
+    }
+    public Address getSSAddress(SSLocations ssLocations){
+        Address address = new Address();
+        address.setAddressType("usual_residence");
+        HashMap<String,String> addressMap = new HashMap<>();
+        addressMap.put("address1", ssLocations.union_ward.name);
+        addressMap.put("address2", ssLocations.city_corporation_upazila.name);
+        addressMap.put("address3", ssLocations.pourasabha.name);
+        addressMap.put("address8", ssLocations.village.id+"");
+        address.setAddressFields(addressMap);
+        address.setStateProvince(ssLocations.division.name);
+        address.setCityVillage(ssLocations.village.name);
+        address.setCountyDistrict(ssLocations.district.name);
+        address.setCountry(ssLocations.country.name);
+        return address;
+    }
+    private String getHHIdFromHH(String baseEntityId) {
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery("select relational_id from ec_family_member where base_entity_id ='"+baseEntityId+"'",null);
+            if (cursor.moveToNext()) {
+                String jsonEventStr = (cursor.getString(0));
+
+                return jsonEventStr;
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return "";
+    }
+    private SSLocations getSSLocationStr(String ssName) {
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery("select geojson from ss_location where ss_name ='"+ssName+"'",null);
+            if (cursor.moveToNext()) {
+                String jsonEventStr = (cursor.getString(0));
+                JSONArray jsonArray = new JSONArray(jsonEventStr);
+                SSLocations locations = null;
+                for(int i = 0; i <jsonArray.length();i++){
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    locations = new Gson().fromJson(jsonObject.toString(), SSLocations.class);
+                }
+                return locations;
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return null;
+    }
+
+    private List<Address> getAddressFromHH(String baseEntityId) {
+        JSONObject clientjson = getClient(getWritableDatabase(),baseEntityId);
+        try{
+            String addessJson = clientjson.getString("addresses");
+            JSONArray jsonArray = new JSONArray(addessJson);
+            List<Address> listAddress = new ArrayList<>();
+            for(int i = 0; i <jsonArray.length();i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Address address = new Gson().fromJson(jsonObject.toString(), Address.class);
+                listAddress.add(address);
+            }
+            return listAddress;
+        }catch (Exception e){
+
+        }
+        return new ArrayList<>();
+
+    }
+
+
     public List<JSONObject> getUnSyncedEventsForceSync(int limit) {
         List<JSONObject> events = new ArrayList<>();
 
@@ -1863,6 +2116,7 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public void addorUpdateClient(String baseEntityId, JSONObject jsonObject, String syncStatus) {
+        if(TextUtils.isEmpty(baseEntityId)) return;
         try {
             ContentValues values = new ContentValues();
             values.put(client_column.json.name(), jsonObject.toString());
@@ -1890,6 +2144,7 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public void addEvent(String baseEntityId, JSONObject jsonObject, String syncStatus) {
+        if(TextUtils.isEmpty(baseEntityId)) return;
         try {
             final String EVENT_TYPE = "eventType";
             ContentValues values = new ContentValues();
@@ -1924,7 +2179,6 @@ public class EventClientRepository extends BaseRepository {
                             jsonObject.getString(event_column.formSubmissionId.name()));
 
                     getWritableDatabase().insert(Table.event.name(), null, values);
-
                 }
             } else {
 // a case here would be if an event comes from openmrs
@@ -1933,6 +2187,7 @@ public class EventClientRepository extends BaseRepository {
 
         } catch (Exception e) {
             Timber.e(e);
+            Utils.appendLog("SYNC_URL","addEvent>>exception:"+e.getMessage());
         }
     }
 
@@ -1969,6 +2224,7 @@ public class EventClientRepository extends BaseRepository {
                     values,
                     event_column.formSubmissionId.name() + " = ?",
                     new String[]{formSubmissionId});
+
 
         } catch (Exception e) {
             Log.e(getClass().getName(), "Exception", e);

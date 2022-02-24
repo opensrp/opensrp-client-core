@@ -66,8 +66,12 @@ import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -105,7 +109,47 @@ public class Utils {
     private static String KG_FORMAT = "%s kg";
     private static String CM_FORMAT = "%s cm";
     public static final String APP_PROPERTIES_FILE = "app.properties";
+    public static void appendLog(String TAG,String text) {
+        try{
 
+        Context context= DrishtiApplication.getInstance().getApplicationContext();
+        String saveText = TAG + new DateTime(System.currentTimeMillis())+" >>> "+ text;
+        Calendar calender = Calendar.getInstance();
+        int year = calender.get(Calendar.YEAR);
+        int month = calender.get(Calendar.MONTH)+1;
+        int day = calender.get(Calendar.DAY_OF_MONTH);
+        String fileNameDayWise = year+""+addZeroForDay(month+"")+""+addZeroForDay(day+"");
+
+        File f = new File(context.getExternalFilesDir(null) + "/hnpp_log/"+fileNameDayWise);
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+        File logFile = new File(context.getExternalFilesDir(null) + "/hnpp_log/"+fileNameDayWise+"/"+"log.file");
+        if (!logFile.exists()) {
+            try {
+                logFile.createNewFile();
+            } catch (IOException ee) {
+                Log.e(TAG, ee.getMessage());
+            }
+        }
+        try {
+            //BufferedWriter for performance, true to set append to file flag
+            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+            buf.append(saveText);
+            buf.newLine();
+            buf.close();
+        } catch (IOException ee) {
+        }
+
+        }catch (Exception e){
+
+        }
+    }
+    public static String addZeroForDay(String day){
+        if(TextUtils.isEmpty(day)) return "";
+        if(day.length()==1) return "0"+day;
+        return day;
+    }
     public static String convertDateFormat(String date, boolean suppressException) {
         try {
             return UI_DF.format(DB_DF.parse(date));

@@ -5,8 +5,8 @@ package org.smartregister;
  */
 public abstract class SyncConfiguration {
 
-    private int connectTimeout = 60000;
-    private int readTimeout = 60000;
+    private int connectTimeout = 5*60000;
+    private int readTimeout = 5*60000;
 
     public abstract int getSyncMaxRetries();
 

@@ -58,7 +58,7 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
 
         if (dataType.getName().equals(event.getName())) {
             Timber.e("Received %s events", String.valueOf(jsonArray.length()));
-            eventClientRepository.batchInsertEvents(jsonArray, 0);
+            eventClientRepository.batchInsertEvents(jsonArray);
         } else if (dataType.getName().equals(client.getName())) {
             Timber.e("Received %s clients", String.valueOf(jsonArray.length()));
             eventClientRepository.batchInsertClients(jsonArray);

@@ -67,7 +67,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Test
     public void batchInsertEventsReturnsNotNull() throws Exception {
-        Assert.assertTrue(eventClientRepository.batchInsertEvents(new JSONArray(ClientData.eventJsonArray), 0l));
+        Assert.assertTrue(eventClientRepository.batchInsertEvents(new JSONArray(ClientData.eventJsonArray)));
     }
 
     @Test

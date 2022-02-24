@@ -24,6 +24,7 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.SyncUtils;
+import org.smartregister.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.text.MessageFormat;
@@ -111,8 +112,9 @@ public class SyncIntentService extends BaseSyncIntentService {
                 baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
             }
 
-            Long lastSyncDatetime = ecSyncUpdater.getLastSyncTimeStamp();
+            long lastSyncDatetime = ecSyncUpdater.getLastSyncTimeStamp();
             Timber.i("LAST SYNC DT %s", new DateTime(lastSyncDatetime));
+            Utils.appendLog("SYNC_URL","from library:"+lastSyncDatetime);
 
             if (httpAgent == null) {
                 complete(FetchStatus.fetchedFailed);
@@ -132,7 +134,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 Timber.i("URL: %s", url);
                 resp = httpAgent.fetch(url);
             }
-
+            Utils.appendLog("SYNC_URL","from library url:"+url);
             if (resp.isUrlError()) {
                 FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
                 complete(FetchStatus.fetchedFailed);
@@ -153,7 +155,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             JSONObject jsonObject = new JSONObject((String) resp.payload());
 
             int eCount = fetchNumberOfEvents(jsonObject);
-            Timber.i("Parse Network Event Count: %s", eCount);
+            Utils.appendLog("SYNC_URL","from library response come:"+eCount);
 
             if (eCount == 0) {
                 complete(FetchStatus.nothingFetched);
@@ -191,13 +193,11 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     protected void processClient(Pair<Long, Long> serverVersionPair) {
         try {
-            long startTime = System.currentTimeMillis();
             ECSyncHelper ecUpdater = ECSyncHelper.getInstance(context);
-            List<EventClient> events = ecUpdater.allEventClients(serverVersionPair.first - 1, serverVersionPair.second);
-            Log.v("SYNC_URL", "processClient 1 timediff:"+(System.currentTimeMillis() - startTime));
+            Utils.appendLog("SYNC_URL", "processClient:minimum"+(serverVersionPair.first - 1)+":maximum:"+serverVersionPair.second);
 
+            List<EventClient> events = ecUpdater.allEventClients(serverVersionPair.first - 1, serverVersionPair.second);
             DrishtiApplication.getInstance().getClientProcessor().processClient(events);
-            Log.v("SYNC_URL", "processClient 2 timediff:"+(System.currentTimeMillis() - startTime));
             sendSyncStatusBroadcastMessage(FetchStatus.fetched);
         } catch (Exception e) {
             Timber.e(e, "Process Client Exception: %s", e.getMessage());
