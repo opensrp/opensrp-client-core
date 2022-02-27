@@ -15,8 +15,6 @@ import org.smartregister.domain.FormDefinitionVersion;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.repository.FormsVersionRepository;
-import org.smartregister.util.ZipUtil;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -143,14 +141,14 @@ public class AllFormVersionSyncService {
             }
         };
 
-        File[] zipFiles = dir.listFiles(filter);
-
-        for (File f : zipFiles) {
-            ZipUtil zipUtil = new ZipUtil(f.getAbsolutePath(),
-                    FormPathService.sdcardPath + f.getName().replaceAll(".zip", "")
-                            + File.separator);
-            zipUtil.unzip();
-        }
+//        File[] zipFiles = dir.listFiles(filter);
+//
+//        for (File f : zipFiles) {
+//            ZipUtil zipUtil = new ZipUtil(f.getAbsolutePath(),
+//                    FormPathService.sdcardPath + f.getName().replaceAll(".zip", "")
+//                            + File.separator);
+//            zipUtil.unzip();
+//        }
     }
 
     /* Verify all forms file in sdcard */
