@@ -1,7 +1,9 @@
 package org.smartregister.sample;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +24,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.smartregister.cryptography.CryptographicHelper;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.sample.fragment.ReportFragment;
 import org.smartregister.util.AppHealthUtils;
@@ -29,6 +32,16 @@ import org.smartregister.util.DateUtil;
 import org.smartregister.util.LangUtils;
 import org.smartregister.view.activity.MultiLanguageActivity;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +53,7 @@ public class MainActivity extends MultiLanguageActivity {
     DatePicker picker;
     Button btnGet;
     TextView tvw;
-
+    CryptographicHelper cryptographicHelper = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,13 +158,80 @@ public class MainActivity extends MultiLanguageActivity {
 
         new AppHealthUtils(findViewById(R.id.show_sync_stats));
         ToggleButton toggle = (ToggleButton) findViewById(R.id.encrypt_decrypt_toggle);
+
+        cryptographicHelper = CryptographicHelper.getInstance(this);
+        String filename = "test";
+        String contents = "Hello world!";
+        try (FileOutputStream fos = MainActivity.this.openFileOutput(filename, Context.MODE_PRIVATE)) {
+            fos.write(contents.getBytes());
+            fos.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                String keyAlias = "sample";
+                if(cryptographicHelper.getKey(keyAlias)==null)
+                {
+                    cryptographicHelper.generateKey(keyAlias);
+                    Timber.i("key with alias %s generated",keyAlias);
+                }
+                String[] files = MainActivity.this.fileList();
+                for (String file:
+                     files) {
+                    Timber.i("this is the file %s ",file);
+                }
+
+
                 if (isChecked) {
+
+                    try {
+                        byte[] encryptedContents = CryptographicHelper.encrypt(contents.getBytes(), keyAlias);
+                        FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        Timber.i("enecrypted stuff to write %S ",new String(encryptedContents));
+                        fileOutputStream.write((encryptedContents));
+                        fileOutputStream.flush();
+
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 } else {
+                    try {
+                        FileInputStream fis = openFileInput(filename);
+                        InputStreamReader inputStreamReader = new InputStreamReader(fis);
+                        StringBuilder stringBuilder = new StringBuilder();
+                        try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
+                            String line = reader.readLine();
+                            while (line != null) {
+                                stringBuilder.append(line).append('\n');
+                                line = reader.readLine();
+                            }
+                            Timber.i("reading encrypted contents: %s ",line);
+                        } catch (IOException e) {
+                            // Error occurred when opening raw file for reading.
+                        }
+                        byte[] encryptedContents = CryptographicHelper.decrypt(stringBuilder.toString().getBytes(), keyAlias);
+                        String decryptedContent =new String(encryptedContents);
+                        Timber.i("Decrypted contents: %s ",decryptedContent);
+                        FileOutputStream fileOutputStream = MainActivity.this.openFileOutput("myFile", MODE_PRIVATE);
+                        fileOutputStream.write(decryptedContent.getBytes());
+                        // Let the document provider know you're done by closing the stream.
+                        fileOutputStream.close();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         });
+
 
     }
 
@@ -178,5 +258,11 @@ public class MainActivity extends MultiLanguageActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cryptographicHelper = null;
     }
 }
