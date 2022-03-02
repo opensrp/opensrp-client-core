@@ -112,6 +112,7 @@ public class Utils {
     public static void appendLog(String TAG,String text) {
         try{
 
+        Log.v(TAG,text);
         Context context= DrishtiApplication.getInstance().getApplicationContext();
         String saveText = TAG + new DateTime(System.currentTimeMillis())+" >>> "+ text;
         Calendar calender = Calendar.getInstance();
