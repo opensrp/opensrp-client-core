@@ -33,9 +33,10 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:requestLegacyExternalStorage="true">
+
         <service
             android:name=".sync.intent.PlanPeriodicPlanEvaluationService"
-            android:exported="false"></service>
+            android:exported="false" />
         <service
             android:name=".service.ImageUploadSyncService"
             android:description="@string/component_desc_image_upload_service"
@@ -53,6 +54,10 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+
+        <activity
+            android:name=".view.activity.ChangePasswordActivity"
+            android:exported="false" />
 
         <activity
             android:name=".view.activity.ReportsActivity"
@@ -118,7 +123,6 @@
             android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".view.activity.StatsActivity"
             android:launchMode="singleTask"
