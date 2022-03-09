@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import org.apache.http.conn.scheme.SocketFactory;
-import org.apache.http.conn.ssl.AbstractVerifier;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.smartregister.BuildConfig;
@@ -16,7 +15,6 @@ import java.security.KeyStore;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLException;
 import javax.net.ssl.TrustManagerFactory;
 
 /**
@@ -47,19 +45,23 @@ public class OpensrpSSLHelper {
             }
 
             SSLSocketFactory socketFactory = new SSLSocketFactory(trustedKeystore);
-            final X509HostnameVerifier oldVerifier = socketFactory.getHostnameVerifier();
-            socketFactory.setHostnameVerifier(new AbstractVerifier() {
-                @Override
-                public void verify(String host, String[] cns, String[] subjectAlts) throws
-                        SSLException {
-                    for (String cn : cns) {
-                        if (!configuration.shouldVerifyCertificate() || host.equals(cn)) {
-                            return;
-                        }
-                    }
-                    oldVerifier.verify(host, cns, subjectAlts);
-                }
-            });
+//            final X509HostnameVerifier oldVerifier = socketFactory.getHostnameVerifier();
+
+            X509HostnameVerifier hostnameVerifier = org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
+            socketFactory.setHostnameVerifier(hostnameVerifier);
+
+//            socketFactory.setHostnameVerifier(new AbstractVerifier() {
+//                @Override
+//                public void verify(String host, String[] cns, String[] subjectAlts) throws
+//                        SSLException {
+//                    for (String cn : cns) {
+//                        if (!configuration.shouldVerifyCertificate() || host.equals(cn)) {
+//                            return;
+//                        }
+//                    }
+//                    oldVerifier.verify(host, cns, subjectAlts);
+//                }
+//            });
             return socketFactory;
         } catch (Exception e) {
             Log.d(TAG, e.getMessage() != null ? e.getMessage() : "");
