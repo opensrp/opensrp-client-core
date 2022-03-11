@@ -15,9 +15,14 @@ import org.smartregister.R
 import org.smartregister.account.AccountHelper
 import org.smartregister.view.activity.ChangePasswordActivity.*
 
-
+/**
+ * Created by ndegwamartin on 08/03/2022.
+ *
+ * This activity gets launched when client core detects that your user account requires a password reset action
+ */
 class ChangePasswordActivity : AppCompatActivity() {
-    private lateinit var webView: WebView
+    var webView: WebView? = null
+        private set
     private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,8 +43,8 @@ class ChangePasswordActivity : AppCompatActivity() {
         webView = findViewById<View>(R.id.changePasswordWV) as WebView
 
         //To resolve to URL of format https://keycloak.<env>.smartregister.org/auth/realms/<realm-name>/account
-        webView.loadUrl(issuerEndpointURL + AccountHelper.OAUTH.PASSWORD_RESET_ENDPOINT)
-        webView.apply {
+        webView!!.loadUrl(issuerEndpointURL + AccountHelper.OAUTH.PASSWORD_RESET_ENDPOINT)
+        webView?.apply {
             settings.apply {
                 javaScriptEnabled = true
                 loadsImagesAutomatically = true
@@ -50,8 +55,8 @@ class ChangePasswordActivity : AppCompatActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK && this.webView.canGoBack()) {
-            this.webView.goBack()
+        if (keyCode == KeyEvent.KEYCODE_BACK && this.webView!!.canGoBack()) {
+            this.webView?.goBack()
             return true
         }
         return super.onKeyDown(keyCode, event)

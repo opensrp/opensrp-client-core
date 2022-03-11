@@ -49,7 +49,6 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
     private final AccountAuthenticatorXml mAccountAuthenticatorXml;
 
     private final Listener<LoginResponse> afterLoginCheck;
-    private AccountResponse response;
 
     public RemoteLoginTask(BaseLoginContract.View loginView, String username, char[] password, AccountAuthenticatorXml accountAuthenticatorXml, Listener<LoginResponse> afterLoginCheck) {
         mLoginView = loginView;
