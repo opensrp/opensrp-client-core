@@ -59,7 +59,7 @@ public class SyncUtils {
     }
 
     public void logoutUser() throws AuthenticatorException, OperationCanceledException, IOException {
-        logoutUser(R.string.account_disabled_logged_off);
+        logoutUser(R.string.your_session_has_expired);
     }
 
     public void logoutUser(@StringRes int logoutMessage) throws AuthenticatorException, OperationCanceledException, IOException {
