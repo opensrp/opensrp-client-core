@@ -308,7 +308,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     @Override
     public void showPasswordResetView(String passwordResetEndpoint) {
         Intent intent = new Intent(getLoginView().getActivityContext(), ChangePasswordActivity.class);
-        intent.putExtra(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL,passwordResetEndpoint);
+        intent.putExtra(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL, passwordResetEndpoint);
         getLoginView().getActivityContext().startActivity(intent);
     }
 }
