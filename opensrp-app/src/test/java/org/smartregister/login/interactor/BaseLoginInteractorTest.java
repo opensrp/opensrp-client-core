@@ -156,7 +156,6 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
     private String username = "johndoe";
     private char[] qwertyPassword = "qwerty".toCharArray();
     private char[] password = "password".toCharArray();
-    private String paramInBundle;
 
     @Before
     public void setUp() {
@@ -524,8 +523,8 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
         AccountResponse accountResponse = new AccountResponse(400, accountError);
 
-        LoginInteractorShadow interactorSpy = Mockito.spy(this.interactor);
-        Activity activitySpy = Mockito.spy(this.activity);
+        LoginInteractorShadow interactorSpy = spy(this.interactor);
+        Activity activitySpy = spy(this.activity);
 
         when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(accountResponse);
         when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
@@ -538,7 +537,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
         verify(interactorSpy, Mockito.atLeastOnce()).showPasswordResetView(urlCaptor.capture());
         Assert.assertNotNull(urlCaptor.getValue());
-        Assert.assertEquals(issuerEndpoint, urlCaptor.getValue());
+        assertEquals(issuerEndpoint, urlCaptor.getValue());
 
         ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
         verify(activitySpy, Mockito.atLeastOnce()).startActivity(intentCaptor.capture());
@@ -546,10 +545,10 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
         String paramInBundle = intentCaptor.getValue().getStringExtra(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL);
         Assert.assertNotNull(paramInBundle);
-        Assert.assertEquals(issuerEndpoint, paramInBundle);
+        assertEquals(issuerEndpoint, paramInBundle);
 
         //Assert user service fetch details was never invoked
-        verify(userService, Mockito.never()).fetchUserDetails(ArgumentMatchers.anyString());
+        verify(userService, never()).fetchUserDetails(ArgumentMatchers.anyString());
     }
 
 }
