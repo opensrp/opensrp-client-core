@@ -536,15 +536,15 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
 
         verify(interactorSpy, Mockito.atLeastOnce()).showPasswordResetView(urlCaptor.capture());
-        Assert.assertNotNull(urlCaptor.getValue());
+        assertNotNull(urlCaptor.getValue());
         assertEquals(issuerEndpoint, urlCaptor.getValue());
 
         ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
         verify(activitySpy, Mockito.atLeastOnce()).startActivity(intentCaptor.capture());
-        Assert.assertNotNull(intentCaptor.getValue());
+        assertNotNull(intentCaptor.getValue());
 
         String paramInBundle = intentCaptor.getValue().getStringExtra(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL);
-        Assert.assertNotNull(paramInBundle);
+        assertNotNull(paramInBundle);
         assertEquals(issuerEndpoint, paramInBundle);
 
         //Assert user service fetch details was never invoked
