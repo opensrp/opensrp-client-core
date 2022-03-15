@@ -1,6 +1,6 @@
 engines:
   duplication:
     exclude_paths:
-     - 'opensrp-app/src/test/**/*'
-     - 'opensrp-app/androidTest/**/*'
+     - '**/test/**'
+     - '**/androidTest/**'
 
