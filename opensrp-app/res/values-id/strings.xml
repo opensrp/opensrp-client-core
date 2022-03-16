@@ -2,7 +2,7 @@
 <resources>
     <string name="empty_string"></string>
     <string name="app_name">OpenSRP</string>
-        <string name="userNameEditText">Masukkan nama pengguna</string>
+    <string name="userNameEditText">Masukkan nama pengguna</string>
     <string name="passwordEditText">Masukkan sandi</string>
     <string name="login_text">Masuk</string>
     <string name="logout_text">Keluar</string>
