@@ -2,7 +2,7 @@
 <resources>
     <string name="empty_string"></string>
     <string name="app_name">OpenSRP</string>
-    <string name="userNameEditText">Masukkan nama pengguna</string>
+        <string name="userNameEditText">Masukkan nama pengguna</string>
     <string name="passwordEditText">Masukkan sandi</string>
     <string name="login_text">Masuk</string>
     <string name="logout_text">Keluar</string>
@@ -386,6 +386,7 @@ dihapus.</string>
 
     <string name="account_disabled">Akun Dinonaktifkan</string>
     <string name="account_disabled_logged_off">Anda telah keluar karena akun Anda telah dinonaktifkan. Hubungi administrator Anda</string>
+    <string name="your_session_has_expired"> Sesi Anda telah berakhir. Silakan masuk lagi.</string>
 
     <!--Alerts-->
     <string name="invalid_url_massage">Silakan masukkan url yang benar</string>

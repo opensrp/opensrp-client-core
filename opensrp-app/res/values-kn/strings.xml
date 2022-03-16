@@ -15,4 +15,5 @@
     <string name="home_pnc_label">ಪಿಎನ್ ಸಿ</string>
     <string name="home_child_label">ಮಗು</string>
     <string name="home_report_label">ವರದಿ</string>
+    <string name="your_session_has_expired">ನಿಮ್ಮ ಅವಧಿಯು ಮುಕ್ತಾಯಗೊಂಡಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಲಾಗ್ ಇನ್ ಮಾಡಿ.</string>
 </resources>
