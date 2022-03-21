@@ -54,6 +54,7 @@ public class MainActivity extends MultiLanguageActivity {
     Button btnGet;
     TextView tvw;
     CryptographicHelper cryptographicHelper = null;
+    TextView encDecTextView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +67,7 @@ public class MainActivity extends MultiLanguageActivity {
         Activity activity = this;
         tvw = (TextView) findViewById(R.id.textView1);
         picker = (DatePicker) findViewById(R.id.datePicker1);
+        encDecTextView = findViewById(R.id.encrypt_decrypt_tv);
 
         picker.setMinDate(new LocalDate().minusYears(2).toDate().getTime());
 
@@ -160,8 +162,8 @@ public class MainActivity extends MultiLanguageActivity {
         ToggleButton toggle = (ToggleButton) findViewById(R.id.encrypt_decrypt_toggle);
 
         cryptographicHelper = CryptographicHelper.getInstance(this);
-        String filename = "test";
-        String contents = "Hello world!";
+        String filename = "test.txt";
+        String contents = "Hello world earthlings!";
         try (FileOutputStream fos = MainActivity.this.openFileOutput(filename, Context.MODE_PRIVATE)) {
             fos.write(contents.getBytes());
             fos.flush();
@@ -193,6 +195,7 @@ public class MainActivity extends MultiLanguageActivity {
                         byte[] encryptedContents = CryptographicHelper.encrypt(contents.getBytes(), keyAlias);
                         FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                         Timber.i("enecrypted stuff to write %S ",new String(encryptedContents));
+                        encDecTextView.setText(new String(encryptedContents));
                         fileOutputStream.write((encryptedContents));
                         fileOutputStream.flush();
 
@@ -202,31 +205,27 @@ public class MainActivity extends MultiLanguageActivity {
                     }
 
                 } else {
-                    try {
-                        FileInputStream fis = openFileInput(filename);
-                        InputStreamReader inputStreamReader = new InputStreamReader(fis);
-                        StringBuilder stringBuilder = new StringBuilder();
-                        try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
-                            String line = reader.readLine();
-                            while (line != null) {
-                                stringBuilder.append(line).append('\n');
-                                line = reader.readLine();
-                            }
-                            Timber.i("reading encrypted contents: %s ",line);
+                        try {
+                            FileInputStream inputStream = openFileInput(filename);
+                            Timber.w("file length %s", filename.length());
+                            byte[] inputBytes = new byte[inputStream.available()];
+                            inputStream.read(inputBytes);
+                            Timber.e("before %s", new String(inputBytes));
+
+                            byte[] decryptedStuff =  CryptographicHelper.decrypt(inputBytes, keyAlias);
+                            Timber.e("decrepted %s", new String(decryptedStuff));
+                            FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                            Timber.i("enecrypted stuff to write %S ",new String(decryptedStuff));
+                            encDecTextView.setText(new String(decryptedStuff));
+                            fileOutputStream.write((decryptedStuff));
+                            fileOutputStream.flush();
+
+
                         } catch (IOException e) {
+                            e.printStackTrace();
                             // Error occurred when opening raw file for reading.
                         }
-                        byte[] encryptedContents = CryptographicHelper.decrypt(stringBuilder.toString().getBytes(), keyAlias);
-                        String decryptedContent =new String(encryptedContents);
-                        Timber.i("Decrypted contents: %s ",decryptedContent);
-                        FileOutputStream fileOutputStream = MainActivity.this.openFileOutput("myFile", MODE_PRIVATE);
-                        fileOutputStream.write(decryptedContent.getBytes());
-                        // Let the document provider know you're done by closing the stream.
-                        fileOutputStream.close();
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
 
                 }
             }
