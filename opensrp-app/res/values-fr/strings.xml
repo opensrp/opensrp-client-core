@@ -385,6 +385,7 @@
 
     <string name="account_disabled">Compte désactivé</string>
     <string name="account_disabled_logged_off">Vous avez été déconnecté et votre compte a été désactivé. Veuillez contacter votre administrateur.</string>
+    <string name="your_session_has_expired">Votre session a expiré. Veuillez vous reconnecter.</string>
 
     <!--Alerts-->
     <string name="invalid_url_massage">Veuillez entrer une URL valide</string>
