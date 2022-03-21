@@ -97,7 +97,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="30dp">
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -106,12 +107,12 @@
 
         </TextView>
         <ToggleButton
-           android:id="@+id/encrypt_decrypt_toggle"
+            android:id="@+id/encrypt_decrypt_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textOff="@string/encrypt"
             android:textOn="@string/decrypt"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_marginLeft="100dp"/>
     </LinearLayout>
 
 </RelativeLayout>

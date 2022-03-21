@@ -159,11 +159,13 @@ public class MainActivity extends MultiLanguageActivity {
         ((TextView) findViewById(R.id.time)).setText(DateUtil.getDuration(new DateTime().minusYears(4).minusMonths(3).minusWeeks(2).minusDays(1)));
 
         new AppHealthUtils(findViewById(R.id.show_sync_stats));
-        ToggleButton toggle = (ToggleButton) findViewById(R.id.encrypt_decrypt_toggle);
 
+        // File encryption example section
+        ToggleButton toggle = (ToggleButton) findViewById(R.id.encrypt_decrypt_toggle);
         cryptographicHelper = CryptographicHelper.getInstance(this);
         String filename = "test.txt";
-        String contents = "Hello world earthlings!";
+        String contents = getString(R.string.encrypt_decrypt_string);
+        // Create a file with the contents above
         try (FileOutputStream fos = MainActivity.this.openFileOutput(filename, Context.MODE_PRIVATE)) {
             fos.write(contents.getBytes());
             fos.flush();
@@ -177,21 +179,17 @@ public class MainActivity extends MultiLanguageActivity {
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String keyAlias = "sample";
+                // Get or create a key with the Alias name sample or create one if id does not exist
                 if(cryptographicHelper.getKey(keyAlias)==null)
                 {
                     cryptographicHelper.generateKey(keyAlias);
                     Timber.i("key with alias %s generated",keyAlias);
                 }
-                String[] files = MainActivity.this.fileList();
-                for (String file:
-                     files) {
-                    Timber.i("this is the file %s ",file);
-                }
-
 
                 if (isChecked) {
 
                     try {
+                        // read the text.txt while it is in plain text and write to file
                         byte[] encryptedContents = CryptographicHelper.encrypt(contents.getBytes(), keyAlias);
                         FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                         Timber.i("enecrypted stuff to write %S ",new String(encryptedContents));
@@ -206,6 +204,7 @@ public class MainActivity extends MultiLanguageActivity {
 
                 } else {
                         try {
+                            //
                             FileInputStream inputStream = openFileInput(filename);
                             Timber.w("file length %s", filename.length());
                             byte[] inputBytes = new byte[inputStream.available()];
@@ -213,7 +212,7 @@ public class MainActivity extends MultiLanguageActivity {
                             Timber.e("before %s", new String(inputBytes));
 
                             byte[] decryptedStuff =  CryptographicHelper.decrypt(inputBytes, keyAlias);
-                            Timber.e("decrepted %s", new String(decryptedStuff));
+                            Timber.e("decrypted content %s", new String(decryptedStuff));
                             FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                             Timber.i("enecrypted stuff to write %S ",new String(decryptedStuff));
                             encDecTextView.setText(new String(decryptedStuff));
