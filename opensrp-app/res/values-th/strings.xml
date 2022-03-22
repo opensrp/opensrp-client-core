@@ -385,7 +385,7 @@
 
     <string name="account_disabled">บัญชีถูกปิดใช้งาน</string>
     <string name="account_disabled_logged_off">คุณได้ออกจากระบบเนื่องจากบัญชีของคุณถูกปิดการใช้งาน โปรดติดต่อปแอดมินฯผู้ดูแล</string>
-    <string name="your_session_has_expired">เซสชั่นของคุณหมดอายุแล้ว กรุณาเข้าสู่ระบบอีกครั้ง</string>
+    <string name="your_session_has_expired">ระยะเวลาการล็อกอินของคุณหมดแล้ว กรุณาล็อกอินเพื่อเข้าสู่ระบบอีกครั้ง</string>
 
     <!--Alerts-->
     <string name="invalid_url_massage">โปรดใส่ URL ที่ถูกต้อง!</string>
