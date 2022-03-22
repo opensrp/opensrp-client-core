@@ -1,7 +1,13 @@
 package org.smartregister.login.interactor;
 
+import static org.smartregister.domain.LoginResponse.INVALID_GRANT;
+import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
+import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
+import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
+
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -14,6 +20,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
 import org.smartregister.R;
 import org.smartregister.account.AccountAuthenticatorXml;
+import org.smartregister.account.AccountHelper;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.event.Listener;
@@ -27,6 +34,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.ServerSettingsHelper;
 import org.smartregister.util.NetworkUtils;
+import org.smartregister.view.activity.ChangePasswordActivity;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.BaseLoginContract;
 
@@ -34,10 +42,6 @@ import java.lang.ref.WeakReference;
 import java.util.TimeZone;
 
 import timber.log.Timber;
-
-import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
-import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
-import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 
 /**
  * Created by ndegwamartin on 26/06/2018.
@@ -193,6 +197,9 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                                 getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.unknown_response));
                             } else if (loginResponse == UNAUTHORIZED) {
                                 getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.unauthorized));
+                            } else if (loginResponse == INVALID_GRANT) {
+                                String pwdResetEndpoint = loginResponse.getRawData().optString(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL);
+                                showPasswordResetView(pwdResetEndpoint);
                             } else {
                                 getLoginView().showErrorDialog(loginResponse.message());
                             }
@@ -296,5 +303,12 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
             }
         }
+    }
+
+    @Override
+    public void showPasswordResetView(String passwordResetEndpoint) {
+        Intent intent = new Intent(getLoginView().getActivityContext(), ChangePasswordActivity.class);
+        intent.putExtra(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL, passwordResetEndpoint);
+        getLoginView().getActivityContext().startActivity(intent);
     }
 }
