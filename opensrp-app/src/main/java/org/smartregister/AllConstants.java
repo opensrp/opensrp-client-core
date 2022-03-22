@@ -177,24 +177,6 @@ public class AllConstants {
                 PENTAVALENT_2, PENTAVALENT_3, HEPATITIS_BIRTH_DOSE, JE, MMR};
     }
 
-    public static class CloudantSync {
-
-        public static final String ACTION_DATABASE_CREATED =
-                "org.smartregister" + "" + "" + "" + ".DATABASE_CREATED_ACTION";
-        public static final String ACTION_REPLICATION_ERROR =
-                "org.smartregister" + "" + "" + "" + ".REPLICATION_ERROR_ACTION";
-        public static final String ACTION_REPLICATION_COMPLETED =
-                "org.smartregister" + "" + "" + ".REPLICATION_COMPLETED_ACTION";
-        public static final String REPLICATION_ERROR = "REPLICATION_ERROR";
-        public static final String DOCUMENTS_REPLICATED = "DOCUMENTS_REPLICATED";
-        public static final String BATCHES_REPLICATED = "BATCHES_REPLICATED";
-        public static final String COUCHDB_PORT = "5984";
-        public static final String COUCH_DATABASE_NAME = "opensrp";
-        public static final String COUCH_DATABASE_USER = "rootuser";
-        public static final String COUCH_DATABASE_PASS = "adminpass";
-
-    }
-
     // Sync Filters moved to org.smartregister.SyncFilter class
 
     public class FormNames {

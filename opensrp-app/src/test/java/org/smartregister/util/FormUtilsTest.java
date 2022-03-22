@@ -23,8 +23,6 @@ import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.cloudant.models.Client;
-import org.smartregister.cloudant.models.Event;
 import org.smartregister.domain.ANM;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.repository.DetailsRepository;

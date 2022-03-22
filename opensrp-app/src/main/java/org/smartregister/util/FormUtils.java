@@ -1,7 +1,6 @@
 package org.smartregister.util;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Xml;
 
 import com.google.gson.Gson;
@@ -22,7 +21,6 @@ import org.smartregister.clientandeventmodel.FormField;
 import org.smartregister.clientandeventmodel.SubFormData;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.domain.form.SubForm;
-import org.smartregister.service.intentservices.ReplicationIntentService;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -166,15 +164,6 @@ public class FormUtils {
         String eventJson = gson.toJson(event);
         Timber.d(eventJson);
         Timber.d("====================================");
-    }
-
-    /**
-     * Start ReplicationIntentService which handles cloudant sync processes
-     */
-    private void startReplicationIntentService() {
-
-        Intent serviceIntent = new Intent(mContext, ReplicationIntentService.class);
-        mContext.startService(serviceIntent);
     }
 
     private List<SubFormData> getSubFormList(FormSubmission formSubmission) {

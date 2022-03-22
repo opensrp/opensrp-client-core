@@ -1,5 +1,13 @@
 package org.smartregister.service;
 
+import static org.smartregister.convertor.FormSubmissionConvertor.toDomain;
+import static org.smartregister.domain.FetchStatus.fetched;
+import static org.smartregister.domain.FetchStatus.fetchedFailed;
+import static org.smartregister.domain.FetchStatus.nothingFetched;
+import static org.smartregister.util.Log.logError;
+import static org.smartregister.util.Log.logInfo;
+import static java.text.MessageFormat.format;
+
 import android.content.Intent;
 
 import com.google.gson.Gson;
@@ -17,14 +25,6 @@ import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.text.MessageFormat.format;
-import static org.smartregister.convertor.FormSubmissionConvertor.toDomain;
-import static org.smartregister.domain.FetchStatus.fetched;
-import static org.smartregister.domain.FetchStatus.fetchedFailed;
-import static org.smartregister.domain.FetchStatus.nothingFetched;
-import static org.smartregister.util.Log.logError;
-import static org.smartregister.util.Log.logInfo;
 
 public class FormSubmissionSyncService {
     public static final String FORM_SUBMISSIONS_PATH = "form-submissions";
@@ -49,17 +49,7 @@ public class FormSubmissionSyncService {
 
     public FetchStatus sync() {
         try {
-//            CloudantSyncHandler mCloudantSyncHandler = CloudantSyncHandler.getInstance(Context
-// .getInstance().applicationContext());
-//            CountDownLatch mCountDownLatch = new CountDownLatch(2);
-//            mCloudantSyncHandler.setCountDownLatch(mCountDownLatch);
-//            mCloudantSyncHandler.startPullReplication();
-//            mCloudantSyncHandler.startPushReplication();
-
-            //          mCountDownLatch.await();
-            //pushToServer();
-            Intent intent = new Intent(DrishtiApplication.getInstance().getApplicationContext(),
-                    ImageUploadSyncService.class);
+            Intent intent = new Intent(DrishtiApplication.getInstance().getApplicationContext(), ImageUploadSyncService.class);
             DrishtiApplication.getInstance().getApplicationContext().startService(intent);
             return FetchStatus.fetched;
         } catch (Exception e) {

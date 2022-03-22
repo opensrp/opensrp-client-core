@@ -1,7 +1,6 @@
 package org.smartregister.view.activity;
 
 import static org.smartregister.AllConstants.ALERT_NAME_PARAM;
-import static org.smartregister.AllConstants.CloudantSync;
 import static org.smartregister.AllConstants.ENTITY_ID;
 import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
 import static org.smartregister.AllConstants.FIELD_OVERRIDES_PARAM;
@@ -221,14 +220,6 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
     }
 
     /**
-     * Called by CloudantSyncHandler when it receives a replication complete callback.
-     * CloudantSyncHandler takes care of calling this on the main thread.
-     */
-    public void replicationComplete() {
-        //Toast.makeText(getApplicationContext(), "Replication Complete", Toast.LENGTH_LONG).show();
-    }
-
-    /**
      * Called by TasksModel when it receives a replication error callback.
      * TasksModel takes care of calling this on the main thread.
      */
@@ -239,11 +230,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
 
     private void setupReplicationBroadcastReceiver() {
         // The filter's action is BROADCAST_ACTION
-        IntentFilter opensrpClientIntentFilter = new IntentFilter(
-                CloudantSync.ACTION_DATABASE_CREATED);
-        opensrpClientIntentFilter.addAction(CloudantSync.ACTION_REPLICATION_COMPLETED);
-        opensrpClientIntentFilter.addAction(CloudantSync.ACTION_REPLICATION_ERROR);
-        opensrpClientIntentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+        IntentFilter opensrpClientIntentFilter = new IntentFilter(Intent.ACTION_TIMEZONE_CHANGED);
         opensrpClientIntentFilter.addAction(Intent.ACTION_TIME_CHANGED);
         opensrpClientIntentFilter.addAction(Intent.ACTION_DATE_CHANGED);
 
