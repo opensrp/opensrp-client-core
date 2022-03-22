@@ -109,14 +109,13 @@ import timber.log.Timber;
  */
 public class Utils {
 
+    public static final String APP_PROPERTIES_FILE = "app.properties";
     private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Utils.getDefaultLocale());
     private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Utils.getDefaultLocale());
-
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
     private static String KG_FORMAT = "%s kg";
     private static String CM_FORMAT = "%s cm";
-    public static final String APP_PROPERTIES_FILE = "app.properties";
 
     public static String convertDateFormat(String date, boolean suppressException) {
         try {
@@ -606,10 +605,6 @@ public class Utils {
         return getAllSharedPreferences().getANMPreferredName(getAllSharedPreferences().fetchRegisteredANM());
     }
 
-    public String getName() {
-        return getPrefferedName();
-    }
-
     public static String getUserInitials() {
         String initials = "Me";
         String preferredName = getPrefferedName();
@@ -647,7 +642,6 @@ public class Utils {
         }
         return "";
     }
-
 
     public static String getDob(int age) {
         return getDob(age, DateUtil.DATE_FORMAT_FOR_TIMELINE_EVENT);
@@ -757,7 +751,7 @@ public class Utils {
      * @return String value from resource file
      */
     public static String getTranslatedIdentifier(String key) {
-
+        if (key == null) return null;
         String myKey;
         try {
             myKey = CoreLibrary.getInstance().context().applicationContext().getString(CoreLibrary.getInstance().context().applicationContext().getResources().getIdentifier(key.toLowerCase(), "string", CoreLibrary.getInstance().context().applicationContext().getPackageName()));
@@ -1020,5 +1014,9 @@ public class Utils {
         } else {
             return locationName;
         }
+    }
+
+    public String getName() {
+        return getPrefferedName();
     }
 }
