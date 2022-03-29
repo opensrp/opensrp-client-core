@@ -1,6 +1,15 @@
 package org.smartregister.cursoradapter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,6 +18,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.powermock.reflect.internal.WhiteboxImpl;
 import org.robolectric.Robolectric;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -17,12 +27,6 @@ import org.smartregister.R;
 import org.smartregister.view.activity.mock.BaseRegisterActivityMock;
 import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.SortOption;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 
 /**
  * Created by samuelgithengi on 11/3/20.
@@ -116,8 +120,20 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
         verify(recyclerViewFragment).onResumption();
     }
 
-    //@Test
-    public void testUpdateDefaultOptions() {
+    @Test
+    public void testUpdateDefaultOptions() throws Exception {
+        TextView mockTextView = mock(TextView.class);
+        ReflectionHelpers.setField(recyclerViewFragment, "appliedSortView", mockTextView);
+        ReflectionHelpers.setField(recyclerViewFragment, "appliedVillageFilterView", mockTextView);
+        ReflectionHelpers.setField(recyclerViewFragment, "serviceModeView", mockTextView);
+        ReflectionHelpers.setField(recyclerViewFragment, "titleLabelView", mockTextView);
+
+        assertNull(recyclerViewFragment.getCurrentVillageFilter());
+        assertNull(recyclerViewFragment.getCurrentServiceModeOption());
+        assertNull(recyclerViewFragment.getCurrentSortOption());
+
+        WhiteboxImpl.invokeMethod(recyclerViewFragment, "updateDefaultOptions");
+
         assertNotNull(recyclerViewFragment.getCurrentVillageFilter());
         assertNotNull(recyclerViewFragment.getCurrentServiceModeOption());
         assertNotNull(recyclerViewFragment.getCurrentSortOption());
