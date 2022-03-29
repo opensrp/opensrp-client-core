@@ -248,7 +248,7 @@ public class LocationRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void testMarkLocationsAsSynced(){
+    public void testMarkLocationsAsSyncedMarksLocationWithGivenParameterIdValueAsSynced(){
         String locationId = "location-id-1";
         locationRepository.markLocationsAsSynced(locationId);
         verify(sqLiteDatabase).update(stringArgumentCaptor.capture(),contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(), argsCaptor.capture() );
