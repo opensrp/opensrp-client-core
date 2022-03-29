@@ -77,7 +77,7 @@ public class ClientRelationshipRepositoryTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testSaveRelationShipVarArgShouldInsertAll() {
+    public void testSaveRelationShipWithVariableArgsShouldInsertAll() {
         ClientRelationship clientRelationship1 = mock(ClientRelationship.class);
         ClientRelationship clientRelationship2 = mock(ClientRelationship.class);
         SQLiteStatement sqLiteStatement = mock(SQLiteStatement.class);
