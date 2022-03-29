@@ -130,6 +130,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
+    jacoco.excludes = ['jdk.internal.*']
     testLogging {
         // Enables easier debugging of tests in Github Actions CI
         events TestLogEvent.FAILED
@@ -164,6 +165,7 @@ configurations.all {
 }
 
 dependencies {
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
     implementation 'net.zetetic:android-database-sqlcipher:4.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
@@ -230,7 +232,7 @@ dependencies {
 
     implementation 'org.smartregister:opensrp-client-utils:0.0.4-SNAPSHOT'
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:1.6.0-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-plan-evaluator:1.6.6-SNAPSHOT'
 
     implementation 'xerces:xercesImpl:2.12.0'
 
@@ -265,6 +267,9 @@ dependencies {
 
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
     testImplementation 'org.mockito:mockito-core:3.1.0'
+    testImplementation "androidx.test:core:1.4.0"
+    testImplementation "androidx.test.ext:junit:1.1.2"
+
     testAnnotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
 
     testImplementation('org.robolectric:robolectric:4.3.1') {
@@ -316,10 +321,11 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
 
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
     def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debug/classes", excludes: fileFilter)
+    def kotlinDebugTree = fileTree(dir: "${project.buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
     def mainSrc = "$project.projectDir/src/main/java"
 
     sourceDirectories.setFrom(files([mainSrc]))
-    classDirectories.setFrom(files([debugTree]))
+    classDirectories.setFrom(files([debugTree, kotlinDebugTree]))
     executionData.setFrom(fileTree(dir: project.buildDir, includes: [
             'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
     ]))
@@ -331,3 +337,4 @@ coveralls {
 }
 
 apply from: '../maven.gradle'
+apply plugin: 'kotlin-android'

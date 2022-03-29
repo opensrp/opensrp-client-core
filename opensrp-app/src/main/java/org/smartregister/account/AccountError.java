@@ -9,6 +9,8 @@ import java.io.Serializable;
  */
 public class AccountError implements Serializable {
 
+    public static final String ACCOUNT_NOT_FULLY_SETUP = "Account is not fully set up";
+
     @SerializedName("status_code")
     private int statusCode;
     private String error;
