@@ -32,6 +32,7 @@ public class AccountHelper {
 
         public final static String ACCOUNT_CONFIGURATION_ENDPOINT = "/rest/config/keycloak";
         public final static String TOKEN_ENDPOINT = "/oauth/token";
+        public final static String PASSWORD_RESET_ENDPOINT = "/account";
 
         public static final class GRANT_TYPE {
             public final static String PASSWORD = "password";

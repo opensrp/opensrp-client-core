@@ -441,6 +441,11 @@ public class AllConstants {
         public static final String TASK_GENERATED = "task_generated";
         public static final String DIALOG_TITLE = "dialog_title";
         public static final String DIALOG_MESSAGE = "dialog_message";
+        public static final String PLAN_ID = "plan-id";
+        public static final String ACTION_CODE = "action-code";
+        public static final String ACTION_IDENTIFIER = "action-identifier";
+        public static final String ACTION = "action";
+
     }
 
     public static final class REGISTER_FRAGMENT {
@@ -481,6 +486,7 @@ public class AllConstants {
         public static final String LOCATION_PICKER_TAG_SHOWN = "location.picker.tag.shown";
         public static final String ENCRYPT_SHARED_PREFERENCES = "encrypt.shared.preferences";
         public static final String ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN = "allow.offline.login.with.invalid.token";
+        public static final String ENABLE_SEARCH_BUTTON ="enable.search.button";
     }
 
     public interface FORCED_LOGOUT {

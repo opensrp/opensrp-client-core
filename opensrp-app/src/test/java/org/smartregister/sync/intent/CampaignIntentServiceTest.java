@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -37,7 +38,7 @@ import java.util.Set;
 /**
  * Created by Vincent Karuri on 02/03/2021
  */
-public class CampaignIntentServiceTest extends BaseUnitTest {
+public class CampaignIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Captor
     private ArgumentCaptor<Intent> intentArgumentCaptor;

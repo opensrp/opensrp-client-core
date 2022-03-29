@@ -61,7 +61,7 @@ public class EventDaoImplTest extends BaseUnitTest {
 
         assertEquals("Household_Registration", questionnaireResponse.getQuestionnaire().getValue());
         assertEquals("2184aaaa-d1cf-4099-945a-c66bd8a93e1e", questionnaireResponse.getId());
-        assertEquals(11, questionnaireResponse.getItem().size());
+        assertEquals(12, questionnaireResponse.getItem().size());
 
 
     }

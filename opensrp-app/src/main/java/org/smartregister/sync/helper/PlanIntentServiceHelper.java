@@ -25,8 +25,11 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
+import org.smartregister.utils.TimingRepeatTimeTypeConverter;
 
+import java.sql.Time;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,8 +52,10 @@ public class PlanIntentServiceHelper extends BaseHelper {
 
     private final PlanDefinitionRepository planDefinitionRepository;
     private final AllSharedPreferences allSharedPreferences;
-    protected static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd"))
+    protected static Gson gson = new GsonBuilder()
+            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd"))
             .registerTypeAdapter(LocalDate.class, new DateTypeConverter())
+            .registerTypeAdapter(Time.class, new TimingRepeatTimeTypeConverter())
             .disableHtmlEscaping()
             .create();
 
@@ -63,6 +68,8 @@ public class PlanIntentServiceHelper extends BaseHelper {
     private SyncProgress syncProgress;
 
     private Trace planSyncTrace;
+    private ArrayList<PlanDefinition> planIdsToEvaluate = new ArrayList<>();
+    private PeriodicTriggerEvaluationHelper periodicTriggerEvaluationHelper;
 
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
@@ -76,6 +83,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
         this.planDefinitionRepository = planRepository;
         this.planSyncTrace  = initTrace(PLAN_SYNC);
         this.allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+        periodicTriggerEvaluationHelper = new PeriodicTriggerEvaluationHelper();
     }
 
     public void syncPlans() {
@@ -117,10 +125,12 @@ public class PlanIntentServiceHelper extends BaseHelper {
             for (PlanDefinition plan : plans) {
                 try {
                     planDefinitionRepository.addOrUpdate(plan);
+                    planIdsToEvaluate.add(plan);
                 } catch (Exception e) {
                     Timber.e(e, "EXCEPTION %s", e.toString());
                 }
             }
+
             // update most recent server version
             if (!Utils.isEmptyCollection(plans)) {
                 batchFetchCount = plans.size();
@@ -132,12 +142,17 @@ public class PlanIntentServiceHelper extends BaseHelper {
                 // retry fetch since there were items synced from the server
                 batchFetchPlansFromServer(false);
             }
+
+            if (!planIdsToEvaluate.isEmpty()) {
+                periodicTriggerEvaluationHelper.reschedulePeriodicPlanEvaluations(plans);
+            }
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
 
         return batchFetchCount;
     }
+
 
     private void startPlanTrace(String action) {
         String providerId = allSharedPreferences.fetchRegisteredANM();
