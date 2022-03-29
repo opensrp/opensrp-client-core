@@ -237,15 +237,15 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     }
 
     public Context getApplicationContext() {
-        return mLoginPresenter.getLoginView().getActivityContext();
+        return getLoginView().getActivityContext();
     }
 
     public AllSharedPreferences getSharedPreferences() {
-        return mLoginPresenter.getOpenSRPContext().allSharedPreferences();
+        return mLoginPresenter != null && mLoginPresenter.getOpenSRPContext() != null ? mLoginPresenter.getOpenSRPContext().allSharedPreferences() : null;
     }
 
     public BaseLoginContract.View getLoginView() {
-        return mLoginPresenter.getLoginView();
+        return mLoginPresenter != null ? mLoginPresenter.getLoginView() : null;
     }
 
     public UserService getUserService() {
