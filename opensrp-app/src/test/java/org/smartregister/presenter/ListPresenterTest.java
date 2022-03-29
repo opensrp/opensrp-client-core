@@ -44,7 +44,7 @@ public class ListPresenterTest {
     }
 
     @Test
-    public void testOnFetchRequestError() {
+public void testOnItemsFetchShouldInvokeRefreshView() {
         listPresenter.with(view);
         List<ListContract.Identifiable> identifiables = new ArrayList<>();
         listPresenter.onItemsFetched(identifiables);
@@ -52,6 +52,15 @@ public class ListPresenterTest {
         Mockito.verify(view).renderData(identifiables);
         Mockito.verify(view).refreshView();
         Mockito.verify(view).setLoadingState(false);
+    }
+
+    @Test
+    public void testOnFetchRequestErrorWithExceptionShouldInvokeViewOnFetchError() {
+        listPresenter.with(view);
+        Exception e = new Exception();
+        listPresenter.onFetchRequestError(e);
+        Mockito.verify(view).setLoadingState(false);
+        Mockito.verify(view).onFetchError(e);
     }
 
     @Test

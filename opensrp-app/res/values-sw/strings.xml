@@ -389,6 +389,7 @@
     <string name="account_disabled_logged_off">Umetolewa nje ya mfumo na akaunti yako imezuiliwa. Tafadhali wasiliana na msimaizi</string>
     <string name="account_new_assignment_logged_off">Umetolewa nje ya mfumo. Ingia tena.</string>
     <string name="default_location_revoked_logged_off">Umetolewa nje ya mfumo kwa sababu haupo mahali.</string>
+    <string name="your_session_has_expired">Muda wa kipindi chako umeisha. Tafadhali ingia tena.</string>
 
     <!--Alerts-->
     <string name="invalid_url_massage">Tafadhali ingiza url sahihi</string>

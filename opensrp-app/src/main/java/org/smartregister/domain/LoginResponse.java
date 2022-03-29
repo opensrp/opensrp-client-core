@@ -24,6 +24,7 @@ public enum LoginResponse {
     SUCCESS_WITHOUT_TIME_DETAILS("Time Details was not accessible. Try again"),
     SUCCESS_WITHOUT_TIME("Server time was not accessible. Try again"),
     SUCCESS_WITHOUT_TIME_ZONE("Server time zone was not accessible. Try again"),
+    INVALID_GRANT("Account is not fully set up"),
     CUSTOM_SERVER_RESPONSE("Custom server response.");
 
 
@@ -59,5 +60,10 @@ public enum LoginResponse {
 
     public void setRawData(JSONObject rawData) {
         this.rawData = rawData;
+    }
+
+    public LoginResponse withRawData(JSONObject jsonObject){
+        this.rawData = jsonObject;
+        return this;
     }
 }
