@@ -49,6 +49,7 @@ subprojects {
 
     repositories {
         google()
+        jcenter()
         mavenCentral()
         maven { url 'https://jitpack.io' }
         maven { url "http://acra.googlecode.com/svn/repository/releases" }
