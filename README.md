@@ -2,7 +2,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/OpenSRP/opensrp-client-core/badge.svg?branch=master)](https://coveralls.io/github/OpenSRP/opensrp-client-core?branch=master)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/98bae20e1d9a4fcbb7da594a57705b9a)](https://www.codacy.com/gh/opensrp/opensrp-client-core/dashboard?utm_source=github.com&utm_medium=referral&utm_content=OpenSRP/opensrp-client-core&utm_campaign=Badge_Grade)
 
-[![Dristhi](opensrp-app/res/drawable-mdpi/login_logo.png)](https://smartregister.atlassian.net/wiki/dashboard.action)
+[![Dristhi](opensrp-core/res/drawable-mdpi/login_logo.png)](https://smartregister.atlassian.net/wiki/dashboard.action)
 
 # Table of Contents
 
