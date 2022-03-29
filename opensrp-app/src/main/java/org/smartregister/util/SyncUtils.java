@@ -15,9 +15,11 @@ import androidx.annotation.StringRes;
 import androidx.annotation.VisibleForTesting;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.account.AccountHelper;
@@ -57,12 +59,15 @@ public class SyncUtils {
     }
 
     public void logoutUser() throws AuthenticatorException, OperationCanceledException, IOException {
-        logoutUser(R.string.account_disabled_logged_off);
+        logoutUser(R.string.your_session_has_expired);
     }
 
     public void logoutUser(@StringRes int logoutMessage) throws AuthenticatorException, OperationCanceledException, IOException {
         //force remote login
-        opensrpContext.userService().forceRemoteLogin(opensrpContext.allSharedPreferences().fetchRegisteredANM());
+        if (!opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN)
+                || (HttpStatus.SC_UNAUTHORIZED != opensrpContext.allSharedPreferences().getLastAuthenticationHttpStatus())) {
+            opensrpContext.userService().forceRemoteLogin(opensrpContext.allSharedPreferences().fetchRegisteredANM());
+        }
 
         Intent logoutUserIntent = getLogoutUserIntent(logoutMessage);
 
@@ -146,7 +151,7 @@ public class SyncUtils {
      */
     public int getNumOfSyncAttempts() {
         int numOfRetries = CoreLibrary.getInstance().getSyncConfiguration().getSyncMaxRetries();
-        return  numOfRetries > 0 ? numOfRetries + 1 : 1;
+        return numOfRetries > 0 ? numOfRetries + 1 : 1;
     }
 
     /**

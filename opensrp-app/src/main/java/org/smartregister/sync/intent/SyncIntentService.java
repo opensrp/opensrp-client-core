@@ -72,6 +72,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     protected ValidateAssignmentHelper validateAssignmentHelper;
     private long totalRecords;
     private int fetchedRecords = 0;
+    private int totalRecordsCount = 0 ;
     //this variable using to track the sync request goes along with add events/clients
     private boolean isEmptyToAdd = true;
 
@@ -244,6 +245,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
         if (eCount == 0) {
             complete(FetchStatus.nothingFetched);
+            sendSyncProgressBroadcast(eCount); // Complete progress update
         } else if (eCount < 0) {
             fetchFailed(count);
         } else {
@@ -267,7 +269,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
             }
             sendSyncProgressBroadcast(eCount);
-            fetchRetry(0, false);
+            fetchRetry(0, true);
 
         }
     }
@@ -312,7 +314,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
 
         for (int i = 0; i < syncUtils.getNumOfSyncAttempts(); i++) {
-            Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
+            Map<String, Object> pendingEvents = db.getUnSyncedEvents(getEventBatchSize());
 
             if (pendingEvents.isEmpty()) {
                 break;
@@ -350,6 +352,9 @@ public class SyncIntentService extends BaseSyncIntentService {
                 Timber.i("Events synced successfully.");
                 stopTrace(eventSyncTrace);
                 updateProgress(eventsUploadedCount, totalEventCount);
+
+                if((totalEventCount - eventsUploadedCount) > 0)
+                    pushECToServer(db);
                 break;
             }
         }
@@ -451,11 +456,12 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     protected void sendSyncProgressBroadcast(int eventCount) {
+        totalRecordsCount += totalRecords;
         fetchedRecords = fetchedRecords + eventCount;
         SyncProgress syncProgress = new SyncProgress();
         syncProgress.setSyncEntity(SyncEntity.EVENTS);
         syncProgress.setTotalRecords(totalRecords);
-        syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, fetchedRecords));
+        syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecordsCount, fetchedRecords));
         Intent intent = new Intent();
         intent.setAction(AllConstants.SyncProgressConstants.ACTION_SYNC_PROGRESS);
         intent.putExtra(AllConstants.SyncProgressConstants.SYNC_PROGRESS_DATA, syncProgress);
@@ -482,6 +488,10 @@ public class SyncIntentService extends BaseSyncIntentService {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
         }
         return baseUrl;
+    }
+
+    protected Integer getEventBatchSize(){
+        return EVENT_PUSH_LIMIT;
     }
 
 }

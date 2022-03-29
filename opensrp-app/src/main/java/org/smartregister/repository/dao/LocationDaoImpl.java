@@ -1,5 +1,6 @@
 package org.smartregister.repository.dao;
 
+import com.ibm.fhir.model.resource.Bundle;
 import com.ibm.fhir.model.resource.Location;
 
 import org.smartregister.converters.LocationConverter;
@@ -39,6 +40,11 @@ public class LocationDaoImpl extends LocationRepository implements LocationDao {
 
     @Override
     public List<String> findChildLocationByJurisdiction(String jurisdictionId) {
+        throw new UnsupportedOperationException("This is not supported on android apps");
+    }
+
+    @Override
+    public List<Bundle> findLocationAndStocksByJurisdiction(String s) {
         throw new UnsupportedOperationException("This is not supported on android apps");
     }
 }

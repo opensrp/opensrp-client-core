@@ -1,7 +1,23 @@
 package org.smartregister.login.interactor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.smartregister.domain.LoginResponse.INVALID_GRANT;
+import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE;
+import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
+import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
+
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -18,6 +34,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
@@ -47,6 +64,7 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.service.UserService;
 import org.smartregister.shadows.LoginInteractorShadow;
 import org.smartregister.shadows.ShadowNetworkUtils;
+import org.smartregister.util.AppProperties;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
@@ -54,19 +72,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.TimeZone;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE;
-import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
-import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 
 /**
  * Created by samuelgithengi on 8/4/20.
@@ -144,6 +149,9 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
     @Mock
     private AccountResponse accountResponse;
 
+    @Mock
+    private AppProperties appProperties;
+
     private String username = "johndoe";
     private char[] qwertyPassword = "qwerty".toCharArray();
     private char[] password = "password".toCharArray();
@@ -155,6 +163,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         when(allSharedPreferences.getPreferences()).thenReturn(sharedPreferences);
         when(context.allSharedPreferences()).thenReturn(allSharedPreferences);
         when(context.userService()).thenReturn(userService);
+        when(context.getAppProperties()).thenReturn(appProperties);
         when(presenter.getLoginView()).thenReturn(view);
         when(presenter.getPassword()).thenReturn(qwertyPassword);
 
@@ -190,6 +199,8 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
     @After
     public void tearDown() {
         initCoreLibrary();
+        if (activity != null && !activity.isFinishing())
+            activity.finish();
     }
 
     @Test
@@ -500,5 +511,43 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         assertEquals("1212121", settingCaptor.getValue().getVersion());
     }
 
+    @Test
+    public void testRemoteLoginWithAccountNotFullySetupNavigatesToChangePasswordActivity() {
+        String issuerEndpoint = "https://my-server.com/oauth/issuer";
+
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
+        AccountError accountError = new AccountError(0, AccountError.ACCOUNT_NOT_FULLY_SETUP);
+
+        Whitebox.setInternalState(accountError, "errorDescription", INVALID_GRANT.message());
+
+        AccountResponse accountResponse = new AccountResponse(400, accountError);
+
+        LoginInteractorShadow interactorSpy = spy(this.interactor);
+        Activity activitySpy = spy(this.activity);
+
+        when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(accountResponse);
+        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
+        when(interactor.getLoginView()).thenReturn(view);
+        Mockito.doReturn(activitySpy).when(view).getActivityContext();
+
+        interactorSpy.login(new WeakReference<>(view), username, qwertyPassword);
+
+        ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
+
+        verify(interactorSpy, Mockito.atLeastOnce()).showPasswordResetView(urlCaptor.capture());
+        assertNotNull(urlCaptor.getValue());
+        assertEquals(issuerEndpoint, urlCaptor.getValue());
+
+        ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+        verify(activitySpy, Mockito.atLeastOnce()).startActivity(intentCaptor.capture());
+        assertNotNull(intentCaptor.getValue());
+
+        String paramInBundle = intentCaptor.getValue().getStringExtra(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL);
+        assertNotNull(paramInBundle);
+        assertEquals(issuerEndpoint, paramInBundle);
+
+        //Assert user service fetch details was never invoked
+        verify(userService, never()).fetchUserDetails(ArgumentMatchers.anyString());
+    }
 
 }

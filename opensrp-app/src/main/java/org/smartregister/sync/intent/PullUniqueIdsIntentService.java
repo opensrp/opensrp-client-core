@@ -6,6 +6,8 @@ package org.smartregister.sync.intent;
 
 import android.content.Intent;
 
+import androidx.annotation.VisibleForTesting;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
@@ -53,7 +55,7 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
     }
 
     private JSONObject fetchOpenMRSIds(int source, int numberToGenerate) throws Exception {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        HTTPAgent httpAgent = getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
         String endString = "/";
@@ -91,6 +93,11 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         uniqueIdRepo = CoreLibrary.getInstance().context().getUniqueIdRepository();
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @VisibleForTesting
+    protected HTTPAgent getHttpAgent() {
+        return CoreLibrary.getInstance().context().getHttpAgent();
     }
 
 }

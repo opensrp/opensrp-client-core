@@ -75,6 +75,8 @@ public interface BaseLoginContract {
         void onDestroy(boolean isChangingConfiguration);
 
         void login(WeakReference<View> view, String userName, char[] password);
+
+        void showPasswordResetView(String passwordResetEndpoint);
     }
 
     interface Model {

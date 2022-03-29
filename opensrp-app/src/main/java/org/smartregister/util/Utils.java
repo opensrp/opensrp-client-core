@@ -16,6 +16,8 @@
 
 package org.smartregister.util;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -99,8 +101,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import timber.log.Timber;
-
-import static android.content.Context.INPUT_METHOD_SERVICE;
 
 
 /**
@@ -613,17 +613,22 @@ public class Utils {
     public static String getUserInitials() {
         String initials = "Me";
         String preferredName = getPrefferedName();
-
-        if (StringUtils.isNotBlank(preferredName)) {
-            String[] preferredNameArray = preferredName.split(" ");
-            initials = "";
-            if (preferredNameArray.length > 1) {
-                initials = String.valueOf(preferredNameArray[0].charAt(0)) + String.valueOf(preferredNameArray[1].charAt(0));
-            } else if (preferredNameArray.length == 1) {
-                initials = String.valueOf(preferredNameArray[0].charAt(0));
+        try {
+            if (StringUtils.isNotBlank(preferredName)) {
+                preferredName = preferredName.trim();
+                String[] preferredNameArray = preferredName.split(" ");
+                initials = "";
+                if (preferredNameArray.length > 1) {
+                    initials = String.valueOf(preferredNameArray[0].charAt(0)) + String.valueOf(preferredNameArray[1].charAt(0));
+                } else if (preferredNameArray.length == 1) {
+                    initials = String.valueOf(preferredNameArray[0].charAt(0));
+                }
             }
+            return initials;
+        } catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException e) {
+            Timber.e("Index out of Bounds " + e.getMessage());
+            return "";
         }
-        return initials;
     }
 
     public static AllSharedPreferences getAllSharedPreferences() {
@@ -971,22 +976,49 @@ public class Utils {
      * combines them and returns a single string to be appended to a GET API call
      *
      * @param apiParams a list of pairs containing API call parameters and values
-     *
      * @return a string having all the parameters and values combined
      */
-    public static String composeApiCallParamsString(List <Pair<String,String>> apiParams) {
+    public static String composeApiCallParamsString(List<Pair<String, String>> apiParams) {
         StringBuilder apiCallParamsString = new StringBuilder("");
         String paramsSeparator = "&";
         String equalsSign = "=";
         if (apiParams == null || apiParams.isEmpty()) {
             return apiCallParamsString.toString();
         }
-        for (Pair<String,String> apiParamsPair: apiParams) {
+        for (Pair<String, String> apiParamsPair : apiParams) {
             apiCallParamsString.append(paramsSeparator)
                     .append(apiParamsPair.first)
                     .append(equalsSign)
                     .append(apiParamsPair.second);
         }
         return apiCallParamsString.toString();
+    }
+
+    public static String getTranslatedLocation(String locationName) {
+        String key = getLocationKeyFromName(locationName);
+        String translatedLocationName = getTranslatedIdentifier(key);
+
+        return StringUtils.isNotEmpty(translatedLocationName) ? translatedLocationName : locationName;
+    }
+
+    /**
+     * Clean up location name string to remove special characters and replace spaces with underscores to ge the identifier
+     *
+     * @param locationName
+     * @return
+     */
+    private static String getLocationKeyFromName(@NonNull String locationName) {
+        if (StringUtils.isNotEmpty(locationName)) {
+            return locationName.toLowerCase().trim()
+                    .replace(" ", "_")
+                    .replace("(", "")
+                    .replace(")", "")
+                    .replace("-", "_")
+                    .replace(":", "_")
+                    .replace("'", "")
+                    .replace("’", "_");
+        } else {
+            return locationName;
+        }
     }
 }

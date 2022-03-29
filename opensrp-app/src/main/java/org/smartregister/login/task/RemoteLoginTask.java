@@ -1,5 +1,7 @@
 package org.smartregister.login.task;
 
+import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountsException;
@@ -18,12 +20,15 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.account.AccountConfiguration;
+import org.smartregister.account.AccountError;
 import org.smartregister.account.AccountHelper;
 import org.smartregister.account.AccountResponse;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.event.Listener;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
+import org.smartregister.util.EasyMap;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
@@ -32,8 +37,6 @@ import java.util.Collections;
 import java.util.Locale;
 
 import timber.log.Timber;
-
-import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
 
 /**
  * Created by ndegwamartin on 22/06/2018.
@@ -72,7 +75,8 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
             boolean isKeycloakConfigured = accountConfiguration != null;
 
             //Persist config resources
-            SharedPreferences.Editor sharedPrefEditor = getOpenSRPContext().allSharedPreferences().getPreferences().edit();
+            AllSharedPreferences allSharedPreferences = getOpenSRPContext().allSharedPreferences();
+            SharedPreferences.Editor sharedPrefEditor = allSharedPreferences.getPreferences().edit();
             sharedPrefEditor.putBoolean(AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED, isKeycloakConfigured);
             sharedPrefEditor.apply();
 
@@ -97,6 +101,10 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                 sharedPrefEditor.apply();
 
                 AccountResponse response = getOpenSRPContext().getHttpAgent().oauth2authenticate(mUsername, mPassword, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD, accountConfiguration.getTokenEndpoint());
+
+                if (response.getStatus() == 400 && response.getAccountError() != null && AccountError.ACCOUNT_NOT_FULLY_SETUP.equals(response.getAccountError().getErrorDescription())) {
+                    return LoginResponse.INVALID_GRANT.withRawData(new JSONObject(EasyMap.mapOf(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL, accountConfiguration.getIssuerEndpoint())));
+                }
 
                 AccountManager mAccountManager = CoreLibrary.getInstance().getAccountManager();
 
@@ -141,6 +149,8 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                         }
 
                     }
+
+                    allSharedPreferences.updateLastAuthenticationHttpStatus(0);
                 } else {
                     if (response.getAccountError() != null && response.getAccountError().getError() != null) {
                         return LoginResponse.valueOf(response.getAccountError().getError().toUpperCase(Locale.ENGLISH));

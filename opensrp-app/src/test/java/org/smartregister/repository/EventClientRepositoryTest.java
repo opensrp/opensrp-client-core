@@ -45,7 +45,13 @@ import java.util.Set;
 import java.util.UUID;
 
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.smartregister.AllConstants.ROWID;
+import static org.smartregister.repository.BaseRepository.TYPE_InValid;
+import static org.smartregister.repository.BaseRepository.TYPE_Task_Unprocessed;
+import static org.smartregister.repository.BaseRepository.TYPE_Unsynced;
+import static org.smartregister.repository.BaseRepository.TYPE_Valid;
 
 /**
  * Created by onaio on 29/08/2017.
@@ -626,7 +632,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     @Test
     public  void testGetUnSyncedClientsReturnsListOfUnsyncedClients() throws Exception {
         String query = "SELECT json FROM client WHERE syncStatus = ? limit 16";
-        String[] params = new String[]{BaseRepository.TYPE_Unsynced};
+        String[] params = new String[]{TYPE_Unsynced};
         when(sqliteDatabase.rawQuery(query, params)).thenReturn(getClientCursor());
 
         List<JSONObject> actualClientJSONObjects = eventClientRepository.getUnSyncedClients(16);
@@ -636,10 +642,101 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     }
 
+    @Test
+    public void testMarkEventValidationStatusUpdatesStatusToValid() {
+        String formSubmissionId = "form-sub-id-1";
+        boolean isValid = true;
+        int maxRowId = 10;
+        String maxRowIdQuery = "SELECT max(rowid) AS max_row_id FROM event";
+        String whereClause = EventClientRepository.event_column.formSubmissionId.name() + " = ?";
+        when(sqliteDatabase.rawQuery(maxRowIdQuery, null)).thenReturn(getCursorMaxRowId());
+        ContentValues expectedContentValues = new ContentValues();
+        expectedContentValues.put(EventClientRepository.event_column.formSubmissionId.name(), formSubmissionId);
+        expectedContentValues.put(EventClientRepository.event_column.validationStatus.name(), TYPE_Valid);
+        expectedContentValues.put(ROWID, maxRowId + 1);
+
+        eventClientRepository.markEventValidationStatus(formSubmissionId, isValid);
+        verify(sqliteDatabase).update(EventClientRepository.Table.event.name(), expectedContentValues, whereClause, new String[]{formSubmissionId});
+    }
+
+    @Test
+    public void testMarkEventValidationStatusUpdatesStatusToInValidAndSyncStatusToUnsynced() {
+        String formSubmissionId = "form-sub-id-1";
+        boolean isValid = false;
+        int maxRowId = 10;
+        String maxRowIdQuery = "SELECT max(rowid) AS max_row_id FROM event";
+        String whereClause = EventClientRepository.event_column.formSubmissionId.name() + " = ?";
+        when(sqliteDatabase.rawQuery(maxRowIdQuery, null)).thenReturn(getCursorMaxRowId());
+        ContentValues expectedContentValues = new ContentValues();
+        expectedContentValues.put(EventClientRepository.event_column.formSubmissionId.name(), formSubmissionId);
+        expectedContentValues.put(EventClientRepository.event_column.validationStatus.name(), TYPE_InValid);
+        expectedContentValues.put(ROWID, maxRowId + 1);
+        expectedContentValues.put(EventClientRepository.event_column.syncStatus.name(), TYPE_Unsynced);
+
+        eventClientRepository.markEventValidationStatus(formSubmissionId, isValid);
+        verify(sqliteDatabase).update(EventClientRepository.Table.event.name(), expectedContentValues, whereClause, new String[]{formSubmissionId});
+    }
+
+    @Test
+    public void testMarkClientValidationStatusUpdatesStatusToValid() {
+        String baseEntityId = "base-entity-id-1";
+        boolean isValid = true;
+        int maxRowId = 10;
+        String maxRowIdQuery = "SELECT max(rowid) AS max_row_id FROM client";
+        String whereClause = EventClientRepository.client_column.baseEntityId.name() + " = ?";
+        when(sqliteDatabase.rawQuery(maxRowIdQuery, null)).thenReturn(getCursorMaxRowId());
+        ContentValues expectedContentValues = new ContentValues();
+        expectedContentValues.put(EventClientRepository.client_column.baseEntityId.name(), baseEntityId);
+        expectedContentValues.put(EventClientRepository.event_column.validationStatus.name(), TYPE_Valid);
+        expectedContentValues.put(ROWID, maxRowId + 1);
+
+        eventClientRepository.markClientValidationStatus(baseEntityId, isValid);
+        verify(sqliteDatabase).update(EventClientRepository.Table.client.name(), expectedContentValues, whereClause, new String[]{baseEntityId});
+    }
+
+    @Test
+    public void testMarkClientValidationStatusUpdatesStatusToInValidAndSyncStatusToUnsynced() {
+        String baseEntityId = "base-entity-id-1";
+        boolean isValid = false;
+        int maxRowId = 10;
+        String maxRowIdQuery = "SELECT max(rowid) AS max_row_id FROM client";
+        String whereClause = EventClientRepository.client_column.baseEntityId.name() + " = ?";
+        when(sqliteDatabase.rawQuery(maxRowIdQuery, null)).thenReturn(getCursorMaxRowId());
+        ContentValues expectedContentValues = new ContentValues();
+        expectedContentValues.put(EventClientRepository.client_column.baseEntityId.name(), baseEntityId);
+        expectedContentValues.put(EventClientRepository.event_column.validationStatus.name(), TYPE_InValid);
+        expectedContentValues.put(ROWID, maxRowId + 1);
+        expectedContentValues.put(EventClientRepository.event_column.syncStatus.name(), TYPE_Unsynced);
+
+        eventClientRepository.markClientValidationStatus(baseEntityId, isValid);
+        verify(sqliteDatabase).update(EventClientRepository.Table.client.name(), expectedContentValues, whereClause, new String[]{baseEntityId});
+    }
+
+    @Test
+    public void testmarkEventAsTaskUnprocessedUpdatesSyncStatusToTaskUnprocessed() {
+        String formSubmissionId = "form-sub-id-1";
+        int maxRowId = 10;
+        String maxRowIdQuery = "SELECT max(rowid) AS max_row_id FROM event";
+        String whereClause = EventClientRepository.event_column.formSubmissionId.name() + " = ?";
+        when(sqliteDatabase.rawQuery(maxRowIdQuery, null)).thenReturn(getCursorMaxRowId());
+        ContentValues expectedContentValues = new ContentValues();
+        expectedContentValues.put(EventClientRepository.client_column.syncStatus.name(), TYPE_Task_Unprocessed);
+        expectedContentValues.put(ROWID, maxRowId + 1);
+
+        eventClientRepository.markEventAsTaskUnprocessed(formSubmissionId);
+        verify(sqliteDatabase).update(EventClientRepository.Table.event.name(), expectedContentValues, whereClause, new String[]{formSubmissionId});
+    }
+
 
     public static MatrixCursor getIndexCursor() {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{"index"});
         matrixCursor.addRow(new String[]{"event_index"});
+        return matrixCursor;
+    }
+
+    public MatrixCursor getCursorMaxRowId() {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"max_row_id"});
+        matrixCursor.addRow(new String[]{"10"});
         return matrixCursor;
     }
 

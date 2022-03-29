@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -37,7 +38,7 @@ import java.util.Set;
 /**
  * Created by Vincent Karuri on 02/03/2021
  */
-public class CampaignIntentServiceTest extends BaseUnitTest {
+public class CampaignIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Captor
     private ArgumentCaptor<Intent> intentArgumentCaptor;
@@ -62,7 +63,7 @@ public class CampaignIntentServiceTest extends BaseUnitTest {
         Mockito.doReturn(new Response<String>(ResponseStatus.failure, null)).when(httpAgent).fetch(ArgumentMatchers.anyString());
         ReflectionHelpers.setField(openSRPContext, "httpAgent", httpAgent);
 
-        Whitebox.invokeMethod(campaignIntentService, "onHandleIntent", null);
+        Whitebox.invokeMethod(campaignIntentService, "onHandleIntent", (Object) null);
 
         Mockito.verify(campaignIntentService).sendBroadcast(intentArgumentCaptor.capture());
         Assert.assertEquals(FetchStatus.nothingFetched,
@@ -102,7 +103,7 @@ public class CampaignIntentServiceTest extends BaseUnitTest {
         CampaignRepository campaignRepository = Mockito.mock(CampaignRepository.class);
         ReflectionHelpers.setField(campaignIntentService, "campaignRepository", campaignRepository);
 
-        Whitebox.invokeMethod(campaignIntentService, "onHandleIntent", null);
+        Whitebox.invokeMethod(campaignIntentService, "onHandleIntent", (Object) null);
 
         Mockito.verify(campaignRepository, Mockito.times(2)).addOrUpdate(campaignArgumentCaptor.capture());
 
