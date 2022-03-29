@@ -23,14 +23,11 @@ import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.cloudant.models.Client;
-import org.smartregister.cloudant.models.Event;
 import org.smartregister.domain.ANM;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.service.ANMService;
-import org.smartregister.sync.CloudantDataHandler;
 import org.smartregister.util.mock.XmlSerializerMock;
 
 import java.io.File;
@@ -43,7 +40,7 @@ import java.util.HashMap;
 /**
  * Created by kaderchowdhury on 14/11/17.
  */
-@PrepareForTest({CoreLibrary.class, CloudantDataHandler.class, Xml.class})
+@PrepareForTest({CoreLibrary.class, Xml.class})
 public class FormUtilsTest extends BaseUnitTest {
 
     private FormUtils formUtils;
@@ -59,8 +56,7 @@ public class FormUtilsTest extends BaseUnitTest {
 
     @Rule
     public PowerMockRule rule = new PowerMockRule();
-    @Mock
-    private CloudantDataHandler cloudantDataHandler;
+
     @Mock
     private CoreLibrary coreLibrary;
     @Mock
@@ -83,10 +79,6 @@ public class FormUtilsTest extends BaseUnitTest {
         PowerMockito.when(context.anmService()).thenReturn(anmService);
         PowerMockito.when(anmService.fetchDetails()).thenReturn(anm);
         PowerMockito.when(anm.name()).thenReturn("anmId");
-        PowerMockito.mockStatic(CloudantDataHandler.class);
-        PowerMockito.when(CloudantDataHandler.getInstance(context_.getApplicationContext())).thenReturn(cloudantDataHandler);
-        PowerMockito.when(cloudantDataHandler.createClientDocument(Mockito.any(Client.class))).thenReturn(null);
-        PowerMockito.when(cloudantDataHandler.createEventDocument(Mockito.any(Event.class))).thenReturn(null);
         formUtils = FormUtils.getInstance(context_);
     }
 
@@ -159,40 +151,6 @@ public class FormUtilsTest extends BaseUnitTest {
     @Test
     public void assertConstructorInitializationNotNull() throws Exception {
         Assert.assertNotNull(new FormUtils(context_));
-    }
-
-    @Test
-    public void assertgenerateFormSubmisionFromXMLString() throws Exception {
-        formUtils = new FormUtils(context_);
-
-        String formData = getStringFromStream(new FileInputStream(getFileFromPath(this, formSubmissionXML)));
-
-        Mockito.when(context_.getAssets()).thenReturn(assetManager);
-
-        Mockito.when(assetManager.open(formDefinition)).thenAnswer(new Answer<InputStream>() {
-            @Override
-            public InputStream answer(InvocationOnMock invocation) throws Throwable {
-                return new FileInputStream(getFileFromPath(this, formDefinition));
-            }
-        });
-
-        Mockito.when(assetManager.open(model)).thenAnswer(new Answer<InputStream>() {
-            @Override
-            public InputStream answer(InvocationOnMock invocation) throws Throwable {
-                return new FileInputStream(getFileFromPath(this, model));
-            }
-        });
-        Mockito.when(assetManager.open(formJSON)).thenAnswer(new Answer<InputStream>() {
-            @Override
-            public InputStream answer(InvocationOnMock invocation) throws Throwable {
-                return new FileInputStream(getFileFromPath(this, formJSON));
-            }
-        });
-        FormDataRepository formDataRepository = Mockito.mock(FormDataRepository.class);
-        Mockito.when(context.formDataRepository()).thenReturn(formDataRepository);
-        Mockito.when(formDataRepository.queryUniqueResult(Mockito.anyString(),Mockito.any(String[].class))).thenReturn(null);
-
-        Assert.assertNotNull(formUtils.generateFormSubmisionFromXMLString("baseEntityId", formData, FORMNAME, new JSONObject()));
     }
 
     private static File getFileFromPath(Object obj, String fileName) {

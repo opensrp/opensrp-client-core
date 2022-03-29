@@ -154,7 +154,7 @@ public class ClientProcessorForJava {
                 .getEventClientRepository().markEventAsProcessed(event.getFormSubmissionId());
     }
 
-    public Boolean processEvent(Event event, Client client, ClientClassification clientClassification) throws Exception {
+    public Boolean processEvent(Event event, Client client, ClientClassification clientClassification){
         try {
             // mark event as processed regardless of any errors
             completeProcessing(event);

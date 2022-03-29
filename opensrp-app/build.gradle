@@ -202,7 +202,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     annotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
 
-    implementation 'com.cloudant:cloudant-http:2.7.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.security:security-crypto:1.0.0-rc03'
@@ -246,7 +245,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     annotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
 
-    implementation 'com.cloudant:cloudant-http:2.7.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
 
     implementation('com.android.support:design:28.0.0') {

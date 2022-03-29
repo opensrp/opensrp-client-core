@@ -40,19 +40,6 @@ public class OpenSRPClientBroadCastReceiver extends BroadcastReceiver {
                     Timber.d("timezonechanged");
                     forceFullySignOut();
                     break;
-                case AllConstants.CloudantSync.ACTION_DATABASE_CREATED:
-//                      ((SecuredActivity) activity).loadDatabase();
-                    break;
-                case AllConstants.CloudantSync.ACTION_REPLICATION_COMPLETED:
-//                    Integer docsReplicated = intent.getIntExtra(
-//                            AllConstants.CloudantSync.DOCUMENTS_REPLICATED, 0);
-//                    Integer batchReplicated = intent.getIntExtra(
-//                            AllConstants.CloudantSync.BATCHES_REPLICATED, 0);
-//                    ((SecuredActivity) activity).showToast("Replication completed.");
-                    break;
-                case AllConstants.CloudantSync.ACTION_REPLICATION_ERROR:
-                    ((SecuredActivity) activity).showToast(context.getString(R.string.replication_error_occurred));
-                    break;
                 default:
                     // Do nothing
             }
