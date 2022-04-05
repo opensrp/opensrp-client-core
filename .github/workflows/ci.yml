@@ -15,6 +15,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Cancel Previous workflow runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
       - uses: actions/checkout@v2
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
@@ -25,11 +29,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Run unit tests with Gradle
-        run: ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport --stacktrace
+        run: ./gradlew opensrp-core:clean opensrp-core:jacocoTestReport --stacktrace
       - name: Generate Javadoc with Gradle
         run: ./gradlew javadoc
       - name: Upload coverage to Coveralls with Gradle
-        run: ./gradlew opensrp-app:coveralls --stacktrace
+        run: ./gradlew opensrp-core:coveralls --stacktrace
 
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}

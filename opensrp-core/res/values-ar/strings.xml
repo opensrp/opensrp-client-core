@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="empty_string"></string>
+    <string name="app_name">نظام التسجيل الذكي المفتوح</string>
+    <string name="userNameEditText">أدخل اسم المستخدم</string>
+    <string name="passwordEditText">ادخل كلمه المرور</string>
+    <string name="login_text"> تسجيل الدخول</string>
+    <string name="logout_text">خروج</string>
+    <string name="image_description">شعار</string>
+    <string name="spacer">مبعاد</string>
+    <string name="loggin_in_dialog_title">جاري الدخول</string>
+    <string name="loggin_in_dialog_message">الرجاء الانتظار</string>
+    <string name="login_failed_dialog_title">فشل تسجيل الدخول</string>
+    <string name="login_failed_dialog_message">يرجى التحقق من معلومات الهوية</string>
+    <string name="form_back_confirm_dialog_message">هل أنت متأكد أنك تريد العودة؟ سيتم مسح جميع المعطيات التي أدخلت في هذه الاستمارة</string>
+    <string name="form_back_confirm_dialog_title">تأكيد استمارة مغلقة</string>
+    <string name="yes_button_label">نعم</string>
+    <string name="no_button_label">لا</string>
+
+    <string name="home_ec_label">زوجان مؤهلان</string>
+    <string name="home_fp_label">تنظيم الأسرة</string>
+    <string name="home_anc_label">علاجات ما قبل الولادة</string>
+    <string name="home_pnc_label">علاجات ما بعد الولادة</string>
+    <string name="home_child_label"> الطفل</string>
+    <string name="home_report_label">إبلاغ</string>
+    <string name="register_label">تسجل</string>
+    <string name="home_videos_label">فيديوهات</string>
+
+    <string name="videos_cannot_play_video_dialog_title">لا يمكن تشغيل الفيديو</string>
+    <string name="videos_IEC_not_installed_dialog_message">الرجاء تثبيت تطبيق IEC لتشغيل مقاطع الفيديو</string>
+    <string name="videos_unknown_error_dialog_message">غير قادر على تشغيل الفيديو بسبب خطأ فني.</string>
+    <string name="settings_logout_confirm_title">تأكيد تسجيل الخروج</string>
+    <string name="settings_logout_confirm_dialog_message">هل أنت متأكد أنك تريد تسجيل الخروج؟ سيتم مسح جميع البيانات</string>
+    <string name="unsynced_forms_count_message">استمارات غير متزامنة </string>
+
+    <string name="str_next"> التالية&gt;&gt;</string>
+    <string name="str_previous">&gt;&gt;السابقة </string>
+    <string name="str_page_info">صفحة {0} من {1}</string>
+
+    <string name="header_name">الاسم</string>
+    <string name="header_ec_no">EC NO</string>
+    <string name="header_gplsa">GPLSA</string>
+    <string name="header_fp">طريقة تنظيم الأسرة</string>
+    <string name="header_children">الأطفال</string>
+    <string name="header_status">الحالة</string>
+    <string name="header_edit"></string>
+
+    <string name="couple_selection">جميع الأزواج المؤهلين</string>
+    <string name="str_ec_search_hint"> بحث</string>
+    <string name="str_fp_search_hint">بحث سجل تنظيم الأسرة</string>
+    <string name="str_pnc_search_hint">بحث سجل علاجات ما قبل الولادة </string>
+    <string name="str_child_search_hint">بحث سجل الطفل</string>
+    <string name="label_sorted_by">فرز بواسطة:</string>
+    <string name="label_village">القرية</string>
+    <string name="ec_register_wife_age">({0})</string>
+
+    <string name="ec_register_male_child">ذكر\n{0}</string>
+    <string name="ec_register_female_child">انثى\n{0}</string>
+    <string name="ec_register_no_fp">رقم تنظيم الأسرة</string>
+
+    <string name="status_delivery">ولادة</string>
+    <string name="str_lmp">آخر دورة شهرية</string>
+    <string name="str_edd">EDD</string>
+    <string name="str_anc">علاجات ما قبل الولادة</string>
+    <string name="str_pnc">علاجات ما بعد الولادة</string>
+    <string name="str_fp">تنظيم الأسرة</string>
+    <string name="str_number_of_strips">عدد الشرائط:</string>
+    <string name="str_number_given">الرقم المعطى:</string>
+    <string name="str_gravida">ج</string>
+    <string name="str_parity">پ</string>
+    <string name="str_number_of_living_children">ل</string>
+    <string name="str_number_of_still_births"> س</string>
+    <string name="str_number_of_abortions">أ</string>
+
+    <string name="str_out_of_area">(O/A)</string>
+
+    <string name="sort_by_name_label">(أ إلى ي)الاسم</string>
+    <string name="sort_by_name_label_reverse">( ي إلى أ)الاسم</string>
+    <string name="sort_by_ec_number_label">EC Number</string>
+    <string name="sort_by_date_of_delivery_label">تاريخ الولادة</string>
+    <string name="sort_by_sc_label">SC</string>
+    <string name="sort_by_st_label">ST</string>
+    <string name="sort_by_high_priority_label">أولوية عالية</string>
+    <string name="sort_by_high_risk_pregnancy_label">HRP</string>
+    <string name="sort_by_high_risk_label">خطر كبير</string>
+    <string name="sort_by_bpl_label">BPL</string>
+
+    <string name="filter_by_all_label">الكل</string>
+    <string name="filter_by_out_of_area_label">O/A</string>
+    <string name="filter_by_leave_the_place_label">L/P</string>
+    <string name="ec_register_title_in_short">EC</string>
+
+    <string name="str_register_anc_form">تسجىل علاجات ما قبل الولادة </string>
+    <string name="str_register_fp_form">تسجيل تنظيم الأسرة </string>
+    <string name="str_register_child_form">تسجيل الطفل</string>
+    <string name="str_fp_change_form">تغير تنظيم الأسرة</string>
+    <string name="str_fp_change_fp_form">تغير تنظيم الأسرة</string>
+    <string name="str_record_ecp_form">Record ECP</string>
+    <string name="str_edit_ec_form">Edit EC</string>
+    <string name="str_close_ec_form">Close EC</string>
+    <string name="report_month_sample_text">26\03 - 25\04</string>
+    <string name="str_switch_language">تغير اللغة </string>
+
+    <string name="str_register_anc_visit_form">زيارة علاجات ما قبل الولادة</string>
+    <string name="str_register_hb_test_form">فحص الهيموجلوبين</string>
+    <string name="str_register_ifa_form">IFA</string>
+    <string name="str_register_tt_form">لقاح توكسويد الكزاز</string>
+    <string name="str_register_delivery_plan_form">خطة الولادة</string>
+    <string name="str_register_pnc_registration_form">تسجيل علاجات ما بعد الولادة</string>
+    <string name="str_register_anc_investigations_form">تحقيقات علاجات ما قبل الولادة</string>
+    <string name="str_register_anc_close_form">علاجات ما قبل الولادة مغلقة</string>
+
+    <string name="str_reporting">إبلاغ</string>
+    <string name="str_videos">فيديوهات</string>
+
+    <string name="child_register_title_in_short"> الطفل:</string>
+    <string name="child_service_mode_overview">استعراض عام</string>
+    <string name="child_service_mode_immunization_0_to_9">تلقيح 0-9</string>
+    <string name="child_service_mode_immunization_9_plus">تلقيح 9+</string>
+    <string name="header_id_no">رقم الهوية</string>
+    <string name="header_dob">رقم الهوية</string>
+    <string name="header_sick_status">الحالة المرضىية</string>
+    <string name="header_last_service">الخدمة الأخيرة</string>
+    <string name="header_bcg">لقاح السل</string>
+    <string name="header_hep_b_birth">لقاح التهاب الكبد \"ب\" عند الولادة</string>
+    <string name="header_opv">لقاح الشلل</string>
+    <string name="header_pentavalent">الخماسي</string>
+    <string name="header_measles">لقاح الحصبة</string>
+    <string name="header_opv_booster">لقاح الشلل معزز</string>
+    <string name="header_dpt_booster">لقاح الشلل معزز </string>
+    <string name="header_vitamin_a">الفيتامين أ</string>
+    <string name="thayi_label">Thayi:</string>
+    <string name="mother_ec_label">Mother EC:</string>
+    <string name="sort_by_child_age">العمر</string>
+    <string name="sort_by_child_hr">HR</string>
+    <string name="str_child_immunizations">تلقيحات الطفل</string>
+    <string name="str_child_illness">مرض الطفل</string>
+    <string name="str_child_close">طفل مغلق</string>
+    <string name="str_vitamin_a">الفيتامين أ</string>
+    <string name="service_type_pnc">علاجات ما بعد الولادة</string>
+    <string name="service_type_pentavalent_2">الخماسي 2</string>
+    <string name="service_type_bcg">لقاح السل</string>
+    <string name="service_type_pentavalent_3">الخماسي 3</string>
+    <string name="service_type_pentavalent_1">الخماسي 1</string>
+    <string name="service_type_opv_0">لقاح الشلل 0</string>
+    <string name="service_type_opv_1">لقاح الشلل 1</string>
+    <string name="service_type_opv_2">لقاح الشلل 2</string>
+    <string name="service_type_opv_3">لقاح الشلل 3</string>
+    <string name="service_type_dpt_booster_1"> اللقاح الثلاثى معزز 1</string>
+    <string name="service_type_dpt_booster_2"> اللقاح الثلاثى معزز 2</string>
+    <string name="service_type_opv_booster">لقاح الشلل معزز</string>
+    <string name="service_type_measles">لقاح الحصبة</string>
+    <string name="service_type_measles_booster">لقاح الحصبة معزز </string>
+    <string name="service_type_measles_booster_short">لقاح الحصبة معزز</string>
+    <string name="service_type_hepb_0">لقاح التهاب الكبد \"ب\"</string>
+    <string name="service_type_je">JE</string>
+    <string name="service_type_mmr">لقاح الحصبة، النكاف والحصبة الألمانية </string>
+    <string name="service_type_vitamin_a">الفيتامين أ</string>
+    <string name="service_type_illness_visit">زيارة مريضة</string>
+    <string name="service_type_empty" />
+    <string name="sick_visit">زيارة مريضة</string>
+    <string name="illness_report">1 تقرير المرض: 1%s</string>
+    <string name="illness_date">التاريخ</string>
+    <string name="str_bcg">لقاح السل</string>
+    <string name="str_bcg_on">على</string>
+    <string name="hep_b_birth">لقاح التهاب الكبد \"ب\"</string>
+    <string name="opv">لقاح الشلل</string>
+    <string name="tt">لقاح توكسويد الكزاز</string>
+    <string name="ifa">IFA</string>
+    <string name="pentavalent">الخماسي</string>
+    <string name="measles">لقاح الحصبة معزز</string>
+    <string name="opv_booster">لقاح الشلل معزز</string>
+    <string name="dpt_booster"> اللقاح الثلاثى معزز</string>
+    <string name="vitamin_a">الفيتامين أ</string>
+    <string name="service_type_pentavalent_1_short">الخماسي 1</string>
+    <string name="service_type_pentavalent_2_short">الخماسي 2</string>
+    <string name="service_type_pentavalent_3_short">الخماسي 3</string>
+    <string name="service_type_dpt_booster_1_short"> اللقاح الثلاثى المعزز فيتامين ب 1</string>
+    <string name="service_type_dpt_booster_2_short"> اللقاح الثلاثى المعزز فيتامين ب 2</string>
+    <string name="pentavalent_short">الخماسي</string>
+
+    <string name="fp_register_title_in_short">FP:</string>
+    <string name="pnc_register_title_in_short">علاجات ما بعد الولادة:</string>
+    <string name="header_method">طريقة</string>
+    <string name="header_side_effects">آثار جانبية</string>
+    <string name="header_followup_refill">متابعة / إعادة ملء</string>
+    <string name="header_fp_prioritization_risks">المخاطر</string>
+    <string name="fp_register_service_mode_all_methods">جميع الطرق</string>
+    <string name="fp_register_service_mode_condom">الواقي</string>
+    <string name="fp_register_service_mode_dmpa">DMPA\عن طريق الحقن</string>
+    <string name="fp_register_service_mode_iucd">IUCD</string>
+    <string name="fp_register_service_mode_ocp">OCP</string>
+    <string name="fp_register_service_mode_female_sterilization">تعقيم الإناث</string>
+    <string name="fp_register_service_mode_male_sterilization">تعقيم الذكور</string>
+    <string name="fp_register_service_mode_others">اخرون</string>
+
+    <string name="fp_register_service_mode_ecp">ECP</string>
+    <string name="fp_register_service_mode_traditional">طرق تقليدية</string>
+    <string name="fp_register_service_mode_lam">LAM</string>
+    <string name="fp_register_service_mode_centchroman">Centchroman</string>
+    <string name="fp_register_service_mode_none_ps">None - PS</string>
+    <string name="fp_register_service_mode_none_ss">None - SS</string>
+
+    <string name="fp_prioritization_all_ec_service_mode">All EC</string>
+    <string name="fp_prioritization_high_priority_service_mode">أولوية عالية</string>
+    <string name="fp_prioritization_two_plus_children_service_mode">2+طفل</string>
+    <string name="fp_prioritization_one_child_service_mode">1طفل</string>
+    <string name="fp_register_child_details"> الطفل:</string>
+    <string name="str_due">مستحق</string>
+    <string name="fp_methods">طرق تنظيم الأسرة</string>
+    <string name="fp_prioritization">تحديد أولويات تنظيم الأسرة</string>
+    <string name="fp_prioritization_add_fp">إضافة تنظيم الأسرة</string>
+    <string name="fp_prioritization_fp_videos">فىديوهات تنظيم الأسرة</string>
+
+    <string name="header_thayi_number">THAYI NO.</string>
+    <string name="header_delivery_info">معلومات الولادة </string>
+    <string name="header_delivery_complications">مضاعفات</string>
+    <string name="header_pp_fp">تنظيم الأسرة بعد الولادة</string>
+    <string name="header_child"> الطفل</string>
+    <string name="header_days_pp">أيام بعد الولادة</string>
+    <string name="header_first_seven_days">أول 7 أيام</string>
+    <string name="header_pnc_visits">زيارات علاجات ما بعد الولادة</string>
+
+    <string name="pnc_register_service_mode_overview">استعراض عام</string>
+    <string name="pnc_register_service_mode_pnc_visits">زيارات علاجات ما بعد الولادة</string>
+
+    <string name="str_pnc_visit_form">زيارة علاجات ما بعد الولادة</string>
+    <string name="str_pnc_postpartum_family_planning_form">تنظيم الأسرة بعد الولادة</string>
+    <string name="str_pnc_close_form">علاجات ما بعد الولادة مغلقة</string>
+
+    <string name="str_referred">محال</string>
+    <string name="str_referral"> إحالة</string>
+    <string name="str_follow_up"> إحالة</string>
+    <string name="str_refill"> إعادة ملء</string>
+    <string name="str_update">تحديث</string>
+    <string name="str_side_effects">آثار جانبية</string>
+
+    <string name="anc_label">علاجات ما قبل الولادة:</string>
+    <string name="hb_test_label">فحص الهيموجلوبين</string>
+    <string name="edd_label">EDD: </string>
+    <string name="str_days_past_due">عدد اليوم (الايام) المتاخرة</string>
+    <string name="lmp_label">آخر دورة شهرية</string>
+    <string name="str_weeks">أسابيع</string>
+    <string name="anc_register_title_in_short">علاجات ما قبل الولادة</string>
+    <string name="str_bp">BP</string>
+    <string name="str_weight">الوزن,</string>
+    <string name="str_anc_search_hint">بحث سجل علاجات ما قبل الولادة</string>
+    <string name="anc_service_mode_overview">استعراض عام</string>
+    <string name="anc_service_mode_anc_visits">بحث سجل علاجات ما قبل الولادة</string>
+    <string name="anc_service_mode_tt">لقاح توكسويد الكزاز</string>
+    <string name="anc_service_mode_hb_ifa">الهيموجلوبين\حامض فوليك الحديد</string>
+    <string name="anc_service_mode_delivery_plan">خطة الولادة</string>
+    <string name="anc_service_mode_hb_unit">جم/ديسيلتر</string>
+    <string name="anc_service_mode_ifa_tablets">الأجهزة اللوحية</string>
+    <string name="header_id">رقم الهوية</string>
+    <string name="header_anc_status">حالة علاجات ما قبل الولادة</string>
+    <string name="header_risk_factors">عوامل الخطر</string>
+    <string name="header_anc_1">علاجات ما قبل الولادة1</string>
+    <string name="header_anc_2">علاجات ما قبل الولادة2</string>
+    <string name="header_anc_3">علاجات ما قبل الولادة3</string>
+    <string name="header_anc_4">علاجات ما قبل الولادة4</string>
+    <string name="header_other">آخر</string>
+    <string name="header_visits">زيارات</string>
+    <string name="header_tt">لقاح توكسويد الكزاز</string>
+    <string name="header_tt_1">لقاح توكسويد الكزاز1</string>
+    <string name="header_tt_2">لقاح توكسويد الكزاز2</string>
+    <string name="header_tt_booster">لقاح توكسويد الكزاز معزز</string>
+    <string name="header_ifa">حامض فوليك الحديد</string>
+    <string name="header_hb">الهيموجلوبين</string>
+    <string name="header_delivery_plan">خطة الولادة</string>
+    <string name="str_delivery_at">الولادة في</string>
+    <string name="str_transport">النقل</string>
+    <string name="str_has_companion">لديه مرافق:</string>
+    <string name="str_asha">Asha</string>
+    <string name="str_contact">اتصال</string>
+    <string name="str_risks_reviewed">المخاطر التي تم استعراضها:</string>
+    <string name="sort_by_edd_label">EDD</string>
+
+    <string name="str_pnc_delivery_date">التاريخ</string>
+    <string name="str_pnc_delivery_place">المكان</string>
+    <string name="str_pnc_delivery_type">نوع:</string>
+    <string name="str_pp_fp">تنظيم الأسرة بعد الولادة</string>
+    <string name="str_pnc_child_weight">الوزن:%1$s كلغ</string>
+    <string name="str_pnc_dob_label">تأريخ الميلاد</string>
+
+    <string name="str_pnc_clause">علاجات ما بعد الولادة</string>
+    <string name="str_pnc_circle_type_expected">متوقع</string>
+    <string name="str_pnc_circle_type_actual">فعلي</string>
+    <string name="str_pnc_circle_status_done">موافق</string>
+    <string name="str_pnc_circle_status_missed">مفقود</string>
+    <string name="str_pnc_circle_color_yellow">اصفر</string>
+    <string name="str_pnc_circle_color_green">أحمر</string>
+    <string name="str_pnc_circle_color_red">red</string>
+    <string name="str_child_illness_ari">ari</string>
+    <string name="str_child_illness_sam">sam</string>
+    <string name="str_pnc_visit_button_label">زيارة علاجات ما بعد الولادة</string>
+
+    <string name="ic_check_circle_blank">&#xe03e;</string>
+    <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
+    <string name="ic_keyboard_arrow_left">&#xe0c6;</string>
+    <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
+    <string name="ic_keyboard_arrow_up">&#xe0c8;</string>
+
+    <string name="event_fields_extractor">{ \"obs\": [ {\"الاسم\":\"اسم_الأب\"} ], \"خصائص\" : [ {\"الاسم\":\"باطلة\"},{\"الاسم\":\"مزود رقم الهوية\"} ] }</string>
+    <string name="client_fields_extractor">{ \"ممتلكاتِ\": [ {\"الاسم\":\"اسم_الأب\"} ], \"خصائص\" : [ ] }</string>
+    <string name="string_global">عالمي</string>
+    <string name="str_provider_profile">مواصفات</string>
+    <string name="device_time_ok">وقت هذا الجهاز صيح</string>
+    <string name="timezone_mismatch">يرجى تغير النطاق الزمني إلى \'%1$s\' في إعدادات الجهاز قبل تسجيل الدخول</string>
+    <string name="time_mismatch">يبدو أن وقت هذا الجهاز خاطئ. يرجى تصحيحه قبل المتابعة</string>
+    <string name="time_error">لا يمكن تحديد ما إذا كان وقت هذا الجهاز صحيحًا </string>
+
+    <!-- bottom navigation menu -->
+    <string name="clients_menu">زبائن</string>
+    <string name="search_menu">بحث</string>
+    <string name="register_menu">سجل</string>
+    <string name="library_menu">مكتبة</string>
+    <string name="me">أنا</string>
+    <string name="action_me">إجراء_أنا</string>
+
+    <!-- sync -->
+    <string name="url_separator">\</string>
+    <string name="clients_key">زبائن</string>
+    <string name="events_key">أحداث</string>
+
+    <string name="loading_client_settings">&#8230;جاريٍ تحميل إعدادات الزبون </string>
+    <!-- login -->
+    <string name="prompt_username">اسم المستخدم</string>
+    <string name="prompt_password">كلمه السر(اختياري)</string>
+    <string name="action_sign_in">تسجيل الدخول او سجل</string>
+    <string name="action_sign_in_short">تسجيل الدخول</string>
+    <string name="error_invalid_username">اسم المستخدم هذا غير صالح</string>
+    <string name="error_invalid_password">كلمة المرور هذه قصيرة جدًا</string>
+    <string name="error_incorrect_password">كلمة المرور هذه غير صحيحة</string>
+    <string name="registration_info">معلومات تسجيل</string>
+    <string name="app_version">إصدار التطبيق:%1$s(مبنى على %2$s)</string>
+    <string name="show_password_text">عرض كلمة المرور</string>
+    <string name="application_module_text">نظام التسجيل الذكي المفتوح \nالتطبيق</string>
+    <string name="error_field_required"> هذا الحقل مطلوب</string>
+    <string name="please_wait_message">الرجاء الانتظار</string>
+    <string name="sync_failed_no_internet">فشل التزامن. تحقق من اتصالك بالإنترنت.</string>
+    <string name="syncing">جارى التزامن</string>
+    <string name="sync_failed">فشل التزامن</string>
+    <string name="sync_complete"> اكتمل التزامن</string>
+    <string name="manual_sync_triggered">&#8230;تم تشغيل المزامن اليدوي </string>
+
+    <!-- base register -->
+    <string name="filter">مرشّح</string>
+    <string name="due_only">مستحق  فقط</string>
+    <string name="search_hint">البحث عن الاسم او رقم الهوية</string>
+    <string name="_0_clients_sort_updated">0 زبناء (فرز:محدث)</string>
+    <string name="no_record">لا أثر</string>
+    <string name="clients">%1$dزبناء</string>
+    <string name="client">%1$dزبون </string>
+    <string name="library_placeholder">مكان خاص بالمكتبة</string>
+    <string name="service_location">محل الخدمة</string>
+    <string name="section_icon">أيقونة القسم</string>
+    <string name="me_page_location_text">الموقع:</string>
+    <string name="right_arrow">السهم الأيمن</string>
+    <string name="settings">الإعدادات</string>
+    <string name="log_out_text">تسجيل الخروج</string>
+    <string name="data_synced">مزامنة البيانات: %1$s عند %2$s</string>
+    <string name="scan_qr_code_title">مسح شفرة الاستجابة السريعة</string>
+
+    <!--The barcode strings-->
+    <string name="ok">موافق</string>
+    <string name="permission_camera_rationale">الوصول إلى الكاميرا ضروري للكشف</string>
+    <string name="no_camera_permission">لا يمكن تشغيل هذا التطبيق لأنه لا يملك إذن الكاميرا. سيتم الآن الخروج من التطبيق.</string>
+    <string name="low_storage_error">لا يمكن تنزيل تبعيات كاشف الوجه نظرًا لانخفاض سعة تخزين الجهاز</string>
+    <string name="title_activity_main">عينة قارئ الشفرة</string>
+    <string name="barcode_header">انقر على &quot;؛ قراءة الشفرة&quot; لقراءة الشفرة</string>
+    <string name="read_barcode">اقرأ الشفرة</string>
+    <string name="auto_focus">التركيز التلقائي</string>
+    <string name="use_flash">استعمل الوميض</string>
+    <string name="barcode_success">تمت قراءة الشفرة بنجاح</string>
+    <string name="barcode_failure">لم يتم التقاط الشفرة</string>
+    <string name="barcode_error">خطأ في قراءة الشفرة:%1$s</string>
+
+    <string name="allow_camera_management">&#8230;يلزمك السماح للتطبيق باستخدام الكاميرا لمسح رموزالاستجابة السريعة</string>
+    <string name="unauthorized_group">غير مسموح لمجموعة المستخدم للوصول إلى هذا الجهاز</string>
+    <string name="opensrp_url">http://27.147.129.50:9979</string>
+    <string name="no_internet_connectivity">لا يوجد اتصال بالإنترنت. يرجى التأكد من اتصال البيانات</string>
+    <string name="unknown_response">فشل تسجيل الدخول. حاول لاحقا</string>
+    <string name="unauthorized">يرجى التحقق من معلومات الهوية</string>
+
+    <string name="account_disabled">الحساب معطل</string>
+    <string name="account_disabled_logged_off"> لقد تم تسجيل خروجك لأن حسابك تم تعطيله. قم بالاتصال بالمسؤول</string>
+    <string name="your_session_has_expired">انتهت صلاحية جلسة العمل الخاصة بك. الرجاد الدخول على الحساب من جديد.</string>
+
+    <!--Alerts-->
+    <string name="invalid_url_massage">من فضلك أدخل رابط صحيح!</string>
+    <string name="language_change_prepend_message">اللغة المفضلة مضبوطة على</string>
+    <string name="language_change_append_message">من فضلك اعد تشغيل التطبيق</string>
+    <string name="photo_captured">لقد تم التقاط الصورة</string>
+
+    <string name="log_data_type_provided_does_not_exist_in_the_sender">The data type %s provided does not exist in the sender</string>
+
+    <string name="currently_processing_transferred_records">Currently processing transferred records.</string>
+    <string name="do_not_edit_client_records_until_complete">Do not edit client records until complete.</string>
+    <string name="processing_disclaimer">Records will be processed for up to 10 minutes before your records will be updated. Do not edit medical records until the process is complete.</string>
+
+    <!-- Duration -->
+    <string name="x_seconds">%1$dث</string>
+    <string name="x_minutes">%1$dد</string>
+    <string name="x_hours">%1$dس</string>
+    <string name="x_days">%1$dيـ</string>
+    <string name="x_weeks">%1$dأ</string>
+    <string name="x_weeks_days">%1$dأ
+        %2$dيـ
+        </string>
+    <string name="x_months">%1$dش</string>
+    <string name="x_months_weeks">%1$dش
+        %2$dأ
+    </string>
+    <string name="x_years">%1$dس</string>
+    <string name="x_years_months">%1$dس
+        %2$dش</string>
+
+    <string name="account_removed">لقد تم تسجيل خروجك لأنه تم حذف حسابك من مدير الحساب</string>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OpenSRP</string>
+    <string name="userNameEditText">ಬಳಕೆದಾರರ ಐಡಿ</string>
+    <string name="passwordEditText">ಬಳಕೆದಾರರ ಪಾಸ್ವರ್ಡ್</string>
+    <string name="login_text">ಲಾಗಿನ್</string>
+    <string name="image_description">logo</string>
+    <string name="spacer">spacer</string>
+    <string name="loggin_in_dialog_title">Logging in…</string>
+    <string name="loggin_in_dialog_message">Please wait</string>
+    <string name="login_failed_dialog_title">Log in failed</string>
+    <string name="login_failed_dialog_message">Please check the credentials</string>
+    <string name="home_ec_label">ಅರ್ಹ ದಂಪತಿಗಳು</string>
+    <string name="home_anc_label">ಎಎನ್ ಸಿ</string>
+    <string name="home_pnc_label">ಪಿಎನ್ ಸಿ</string>
+    <string name="home_child_label">ಮಗು</string>
+    <string name="home_report_label">ವರದಿ</string>
+    <string name="your_session_has_expired">ನಿಮ್ಮ ಅವಧಿಯು ಮುಕ್ತಾಯಗೊಂಡಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಲಾಗ್ ಇನ್ ಮಾಡಿ.</string>
+</resources>
