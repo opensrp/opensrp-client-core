@@ -757,7 +757,7 @@ public class Utils {
      * @return String value from resource file
      */
     public static String getTranslatedIdentifier(String key) {
-
+        if (key == null) return null;
         String myKey;
         try {
             myKey = CoreLibrary.getInstance().context().applicationContext().getString(CoreLibrary.getInstance().context().applicationContext().getResources().getIdentifier(key.toLowerCase(), "string", CoreLibrary.getInstance().context().applicationContext().getPackageName()));
