@@ -198,7 +198,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                             } else if (loginResponse == UNAUTHORIZED) {
                                 getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.unauthorized));
                             } else if (loginResponse == INVALID_GRANT) {
-                                String pwdResetEndpoint = loginResponse.getRawData().optString(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL);
+                                String pwdResetEndpoint = loginResponse.getRawData() != null ? loginResponse.getRawData().optString(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL) : "";
                                 showPasswordResetView(pwdResetEndpoint);
                             } else {
                                 getLoginView().showErrorDialog(loginResponse.message());
