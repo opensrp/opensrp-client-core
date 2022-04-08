@@ -3,7 +3,6 @@ package org.smartregister.sample;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,16 +31,10 @@ import org.smartregister.util.DateUtil;
 import org.smartregister.util.LangUtils;
 import org.smartregister.view.activity.MultiLanguageActivity;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -67,7 +60,7 @@ public class MainActivity extends MultiLanguageActivity {
         Activity activity = this;
         tvw = (TextView) findViewById(R.id.textView1);
         picker = (DatePicker) findViewById(R.id.datePicker1);
-        encDecTextView = findViewById(R.id.encrypt_decrypt_tv);
+        encDecTextView = (TextView) findViewById(R.id.encrypt_decrypt_tv);
 
         picker.setMinDate(new LocalDate().minusYears(2).toDate().getTime());
 
@@ -192,7 +185,7 @@ public class MainActivity extends MultiLanguageActivity {
                         // read the text.txt while it is in plain text and write to file
                         byte[] encryptedContents = CryptographicHelper.encrypt(contents.getBytes(), keyAlias);
                         FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                        Timber.i("enecrypted stuff to write %S ",new String(encryptedContents));
+                        Timber.i("encrypted stuff to write %S ",new String(encryptedContents));
                         encDecTextView.setText(new String(encryptedContents));
                         fileOutputStream.write((encryptedContents));
                         fileOutputStream.flush();
@@ -206,16 +199,15 @@ public class MainActivity extends MultiLanguageActivity {
                         try {
                             //
                             FileInputStream inputStream = openFileInput(filename);
-                            Timber.w("file length %s", filename.length());
                             byte[] inputBytes = new byte[inputStream.available()];
                             inputStream.read(inputBytes);
-                            Timber.e("before %s", new String(inputBytes));
+                            Timber.i("before decryption %s", new String(inputBytes));
 
                             byte[] decryptedStuff =  CryptographicHelper.decrypt(inputBytes, keyAlias);
-                            Timber.e("decrypted content %s", new String(decryptedStuff));
-                            FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                            Timber.i("enecrypted stuff to write %S ",new String(decryptedStuff));
                             encDecTextView.setText(new String(decryptedStuff));
+                            Timber.i("decrypted content %s", new String(decryptedStuff));
+
+                            FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                             fileOutputStream.write((decryptedStuff));
                             fileOutputStream.flush();
 
