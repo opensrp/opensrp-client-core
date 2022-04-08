@@ -12,6 +12,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:4.0.0'
         classpath 'gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.10.2'
         classpath 'org.smartregister:gradle-jarjar-plugin:1.0.0-SNAPSHOT'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31'
     }
 }
 
@@ -53,7 +54,6 @@ subprojects {
         maven { url 'https://jitpack.io' }
         maven { url "http://acra.googlecode.com/svn/repository/releases" }
         maven { url "https://repo.maven.apache.org/maven2" }
-        maven { url "http://cloudant.github.io/cloudant-sync-eap/repository" }
         maven {
             url "https://s3.amazonaws.com/repo.commonsware.com"
         }
