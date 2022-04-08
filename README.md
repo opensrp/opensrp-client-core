@@ -128,6 +128,9 @@ _**void generateKey(String keyAlias)**_ For key generation using a Key Alias par
 
 - NB: \* This class depends on `AndroidLegacyCryptography` class and the `AndroidMCryptography` class which both implement the above in different ways depending on the SDK version.
   `AndroidLegacyCryptography` has method implementation that are used when the SDK version is less than API level 23
+  
+An implementation of these methods has been done in the sample app. You can check it out the code in
+the [MainActivity](https://github.com/opensrp/opensrp-client-core/blob/master/sample/src/main/java/org/smartregister/sample/MainActivity.java) class of the sample app
 
 ## 2. Data management
 
