@@ -94,7 +94,8 @@ public class SyncUtils {
             intent = intent.setClassName(context.getPackageName(), activities.get(0).activityInfo.name);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra(ACCOUNT_DISABLED, context.getString(logoutMessage));
+            intent.putExtra(AllConstants.INTENT_KEY.DIALOG_MESSAGE, context.getString(logoutMessage));
+            intent.putExtra(AllConstants.INTENT_KEY.DIALOG_TITLE, context.getString(R.string.session_expired_title);
         }
 
         return intent;
