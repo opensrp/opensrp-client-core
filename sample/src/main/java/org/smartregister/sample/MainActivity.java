@@ -183,7 +183,10 @@ public class MainActivity extends MultiLanguageActivity {
 
                     try {
                         // read the text.txt while it is in plain text and write to file
-                        byte[] encryptedContents = CryptographicHelper.encrypt(contents.getBytes(), keyAlias);
+                        FileInputStream inputStream = openFileInput(filename);
+                        byte[] inputBytes = new byte[inputStream.available()];
+                        inputStream.read(inputBytes);
+                        byte[] encryptedContents = CryptographicHelper.encrypt(inputBytes, keyAlias);
                         FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                         Timber.i("encrypted stuff to write %S ",new String(encryptedContents));
                         encDecTextView.setText(new String(encryptedContents));
