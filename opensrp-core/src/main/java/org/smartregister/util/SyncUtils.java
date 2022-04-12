@@ -95,7 +95,7 @@ public class SyncUtils {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra(AllConstants.INTENT_KEY.DIALOG_MESSAGE, context.getString(logoutMessage));
-            intent.putExtra(AllConstants.INTENT_KEY.DIALOG_TITLE, context.getString(R.string.session_expired_title);
+            intent.putExtra(AllConstants.INTENT_KEY.DIALOG_TITLE, context.getString(R.string.session_expired_title));
         }
 
         return intent;
