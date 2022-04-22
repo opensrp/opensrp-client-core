@@ -187,13 +187,13 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
         }
         if (alertDialog == null) {
             alertDialog = new AlertDialog.Builder(this)
-                    .setPositiveButton("OK", (dialogInterface, i) -> dialogInterface.dismiss()).create();
+                    .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss())
+                    .create();
         }
 
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
         alertDialog.show();
-
     }
 
     public void showProgress(final boolean show) {
