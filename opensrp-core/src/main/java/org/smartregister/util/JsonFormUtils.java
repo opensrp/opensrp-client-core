@@ -190,7 +190,7 @@ public class JsonFormUtils {
 
     }
 
-    private static void getObs(JSONArray fields, Event event, @Nullable Map<String, NativeFormFieldProcessor> fieldProcessorMap, JSONObject metadata){
+    private static void getObs(JSONArray fields, Event event, @Nullable Map<String, NativeFormFieldProcessor> fieldProcessorMap, JSONObject metadata) {
         for (int i = 0; i < fields.length(); i++) {
             JSONObject jsonObject = getJSONObject(fields, i);
             try {
@@ -1201,7 +1201,7 @@ public class JsonFormUtils {
     }
 
     public static String getString(JSONObject jsonObject, String field) {
-        return isBlankJsonObject(jsonObject) ? null : jsonObject.optString(field, null);
+        return isBlankJsonObject(jsonObject) ? null : (jsonObject.optJSONObject(field) != null ? jsonObject.optJSONObject(field).toString() : jsonObject.optString(field, null));
     }
 
     public static String getString(String jsonString, String field) {
