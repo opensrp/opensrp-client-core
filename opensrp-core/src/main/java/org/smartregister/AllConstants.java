@@ -1,6 +1,9 @@
 package org.smartregister;
 
 public class AllConstants {
+
+    public static final String PRACTITIONER_IDENTIFIER = "practitionerIdentifier";
+
     public static final String DRISHTI_BASE_URL = "DRISHTI_BASE_URL";
     public static final String PROFILE_IMAGES_DOWNLOAD_PATH = "/multimedia/profileimage";
     public static final String PROFILE_IMAGES_UPLOAD_PATH = "/multimedia/upload";

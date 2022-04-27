@@ -43,6 +43,7 @@ import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.ManifestRepository;
 import org.smartregister.repository.MotherRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
+import org.smartregister.repository.PractitionerRepository;
 import org.smartregister.repository.ReportRepository;
 import org.smartregister.repository.ServiceProvidedRepository;
 import org.smartregister.repository.SettingsRepository;
@@ -229,6 +230,7 @@ public class Context {
     private ManifestRepository manifestRepository;
     private ClientFormRepository clientFormRepository;
     private ClientRelationshipRepository clientRelationshipRepository;
+    private PractitionerRepository practitionerRepository;
 
     private static final String SHARED_PREFERENCES_FILENAME = "%s_preferences";
 
@@ -1250,6 +1252,13 @@ public class Context {
             clientRelationshipRepository = new ClientRelationshipRepository();
         }
         return clientRelationshipRepository;
+    }
+
+    public PractitionerRepository getPractitionerRepository() {
+        if (practitionerRepository == null) {
+            practitionerRepository = new PractitionerRepository();
+        }
+        return practitionerRepository;
     }
 
     ///////////////////////////////////////////////////////////////////////////////

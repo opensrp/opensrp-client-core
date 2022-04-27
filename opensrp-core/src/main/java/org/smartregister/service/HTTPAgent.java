@@ -1,5 +1,27 @@
 package org.smartregister.service;
 
+import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
+import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
+import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
+import static org.smartregister.domain.LoginResponse.SUCCESS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION_UUID;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_NAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_UUID;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_ZONE;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_LOCATION;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_PREFERREDNAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_USERNAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE;
+import static org.smartregister.domain.LoginResponse.TIMEOUT;
+import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
+import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
+import static org.smartregister.util.HttpResponseUtil.getResponseBody;
+
 import android.content.Context;
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
@@ -27,6 +49,8 @@ import org.smartregister.account.AccountUserInfo;
 import org.smartregister.compression.GZIPCompression;
 import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.LoginResponse;
+import org.smartregister.domain.Practitioner;
+import org.smartregister.domain.PractitionerRole;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseErrorStatus;
@@ -67,28 +91,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 import timber.log.Timber;
 
-import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
-import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
-import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
-import static org.smartregister.domain.LoginResponse.SUCCESS;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_DETAILS;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION_UUID;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_NAME;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_UUID;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_DETAILS;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_ZONE;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_DETAILS;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_LOCATION;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_PREFERREDNAME;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_USERNAME;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE;
-import static org.smartregister.domain.LoginResponse.TIMEOUT;
-import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
-import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
-import static org.smartregister.util.HttpResponseUtil.getResponseBody;
-
 public class HTTPAgent {
 
     public static final int FILE_UPLOAD_CHUNK_SIZE_BYTES = 4096;
@@ -107,7 +109,8 @@ public class HTTPAgent {
     private Gson gson;
 
     private static final String DETAILS_URL = "/user-details?anm-id=";
-
+    private static final String PRACTITIONER_ROLE_URL = "/rest/practitionerRole";
+    private static final String PRACTITIONER_URL = "/rest/practitioner";
 
     public HTTPAgent(Context context, AllSharedPreferences
             allSharedPreferences, DristhiConfiguration configuration) {
@@ -116,6 +119,83 @@ public class HTTPAgent {
         this.configuration = configuration;
         gson = new Gson();
         gzipCompression = new GZIPCompression();
+    }
+
+    public Practitioner[] fetchPractitioners() {
+
+        String baseUrl = configuration.dristhiBaseURL();
+
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
+
+        baseUrl = baseUrl + PRACTITIONER_URL;
+
+        HttpURLConnection urlConnection = null;
+
+        InputStream inputStream = null;
+        try {
+            Timber.d("Fetching practitioners %s -> ", baseUrl);
+            urlConnection = initializeHttp(baseUrl, true);
+
+            int statusCode = urlConnection.getResponseCode();
+            if (statusCode == HttpStatus.SC_OK) {
+
+                inputStream = urlConnection.getInputStream();
+
+                String responseString = IOUtils.toString(inputStream);
+
+                return gson.fromJson(responseString, Practitioner[].class);
+            }
+
+        } catch (IOException | URISyntaxException e) {
+            Timber.e(e);
+        } finally {
+
+            closeConnection(urlConnection);
+            closeIOStream(inputStream);
+
+        }
+        return null;
+    }
+
+    public PractitionerRole[] fetchPractitionerRoles() {
+
+        String baseUrl = configuration.dristhiBaseURL();
+
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
+
+        baseUrl = baseUrl + PRACTITIONER_ROLE_URL;
+
+        HttpURLConnection urlConnection = null;
+
+        InputStream inputStream = null;
+        try {
+            Timber.d("Fetching practitioner roles %s -> ", baseUrl);
+
+            urlConnection = initializeHttp(baseUrl, true);
+
+            int statusCode = urlConnection.getResponseCode();
+            if (statusCode == HttpStatus.SC_OK) {
+
+                inputStream = urlConnection.getInputStream();
+
+                String responseString = IOUtils.toString(inputStream);
+
+                return gson.fromJson(responseString, PractitionerRole[].class);
+            }
+
+        } catch (IOException | URISyntaxException e) {
+            Timber.e(e);
+        } finally {
+
+            closeConnection(urlConnection);
+            closeIOStream(inputStream);
+
+        }
+        return null;
     }
 
     /**

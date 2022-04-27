@@ -35,6 +35,8 @@ public class AllSharedPreferences {
     private static final String DB_ENCRYPTION_VERSION = "DB_ENCRYPTION_VERSION";
     private SharedPreferences preferences;
     private String LAST_AUTHENTICATION_HTTP_STATUS = "LAST_AUTHENTICATION_HTTP_STATUS";
+    private static final String USER_PRACTITIONER_ROLE = "USER_PRACTITIONER_ROLE";
+    private static final String USER_PRACTITIONER_IDENTIFIER = "USER_PRACTITIONER_IDENTIFIER";
 
     public AllSharedPreferences(SharedPreferences preferences) {
         this.preferences = preferences;
@@ -397,6 +399,24 @@ public class AllSharedPreferences {
 
     public int getLastAuthenticationHttpStatus() {
         return preferences.getInt(LAST_AUTHENTICATION_HTTP_STATUS, 0);
+    }
+
+    @Nullable
+    public String getUserPractitionerRole() {
+        return preferences.getString(USER_PRACTITIONER_ROLE, null);
+    }
+
+    @Nullable
+    public String getUserPractitionerIdentifier() {
+        return preferences.getString(USER_PRACTITIONER_IDENTIFIER, null);
+    }
+
+    public void setUserPractitionerRole(String practitionerRole) {
+        preferences.edit().putString(USER_PRACTITIONER_ROLE, practitionerRole).commit();
+    }
+
+    public void setUserPractitionerIdentifier(String identifier) {
+        preferences.edit().putString(USER_PRACTITIONER_IDENTIFIER, identifier).commit();
     }
 }
 
