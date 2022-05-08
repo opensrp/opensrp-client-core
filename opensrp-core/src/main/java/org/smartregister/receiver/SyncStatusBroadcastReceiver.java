@@ -1,5 +1,7 @@
 package org.smartregister.receiver;
 
+import static org.smartregister.util.Log.logError;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 
 import org.joda.time.DateTime;
+import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.job.ExtendedSyncServiceJob;
 import org.smartregister.repository.AllSharedPreferences;
@@ -14,9 +17,6 @@ import org.smartregister.sync.DrishtiSyncScheduler;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static org.smartregister.util.Log.logError;
 
 /**
  * Created by keyman on 26/06/2018.
@@ -126,7 +126,8 @@ public class SyncStatusBroadcastReceiver extends BroadcastReceiver {
 
     private void complete(FetchStatus fetchStatus, Context context) {
         if (fetchStatus.equals(FetchStatus.nothingFetched) || fetchStatus.equals(FetchStatus.fetchedFailed)) {
-            AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(context.getApplicationContext()));
+            //AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(context.getApplicationContext()));
+            AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
             allSharedPreferences.saveIsSyncInitial(false);
         }
         isSyncing = false;
