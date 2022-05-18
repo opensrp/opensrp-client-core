@@ -151,8 +151,8 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                     }
 
                     allSharedPreferences.updateLastAuthenticationHttpStatus(0);
-                } else {
-                    if (response.getAccountError() != null && response.getAccountError().getError() != null) {
+                } else { if (response.getAccountError() != null && response.getAccountError().getError() != null
+                            && !response.getAccountError().getError().equalsIgnoreCase(LoginResponse.INVALID_GRANT.name())) {
                         return LoginResponse.valueOf(response.getAccountError().getError().toUpperCase(Locale.ENGLISH));
                     } else if (loginResponse == null) {
                         return null;
