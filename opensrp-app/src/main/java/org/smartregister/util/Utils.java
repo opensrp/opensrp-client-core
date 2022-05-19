@@ -101,8 +101,8 @@ import static org.smartregister.util.Log.logError;
  */
 public class Utils {
     private static final String TAG = "Utils";
-    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
 
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
@@ -110,41 +110,41 @@ public class Utils {
     private static String CM_FORMAT = "%s cm";
     public static final String APP_PROPERTIES_FILE = "app.properties";
     public static void appendLog(String TAG,String text) {
-        try{
-
-        Log.v(TAG,text);
-        Context context= DrishtiApplication.getInstance().getApplicationContext();
-        String saveText = TAG + new DateTime(System.currentTimeMillis())+" >>> "+ text;
-        Calendar calender = Calendar.getInstance();
-        int year = calender.get(Calendar.YEAR);
-        int month = calender.get(Calendar.MONTH)+1;
-        int day = calender.get(Calendar.DAY_OF_MONTH);
-        String fileNameDayWise = year+""+addZeroForDay(month+"")+""+addZeroForDay(day+"");
-
-        File f = new File(context.getExternalFilesDir(null) + "/hnpp_log/"+fileNameDayWise);
-        if (!f.exists()) {
-            f.mkdirs();
-        }
-        File logFile = new File(context.getExternalFilesDir(null) + "/hnpp_log/"+fileNameDayWise+"/"+"log.file");
-        if (!logFile.exists()) {
-            try {
-                logFile.createNewFile();
-            } catch (IOException ee) {
-                Log.e(TAG, ee.getMessage());
-            }
-        }
-        try {
-            //BufferedWriter for performance, true to set append to file flag
-            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
-            buf.append(saveText);
-            buf.newLine();
-            buf.close();
-        } catch (IOException ee) {
-        }
-
-        }catch (Exception e){
-
-        }
+//        try{
+//
+//        Log.v(TAG,text);
+//        Context context= DrishtiApplication.getInstance().getApplicationContext();
+//        String saveText = TAG + new DateTime(System.currentTimeMillis())+" >>> "+ text;
+//        Calendar calender = Calendar.getInstance();
+//        int year = calender.get(Calendar.YEAR);
+//        int month = calender.get(Calendar.MONTH)+1;
+//        int day = calender.get(Calendar.DAY_OF_MONTH);
+//        String fileNameDayWise = year+""+addZeroForDay(month+"")+""+addZeroForDay(day+"");
+//
+//        File f = new File(context.getExternalFilesDir(null) + "/hnpp_log/"+fileNameDayWise);
+//        if (!f.exists()) {
+//            f.mkdirs();
+//        }
+//        File logFile = new File(context.getExternalFilesDir(null) + "/hnpp_log/"+fileNameDayWise+"/"+"log.file");
+//        if (!logFile.exists()) {
+//            try {
+//                logFile.createNewFile();
+//            } catch (IOException ee) {
+//                Log.e(TAG, ee.getMessage());
+//            }
+//        }
+//        try {
+//            //BufferedWriter for performance, true to set append to file flag
+//            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+//            buf.append(saveText);
+//            buf.newLine();
+//            buf.close();
+//        } catch (IOException ee) {
+//        }
+//
+//        }catch (Exception e){
+//
+//        }
     }
     public static String addZeroForDay(String day){
         if(TextUtils.isEmpty(day)) return "";
@@ -289,7 +289,7 @@ public class Utils {
         }
         for (String f : l) {
             String v = getValue(cm, f, humanize);
-            if (v != "") {
+            if (!v.equals("")) {
                 return v;
             }
         }
@@ -297,10 +297,9 @@ public class Utils {
     }
 
     public static boolean hasAnyEmptyValue(Map<String, String> cm, String postFix, String... fields) {
-        List<String> l = Arrays.asList(fields);
-        for (String f : l) {
+        for (String f : fields) {
             String v = getValue(cm, f, false);
-            if (v == "" && (StringUtils.isBlank(postFix) || StringUtils.isBlank(getValue(cm, f + postFix, false)))) {
+            if (v.equals("") && (StringUtils.isBlank(postFix) || StringUtils.isBlank(getValue(cm, f + postFix, false)))) {
                 return true;
             }
         }
@@ -355,7 +354,7 @@ public class Utils {
     }
 
     public static Gson getLongDateAwareGson() {
-        Gson g = new GsonBuilder().registerTypeAdapter(DateTime.class, new JsonDeserializer<DateTime>() {
+        return new GsonBuilder().registerTypeAdapter(DateTime.class, new JsonDeserializer<DateTime>() {
             @Override
             public DateTime deserialize(JsonElement e, Type t, JsonDeserializationContext jd) throws JsonParseException {
                 if (e.isJsonNull()) {
@@ -369,7 +368,6 @@ public class Utils {
             }
 
         }).create();
-        return g;
     }
 
     public static boolean isConnectedToNetwork(Context context) {
@@ -377,29 +375,6 @@ public class Utils {
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
-    }
-
-
-    public static boolean hasFroyo() {
-        // Can use static final constants like FROYO, declared in later versions
-        // of the OS since they are inlined at compile time. This is guaranteed behavior.
-        return Build.VERSION.SDK_INT >= VERSION_CODES.FROYO;
-    }
-
-    public static boolean hasGingerbread() {
-        return Build.VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD;
-    }
-
-    public static boolean hasHoneycomb() {
-        return Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
-    }
-
-    public static boolean hasHoneycombMR1() {
-        return Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB_MR1;
-    }
-
-    public static boolean hasJellyBean() {
-        return Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
     }
 
     public static String getName(String firstName, String lastName) {
@@ -453,11 +428,7 @@ public class Utils {
             T[] arr = (T[]) new Void[0];
             params = arr;
         }
-        if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
-            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
-        } else {
-            asyncTask.execute(params);
-        }
+        asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
     }
 
     public static DateTime dobToDateTime(CommonPersonObjectClient childDetails) {
@@ -565,7 +536,7 @@ public class Utils {
         if (context == null) return;
         if(context instanceof Activity){
             Activity activity = (Activity) context;
-            if(activity == null || activity.isFinishing()) return;
+            if(activity.isFinishing()) return;
         }
        try{
            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
@@ -579,7 +550,7 @@ public class Utils {
         if (context == null) return;
         if(context instanceof Activity){
             Activity activity = (Activity) context;
-            if(activity ==null || activity.isFinishing()) return;
+            if(activity.isFinishing()) return;
         }
         try{
             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
