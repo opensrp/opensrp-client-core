@@ -21,7 +21,6 @@ allprojects {
 }
 
 apply plugin: 'com.android.library'
-//apply plugin: 'org.robolectric'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'maven-publish'
@@ -93,7 +92,7 @@ android {
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
         buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
     }
-
+    sourceSets.main.jni.srcDirs = [] //disable automatic ndk-build call
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -165,14 +164,12 @@ configurations.all {
 dependencies {
 
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    testImplementation project(path: ':opensrp-core')
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
     implementation 'net.zetetic:android-database-sqlcipher:4.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'org.codehaus.jackson:jackson-core-asl:1.9.13'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation "org.apache.httpcomponents:httpmime:4.5.6"
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.10'
     implementation group: 'com.google.guava', name: 'guava', version: '24.1-jre'
     implementation group: 'commons-io', name: 'commons-io', version: '2.4'
@@ -199,7 +196,7 @@ dependencies {
     annotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
 
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.security:security-crypto:1.0.0-rc03'
 
     implementation('com.google.android.material:material:1.1.0') {
@@ -260,6 +257,7 @@ dependencies {
 
     androidTestImplementation 'junit:junit:4.13'
 
+    testImplementation project(path: ':opensrp-core')
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
     testImplementation 'org.mockito:mockito-core:3.1.0'
     testImplementation "androidx.test:core:1.4.0"
