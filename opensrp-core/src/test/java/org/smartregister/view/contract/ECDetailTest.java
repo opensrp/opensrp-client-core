@@ -12,10 +12,11 @@ import java.util.List;
 public class ECDetailTest {
     private ECDetail ecDetail;
     private String caseId = "1234-5678-1234";
+
     @Before
-    public void setup(){
-       ecDetail = new ECDetail(caseId,"Kogelo","kisumu", "456", true,
-       "addres1", "sd-card/photos", new ArrayList<Child>(),null, null );
+    public void setup() {
+        ecDetail = new ECDetail(caseId, "Kogelo", "kisumu", "456", true,
+                "addres1", "sd-card/photos", new ArrayList<Child>(), null, null);
     }
 
     @Test
@@ -26,9 +27,9 @@ public class ECDetailTest {
     }
 
 
-    private TimelineEvent getAnEvent(){
-        return new TimelineEvent("PREGNANCY","pregnancy event",
-                new String[]{"ANC","Registered"},
+    private TimelineEvent getAnEvent() {
+        return new TimelineEvent("PREGNANCY", "pregnancy event",
+                new String[]{"ANC", "Registered"},
                 DateUtil.formatDateForTimelineEvent("2011-10-21"));
     }
 }

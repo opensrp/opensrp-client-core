@@ -2,7 +2,8 @@ package org.smartregister.util;
 
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.CustomKeysAndValues;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,15 +26,16 @@ public class CrashLyticsTree extends Timber.Tree {
         if (userName == null) {
             userName = DrishtiApplication.getInstance().getUsername();
         }
-
-        Crashlytics.setInt(CRASHLYTICS_KEY_PRIORITY, priority);
-        Crashlytics.setString(CRASHLYTICS_KEY_TAG, tag);
-        Crashlytics.setString(CRASHLYTICS_KEY_MESSAGE, message);
-        Crashlytics.setUserName(userName);
+        CustomKeysAndValues customKeysAndValues = new CustomKeysAndValues.Builder().putInt(CRASHLYTICS_KEY_PRIORITY, priority)
+                .putString(CRASHLYTICS_KEY_TAG, tag)
+                .putString(CRASHLYTICS_KEY_MESSAGE, message)
+                .build();
+        FirebaseCrashlytics.getInstance().setCustomKeys(customKeysAndValues);
+        FirebaseCrashlytics.getInstance().setUserId(userName);
         if (t == null) {
-            Crashlytics.logException(new Exception(message));
+            FirebaseCrashlytics.getInstance().recordException(new Exception(message));
         } else {
-            Crashlytics.logException(t);
+            FirebaseCrashlytics.getInstance().recordException(t);
         }
     }
 }
