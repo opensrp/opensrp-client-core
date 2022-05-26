@@ -1,5 +1,6 @@
 package org.smartregister.domain;
 
+
 import static org.smartregister.domain.ResponseStatus.failure;
 
 public class Response<T> {
@@ -22,4 +23,5 @@ public class Response<T> {
     public boolean isFailure() {
         return status.equals(failure);
     }
+
 }

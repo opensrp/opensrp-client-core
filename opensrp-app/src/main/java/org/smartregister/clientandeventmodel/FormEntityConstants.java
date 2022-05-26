@@ -1,13 +1,14 @@
 package org.smartregister.clientandeventmodel;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * Mappings in OpenSRP for OpenMRS entities and properties
  */
 public class FormEntityConstants {
 
-    public static final SimpleDateFormat FORM_DATE = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat FORM_DATE = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
     public enum FieldType {
         concept, person, person_address, person_attribute, person_identifier,

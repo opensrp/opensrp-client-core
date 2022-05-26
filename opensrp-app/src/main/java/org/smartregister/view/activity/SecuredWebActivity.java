@@ -65,7 +65,7 @@ public abstract class SecuredWebActivity extends SecuredActivity {
     }
 
     protected void closeDialog() {
-        if (progressDialog.isShowing()) {
+        if (progressDialog!=null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
     }

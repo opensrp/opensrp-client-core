@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.WindowManager;
 
 import org.smartregister.R;
 import org.smartregister.helper.ImageRenderHelper;
@@ -102,14 +103,19 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
     }
 
     public void showProgressDialog(int saveMessageStringIdentifier) {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setCancelable(false);
-            progressDialog.setTitle(getString(saveMessageStringIdentifier));
-            progressDialog.setMessage(getString(R.string.please_wait_message));
-        }
-        if (!isFinishing())
+        if(isFinishing()) return;
+        try{
+            if (progressDialog == null) {
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setCancelable(false);
+                progressDialog.setTitle(getString(saveMessageStringIdentifier));
+                progressDialog.setMessage(getString(R.string.please_wait_message));
+            }
             progressDialog.show();
+        }catch (WindowManager.BadTokenException e){
+
+        }
+
     }
 
     public void hideProgressDialog() {
@@ -126,7 +132,11 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
 
     @Override
     public void displayToast(int stringID) {
-        Utils.showShortToast(this, this.getString(stringID));
+        try{
+            Utils.showShortToast(this, this.getString(stringID));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }

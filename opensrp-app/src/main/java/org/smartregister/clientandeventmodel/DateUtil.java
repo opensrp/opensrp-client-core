@@ -21,10 +21,9 @@ interface DateUtility {
 
 public class DateUtil {
     private static final String TAG = "DateUtil";
-    private static Locale englishLocale = new Locale("en");
-    public static DateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd", englishLocale);
-    public static DateFormat yyyyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", englishLocale);
-    public static DateFormat yyyyMMddTHHmmssSSSZ = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss" + ".SSS'Z'", englishLocale);
+    public static DateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    public static DateFormat yyyyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+    public static DateFormat yyyyMMddTHHmmssSSSZ = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss" + ".SSS'Z'", Locale.ENGLISH);
     private static DateUtility dateUtility = new RealDate();
     //2017-03-01T14:04:20.865Z
 

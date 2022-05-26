@@ -2,6 +2,7 @@ package org.smartregister.util;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
@@ -63,7 +64,7 @@ import timber.log.Timber;
 public class OpenSRPImageLoader extends ImageLoader {
 
     private static final int HALF_FADE_IN_TIME = AllConstants.ANIMATION_FADE_IN_TIME / 2;
-    public static int IMAGE_QUALITY = 20;
+    public static int IMAGE_QUALITY = 5;
     private static final float IMAGE_SCALE_PROPORTION = 0.95F;
 
     private static final String TAG = "OpenSRPImageLoader";
@@ -153,7 +154,7 @@ public class OpenSRPImageLoader extends ImageLoader {
         // AndroidHttpClient (based on Apache DefaultHttpClient) which should no longer be used
         // on newer platform versions where HttpURLConnection is simply better.
         RequestQueue requestQueue;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+        {
             HurlStack stack = new HurlStack() {
                 @Override
                 public HttpResponse performRequest(Request<?> request, Map<String, String>
@@ -168,21 +169,6 @@ public class OpenSRPImageLoader extends ImageLoader {
 
             requestQueue = Volley.newRequestQueue(context, stack);
 
-        } else {
-            HttpClientStack stack = new HttpClientStack(
-                    AndroidHttpClient.newInstance(FileUtilities.getUserAgent(context))) {
-                @Override
-                public HttpResponse performRequest(Request<?> request, Map<String, String>
-                        headers) throws IOException, AuthFailureError {
-
-                    headers.putAll(CoreLibrary.getInstance().context().allSettings().
-                            getAuthParams());
-
-                    return super.performRequest(request, headers);
-                }
-            };
-
-            requestQueue = Volley.newRequestQueue(context, stack);
         }
         return requestQueue;
     }
@@ -598,11 +584,7 @@ public class OpenSRPImageLoader extends ImageLoader {
             @SuppressWarnings("unchecked") T[] arr = (T[]) new Void[0];
             params = arr;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
-        } else {
-            asyncTask.execute(params);
-        }
+        asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
     }
 
     /**
@@ -612,6 +594,7 @@ public class OpenSRPImageLoader extends ImageLoader {
         OpenSRPImageLoader getImageLoaderInstance();
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class LoadBitmapFromDiskTask extends AsyncTask<String, Void, Bitmap> {
 
         private OpenSRPImageListener opensrpImageListener;
@@ -708,6 +691,7 @@ public class OpenSRPImageLoader extends ImageLoader {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class LoadProfileImageTask extends AsyncTask<Void, Void, ProfileImage> {
         private OpenSRPImageLoader openSRPImageLoader;
         private OpenSRPImageListener opensrpImageListener;

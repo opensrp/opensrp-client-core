@@ -4,12 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by samuelgithengi on 11/22/18.
  */
-public class Task {
+public class Task implements Serializable {
 
     public enum TaskStatus {
         @SerializedName("Draft")

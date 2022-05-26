@@ -50,6 +50,7 @@ import org.smartregister.view.dialog.SortOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 import static android.view.View.INVISIBLE;
@@ -458,8 +459,8 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         }
 
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ENGLISH);
 
             JSONObject parentJson = JSONML.toJSONObject(savedDataStr);
             JSONArray jsonArray = parentJson.getJSONArray("childNodes");

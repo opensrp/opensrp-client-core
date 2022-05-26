@@ -122,6 +122,7 @@ public class SyncIntentService extends IntentService {
             Response resp = httpAgent.fetch(url);
             if (resp.isFailure()) {
                 fetchFailed(count);
+                return;
             }
 
             JSONObject jsonObject = new JSONObject((String) resp.payload());
@@ -140,11 +141,12 @@ public class SyncIntentService extends IntentService {
                     lastServerVersion = serverVersionPair.second;
                 }
 
-                ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
-                ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
-
-                processClient(serverVersionPair);
-
+                boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
+                //update sync time if all event client is save.
+                if(isSaved){
+                    processClient(serverVersionPair);
+                    ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
+                }
                 fetchRetry(0);
             }
         } catch (Exception e) {

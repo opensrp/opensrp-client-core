@@ -15,7 +15,6 @@ import org.smartregister.domain.FormDefinitionVersion;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.repository.FormsVersionRepository;
-import org.smartregister.util.ZipUtil;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -111,47 +110,47 @@ public class AllFormVersionSyncService {
         return status;
     }
 
-    public DownloadStatus downloadAllPendingFormFromServer() {
-        DownloadStatus status = DownloadStatus.nothingDownloaded;
-        List<FormDefinitionVersion> pendingFormList = formsVersionRepository.
-                getAllFormWithSyncStatus(SyncStatus.PENDING);
-
-        if (pendingFormList.isEmpty()) {
-            return status;
-        } else {
-            for (FormDefinitionVersion l : pendingFormList) {
-                String downloadLink =
-                        configuration.dristhiBaseURL() + AllConstants.FORM_DOWNLOAD_URL + l
-                                .getFormDirName();
-
-                status = httpAgent.downloadFromUrl(downloadLink, l.getFormDirName() + ".zip");
-                if (status == DownloadStatus.downloaded) {
-                    formsVersionRepository.updateSyncStatus(l.getFormDirName(), SyncStatus.SYNCED);
-                }
-            }
-        }
-        return status;
-    }
-
-    /* Unzip all downloaded form files */
-    public void unzipAllDownloadedFormFile() {
-        File dir = new File(FormPathService.sdcardPathDownload);
-        FileFilter filter = new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.getAbsolutePath().matches(".*\\.zip");
-            }
-        };
-
-        File[] zipFiles = dir.listFiles(filter);
-
-        for (File f : zipFiles) {
-            ZipUtil zipUtil = new ZipUtil(f.getAbsolutePath(),
-                    FormPathService.sdcardPath + f.getName().replaceAll(".zip", "")
-                            + File.separator);
-            zipUtil.unzip();
-        }
-    }
+//    public DownloadStatus downloadAllPendingFormFromServer() {
+//        DownloadStatus status = DownloadStatus.nothingDownloaded;
+//        List<FormDefinitionVersion> pendingFormList = formsVersionRepository.
+//                getAllFormWithSyncStatus(SyncStatus.PENDING);
+//
+//        if (pendingFormList.isEmpty()) {
+//            return status;
+//        } else {
+//            for (FormDefinitionVersion l : pendingFormList) {
+//                String downloadLink =
+//                        configuration.dristhiBaseURL() + AllConstants.FORM_DOWNLOAD_URL + l
+//                                .getFormDirName();
+//
+//                status = httpAgent.downloadFromUrl(downloadLink, l.getFormDirName() + ".zip");
+//                if (status == DownloadStatus.downloaded) {
+//                    formsVersionRepository.updateSyncStatus(l.getFormDirName(), SyncStatus.SYNCED);
+//                }
+//            }
+//        }
+//        return status;
+//    }
+//
+//    /* Unzip all downloaded form files */
+//    public void unzipAllDownloadedFormFile() {
+//        File dir = new File(FormPathService.sdcardPathDownload);
+//        FileFilter filter = new FileFilter() {
+//            @Override
+//            public boolean accept(File pathname) {
+//                return pathname.getAbsolutePath().matches(".*\\.zip");
+//            }
+//        };
+//
+//        File[] zipFiles = dir.listFiles(filter);
+//
+//        for (File f : zipFiles) {
+//            ZipUtil zipUtil = new ZipUtil(f.getAbsolutePath(),
+//                    FormPathService.sdcardPath + f.getName().replaceAll(".zip", "")
+//                            + File.separator);
+//            zipUtil.unzip();
+//        }
+//    }
 
     /* Verify all forms file in sdcard */
     public void verifyFormsInFolder() {

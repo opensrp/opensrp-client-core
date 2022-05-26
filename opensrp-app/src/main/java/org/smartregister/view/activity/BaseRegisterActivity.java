@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.WindowManager;
 
 import com.google.android.gms.vision.barcode.Barcode;
 
@@ -147,24 +148,44 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Override
     public void displaySyncNotification() {
-        Snackbar syncStatusSnackbar =
-                Snackbar.make(this.getWindow().getDecorView(), R.string.manual_sync_triggered, Snackbar.LENGTH_LONG);
-        syncStatusSnackbar.show();
+        try{
+            Snackbar syncStatusSnackbar =
+                    Snackbar.make(this.getWindow().getDecorView(), R.string.manual_sync_triggered, Snackbar.LENGTH_LONG);
+            syncStatusSnackbar.show();
+        }catch (Exception e){
+
+        }
+
     }
 
     @Override
     public void displayToast(int resourceId) {
-        displayToast(getString(resourceId));
+        if(isFinishing()) return;
+        try{
+            displayToast(getString(resourceId));
+        }catch (WindowManager.BadTokenException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void displayToast(String message) {
-        Utils.showToast(getApplicationContext(), message);
+       if(isFinishing()) return;
+       try{
+           Utils.showToast(this, message);
+       }catch (WindowManager.BadTokenException e){
+           e.printStackTrace();
+       }
     }
 
     @Override
     public void displayShortToast(int resourceId) {
-        Utils.showShortToast(getApplicationContext(), getString(resourceId));
+        if(isFinishing()) return;
+       try{
+           Utils.showShortToast(this, getString(resourceId));
+       }catch (WindowManager.BadTokenException e){
+           e.printStackTrace();
+       }
     }
 
     @Override
@@ -250,12 +271,17 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Override
     public void showProgressDialog(int titleIdentifier) {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setTitle(titleIdentifier);
-        progressDialog.setMessage(getString(R.string.please_wait_message));
-        if (!isFinishing())
+        if(isFinishing()) return;
+        try{
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setCancelable(false);
+            progressDialog.setTitle(titleIdentifier);
+            progressDialog.setMessage(getString(R.string.please_wait_message));
             progressDialog.show();
+        }catch (WindowManager.BadTokenException e){
+
+        }
+
     }
 
     @Override

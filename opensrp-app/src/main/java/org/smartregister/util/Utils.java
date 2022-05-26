@@ -35,6 +35,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -65,8 +66,12 @@ import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -96,11 +101,11 @@ import static org.smartregister.util.Log.logError;
  */
 public class Utils {
     private static final String TAG = "Utils";
-    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy");
-    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
 
-    private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
     private static String KG_FORMAT = "%s kg";
     private static String CM_FORMAT = "%s cm";
     public static final String APP_PROPERTIES_FILE = "app.properties";
@@ -243,7 +248,7 @@ public class Utils {
         }
         for (String f : l) {
             String v = getValue(cm, f, humanize);
-            if (v != "") {
+            if (!v.equals("")) {
                 return v;
             }
         }
@@ -251,10 +256,9 @@ public class Utils {
     }
 
     public static boolean hasAnyEmptyValue(Map<String, String> cm, String postFix, String... fields) {
-        List<String> l = Arrays.asList(fields);
-        for (String f : l) {
+        for (String f : fields) {
             String v = getValue(cm, f, false);
-            if (v == "" && (StringUtils.isBlank(postFix) || StringUtils.isBlank(getValue(cm, f + postFix, false)))) {
+            if (v.equals("") && (StringUtils.isBlank(postFix) || StringUtils.isBlank(getValue(cm, f + postFix, false)))) {
                 return true;
             }
         }
@@ -309,7 +313,7 @@ public class Utils {
     }
 
     public static Gson getLongDateAwareGson() {
-        Gson g = new GsonBuilder().registerTypeAdapter(DateTime.class, new JsonDeserializer<DateTime>() {
+        return new GsonBuilder().registerTypeAdapter(DateTime.class, new JsonDeserializer<DateTime>() {
             @Override
             public DateTime deserialize(JsonElement e, Type t, JsonDeserializationContext jd) throws JsonParseException {
                 if (e.isJsonNull()) {
@@ -323,7 +327,6 @@ public class Utils {
             }
 
         }).create();
-        return g;
     }
 
     public static boolean isConnectedToNetwork(Context context) {
@@ -331,29 +334,6 @@ public class Utils {
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
-    }
-
-
-    public static boolean hasFroyo() {
-        // Can use static final constants like FROYO, declared in later versions
-        // of the OS since they are inlined at compile time. This is guaranteed behavior.
-        return Build.VERSION.SDK_INT >= VERSION_CODES.FROYO;
-    }
-
-    public static boolean hasGingerbread() {
-        return Build.VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD;
-    }
-
-    public static boolean hasHoneycomb() {
-        return Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
-    }
-
-    public static boolean hasHoneycombMR1() {
-        return Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB_MR1;
-    }
-
-    public static boolean hasJellyBean() {
-        return Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
     }
 
     public static String getName(String firstName, String lastName) {
@@ -407,11 +387,7 @@ public class Utils {
             T[] arr = (T[]) new Void[0];
             params = arr;
         }
-        if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
-            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
-        } else {
-            asyncTask.execute(params);
-        }
+        asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
     }
 
     public static DateTime dobToDateTime(CommonPersonObjectClient childDetails) {
@@ -516,12 +492,30 @@ public class Utils {
     }
 
     public static void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        if (context == null) return;
+        if(context instanceof Activity){
+            Activity activity = (Activity) context;
+            if(activity.isFinishing()) return;
+        }
+       try{
+           Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+       }catch (Exception e){
+        e.printStackTrace();
+       }
 
     }
 
     public static void showShortToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        if (context == null) return;
+        if(context instanceof Activity){
+            Activity activity = (Activity) context;
+            if(activity.isFinishing()) return;
+        }
+        try{
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        }catch (WindowManager.BadTokenException e){
+            e.printStackTrace();
+        }
 
     }
 

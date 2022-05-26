@@ -60,15 +60,16 @@ public class UpdateActionsTask {
                     allFormVersionSyncService.verifyFormsInFolder();
                     FetchStatus fetchVersionStatus = allFormVersionSyncService
                             .pullFormDefinitionFromServer();
-                    DownloadStatus downloadStatus = allFormVersionSyncService
-                            .downloadAllPendingFormFromServer();
+//                    DownloadStatus downloadStatus = allFormVersionSyncService
+//                            .downloadAllPendingFormFromServer();
 
-                    if (downloadStatus == DownloadStatus.downloaded) {
-                        allFormVersionSyncService.unzipAllDownloadedFormFile();
-                    }
+//                    if (downloadStatus == DownloadStatus.downloaded) {
+//                        allFormVersionSyncService.unzipAllDownloadedFormFile();
+//                    }
 
                     if (fetchVersionStatus == fetched
-                            || downloadStatus == DownloadStatus.downloaded) {
+//                            || downloadStatus == DownloadStatus.downloaded
+                    ) {
                         return fetched;
                     }
                 }
