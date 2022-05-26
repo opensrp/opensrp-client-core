@@ -16,7 +16,6 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.adapter.ServiceLocationsAdapter;
 import org.smartregister.location.helper.LocationHelper;
-import org.smartregister.util.Utils;
 import org.smartregister.view.customcontrols.CustomFontTextView;
 
 import java.util.ArrayList;
@@ -24,7 +23,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Jason Rogena - jrogena@ona.io
@@ -78,11 +76,7 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
         Collections.sort(sortedLocations);
         sortedLocations.add(0, defaultLocation);
 
-        List<String> translatedLocations = sortedLocations.stream().map(e -> {
-            return Utils.getTranslatedLocation(e);
-        }).collect(Collectors.toList());
-
-        serviceLocationsAdapter = new ServiceLocationsAdapter(context, translatedLocations);
+        serviceLocationsAdapter = new ServiceLocationsAdapter(context, sortedLocations);
         locationsLV.setAdapter(serviceLocationsAdapter);
         locationsLV.setOnItemClickListener((parent, view, position, id) -> {
             CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentLocality(serviceLocationsAdapter.getLocationAt(position));
@@ -94,8 +88,7 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
             }
             locationPickerDialog.dismiss();
         });
-
-        this.setText(Utils.getTranslatedLocation(LocationHelper.getInstance().getOpenMrsReadableName(getSelectedItem())));
+        this.setText(LocationHelper.getInstance().getOpenMrsReadableName(getSelectedItem()));
 
         setClickable(true);
         setOnClickListener(this);
@@ -108,7 +101,7 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
             CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentLocality(selectedLocation);
             CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentDataStrategy(AllConstants.DATA_CAPTURE_STRATEGY.NORMAL);
         }
-        return Utils.getTranslatedLocation(selectedLocation);
+        return selectedLocation;
     }
 
     public void setOnLocationChangeListener(final OnLocationChangeListener onLocationChangeListener) {
