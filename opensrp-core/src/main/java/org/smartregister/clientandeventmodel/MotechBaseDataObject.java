@@ -1,6 +1,6 @@
 package org.smartregister.clientandeventmodel;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public abstract class MotechBaseDataObject {
 
