@@ -1,5 +1,20 @@
 package org.smartregister.view.activity;
 
+import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
+import static org.smartregister.AllConstants.FORM_NAME_PARAM;
+import static org.smartregister.AllConstants.INSTANCE_ID_PARAM;
+import static org.smartregister.AllConstants.SHORT_DATE_FORMAT;
+import static org.smartregister.AllConstants.SYNC_STATUS;
+import static org.smartregister.AllConstants.VERSION_PARAM;
+import static org.smartregister.domain.SyncStatus.PENDING;
+import static org.smartregister.util.EasyMap.create;
+import static java.text.MessageFormat.format;
+import static java.util.Arrays.asList;
+
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -25,7 +40,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONML;
 import org.json.JSONObject;
 import org.smartregister.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
@@ -53,21 +67,6 @@ import java.util.List;
 import java.util.Locale;
 
 import timber.log.Timber;
-
-import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
-import static java.text.MessageFormat.format;
-import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
-import static org.smartregister.AllConstants.FORM_NAME_PARAM;
-import static org.smartregister.AllConstants.INSTANCE_ID_PARAM;
-import static org.smartregister.AllConstants.SHORT_DATE_FORMAT;
-import static org.smartregister.AllConstants.SYNC_STATUS;
-import static org.smartregister.AllConstants.VERSION_PARAM;
-import static org.smartregister.domain.SyncStatus.PENDING;
-import static org.smartregister.util.EasyMap.create;
 
 public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity {
 
@@ -463,7 +462,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ENGLISH);
 
-            JSONObject parentJson = JSONML.toJSONObject(savedDataStr);
+            JSONObject parentJson = new JSONObject(savedDataStr);
             JSONArray jsonArray = parentJson.getJSONArray("childNodes");
 
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -480,13 +479,17 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
                 }
             }
 
-            return JSONML.toString(parentJson);
+            return parentJson.toString();
 
         } catch (JSONException e) {
             Timber.e(e);
 
         }
         return savedDataStr;
+    }
+
+    protected String getFormattedPaginationInfoText(int currentPage, int pageCount) {
+        return format(getResources().getString(R.string.str_page_info), currentPage, pageCount);
     }
 
     public interface ClientsHeaderProvider {
@@ -640,9 +643,5 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         private void clearSearchText() {
             searchView.setText("");
         }
-    }
-
-    protected String getFormattedPaginationInfoText(int currentPage, int pageCount) {
-        return format(getResources().getString(R.string.str_page_info), currentPage, pageCount);
     }
 }

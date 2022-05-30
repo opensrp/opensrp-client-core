@@ -192,8 +192,9 @@ dependencies {
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
     implementation 'com.mcxiaoke.volley:library:1.0.19'
 
+    annotationProcessor 'com.jakewharton:butterknife:10.2.3'
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    annotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
 
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.preference:preference-ktx:1.2.0'
