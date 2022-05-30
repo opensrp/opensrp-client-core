@@ -3,11 +3,7 @@ package org.smartregister.util;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader.ImageContainer;
-import com.android.volley.toolbox.ImageLoader.ImageListener;
-
-public class OpenSRPImageListener implements ImageListener {
+public class OpenSRPImageListener {
 
     private final ImageView imageView;
     private final RemoteViews remoteView;
@@ -83,15 +79,5 @@ public class OpenSRPImageListener implements ImageListener {
 
     public int getImageViewId() {
         return imageViewId;
-    }
-
-    @Override
-    public void onErrorResponse(VolleyError error) {
-
-    }
-
-    @Override
-    public void onResponse(ImageContainer response, boolean isImmediate) {
-
     }
 }

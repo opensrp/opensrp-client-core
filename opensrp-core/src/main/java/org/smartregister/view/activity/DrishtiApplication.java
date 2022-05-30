@@ -19,7 +19,6 @@ import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.P2PClassifier;
-import org.smartregister.util.BitmapImageCache;
 import org.smartregister.util.CrashLyticsTree;
 import org.smartregister.util.CredentialsHelper;
 import org.smartregister.util.OpenSRPImageLoader;
@@ -35,7 +34,6 @@ import static org.smartregister.util.Log.logError;
 public abstract class DrishtiApplication extends Application {
 
     protected static DrishtiApplication mInstance;
-    private static BitmapImageCache memoryImageCache;
     private static OpenSRPImageLoader cachedImageLoader;
     protected Locale locale = null;
     protected Context context;
@@ -51,15 +49,6 @@ public abstract class DrishtiApplication extends Application {
     @Nullable
     public P2PClassifier<JSONObject> getP2PClassifier() {
         return null;
-    }
-
-    public static BitmapImageCache getMemoryCacheInstance() {
-        if (memoryImageCache == null) {
-            memoryImageCache = new BitmapImageCache(BitmapImageCache
-                    .calculateMemCacheSize(AllConstants.ImageCache.MEM_CACHE_PERCENT));
-        }
-
-        return memoryImageCache;
     }
 
     public static String getAppDir() {
