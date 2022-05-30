@@ -103,8 +103,13 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
                 AccountResponse response = getOpenSRPContext().getHttpAgent().oauth2authenticate(mUsername, mPassword, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD, accountConfiguration.getTokenEndpoint());
 
-                if (response.getStatus() == 400 && response.getAccountError() != null && AccountError.ACCOUNT_NOT_FULLY_SETUP.equals(response.getAccountError().getErrorDescription())) {
-                    return LoginResponse.INVALID_GRANT.withRawData(new JSONObject(EasyMap.mapOf(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL, accountConfiguration.getIssuerEndpoint())));
+                if (response.getStatus() == HttpURLConnection.HTTP_BAD_REQUEST && response.getAccountError() != null) {
+
+                    if (AccountError.ACCOUNT_NOT_FULLY_SETUP.equals(response.getAccountError().getErrorDescription())) {
+                        return LoginResponse.INVALID_GRANT.withRawData(new JSONObject(EasyMap.mapOf(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL, accountConfiguration.getIssuerEndpoint())));
+                    } else if (AccountError.INVALID_CLIENT.equals(response.getAccountError().getError())) {
+                        return LoginResponse.UNAUTHORIZED_CLIENT;
+                    }
                 }
 
                 AccountManager mAccountManager = CoreLibrary.getInstance().getAccountManager();

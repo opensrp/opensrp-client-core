@@ -1,5 +1,27 @@
 package org.smartregister.service;
 
+import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
+import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
+import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
+import static org.smartregister.domain.LoginResponse.SUCCESS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION_UUID;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_NAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_UUID;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_ZONE;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_LOCATION;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_PREFERREDNAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_USERNAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE;
+import static org.smartregister.domain.LoginResponse.TIMEOUT;
+import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
+import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
+import static org.smartregister.util.HttpResponseUtil.getResponseBody;
+
 import android.content.Context;
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
