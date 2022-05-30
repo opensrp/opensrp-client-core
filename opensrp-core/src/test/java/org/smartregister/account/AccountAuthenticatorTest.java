@@ -137,7 +137,7 @@ public class AccountAuthenticatorTest extends BaseRobolectricUnitTest {
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "httpAgent", httpAgent);
 
         AccountResponse accountResponse = Mockito.mock(AccountResponse.class);
-        Mockito.doReturn(HttpStatus.SC_OK).when(accountResponse).getStatus();
+        Mockito.doReturn(HttpURLConnection.HTTP_OK).when(accountResponse).getStatus();
         Mockito.doReturn(accessToken).when(accountResponse).getAccessToken();
         Mockito.doReturn(accountManagerPassword).when(accountResponse).getRefreshToken();
 
@@ -184,7 +184,7 @@ public class AccountAuthenticatorTest extends BaseRobolectricUnitTest {
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "httpAgent", httpAgent);
 
         AccountResponse accountResponse = Mockito.mock(AccountResponse.class);
-        Mockito.doReturn(HttpStatus.SC_UNAUTHORIZED).when(accountResponse).getStatus();
+        Mockito.doReturn(HttpURLConnection.HTTP_UNAUTHORIZED).when(accountResponse).getStatus();
         Mockito.doReturn(accountResponse).when(httpAgent).oauth2authenticateRefreshToken(accountManagerPassword);
 
 

@@ -29,7 +29,7 @@ public class MockHttpResponse implements CloseableHttpResponse {
 
             @Override
             public int getStatusCode() {
-                return org.apache.http.HttpStatus.SC_OK;
+                return org.apache.http.HttpURLConnection.HTTP_OK;
             }
 
             @Override

@@ -32,6 +32,7 @@ import org.smartregister.util.EasyMap;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
+import java.net.HttpURLConnection;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;

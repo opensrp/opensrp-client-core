@@ -13,7 +13,6 @@ import timber.log.Timber;
  */
 public class SampleApplication extends DrishtiApplication {
 
-
     @Override
     public void onCreate() {
         super.onCreate();

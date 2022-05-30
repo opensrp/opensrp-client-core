@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +38,7 @@ import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
 import java.util.TimeZone;
 
 import timber.log.Timber;
@@ -75,7 +75,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
         if (opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN)
                 && localLogin
-                && (HttpStatus.SC_UNAUTHORIZED == getSharedPreferences().getLastAuthenticationHttpStatus())
+                && (HttpURLConnection.HTTP_UNAUTHORIZED == getSharedPreferences().getLastAuthenticationHttpStatus())
                 && NetworkUtils.isNetworkAvailable()) {
             localLogin = false;
         }

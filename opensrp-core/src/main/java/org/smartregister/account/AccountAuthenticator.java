@@ -11,8 +11,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import org.apache.http.HttpStatus;
 import org.smartregister.CoreLibrary;
+
+import java.net.HttpURLConnection;
 
 import timber.log.Timber;
 
@@ -63,7 +64,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
                     Timber.d("Authenticate with saved credentials");
 
                     AccountResponse accountResponse = CoreLibrary.getInstance().context().getHttpAgent().oauth2authenticateRefreshToken(refreshToken);
-                    if (accountResponse.getStatus() == HttpStatus.SC_OK) {
+                    if (accountResponse.getStatus() == HttpURLConnection.HTTP_OK) {
                         authToken = accountResponse.getAccessToken();
                         refreshToken = accountResponse.getRefreshToken();
 

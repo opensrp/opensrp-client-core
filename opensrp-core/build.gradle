@@ -32,7 +32,6 @@ jacoco {
 android {
     compileSdkVersion androidCompileSdkVersion
     buildToolsVersion androidBuildToolsVersion
-    useLibrary 'org.apache.http.legacy'
 
     defaultPublishConfig !isReleaseBuild() ? "debug" : "release"
 

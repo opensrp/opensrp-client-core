@@ -59,7 +59,6 @@ import com.google.gson.JsonParseException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
-import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
@@ -87,6 +86,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -699,7 +699,7 @@ public class Utils {
     }
 
     public static boolean is2xxSuccessful(int httpStatus) {
-        return httpStatus >= HttpStatus.SC_OK && httpStatus <= HttpStatus.SC_MULTI_STATUS;
+        return httpStatus >= HttpURLConnection.HTTP_OK && httpStatus <= 207;
     }
 
     public static String getFilterValue(LoginResponse loginResponse, SyncFilter syncFilterParam) {
