@@ -8,6 +8,9 @@ import java.util.List;
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 21-04-2020.
  */
 public class TestSyncConfiguration extends SyncConfiguration {
+    public static final String OAUTH_CLIENT_ID = "opensrp-client-id";
+    public static final String OAUTH_CLIENT_SECRET = "$om3cl13nt$3cret";
+
     @Override
     public int getSyncMaxRetries() {
         return 3;
@@ -60,12 +63,12 @@ public class TestSyncConfiguration extends SyncConfiguration {
 
     @Override
     public String getOauthClientId() {
-        return "opensrp-client-id";
+        return OAUTH_CLIENT_ID;
     }
 
     @Override
     public String getOauthClientSecret() {
-        return "$om3cl13nt$3cret";
+        return OAUTH_CLIENT_SECRET;
     }
 
     @Override

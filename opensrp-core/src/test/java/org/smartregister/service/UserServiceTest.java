@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
@@ -47,7 +46,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.smartregister.AllConstants.ENGLISH_LOCALE;
@@ -155,7 +154,7 @@ public class UserServiceTest extends BaseUnitTest {
         assertFalse(userService.isValidLocalLogin("SOME OTHER ANM", "password".getBytes()));
 
         verify(allSharedPreferences).fetchRegisteredANM();
-        verifyZeroInteractions(repository);
+        verifyNoInteractions(repository);
     }
 
     @Test
@@ -332,7 +331,7 @@ public class UserServiceTest extends BaseUnitTest {
         Whitebox.setInternalState(keyStore, "initialized", true);
         Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
         when(keyStore.containsAlias(userName)).thenReturn(true);
-        KeyStore.PrivateKeyEntry privateKeyEntry = PowerMockito.mock(KeyStore.PrivateKeyEntry.class);
+        KeyStore.PrivateKeyEntry privateKeyEntry = Mockito.mock(KeyStore.PrivateKeyEntry.class);
         when(keyStore.getEntry(userName, null)).thenReturn(privateKeyEntry);
         userService = spy(userService);
         doReturn(password).when(userService).decryptString(privateKeyEntry, "RandomSECURE_TEXT");
@@ -354,12 +353,12 @@ public class UserServiceTest extends BaseUnitTest {
         Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
         String user = "johndoe";
         when(keyStore.containsAlias(user)).thenReturn(true);
-        KeyStore.PrivateKeyEntry privateKeyEntry = PowerMockito.mock(KeyStore.PrivateKeyEntry.class);
+        KeyStore.PrivateKeyEntry privateKeyEntry = Mockito.mock(KeyStore.PrivateKeyEntry.class);
         when(keyStore.getEntry(user, null)).thenReturn(privateKeyEntry);
         String password = UUID.randomUUID().toString();
         assertFalse(userService.isUserInValidGroup(user, password.toCharArray()));
         verify(allSharedPreferences, never()).fetchEncryptedGroupId(user);
-        verifyZeroInteractions(repository);
+        verifyNoInteractions(repository);
     }
 
     @Test
@@ -370,7 +369,7 @@ public class UserServiceTest extends BaseUnitTest {
         Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
         String user = "johndoe";
         when(keyStore.containsAlias(user)).thenReturn(true);
-        KeyStore.PrivateKeyEntry privateKeyEntry = PowerMockito.mock(KeyStore.PrivateKeyEntry.class);
+        KeyStore.PrivateKeyEntry privateKeyEntry = Mockito.mock(KeyStore.PrivateKeyEntry.class);
         when(keyStore.getEntry(user, null)).thenReturn(privateKeyEntry);
         when(allSharedPreferences.fetchPioneerUser()).thenReturn(user);
         assertTrue(userService.isUserInPioneerGroup(user));

@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /*
@@ -188,7 +188,7 @@ public class AllCommonsRepositoryTest extends BaseUnitTest {
     @Test
     public void testUpdateSearchWithListToRemoveMissingCaseId() {
         allCommonsRepository.updateSearch(null,"status","synced",new String[]{"created", "deleted"});
-        verifyZeroInteractions(personRepository);
+        verifyNoInteractions(personRepository);
     }
 
     @Test
@@ -201,7 +201,7 @@ public class AllCommonsRepositoryTest extends BaseUnitTest {
     @Test
     public void testUpdateSearchWithNoCaseId() {
         allCommonsRepository.updateSearch("");
-        verifyZeroInteractions(personRepository);
+        verifyNoInteractions(personRepository);
     }
 
     @Test
@@ -226,7 +226,7 @@ public class AllCommonsRepositoryTest extends BaseUnitTest {
     @Test
     public void testUpdateSearchWithNoCaseIdList() {
         allCommonsRepository.updateSearch(new ArrayList<>());
-        verifyZeroInteractions(personRepository);
+        verifyNoInteractions(personRepository);
     }
 
     @Test

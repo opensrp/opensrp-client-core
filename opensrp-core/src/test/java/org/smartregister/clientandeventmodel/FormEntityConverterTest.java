@@ -2,7 +2,7 @@ package org.smartregister.clientandeventmodel;
 
 import android.content.res.AssetManager;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -110,6 +110,6 @@ public class FormEntityConverterTest extends BaseUnitTest {
         Mockito.when(fs.entityId()).thenReturn("entityId");
         Mockito.when(fs.formAttributes()).thenReturn(attributes);
         Mockito.when(attributes.get("encounter_type")).thenReturn("Child Vaccination Enrollment");
-        Mockito.when(fs.getFieldValue(Mockito.isNull(String.class))).thenReturn("2017-10-10");
+        Mockito.when(fs.getFieldValue(Mockito.isNull())).thenReturn("2017-10-10");
     }
 }

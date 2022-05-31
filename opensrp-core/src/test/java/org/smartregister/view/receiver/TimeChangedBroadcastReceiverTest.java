@@ -1,19 +1,23 @@
 package org.smartregister.view.receiver;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+
+import androidx.test.core.app.ApplicationProvider;
+
+import com.google.common.collect.ImmutableList;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -32,19 +36,17 @@ public class TimeChangedBroadcastReceiverTest extends BaseRobolectricUnitTest {
         Assert.assertNull(ReflectionHelpers.getStaticField(TimeChangedBroadcastReceiver.class, "singleton"));
 
         // Remove previous receivers
-        List<ShadowApplication.Wrapper> receivers = ShadowApplication.getInstance().getRegisteredReceivers();
-        receivers.clear();
+        Shadows.shadowOf((Application) ApplicationProvider.getApplicationContext()).clearRegisteredReceivers();
 
         // Assert that there are no registered recievers
-        Assert.assertEquals(0, ShadowApplication.getInstance().getRegisteredReceivers().size());
+        Assert.assertEquals(0, Shadows.shadowOf((Application) ApplicationProvider.getApplicationContext()).getRegisteredReceivers().size());
 
-        TimeChangedBroadcastReceiver.init(RuntimeEnvironment.application);
-
+        TimeChangedBroadcastReceiver.init(ApplicationProvider.getApplicationContext());
 
         // Assert that the receivers were registered
         TimeChangedBroadcastReceiver receiver = ReflectionHelpers.getStaticField(TimeChangedBroadcastReceiver.class, "singleton");
         Assert.assertNotNull(receiver);
-        receivers = ShadowApplication.getInstance().getRegisteredReceivers();
+        ImmutableList<ShadowApplication.Wrapper> receivers = Shadows.shadowOf((Application) ApplicationProvider.getApplicationContext()).getRegisteredReceivers();
         Assert.assertEquals(2, receivers.size());
 
         // Assert the time changed & timezone changed intent filtered were registered
@@ -60,18 +62,17 @@ public class TimeChangedBroadcastReceiverTest extends BaseRobolectricUnitTest {
     @Test
     public void initShouldCallDestroyWhenTheReceiverWasPreviouslyInitialised() {
         // Remove previous receivers
-        List<ShadowApplication.Wrapper> receivers = ShadowApplication.getInstance().getRegisteredReceivers();
-        receivers.clear();
+        Shadows.shadowOf((Application) ApplicationProvider.getApplicationContext()).clearRegisteredReceivers();
 
-        TimeChangedBroadcastReceiver.init(RuntimeEnvironment.application);
+        TimeChangedBroadcastReceiver.init(ApplicationProvider.getApplicationContext());
 
         // Assert that the receivers were registered
         Assert.assertNotNull(TimeChangedBroadcastReceiver.getInstance());
-        receivers = ShadowApplication.getInstance().getRegisteredReceivers();
+        ImmutableList<ShadowApplication.Wrapper> receivers = Shadows.shadowOf((Application) ApplicationProvider.getApplicationContext()).getRegisteredReceivers();
         Assert.assertEquals(2, receivers.size());
 
         // Mock the application instance
-        Context context = Mockito.spy(RuntimeEnvironment.application);
+        Context context = Mockito.spy(ApplicationProvider.getApplicationContext());
         TimeChangedBroadcastReceiver timeChangedBroadcastReceiver = TimeChangedBroadcastReceiver.getInstance();
 
 
@@ -88,30 +89,29 @@ public class TimeChangedBroadcastReceiverTest extends BaseRobolectricUnitTest {
         Assert.assertNull(ReflectionHelpers.getStaticField(TimeChangedBroadcastReceiver.class, "singleton"));
 
         // Remove previous receivers
-        List<ShadowApplication.Wrapper> receivers = ShadowApplication.getInstance().getRegisteredReceivers();
-        receivers.clear();
+        Shadows.shadowOf((Application) ApplicationProvider.getApplicationContext()).clearRegisteredReceivers();
 
         // Assert that there are no registered receivers
-        Assert.assertEquals(0, ShadowApplication.getInstance().getRegisteredReceivers().size());
+        Assert.assertEquals(0, Shadows.shadowOf((Application) ApplicationProvider.getApplicationContext()).getRegisteredReceivers().size());
 
-        TimeChangedBroadcastReceiver.init(RuntimeEnvironment.application);
+        TimeChangedBroadcastReceiver.init(ApplicationProvider.getApplicationContext());
 
         // Assert that the receivers were registered
         Assert.assertNotNull(TimeChangedBroadcastReceiver.getInstance());
-        receivers = ShadowApplication.getInstance().getRegisteredReceivers();
+        ImmutableList<ShadowApplication.Wrapper> receivers = Shadows.shadowOf((Application) ApplicationProvider.getApplicationContext()).getRegisteredReceivers();
         Assert.assertEquals(2, receivers.size());
 
 
         // Call DESTROY
-        TimeChangedBroadcastReceiver.destroy(RuntimeEnvironment.application);
+        TimeChangedBroadcastReceiver.destroy(ApplicationProvider.getApplicationContext());
 
         // Assert that the receivers were unregistered
-        Assert.assertEquals(0, ShadowApplication.getInstance().getRegisteredReceivers().size());
+        Assert.assertEquals(0, Shadows.shadowOf((Application) ApplicationProvider.getApplicationContext()).getRegisteredReceivers().size());
     }
 
     @Test
     public void addOnTimeChangedListenerShouldAddListener() {
-        TimeChangedBroadcastReceiver.init(RuntimeEnvironment.application);
+        TimeChangedBroadcastReceiver.init(ApplicationProvider.getApplicationContext());
 
         // Confirm that there are 0 listeners
         ArrayList<TimeChangedBroadcastReceiver.OnTimeChangedListener> listeners = ReflectionHelpers.getField(TimeChangedBroadcastReceiver.getInstance(), "onTimeChangedListeners");
@@ -127,7 +127,7 @@ public class TimeChangedBroadcastReceiverTest extends BaseRobolectricUnitTest {
 
     @Test
     public void removeOnTimeChangedListenerShouldAddListener() {
-        TimeChangedBroadcastReceiver.init(RuntimeEnvironment.application);
+        TimeChangedBroadcastReceiver.init(ApplicationProvider.getApplicationContext());
         TimeChangedBroadcastReceiver.OnTimeChangedListener onTimeChangedListener = Mockito.mock(TimeChangedBroadcastReceiver.OnTimeChangedListener.class);
         TimeChangedBroadcastReceiver.getInstance().addOnTimeChangedListener(onTimeChangedListener);
 
@@ -146,12 +146,12 @@ public class TimeChangedBroadcastReceiverTest extends BaseRobolectricUnitTest {
     @Test
     public void onReceiveShouldCallListenerOnTimeChangedWhenIntentIsTimeChanged() {
         // Add listener
-        TimeChangedBroadcastReceiver.init(RuntimeEnvironment.application);
+        TimeChangedBroadcastReceiver.init(ApplicationProvider.getApplicationContext());
         TimeChangedBroadcastReceiver.OnTimeChangedListener onTimeChangedListener = Mockito.mock(TimeChangedBroadcastReceiver.OnTimeChangedListener.class);
         TimeChangedBroadcastReceiver.getInstance().addOnTimeChangedListener(onTimeChangedListener);
 
 
-        TimeChangedBroadcastReceiver.getInstance().onReceive(RuntimeEnvironment.application, new Intent(Intent.ACTION_TIME_CHANGED));
+        TimeChangedBroadcastReceiver.getInstance().onReceive(ApplicationProvider.getApplicationContext(), new Intent(Intent.ACTION_TIME_CHANGED));
 
         // Verify that time has changed
         Mockito.verify(onTimeChangedListener).onTimeChanged();
@@ -160,12 +160,12 @@ public class TimeChangedBroadcastReceiverTest extends BaseRobolectricUnitTest {
     @Test
     public void onReceiveShouldCallListenerOnTimeZoneChangedWhenIntentIsTimeZoneChanged() {
         // Add listener
-        TimeChangedBroadcastReceiver.init(RuntimeEnvironment.application);
+        TimeChangedBroadcastReceiver.init(ApplicationProvider.getApplicationContext());
         TimeChangedBroadcastReceiver.OnTimeChangedListener onTimeChangedListener = Mockito.mock(TimeChangedBroadcastReceiver.OnTimeChangedListener.class);
         TimeChangedBroadcastReceiver.getInstance().addOnTimeChangedListener(onTimeChangedListener);
 
 
-        TimeChangedBroadcastReceiver.getInstance().onReceive(RuntimeEnvironment.application, new Intent(Intent.ACTION_TIMEZONE_CHANGED));
+        TimeChangedBroadcastReceiver.getInstance().onReceive(ApplicationProvider.getApplicationContext(), new Intent(Intent.ACTION_TIMEZONE_CHANGED));
 
         // Verify that time has changed
         Mockito.verify(onTimeChangedListener).onTimeZoneChanged();

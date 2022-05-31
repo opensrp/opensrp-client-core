@@ -7,7 +7,6 @@ import android.accounts.NetworkErrorException;
 import android.content.Intent;
 import android.os.Bundle;
 
-import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +17,8 @@ import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.view.activity.BaseLoginActivity;
+
+import java.net.HttpURLConnection;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 20-04-2021.

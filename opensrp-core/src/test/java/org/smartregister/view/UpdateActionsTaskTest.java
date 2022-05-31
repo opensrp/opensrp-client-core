@@ -1,5 +1,14 @@
 package org.smartregister.view;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.FetchStatus.fetched;
+import static org.smartregister.domain.FetchStatus.nothingFetched;
+
 import android.content.Context;
 
 import org.junit.Before;
@@ -17,15 +26,6 @@ import org.smartregister.service.AllFormVersionSyncService;
 import org.smartregister.service.FormSubmissionSyncService;
 import org.smartregister.sync.AfterFetchListener;
 import org.smartregister.sync.UpdateActionsTask;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.domain.FetchStatus.fetched;
-import static org.smartregister.domain.FetchStatus.nothingFetched;
 
 public class UpdateActionsTaskTest extends BaseUnitTest {
     @Mock
@@ -77,7 +77,7 @@ public class UpdateActionsTaskTest extends BaseUnitTest {
     }
 
     @Test
-    public void shouldNotUpdateDisplayIfNothingWasFetched() throws Exception {
+    public void shouldNotUpdateDisplayIfNothingWasFetched() {
         CoreLibrary.init(context);
         when(context.IsUserLoggedOut()).thenReturn(false);
         when(context.allSharedPreferences()).thenReturn(allSharedPreferences);
@@ -112,7 +112,7 @@ public class UpdateActionsTaskTest extends BaseUnitTest {
             }
         });
 
-        // verifyZeroInteractions(actionService);
+        // verifyNoInteractions(actionService);
     }
 
     @Test

@@ -2,7 +2,7 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -65,12 +65,12 @@ public class ImageRepositoryTest extends BaseUnitTest {
     @Test
     public void assertAddCallsDatabaseInsert() {
         imageRepository.add(getProfileImage());
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(), Mockito.any(ContentValues.class));
     }
 
     @Test
     public void assertallProfileImages() {
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getCursor());
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull())).thenReturn(getCursor());
         Assert.assertNotNull(imageRepository.allProfileImages());
     }
 
@@ -82,13 +82,13 @@ public class ImageRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertfindAllUnSynced() {
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getCursor());
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull())).thenReturn(getCursor());
         Assert.assertNotNull(imageRepository.findAllUnSynced());
     }
 
     @Test
     public void assertfindByEntityId() {
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getCursor());
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull())).thenReturn(getCursor());
         Assert.assertNotNull(imageRepository.findByEntityId("1"));
     }
 

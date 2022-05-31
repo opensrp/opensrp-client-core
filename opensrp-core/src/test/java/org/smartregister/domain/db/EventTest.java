@@ -1,6 +1,6 @@
 package org.smartregister.domain.db;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.joda.time.DateTime;
 import org.junit.Before;

@@ -22,9 +22,6 @@ import org.smartregister.view.UnitTest;
 @Config(shadows = {ShadowLocalBroadcastManager.class, FontTextViewShadow.class, ShadowDrawableResourcesImpl.class, ShadowAppDatabase.class, ShadowJobManager.class, ShadowSQLiteDatabase.class}, sdk = Build.VERSION_CODES.O_MR1)
 public abstract class BaseRobolectricUnitTest extends UnitTest {
 
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
     public static final int ASYNC_TIMEOUT = 2000;
 
     public void initCoreLibrary() {

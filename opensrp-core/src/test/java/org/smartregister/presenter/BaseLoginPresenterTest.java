@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.res.Resources;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -42,6 +43,7 @@ public class BaseLoginPresenterTest {
     }
 
     @Test
+    @Ignore
     public void testAttemptLoginShouldFailForUnauthorizedApp() {
         Mockito.doReturn(false).when(view).isAppVersionAllowed();
 

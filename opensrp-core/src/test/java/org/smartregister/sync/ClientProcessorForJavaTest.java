@@ -20,7 +20,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -217,8 +216,8 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         ClientProcessorForJava clientProcessor = new ClientProcessorForJava(context);
         CommonRepository commonRepository = Mockito.mock(CommonRepository.class);
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
-        PowerMockito.when(coreLibrary.context()).thenReturn(opensrpContext);
-        PowerMockito.when(opensrpContext.commonrepository("child")).thenReturn(commonRepository);
+        Mockito.when(coreLibrary.context()).thenReturn(opensrpContext);
+        Mockito.when(opensrpContext.commonrepository("child")).thenReturn(commonRepository);
         assertTrue(clientProcessor.closeCase(new Client("1233-2"), Arrays.asList("child")));
         Mockito.verify(commonRepository).closeCase(closeCaseArgumentCaptor.capture(), closeCaseArgumentCaptor.capture());
         assertEquals("1233-2", closeCaseArgumentCaptor.getAllValues().get(0));

@@ -158,6 +158,8 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
+        initCoreLibrary();
+        CoreLibrary.init(context);
         when(presenter.getOpenSRPContext()).thenReturn(context);
         when(sharedPreferences.edit()).thenReturn(sharePrefEditor);
         when(allSharedPreferences.getPreferences()).thenReturn(sharedPreferences);
@@ -198,7 +200,6 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
     @After
     public void tearDown() {
-        initCoreLibrary();
         if (activity != null && !activity.isFinishing())
             activity.finish();
     }

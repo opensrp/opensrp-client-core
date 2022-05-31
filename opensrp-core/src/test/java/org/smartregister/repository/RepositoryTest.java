@@ -4,14 +4,10 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.security.SecurityHelper;
@@ -22,12 +18,7 @@ import java.io.File;
 /**
  * Created by kaderchowdhury on 19/11/17.
  */
-@PrepareForTest({DrishtiApplication.class, SQLiteDatabase.class})
 public class RepositoryTest extends BaseUnitTest {
-
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
-
     @Mock
     private DrishtiApplication drishtiApplication;
 
@@ -46,15 +37,15 @@ public class RepositoryTest extends BaseUnitTest {
     public void setUp() {
         dbName = "drishti.db";
         password = "Android7832!".toCharArray();
+        Mockito.doReturn(SecurityHelper.toBytes(password)).when(drishtiApplication).getPassword();
 
-        MockitoAnnotations.initMocks(this);
-        PowerMockito.mockStatic(DrishtiApplication.class);
-        PowerMockito.when(DrishtiApplication.getInstance()).thenReturn(drishtiApplication);
-        PowerMockito.when(drishtiApplication.getApplicationContext()).thenReturn(context);
+        try (MockedStatic<DrishtiApplication> drishtiApplicationMockedStatic = Mockito.mockStatic(DrishtiApplication.class);
+             MockedStatic<File> dirMockedStatic = Mockito.mockStatic(File.class)) {
+            drishtiApplicationMockedStatic.when(DrishtiApplication.getInstance()).thenReturn(drishtiApplication);
+            drishtiApplicationMockedStatic.when(() -> drishtiApplication.getApplicationContext()).thenReturn(context);
 
-        ReflectionHelpers.setField(drishtiApplication, "password", SecurityHelper.toBytes(password));
-        PowerMockito.when(context.getDir("opensrp", android.content.Context.MODE_PRIVATE)).thenReturn(new File("/"));
-
+            dirMockedStatic.when(() -> context.getDir("opensrp", android.content.Context.MODE_PRIVATE)).thenReturn(new File("/"));
+        }
 
         repository = Mockito.spy(Mockito.mock(Repository.class, Mockito.CALLS_REAL_METHODS));
         ReflectionHelpers.setField(repository, "context", context);
@@ -66,34 +57,42 @@ public class RepositoryTest extends BaseUnitTest {
 
     @Test
     public void getReadableDatabaseShouldCallGetReadableDbAndPassword() {
-        Mockito.doReturn(null).when(repository).getReadableDatabase(password);
 
-        repository.getReadableDatabase();
+        try (MockedStatic<DrishtiApplication> drishtiApplicationMockedStatic = Mockito.mockStatic(DrishtiApplication.class)) {
 
-        Mockito.verify(repository).getReadableDatabase(SecurityHelper.toBytes(password));
+            drishtiApplicationMockedStatic.when(DrishtiApplication::getInstance).thenReturn(drishtiApplication);
+
+            Mockito.doReturn(null).when(repository).getReadableDatabase(password);
+
+            repository.getReadableDatabase();
+
+            Mockito.verify(repository).getReadableDatabase(SecurityHelper.toBytes(password));
+        }
     }
 
     @Test(expected = RuntimeException.class)
     public void getReadableDatabaseShouldThrowRuntimeException() {
         Mockito.doReturn(null).when(drishtiApplication).getPassword();
-
         repository.getReadableDatabase();
     }
 
     @Test
     public void getWritableDatabaseShouldCallGetWritableDbAndPassword() {
-        Mockito.doReturn(null).when(repository).getWritableDatabase(password);
+        try (MockedStatic<DrishtiApplication> drishtiApplicationMockedStatic = Mockito.mockStatic(DrishtiApplication.class)) {
 
+            drishtiApplicationMockedStatic.when(DrishtiApplication::getInstance).thenReturn(drishtiApplication);
 
-        repository.getWritableDatabase();
+            Mockito.doReturn(null).when(repository).getWritableDatabase(password);
 
-        Mockito.verify(repository).getWritableDatabase(SecurityHelper.toBytes(password));
+            repository.getWritableDatabase();
+
+            Mockito.verify(repository).getWritableDatabase(SecurityHelper.toBytes(password));
+        }
     }
 
     @Test(expected = RuntimeException.class)
     public void getWritableDatabaseShouldThrowRuntimeException() {
         Mockito.doReturn(null).when(drishtiApplication).getPassword();
-
         repository.getWritableDatabase();
     }
 

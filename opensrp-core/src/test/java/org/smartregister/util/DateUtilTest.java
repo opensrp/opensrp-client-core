@@ -1,17 +1,14 @@
 package org.smartregister.util;
 
+import androidx.test.core.app.ApplicationProvider;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
-import org.robolectric.RuntimeEnvironment;
+import org.mockito.Mockito;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -24,26 +21,17 @@ import java.util.concurrent.TimeUnit;
  * Created by kaderchowdhury on 12/11/17.
  */
 
-@PrepareForTest({CoreLibrary.class})
 public class DateUtilTest extends BaseUnitTest {
-
     @Mock
     private CoreLibrary coreLibrary;
-
     @Mock
     private Context context;
-
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
 
     @Before
     public void setUp() {
 
-        MockitoAnnotations.initMocks(this);
-        PowerMockito.mockStatic(CoreLibrary.class);
-        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
-        PowerMockito.when(coreLibrary.context()).thenReturn(context);
-        PowerMockito.when(context.applicationContext()).thenReturn(RuntimeEnvironment.application);
+        Mockito.when(coreLibrary.context()).thenReturn(context);
+        Mockito.when(context.applicationContext()).thenReturn(ApplicationProvider.getApplicationContext());
 
     }
 
@@ -55,7 +43,7 @@ public class DateUtilTest extends BaseUnitTest {
     @Test
     public void assertGetDurationTest() {
 
-        Locale locale = RuntimeEnvironment.application.getApplicationContext().getResources().getConfiguration().locale;
+        Locale locale = ApplicationProvider.getApplicationContext().getApplicationContext().getResources().getConfiguration().locale;
 
         Assert.assertEquals("1d", DateUtil.getDuration(100000000l, locale));
         Assert.assertEquals("5w 1d", DateUtil.getDuration(3110400000l, locale));
@@ -67,8 +55,8 @@ public class DateUtilTest extends BaseUnitTest {
 
         Assert.assertEquals("1d", DateUtil.getDuration(100000000l));
 
-        Assert.assertNotNull(DateUtil.getDuration(RuntimeEnvironment.application, new DateTime(0)));
-        Assert.assertNull(DateUtil.getDuration(RuntimeEnvironment.application, null));
+        Assert.assertNotNull(DateUtil.getDuration(ApplicationProvider.getApplicationContext(), new DateTime(0)));
+        Assert.assertNull(DateUtil.getDuration(ApplicationProvider.getApplicationContext(), null));
     }
 
     @Test

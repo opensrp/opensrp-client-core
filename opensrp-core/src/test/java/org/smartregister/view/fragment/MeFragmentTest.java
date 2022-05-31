@@ -7,19 +7,17 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
-import org.robolectric.RuntimeEnvironment;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
@@ -32,69 +30,56 @@ import org.smartregister.view.contract.MeContract;
  * Created by ndegwamartin on 2020-03-24.
  */
 
-@PrepareForTest({Utils.class})
 public class MeFragmentTest extends BaseUnitTest {
 
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
-
-    @Mock
-    private View view;
-
-    @Mock
-    private FragmentActivity activity;
-
-    @Mock
-    private Bundle bundle;
-
-    @Mock
-    private RelativeLayout meLocationSection;
-
-    @Mock
-    private RelativeLayout settingSection;
-
-    @Mock
-    private RelativeLayout logoutSection;
-
-    @Mock
-    private LocationPickerView facilitySelection;
-
     public static final String TEST_SEARCH_HINT = "Test Search Hint";
-
     public static final String MY_TEST_SEARCH_TEXT = "My Testing Search Text";
-
     private static final String GENERIC_TEXT_PHRASE = "Move the Earth";
-
-    private MeFragment meFragment;
-
     @Mock
     protected MeContract.Presenter presenter;
-
+    @Mock
+    private View view;
+    @Mock
+    private FragmentActivity activity;
+    @Mock
+    private Bundle bundle;
+    @Mock
+    private RelativeLayout meLocationSection;
+    @Mock
+    private RelativeLayout settingSection;
+    @Mock
+    private RelativeLayout logoutSection;
+    @Mock
+    private LocationPickerView facilitySelection;
+    private MeFragment meFragment;
     private LayoutInflater layoutInflater;
 
     @Mock
     private ViewGroup viewGroup;
 
+    private AutoCloseable autoCloseable;
+
     @Before
     public void setUp() throws Exception {
 
-        org.mockito.MockitoAnnotations.initMocks(this);
+        autoCloseable = MockitoAnnotations.openMocks(this);
 
         meFragment = Mockito.mock(MeFragment.class, Mockito.CALLS_REAL_METHODS);
 
         ReflectionHelpers.setField(meFragment, "presenter", presenter);
 
-        layoutInflater = LayoutInflater.from(RuntimeEnvironment.application);
+        layoutInflater = LayoutInflater.from(ApplicationProvider.getApplicationContext());
 
         Mockito.doReturn(meLocationSection).when(view).findViewById(R.id.me_location_section);
         Mockito.doReturn(settingSection).when(view).findViewById(R.id.setting_section);
         Mockito.doReturn(logoutSection).when(view).findViewById(R.id.logout_section);
         Mockito.doReturn(facilitySelection).when(view).findViewById(R.id.facility_selection);
 
-        PowerMockito.mockStatic(Utils.class);
-        PowerMockito.when(Utils.getBooleanProperty(AllConstants.PROPERTY.DISABLE_LOCATION_PICKER_VIEW)).thenReturn(true);
+        try (MockedStatic<Utils> utilsMockedStatic = Mockito.mockStatic(Utils.class)) {
+            utilsMockedStatic.when(() -> Utils.getBooleanProperty(AllConstants.PROPERTY.DISABLE_LOCATION_PICKER_VIEW)).thenReturn(true);
+        }
 
-        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(activity).getResources();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(activity).getResources();
 
     }
 
@@ -138,8 +123,9 @@ public class MeFragmentTest extends BaseUnitTest {
 
 
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
         meFragment = null;
         layoutInflater = null;
+        autoCloseable.close();
     }
 }

@@ -60,7 +60,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.Task.TaskStatus.ARCHIVED;
 import static org.smartregister.domain.Task.TaskStatus.CANCELLED;
@@ -403,7 +403,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
     public void testCancelTasksForEntityWithNullParams() {
         taskRepository.cancelTasksForEntity(null);
         verify(sqLiteDatabase, never()).update(any(), any(), any(), any());
-        verifyZeroInteractions(sqLiteDatabase);
+        verifyNoInteractions(sqLiteDatabase);
     }
 
     @Test
@@ -467,7 +467,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
     @Test
     public void testArchiveTasksForEntityWithNullParams() {
         taskRepository.archiveTasksForEntity(null);
-        verifyZeroInteractions(sqLiteDatabase);
+        verifyNoInteractions(sqLiteDatabase);
     }
 
     @Test

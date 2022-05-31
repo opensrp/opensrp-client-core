@@ -1,18 +1,17 @@
 package org.smartregister.repository;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import android.content.ContentValues;
 
 import net.sqlcipher.MatrixCursor;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -28,13 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 /**
  * Created by kaderchowdhury on 12/11/17.
  */
-@PrepareForTest({CoreLibrary.class})
 public class FormDataRepositoryTest extends BaseUnitTest {
 
     public static final String INSTANCE_ID_COLUMN = "instanceId";
@@ -46,8 +41,7 @@ public class FormDataRepositoryTest extends BaseUnitTest {
     private static final String SYNC_STATUS_COLUMN = "syncStatus";
     private static final String FORM_DATA_DEFINITION_VERSION_COLUMN = "formDataDefinitionVersion";
     private static final String DETAILS_COLUMN_NAME = "details";
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
+
     @Mock
     private Context context;
     private FormDataRepository formDataRepository;
@@ -62,23 +56,24 @@ public class FormDataRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        PowerMockito.mockStatic(CoreLibrary.class);
-        CoreLibrary.init(context);
-        Context.bindtypes = new ArrayList<CommonRepositoryInformationHolder>();
-        CommonRepositoryInformationHolder bt = new CommonRepositoryInformationHolder("BINDTYPENAME", new ColumnDetails[2]);
-        Context.bindtypes.add(bt);
-        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
-        PowerMockito.when(coreLibrary.context()).thenReturn(context);
-        PowerMockito.when(context.configuration()).thenReturn(dristhiConfiguration);
-        PowerMockito.when(dristhiConfiguration.appName()).thenReturn("NULL");
-        PowerMockito.when(context.commonrepository(Mockito.anyString())).thenReturn(Mockito.mock(CommonRepository.class));
-        formDataRepository = new FormDataRepository();
-        formDataRepository.updateMasterRepository(repository);
-        Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getCursor());
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getCursor());
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class)) {
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
+
+            CoreLibrary.init(context);
+            Context.bindtypes = new ArrayList<>();
+            CommonRepositoryInformationHolder bt = new CommonRepositoryInformationHolder("BINDTYPENAME", new ColumnDetails[2]);
+            Context.bindtypes.add(bt);
+            Mockito.when(coreLibrary.context()).thenReturn(context);
+            Mockito.when(context.configuration()).thenReturn(dristhiConfiguration);
+            Mockito.when(dristhiConfiguration.appName()).thenReturn("NULL");
+            Mockito.when(context.commonrepository(Mockito.anyString())).thenReturn(Mockito.mock(CommonRepository.class));
+            formDataRepository = new FormDataRepository();
+            formDataRepository.updateMasterRepository(repository);
+            Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
+            Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
+            Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getCursor());
+            Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(), Mockito.isNull(), Mockito.isNull())).thenReturn(getCursor());
+        }
     }
 
     @Test
@@ -105,7 +100,7 @@ public class FormDataRepositoryTest extends BaseUnitTest {
     @Test
     public void assertsaveFormSubmissionCallsDatabaseInsert() {
         formDataRepository.saveFormSubmission(getFormSubmission());
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(), Mockito.any(ContentValues.class));
     }
 
     @Test

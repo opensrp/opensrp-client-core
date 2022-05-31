@@ -1,5 +1,10 @@
 package org.smartregister.service;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.ei.drishti.dto.Action;
 import org.ei.drishti.dto.BeneficiaryType;
 import org.junit.Before;
@@ -18,11 +23,6 @@ import org.smartregister.util.ActionBuilder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class AlertServiceTest extends BaseUnitTest {
     @Mock
@@ -78,7 +78,7 @@ public class AlertServiceTest extends BaseUnitTest {
 
         service.create(actionForMother);
 
-        Mockito.verifyZeroInteractions(alertRepository);
+        Mockito.verifyNoInteractions(alertRepository);
     }
 
     @Test
@@ -152,7 +152,7 @@ public class AlertServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public  void testChangeAlertStatusToInProcess() {
+    public void testChangeAlertStatusToInProcess() {
         service = spy(service);
         service.changeAlertStatusToInProcess("Entity 1", "AncAlert");
         Mockito.verify(alertRepository).changeAlertStatusToInProcess("Entity 1", "AncAlert");
@@ -200,9 +200,9 @@ public class AlertServiceTest extends BaseUnitTest {
     public void testUpdateFtsSearchInACR() {
         AllCommonsRepository allCommonsRepository = mock(AllCommonsRepository.class);
         when(allCommonsRepositoryMap.get("bind 1")).thenReturn(allCommonsRepository);
-        String[] alertFilterVisitCodes = new String[] {"AncFilter"};
+        String[] alertFilterVisitCodes = new String[]{"AncFilter"};
         when(commonFtsObject.getAlertFilterVisitCodes()).thenReturn(alertFilterVisitCodes);
-        service.updateFtsSearchInACR("bind 1", "Entity 1",  "baseEntityId", "id 1");
+        service.updateFtsSearchInACR("bind 1", "Entity 1", "baseEntityId", "id 1");
 
         verify(allCommonsRepository).updateSearch("Entity 1", "baseEntityId", "id 1", alertFilterVisitCodes);
     }

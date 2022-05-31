@@ -91,21 +91,17 @@ public class HTTPAgent {
 
     public static final int FILE_UPLOAD_CHUNK_SIZE_BYTES = 4096;
     public static final int DOWNLOAD_BUFFER_SIZE = 1024;
-
+    private static final String DETAILS_URL = "/user-details?anm-id=";
     private Context context;
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
     private GZIPCompression gzipCompression;
-
     private String boundary = "***" + System.currentTimeMillis() + "***";
     private String twoHyphens = "--";
     private String crlf = "\r\n";
-
     private int connectTimeout = 60000;
     private int readTimeout = 60000;
     private Gson gson;
-
-    private static final String DETAILS_URL = "/user-details?anm-id=";
 
 
     public HTTPAgent(Context context, AllSharedPreferences
@@ -556,6 +552,16 @@ public class HTTPAgent {
     }
 
     /**
+     * Sets the read timeout in milliseconds
+     * <p>
+     * Setting this will call {@link java.net.HttpURLConnection#setReadTimeout(int)}
+     * on the {@link java.net.HttpURLConnection} instance in {@link org.smartregister.service.HTTPAgent}
+     */
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
+    /**
      * Returns the connection timeout in milliseconds
      *
      * @return connection timeout value in milliseconds
@@ -572,16 +578,6 @@ public class HTTPAgent {
      */
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
-    }
-
-    /**
-     * Sets the read timeout in milliseconds
-     * <p>
-     * Setting this will call {@link java.net.HttpURLConnection#setReadTimeout(int)}
-     * on the {@link java.net.HttpURLConnection} instance in {@link org.smartregister.service.HTTPAgent}
-     */
-    public void setReadTimeout(int readTimeout) {
-        this.readTimeout = readTimeout;
     }
 
     public AccountResponse oauth2authenticateCore(StringBuffer requestParamBuffer, String grantType, String tokenEndpointURL) {
@@ -603,16 +599,8 @@ public class HTTPAgent {
 
             requestParamBuffer.append("&grant_type=").append(grantType);
 
-            if (allSharedPreferences.getPreferences().getBoolean(AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED, false)) {
+            urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + base64Auth);
 
-                requestParamBuffer.append("&client_id=").append(clientId);
-                requestParamBuffer.append("&client_secret=").append(clientSecret);
-
-            } else {
-
-                urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + base64Auth);
-
-            }
 
             byte[] postData = requestParamBuffer.toString().getBytes(CharEncoding.UTF_8);
             int postDataLength = postData.length;

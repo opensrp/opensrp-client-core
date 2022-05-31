@@ -3,7 +3,7 @@ package org.smartregister.view.activity;
 import android.content.Context;
 import android.content.Intent;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.Test;

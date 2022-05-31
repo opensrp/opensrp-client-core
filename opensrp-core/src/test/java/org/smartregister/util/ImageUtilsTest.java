@@ -27,7 +27,6 @@ public class ImageUtilsTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
         mockMethods();
     }
 

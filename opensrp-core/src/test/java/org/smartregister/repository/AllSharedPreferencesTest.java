@@ -38,7 +38,7 @@ public class AllSharedPreferencesTest extends TestCase {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         allSharedPreferences = new AllSharedPreferences(preferences);
-        Mockito.when(preferences.getString(Mockito.anyString(), Mockito.isNull(String.class))).thenReturn(str);
+        Mockito.when(preferences.getString(Mockito.anyString(), Mockito.isNull())).thenReturn(str);
         Mockito.when(preferences.getString(Mockito.anyString(), Mockito.anyString())).thenReturn(str);
         Mockito.when(preferences.getLong(Mockito.anyString(), Mockito.anyLong())).thenReturn(0l);
         Mockito.when(preferences.getString(HOST, "")).thenReturn("");

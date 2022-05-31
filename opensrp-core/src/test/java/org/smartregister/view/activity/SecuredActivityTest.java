@@ -106,6 +106,7 @@ public class SecuredActivityTest extends BaseRobolectricUnitTest {
         Session session = ReflectionHelpers.getField(CoreLibrary.getInstance().context().userService(), "session");
         session.setPassword(null);
         session.start(0);
+        resetCoreLibrary();
     }
 
     @Test

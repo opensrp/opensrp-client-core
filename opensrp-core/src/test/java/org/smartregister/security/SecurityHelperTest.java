@@ -5,18 +5,17 @@ import android.util.Base64;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.CharacterCodingException;
@@ -31,23 +30,20 @@ import javax.crypto.spec.PBEKeySpec;
  * Created by ndegwamartin on 15/06/2020.
  */
 
-@RunWith(PowerMockRunner.class)
 @PrepareForTest({Base64.class, SecretKeyFactory.class})
 public class SecurityHelperTest {
 
+    private static final String TEST_DATA = "Some Random Test Data";
     @Mock
     private Editable editable;
-
     @Mock
     private SecretKey secretKey;
-
     private char[] TEST_PASSWORD;
-
-    private static final String TEST_DATA = "Some Random Test Data";
+    private AutoCloseable closable;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        closable = MockitoAnnotations.openMocks(this);
         TEST_PASSWORD = "TEST_PASSWORD".toCharArray();
     }
 
@@ -124,32 +120,37 @@ public class SecurityHelperTest {
 
         String base64EncodedString = "U29tZSBSYW5kb20gVGVzdCBEYXRh";
 
-        PowerMockito.mockStatic(Base64.class);
-        PowerMockito.when(Base64.decode(base64EncodedString, Base64.DEFAULT)).thenReturn(TEST_DATA.getBytes(CharEncoding.UTF_8));
+        try (MockedStatic<Base64> base64 = Mockito.mockStatic(Base64.class)) {
+            base64.when(() -> Base64.decode(ArgumentMatchers.anyString(), ArgumentMatchers.eq(Base64.DEFAULT))).thenReturn(new byte[]{0, 1});
+            base64.when(() -> Base64.decode(base64EncodedString, Base64.DEFAULT)).thenReturn(TEST_DATA.getBytes(CharEncoding.UTF_8));
 
-        byte[] decoded = SecurityHelper.nullSafeBase64Decode(base64EncodedString);
-        Assert.assertNotNull(decoded);
-        Assert.assertTrue(Arrays.equals(SecurityHelper.toBytes(TEST_DATA.toCharArray()), decoded));
+            byte[] decoded = SecurityHelper.nullSafeBase64Decode(base64EncodedString);
+            Assert.assertNotNull(decoded);
+            Assert.assertTrue(Arrays.equals(SecurityHelper.toBytes(TEST_DATA.toCharArray()), decoded));
 
+        }
     }
 
     @Test
     public void nullSafeBase64DecodeDoesNotThrowExceptionIfParameterIsNull() {
-        PowerMockito.mockStatic(Base64.class);
-        PowerMockito.when(Base64.decode(ArgumentMatchers.anyString(), ArgumentMatchers.eq(Base64.DEFAULT))).thenReturn(new byte[]{0, 1});
+        try (MockedStatic<Base64> base64 = Mockito.mockStatic(Base64.class)) {
+            base64.when(() -> Base64.decode(ArgumentMatchers.anyString(), ArgumentMatchers.eq(Base64.DEFAULT))).thenReturn(new byte[]{0, 1});
 
-        byte[] decoded = SecurityHelper.nullSafeBase64Decode(null);
-        Assert.assertNull(decoded);
-
+            byte[] decoded = SecurityHelper.nullSafeBase64Decode(null);
+            Assert.assertNull(decoded);
+        }
     }
 
     @Test
     public void testGetPsswordHashReturnsHashedPasswordObject() throws Exception {
 
-        PowerMockito.mockStatic(SecretKeyFactory.class);
-        SecretKeyFactory keyFactory = PowerMockito.mock(SecretKeyFactory.class);
-        PowerMockito.when(SecretKeyFactory.getInstance(ArgumentMatchers.anyString())).thenReturn(keyFactory);
-        PowerMockito.when(keyFactory.generateSecret(ArgumentMatchers.any(PBEKeySpec.class))).thenReturn(secretKey);
+        SecretKeyFactory keyFactory = Mockito.mock(SecretKeyFactory.class);
+
+        try (MockedStatic<SecretKeyFactory> mock = Mockito.mockStatic(SecretKeyFactory.class)) {
+            mock.when(() -> SecretKeyFactory.getInstance(ArgumentMatchers.anyString())).thenReturn(keyFactory);
+        }
+
+        Mockito.when(keyFactory.generateSecret(ArgumentMatchers.any(PBEKeySpec.class))).thenReturn(secretKey);
         Mockito.doReturn(SecurityHelper.toBytes(TEST_PASSWORD)).when(secretKey).getEncoded();
 
         PasswordHash passwordHash = SecurityHelper.getPasswordHash(TEST_PASSWORD);
@@ -165,5 +166,10 @@ public class SecurityHelperTest {
         Assert.assertNotNull(value);
         Assert.assertTrue(StringUtils.isAlphanumeric(new StringBuilder().append(value).toString()));
         Assert.assertEquals(32, value.length);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        closable.close();
     }
 }

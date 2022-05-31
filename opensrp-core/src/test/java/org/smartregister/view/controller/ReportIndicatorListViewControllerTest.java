@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.smartregister.domain.Report;
-import org.smartregister.domain.ReportIndicator;
 import org.smartregister.domain.ReportsCategory;
 import org.smartregister.repository.AllReports;
 import org.smartregister.util.DateUtil;
@@ -44,7 +43,7 @@ public class ReportIndicatorListViewControllerTest {
         List<MonthSummaryDatum> monthlySummaries = Arrays.asList(new MonthSummaryDatum("10", "2012", "2", "2", Arrays.asList("123", "456")));
         Report iudReport = new Report("IUD", "40", new Gson().toJson(monthlySummaries));
         Report condomReport = new Report("CONDOM", "30", new Gson().toJson(monthlySummaries));
-        Mockito.when(allReports.allFor(ArgumentMatchers.anyListOf(ReportIndicator.class))).thenReturn(Arrays.asList(iudReport, condomReport));
+        Mockito.when(allReports.allFor(ArgumentMatchers.anyList())).thenReturn(Arrays.asList(iudReport, condomReport));
 
         String indicatorReports = controller.get();
 
@@ -59,7 +58,7 @@ public class ReportIndicatorListViewControllerTest {
         List<MonthSummaryDatum> monthlySummaries = Arrays.asList(new MonthSummaryDatum("10", "2012", "2", "2", Arrays.asList("123", "456")));
         Report iudReport = new Report("IUD", "40", new Gson().toJson(monthlySummaries));
         Report condomReport = new Report("CONDOM", "30", "[]");
-        Mockito.when(allReports.allFor(ArgumentMatchers.anyListOf(ReportIndicator.class))).thenReturn(Arrays.asList(iudReport, condomReport));
+        Mockito.when(allReports.allFor(ArgumentMatchers.anyList())).thenReturn(Arrays.asList(iudReport, condomReport));
 
         String indicatorReports = controller.get();
 

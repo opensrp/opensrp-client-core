@@ -66,7 +66,7 @@ public class EligibleCoupleServiceTest extends BaseUnitTest {
 
         service.register(submission);
 
-        Mockito.verifyZeroInteractions(allTimelineEvents);
+        Mockito.verifyNoInteractions(allTimelineEvents);
     }
 
     @Test
