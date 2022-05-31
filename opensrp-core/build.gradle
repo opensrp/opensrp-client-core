@@ -90,6 +90,8 @@ android {
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
         buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
+        buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
+        buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
     }
     sourceSets.main.jni.srcDirs = [] //disable automatic ndk-build call
     sourceSets {
@@ -239,7 +241,12 @@ dependencies {
 
     testImplementation project(path: ':opensrp-core')
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'//test do we need it
-    testImplementation 'org.mockito:mockito-core:4.5.1'
+
+    //Mockito
+    def mockitoVersion = '4.6.0'
+    testImplementation("org.mockito:mockito-core:$mockitoVersion")
+    testImplementation("org.mockito:mockito-inline:$mockitoVersion")
+
     testImplementation "androidx.test:core:1.4.0-rc01"
     testImplementation "androidx.test.ext:junit:1.1.3-rc01"
 
@@ -261,11 +268,7 @@ dependencies {
 
     // PowerMock
     def powerMockVersion = '2.0.9'
-    testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
-    testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
-    testImplementation "org.powermock:powermock-module-javaagent:$powerMockVersion"
-    testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
-    testImplementation("org.powermock:powermock-classloading-xstream:$powerMockVersion")
+    testImplementation "org.powermock:powermock-core:$powerMockVersion"
 
     def fragmentVersion = "1.5.0-rc01"
     testImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
