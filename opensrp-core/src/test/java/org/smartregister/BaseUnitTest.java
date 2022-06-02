@@ -18,7 +18,7 @@ import java.util.Collection;
  * Created by onaio on 29/08/2017.
  */
 
-@Config(shadows = {FontTextViewShadow.class}, sdk = Build.VERSION_CODES.O_MR1)
+@Config(shadows = {FontTextViewShadow.class}, sdk = Build.VERSION_CODES.S)
 public abstract class BaseUnitTest extends UnitTest {
     protected static final int INITIALS_RESOURCE_ID = R.drawable.bottom_bar_initials_background;
     protected static final String INITIALS_TEXT = "TR";

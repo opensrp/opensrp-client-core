@@ -34,6 +34,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
@@ -151,6 +152,9 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
     @Mock
     private AppProperties appProperties;
+
+    @Mock
+    private CoreLibrary coreLibrary;
 
     private String username = "johndoe";
     private char[] qwertyPassword = "qwerty".toCharArray();

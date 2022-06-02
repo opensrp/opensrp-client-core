@@ -272,6 +272,8 @@ dependencies {
 
     def fragmentVersion = "1.5.0-rc01"
     testImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
+
+    testImplementation 'org.skyscreamer:jsonassert:1.5.0'
 }
 
 task clearJar(type: Delete) {

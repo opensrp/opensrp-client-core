@@ -3,10 +3,10 @@ package org.smartregister.presenter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.view.contract.StatsFragmentContract;
 import org.smartregister.view.interactor.StatsFragmentInteractor;
 import org.smartregister.view.presenter.StatsFragmentPresenter;
@@ -14,23 +14,17 @@ import org.smartregister.view.presenter.StatsFragmentPresenter;
 import java.util.HashMap;
 import java.util.Map;
 
+public class StatsFragmentPresenterTest extends BaseUnitTest {
 
-public class StatsFragmentPresenterTest {
-
-    @Mock
-    private StatsFragmentInteractor interactor;
-
-    private StatsFragmentPresenter presenter;
-
-    @Mock
+    @Spy
     StatsFragmentContract.View view;
+    private StatsFragmentInteractor interactor;
+    private StatsFragmentPresenter presenter;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         presenter = Mockito.mock(StatsFragmentPresenter.class, Mockito.CALLS_REAL_METHODS);
-        view = Mockito.spy(view);
-        interactor = Mockito.spy(interactor);
+        interactor = Mockito.mock(StatsFragmentInteractor.class, Mockito.CALLS_REAL_METHODS);
         ReflectionHelpers.setField(presenter, "interactor", interactor);
         ReflectionHelpers.setField(presenter, "view", view);
     }

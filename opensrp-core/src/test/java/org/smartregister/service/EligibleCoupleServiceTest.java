@@ -4,23 +4,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.TimelineEvent;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.repository.AllEligibleCouples;
 import org.smartregister.repository.AllTimelineEvents;
-import org.smartregister.repository.EligibleCoupleRepository;
-import org.smartregister.repository.TimelineEventRepository;
 import org.smartregister.util.EasyMap;
 
 public class EligibleCoupleServiceTest extends BaseUnitTest {
-
-    @Mock
-    private EligibleCoupleRepository eligibleCoupleRepository;
-    @Mock
-    private TimelineEventRepository timelineEventRepository;
     @Mock
     private AllTimelineEvents allTimelineEvents;
     @Mock
@@ -32,7 +24,6 @@ public class EligibleCoupleServiceTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
         service = new EligibleCoupleService(allEligibleCouples, allTimelineEvents, allBeneficiaries);
     }
 

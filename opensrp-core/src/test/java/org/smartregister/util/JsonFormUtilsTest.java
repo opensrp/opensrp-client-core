@@ -29,6 +29,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.clientandeventmodel.Address;
@@ -44,11 +45,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by kaderchowdhury on 14/11/17.
@@ -578,34 +576,6 @@ public class JsonFormUtilsTest extends BaseUnitTest {
             "\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"address2\"," +
             "\"type\":\"edit_text\",\"hint\":\"Home address\",\"edit_type\":\"name\",\"value\":\"Nairobi\"}]";
 
-    public static boolean areEqual(Object ob1, Object ob2) throws JSONException {
-        Object obj1Converted = convertJsonElement(ob1);
-        Object obj2Converted = convertJsonElement(ob2);
-        return obj1Converted.equals(obj2Converted);
-    }
-
-    private static Object convertJsonElement(Object elem) throws JSONException {
-        if (elem instanceof JSONObject) {
-            JSONObject obj = (JSONObject) elem;
-            Iterator<String> keys = obj.keys();
-            Map<String, Object> jsonMap = new HashMap<>();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                jsonMap.put(key, convertJsonElement(obj.get(key)));
-            }
-            return jsonMap;
-        } else if (elem instanceof JSONArray) {
-            JSONArray arr = (JSONArray) elem;
-            Set<Object> jsonSet = new HashSet<>();
-            for (int i = 0; i < arr.length(); i++) {
-                jsonSet.add(convertJsonElement(arr.get(i)));
-            }
-            return jsonSet;
-        } else {
-            return elem;
-        }
-    }
-
     @Before
     public void setUp() throws Exception {
         formjson = new JSONObject(formresultJson);
@@ -1092,34 +1062,35 @@ public class JsonFormUtilsTest extends BaseUnitTest {
         JSONObject toMerge = new JSONObject();
         toMerge.put("entity_id", "mother");
         JSONObject updated = JsonFormUtils.merge(original, toMerge);
-        assertTrue(areEqual(updated, updatedExpected));
+
+        JSONAssert.assertEquals(updatedExpected, updated, false);
 
     }
 
     @Test
     public void assertMergeRecursiveMergeJson() throws Exception {
         String original = "{\n" +
-                "  \"birthdate\": \"2011-05-27T00:00:00.000Z\",\n" +
-                "  \"birthdateApprox\": false,\n" +
-                "  \"deathdateApprox\": false,\n" +
-                "  \"firstName\": \"Baby\",\n" +
-                "  \"gender\": \"Male\",\n" +
-                "  \"lastName\": \"Robert\",\n" +
-                "  \"relationships\": {},\n" +
-                "  \"addresses\": [],\n" +
-                "  \"attributes\": {\n" +
-                "    \"grade_class\": \"2B\",\n" +
-                "    \"age_entered\": \"10y\",\n" +
-                "  },\n" +
-                "  \"baseEntityId\": \"c659f922-9292-455e-8206-1c71562a4a3b\",\n" +
-                "  \"identifiers\": {\n" +
-                "    \"opensrp_id\": \"4380884-9\",\n" +
-                "    \"reveal_id\": \"2011052743808849\"\n" +
-                "  },\n" +
-                "  \"clientApplicationVersion\": 34,\n" +
-                "  \"clientDatabaseVersion\": 14,\n" +
-                "  \"dateCreated\": \"2021-05-27T15:17:24.483Z\",\n" +
-                "  \"type\": \"Client\"\n" +
+                "\t\"birthdate\": \"2011-05-27T00:00:00.000Z\",\n" +
+                "\t\"birthdateApprox\": false,\n" +
+                "\t\"deathdateApprox\": false,\n" +
+                "\t\"firstName\": \"Baby\",\n" +
+                "\t\"gender\": \"Male\",\n" +
+                "\t\"lastName\": \"Robert\",\n" +
+                "\t\"relationships\": {},\n" +
+                "\t\"addresses\": [],\n" +
+                "\t\"attributes\": {\n" +
+                "\t\t\"grade_class\": \"2B\",\n" +
+                "\t\t\"age_entered\": \"10y\"\n" +
+                "\t},\n" +
+                "\t\"baseEntityId\": \"c659f922-9292-455e-8206-1c71562a4a3b\",\n" +
+                "\t\"identifiers\": {\n" +
+                "\t\t\"opensrp_id\": \"4380884-9\",\n" +
+                "\t\t\"reveal_id\": \"2011052743808849\"\n" +
+                "\t},\n" +
+                "\t\"clientApplicationVersion\": 34,\n" +
+                "\t\"clientDatabaseVersion\": 14,\n" +
+                "\t\"dateCreated\": \"2021-05-27T15:17:24.483Z\",\n" +
+                "\t\"type\": \"Client\"\n" +
                 "}";
 
         String updated = "{\n" +
@@ -1171,7 +1142,7 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
         JSONObject newJson = JsonFormUtils.merge(jsonOriginal, jsonUpdated);
 
-        assertTrue(areEqual(newJson, jsonExpected));
+        JSONAssert.assertEquals(jsonExpected, newJson, false);
 
     }
 

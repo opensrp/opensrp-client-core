@@ -24,12 +24,13 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.R;
+import org.smartregister.view.contract.StatsFragmentContract;
 import org.smartregister.view.presenter.StatsFragmentPresenter;
 
 import java.util.HashMap;
@@ -50,9 +51,11 @@ public class StatsFragmentTest extends BaseUnitTest {
     @Mock
     private Bundle savedInstanceState;
 
+    @Spy
+    private StatsFragmentContract.View view;
+
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         statsFragment = Mockito.mock(StatsFragment.class, Mockito.CALLS_REAL_METHODS);
     }
 
@@ -79,7 +82,7 @@ public class StatsFragmentTest extends BaseUnitTest {
         View rootView = Mockito.spy(Mockito.mock(View.class));
         statsFragment = Mockito.spy(statsFragment);
 
-        presenter = Mockito.spy(Mockito.mock(StatsFragmentPresenter.class));
+        presenter = Mockito.spy(new StatsFragmentPresenter(view));
         ReflectionHelpers.setField(statsFragment, "presenter", presenter);
 
         Mockito.doReturn(btnRefreshStats).when(rootView).findViewById(R.id.refresh_button);

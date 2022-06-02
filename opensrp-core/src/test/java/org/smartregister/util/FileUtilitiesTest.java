@@ -1,7 +1,5 @@
 package org.smartregister.util;
 
-import static org.mockito.Mockito.when;
-
 import android.os.Environment;
 
 import org.apache.commons.io.FileUtils;
@@ -11,6 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.io.BufferedWriter;
@@ -35,9 +34,10 @@ public class FileUtilitiesTest {
     @Test
     public void assertWriteWritesSuccessfully() {
         String testData = "string to write";
-        when(Environment.getExternalStorageDirectory()).thenReturn(existentDirectory);
 
-        try (MockedConstruction<BufferedWriter> bufferedWriterMockedConstruction = Mockito.mockConstruction(BufferedWriter.class)) {
+        try (MockedStatic<Environment> environmentMockedStatic = Mockito.mockStatic(Environment.class)) {
+
+            environmentMockedStatic.when(() -> Environment.getExternalStorageDirectory()).thenReturn(existentDirectory);
 
             FileUtilities fileUtils = new FileUtilities();
             try {
@@ -46,8 +46,8 @@ public class FileUtilitiesTest {
                 // Read it from temp file
                 String path = existentDirectory.getPath() + File.separator + "EZ_time_tracker" + File.separator + FILE_NAME;
                 File file = new File(path);
-                final String writenText = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-                Assert.assertEquals(testData, writenText);
+                final String writtenText = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+                Assert.assertEquals(testData, writtenText);
             } catch (Exception e) {
                 Assert.fail();
             }

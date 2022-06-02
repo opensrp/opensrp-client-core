@@ -14,10 +14,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
@@ -31,10 +31,6 @@ import org.smartregister.view.contract.MeContract;
  */
 
 public class MeFragmentTest extends BaseUnitTest {
-
-    public static final String TEST_SEARCH_HINT = "Test Search Hint";
-    public static final String MY_TEST_SEARCH_TEXT = "My Testing Search Text";
-    private static final String GENERIC_TEXT_PHRASE = "Move the Earth";
     @Mock
     protected MeContract.Presenter presenter;
     @Mock
@@ -57,12 +53,8 @@ public class MeFragmentTest extends BaseUnitTest {
     @Mock
     private ViewGroup viewGroup;
 
-    private AutoCloseable autoCloseable;
-
     @Before
     public void setUp() throws Exception {
-
-        autoCloseable = MockitoAnnotations.openMocks(this);
 
         meFragment = Mockito.mock(MeFragment.class, Mockito.CALLS_REAL_METHODS);
 
@@ -74,13 +66,6 @@ public class MeFragmentTest extends BaseUnitTest {
         Mockito.doReturn(settingSection).when(view).findViewById(R.id.setting_section);
         Mockito.doReturn(logoutSection).when(view).findViewById(R.id.logout_section);
         Mockito.doReturn(facilitySelection).when(view).findViewById(R.id.facility_selection);
-
-        try (MockedStatic<Utils> utilsMockedStatic = Mockito.mockStatic(Utils.class)) {
-            utilsMockedStatic.when(() -> Utils.getBooleanProperty(AllConstants.PROPERTY.DISABLE_LOCATION_PICKER_VIEW)).thenReturn(true);
-        }
-
-        Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(activity).getResources();
-
     }
 
     @Test
@@ -112,13 +97,19 @@ public class MeFragmentTest extends BaseUnitTest {
     @Test
     public void testOnViewCreatedInvokesRequiredSetupMethods() {
 
-        meFragment.onViewCreated(view, bundle);
+        try (MockedStatic<Utils> utilsMockedStatic = Mockito.mockStatic(Utils.class)) {
+            utilsMockedStatic.when(() -> Utils.getBooleanProperty(AllConstants.PROPERTY.DISABLE_LOCATION_PICKER_VIEW)).thenReturn(true);
 
-        Mockito.verify(meFragment).setUpViews(view);
-        Mockito.verify(meFragment).setClickListeners();
+            Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(activity).getResources();
 
-        Mockito.verify(presenter).updateInitials();
-        Mockito.verify(presenter).updateName();
+            meFragment.onViewCreated(view, bundle);
+
+            Mockito.verify(meFragment).setUpViews(view);
+            Mockito.verify(meFragment).setClickListeners();
+
+            Mockito.verify(presenter).updateInitials();
+            Mockito.verify(presenter).updateName();
+        }
     }
 
 
@@ -126,6 +117,5 @@ public class MeFragmentTest extends BaseUnitTest {
     public void tearDown() throws Exception {
         meFragment = null;
         layoutInflater = null;
-        autoCloseable.close();
     }
 }

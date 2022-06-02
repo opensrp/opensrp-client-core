@@ -1,5 +1,10 @@
 package org.smartregister.view.fragment;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -17,7 +22,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.loader.app.LoaderManager;
+import androidx.test.core.app.ApplicationProvider;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,8 +33,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
@@ -43,16 +48,10 @@ import org.smartregister.util.AppProperties;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.BaseRegisterFragmentContract;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-
 /**
  * Created by ndegwamartin on 2020-04-28.
  */
 
-@PrepareForTest({CoreLibrary.class})
 public class BaseRegisterFragmentTest extends BaseUnitTest {
 
     private BaseRegisterFragment baseRegisterFragment;
@@ -125,7 +124,6 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
     @Before
     public void setUp() {
 
-        MockitoAnnotations.initMocks(this);
         baseRegisterFragment = Mockito.mock(BaseRegisterFragment.class, Mockito.CALLS_REAL_METHODS);
 
         ReflectionHelpers.setField(baseRegisterFragment, "presenter", presenter);
@@ -149,6 +147,11 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         doReturn(opensrpContext).when(baseRegisterFragment).context();
 
         doNothing().when(baseRegisterFragment).showShortToast(ArgumentMatchers.eq(activitySpy), ArgumentMatchers.anyString());
+    }
+
+    @After
+    public void tearDown() {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 
     @Test
@@ -177,7 +180,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
     @Test
     public void testOnCreateViewInitsToolbarConfigurationCorrectly() {
 
-        View parentLayout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
+        View parentLayout = LayoutInflater.from(ApplicationProvider.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
         doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
         Toolbar toolbar = parentLayout.findViewById(R.id.register_toolbar);
 
@@ -201,7 +204,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
     @Test
     public void testOnCreateViewInitsInvokesSetUpViewsWithCorrectParam() {
 
-        View parentLayout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
+        View parentLayout = LayoutInflater.from(ApplicationProvider.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
         doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
 
         AppCompatActivity activitySpy = Mockito.spy(activity);
@@ -406,7 +409,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
 
     @Test
     public void testUpdateFilterAndFilterStatus() {
-        View parentLayout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
+        View parentLayout = LayoutInflater.from(ApplicationProvider.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
         doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
 
         TextView headerTextDisplay = parentLayout.findViewById(R.id.header_text_display);
@@ -432,7 +435,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         doReturn(resources).when(activitySpy).getResources();
         doReturn("Test").when(activitySpy).getString(anyInt());
 
-        View parentLayout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
+        View parentLayout = LayoutInflater.from(ApplicationProvider.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
         doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
 
         ProgressBar syncProgressBar = parentLayout.findViewById(R.id.sync_progress_bar);
@@ -515,7 +518,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         doReturn(resources).when(activitySpy).getResources();
         doReturn("Test").when(activitySpy).getString(anyInt());
 
-        View Layout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
+        View Layout = LayoutInflater.from(ApplicationProvider.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
         doReturn(Layout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
 
         ProgressBar progressBar = Layout.findViewById(R.id.sync_progress_bar);
