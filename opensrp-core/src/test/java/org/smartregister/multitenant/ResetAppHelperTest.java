@@ -1,5 +1,11 @@
 package org.smartregister.multitenant;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.spy;
+
 import android.content.SharedPreferences;
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
@@ -18,6 +24,7 @@ import org.smartregister.P2POptions;
 import org.smartregister.exception.AppResetException;
 import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.listener.OnCompleteClearDataCallback;
+import org.smartregister.login.interactor.TestExecutorService;
 import org.smartregister.multitenant.check.PreResetAppCheck;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.authorizer.P2PAuthorizationService;
@@ -33,19 +40,12 @@ import org.smartregister.view.activity.mock.ReportsActivityMock;
 import org.smartregister.view.dialog.ResetAppDialog;
 
 import java.security.KeyStore;
-import java.security.KeyStoreSpi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.Executor;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.spy;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 14-04-2020.
@@ -223,6 +223,13 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testShowProgressText() {
+
+        AppExecutors appExecutors = Mockito.spy(new AppExecutors());
+
+        Mockito.doReturn(new TestExecutorService()).when(appExecutors).mainThread();
+
+        ReflectionHelpers.setField(resetAppHelper, "appExecutors", appExecutors);
+
         ResetAppDialog resetAppDialog = Mockito.mock(ResetAppDialog.class);
 
         ReflectionHelpers.setField(resetAppHelper, "resetAppDialog", resetAppDialog);
@@ -231,13 +238,14 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
         resetAppHelper.showProgressText(progressText);
 
         Mockito.verify(resetAppDialog).showText(progressText);
+
+
     }
 
     @Test
     public void clearAllPrivateKeyEntriesShouldDeleteAllEntries() throws Exception {
         // Mock keystore
         KeyStore keyStore = Mockito.mock(KeyStore.class);
-        KeyStoreSpi keyStoreSpi = Mockito.mock(KeyStoreSpi.class);
 
 
         ReflectionHelpers.setField(DrishtiApplication.getInstance().getContext().userService(), "keyStore", keyStore);
@@ -247,9 +255,8 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
         enums.addAll(Arrays.asList(keys));
         Enumeration<String> keystoreEnumeration = enums.elements();
 
-        Mockito.doReturn(keystoreEnumeration).when(keyStoreSpi).engineAliases();
+        Mockito.doReturn(keystoreEnumeration).when(keyStore).aliases();
 
-        ReflectionHelpers.setField(keyStore, "keyStoreSpi", keyStoreSpi);
         ReflectionHelpers.setField(keyStore, "initialized", true);
 
         // call the method under test
@@ -257,7 +264,7 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
 
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
 
-        Mockito.verify(keyStoreSpi, Mockito.times(4)).engineDeleteEntry(stringArgumentCaptor.capture());
+        Mockito.verify(keyStore, Mockito.times(4)).deleteEntry(stringArgumentCaptor.capture());
 
         List<String> entryAliases = stringArgumentCaptor.getAllValues();
         assertEquals("apple", entryAliases.get(0));

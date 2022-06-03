@@ -6,7 +6,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountsException;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -36,20 +35,22 @@ import java.net.HttpURLConnection;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import timber.log.Timber;
 
 /**
  * Created by ndegwamartin on 22/06/2018.
  */
-public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
+public class RemoteLoginTask {
 
-    private BaseLoginContract.View mLoginView;
     private final String mUsername;
     private final char[] mPassword;
     private final AccountAuthenticatorXml mAccountAuthenticatorXml;
-
     private final Listener<LoginResponse> afterLoginCheck;
+    private boolean cancelled;
+    private BaseLoginContract.View mLoginView;
 
     public RemoteLoginTask(BaseLoginContract.View loginView, String username, char[] password, AccountAuthenticatorXml accountAuthenticatorXml, Listener<LoginResponse> afterLoginCheck) {
         mLoginView = loginView;
@@ -59,14 +60,41 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         this.afterLoginCheck = afterLoginCheck;
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        mLoginView.showProgress(true);
+    public static Context getOpenSRPContext() {
+        return CoreLibrary.getInstance().context();
     }
 
-    @Override
-    protected LoginResponse doInBackground(Void... params) {
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void cancel(boolean cancelled) {
+        this.cancelled = cancelled;
+        mLoginView.showProgress(false);
+    }
+
+    public void execute() {
+
+        mLoginView.showProgress(true);
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        executorService.execute(() -> {
+
+            LoginResponse loginResponse = doInBackground();
+
+            mLoginView.getAppCompatActivity().runOnUiThread(() -> {
+
+                mLoginView.showProgress(false);
+                afterLoginCheck.onEvent(loginResponse);
+
+            });
+
+        });
+
+    }
+
+    protected LoginResponse doInBackground() {
 
         LoginResponse loginResponse;
         try {
@@ -139,7 +167,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
                     if (getOpenSRPContext().userService().getDecryptedPassphraseValue(username) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
 
-                        publishProgress(R.string.loading_client_settings);
+                        mLoginView.getAppCompatActivity().runOnUiThread(() -> mLoginView.updateProgressMessage(getOpenSRPContext().applicationContext().getString(R.string.loading_client_settings)));
 
                         SyncSettingsServiceHelper syncSettingsServiceHelper = new SyncSettingsServiceHelper(getOpenSRPContext().configuration().dristhiBaseURL(), getOpenSRPContext().getHttpAgent());
 
@@ -178,28 +206,6 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         }
 
         return loginResponse;
-    }
-
-    @Override
-    protected void onProgressUpdate(Integer... messageIdentifier) {
-        mLoginView.updateProgressMessage(getOpenSRPContext().applicationContext().getString(messageIdentifier[0]));
-    }
-
-    @Override
-    protected void onPostExecute(final LoginResponse loginResponse) {
-        super.onPostExecute(loginResponse);
-
-        mLoginView.showProgress(false);
-        afterLoginCheck.onEvent(loginResponse);
-    }
-
-    @Override
-    protected void onCancelled() {
-        mLoginView.showProgress(false);
-    }
-
-    public static Context getOpenSRPContext() {
-        return CoreLibrary.getInstance().context();
     }
 
     protected JSONArray pullSetting(SyncSettingsServiceHelper syncSettingsServiceHelper, LoginResponse loginResponse, String accessToken) {

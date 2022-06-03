@@ -15,7 +15,9 @@ public class SaveTeamLocationsTaskTest extends BaseUnitTest {
     public void testDoInBackgroundShouldSaveTeamLocations() {
         LocationHelper locationHelper = Mockito.mock(LocationHelper.class);
         Whitebox.setInternalState(LocationHelper.class, "instance", locationHelper);
+
         new SaveTeamLocationsTask().execute();
+
         Mockito.verify(locationHelper).locationIdsFromHierarchy();
         Whitebox.setInternalState(LocationHelper.class, "instance", (LocationHelper) null);
     }

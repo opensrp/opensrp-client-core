@@ -13,6 +13,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
+import org.smartregister.domain.TimeStatus;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.pathevaluator.PathEvaluatorLibrary;
 import org.smartregister.repository.AllSharedPreferences;
@@ -248,6 +249,10 @@ public class CoreLibrary implements OnAccountsUpdateListener {
 
     public static long getBuildTimeStamp() {
         return buildTimeStamp;
+    }
+
+    public static boolean isTimecheckDisabled() {
+        return AllConstants.TIME_CHECK;
     }
 
     public String getEcClientFieldsFile() {

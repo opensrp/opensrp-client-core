@@ -294,8 +294,6 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
 
         String OPENSRP_ID = "8232-372-8L";
 
-        baseRegisterFragment = Mockito.spy(baseRegisterFragment);
-
         doReturn(searchCancelView).when(baseRegisterFragment).getSearchCancelView();
 
         doNothing().when(baseRegisterFragment).filter(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean());

@@ -48,10 +48,8 @@ import timber.log.Timber;
  */
 public abstract class BaseLoginInteractor implements BaseLoginContract.Interactor {
 
-    private BaseLoginContract.Presenter mLoginPresenter;
-
     private static final int MINIMUM_JOB_FLEX_VALUE = 5;
-
+    private BaseLoginContract.Presenter mLoginPresenter;
     private RemoteLoginTask remoteLoginTask;
 
     private ResetAppHelper resetAppHelper;
@@ -106,7 +104,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
                 getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.unauthorized));
 
-            } else if (isAuthenticated && (!AllConstants.TIME_CHECK || TimeStatus.OK.equals(getUserService().validateStoredServerTimeZone()))) {
+            } else if (isAuthenticated && isValidTimecheck(getUserService().validateStoredServerTimeZone())) {
 
                 navigateToHomePage(userName);
 
@@ -147,28 +145,26 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 getSharedPreferences().savePreference("DRISHTI_BASE_URL", getApplicationContext().getString(R.string.opensrp_url));
             }
             if (!getSharedPreferences().fetchBaseURL("").isEmpty()) {
-                tryRemoteLogin(userName, password, accountAuthenticatorXml, loginResponse -> {
-                    getLoginView().enableLoginButton(true);
-                    if (loginResponse == LoginResponse.SUCCESS) {
-                        String username = loginResponse.payload() != null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
-                                ? loginResponse.payload().user.getUsername() : userName;
-                        if (getUserService().isUserInPioneerGroup(username)) {
-                            TimeStatus timeStatus = getUserService().validateDeviceTime(
-                                    loginResponse.payload(), AllConstants.MAX_SERVER_TIME_DIFFERENCE
-                            );
-                            if (!AllConstants.TIME_CHECK || timeStatus.equals(TimeStatus.OK)) {
 
-                                remoteLoginWith(username, loginResponse);
+                tryRemoteLogin(userName, password, accountAuthenticatorXml, loginResponse -> {
+
+                    getLoginView().enableLoginButton(true);
+
+                    if (loginResponse == LoginResponse.SUCCESS) {
+
+                        String username = getUsername(userName, loginResponse);
+
+                        if (getUserService().isUserInPioneerGroup(username)) {
+
+                            TimeStatus timeStatus = getUserService().validateDeviceTime(loginResponse.payload(), AllConstants.MAX_SERVER_TIME_DIFFERENCE);
+
+                            if (isValidTimecheck(timeStatus)) {
+
+                                postProcessRemoteLoginSuccess(username, loginResponse);
 
                             } else {
-                                if (timeStatus.equals(TimeStatus.TIMEZONE_MISMATCH)) {
-                                    TimeZone serverTimeZone = UserService.getServerTimeZone(loginResponse.payload());
 
-                                    getLoginView().showErrorDialog(getApplicationContext().getString(timeStatus.getMessage(),
-                                            serverTimeZone.getDisplayName()));
-                                } else {
-                                    getLoginView().showErrorDialog(getApplicationContext().getString(timeStatus.getMessage()));
-                                }
+                                postProcessRemoteLoginServerTimeMismatch(timeStatus, loginResponse);
                             }
                         } else {
 
@@ -216,6 +212,26 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         }
     }
 
+    private boolean isValidTimecheck(TimeStatus timeStatus) {
+        return !CoreLibrary.getInstance().isTimecheckDisabled() || TimeStatus.OK.equals(timeStatus);
+    }
+
+    private void postProcessRemoteLoginServerTimeMismatch(TimeStatus timeStatus, LoginResponse loginResponse) {
+        if (timeStatus.equals(TimeStatus.TIMEZONE_MISMATCH)) {
+
+            TimeZone serverTimeZone = UserService.getServerTimeZone(loginResponse.payload());
+            getLoginView().showErrorDialog(getApplicationContext().getString(timeStatus.getMessage(), serverTimeZone.getDisplayName()));
+
+        } else {
+            getLoginView().showErrorDialog(getApplicationContext().getString(timeStatus.getMessage()));
+        }
+    }
+
+    private String getUsername(String userName, LoginResponse loginResponse) {
+        return loginResponse.payload() != null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
+                ? loginResponse.payload().user.getUsername() : userName;
+    }
+
     private void tryRemoteLogin(final String userName, final char[] password, final AccountAuthenticatorXml accountAuthenticatorXml, final Listener<LoginResponse> afterLogincheck) {
         if (remoteLoginTask != null && !remoteLoginTask.isCancelled()) {
             remoteLoginTask.cancel(true);
@@ -224,7 +240,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         remoteLoginTask.execute();
     }
 
-    private void remoteLoginWith(String userName, LoginResponse loginResponse) {
+    private void postProcessRemoteLoginSuccess(String userName, LoginResponse loginResponse) {
         getUserService().processLoginResponseDataForUser(userName, loginResponse.payload());
         processServerSettings(loginResponse);
 

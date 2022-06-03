@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.test.core.app.ApplicationProvider;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,6 +74,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.TimeZone;
+import java.util.concurrent.Executors;
 
 /**
  * Created by samuelgithengi on 8/4/20.
@@ -195,11 +197,18 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
         when(accountAuthenticatorXml.getAccountType()).thenReturn("org.smartregister.core.testapp");
 
+        when(view.getAppCompatActivity()).thenReturn(activity);
+
         Whitebox.setInternalState(CoreLibrary.getInstance(), "context", context);
         Whitebox.setInternalState(CoreLibrary.getInstance(), "accountManager", mAccountManager);
         Whitebox.setInternalState(CoreLibrary.getInstance(), "authenticatorXml", accountAuthenticatorXml);
 
-
+        Mockito.doReturn(context).when(coreLibrary).context();
+        Mockito.doReturn(accountAuthenticatorXml).when(coreLibrary).getAccountAuthenticatorXml();
+        Mockito.doReturn(mAccountManager).when(coreLibrary).getAccountManager();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext()).when(context).applicationContext();
+        Mockito.doReturn(syncConfiguration).when(coreLibrary).getSyncConfiguration();
+        Whitebox.setInternalState(interactor, "resetAppHelper", resetAppHelper);
     }
 
     @After
@@ -241,239 +250,288 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testLoginAttemptsRemoteLoginAndErrorsWhenNoInternetConnectivity() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
 
-        when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(new AccountResponse(0, new AccountError(0, NO_INTERNET_CONNECTIVITY.name())));
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class); MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
+            when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(new AccountResponse(0, new AccountError(0, NO_INTERNET_CONNECTIVITY.name())));
 
-        interactor.login(new WeakReference<>(view), username, qwertyPassword);
+            when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
 
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(view).enableLoginButton(true);
-        verify(view).showErrorDialog(activity.getString(R.string.no_internet_connectivity));
-        verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+            interactor.login(new WeakReference<>(view), username, qwertyPassword);
+
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(view).enableLoginButton(true);
+            verify(view).showErrorDialog(activity.getString(R.string.no_internet_connectivity));
+            verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+        }
     }
 
     @Test
     public void testLoginAttemptsRemoteLoginAndErrorsWhenNullLoginResponse() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
 
-        when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(new AccountResponse(0, new AccountError(0, null)));
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class); MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
+            when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(new AccountResponse(0, new AccountError(0, null)));
 
-        interactor.login(new WeakReference<>(view), username, qwertyPassword);
+            when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
 
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(view).enableLoginButton(true);
-        verify(view).showErrorDialog(activity.getString(R.string.remote_login_generic_error));
-        verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+            interactor.login(new WeakReference<>(view), username, qwertyPassword);
+
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(view).enableLoginButton(true);
+            verify(view).showErrorDialog(activity.getString(R.string.remote_login_generic_error));
+            verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+        }
     }
 
 
     @Test
     public void testLoginAttemptsRemoteLoginAndErrorsWhenResponseUnknown() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
-        when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(new AccountResponse(0, new AccountError(0, UNKNOWN_RESPONSE.name())));
-        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
 
-        interactor.login(new WeakReference<>(view), username, qwertyPassword);
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class); MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
+            when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(new AccountResponse(0, new AccountError(0, UNKNOWN_RESPONSE.name())));
+            when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
 
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(view).enableLoginButton(true);
-        verify(view).showErrorDialog(activity.getString(R.string.unknown_response));
-        verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+            interactor.login(new WeakReference<>(view), username, qwertyPassword);
+
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(view).enableLoginButton(true);
+            verify(view).showErrorDialog(activity.getString(R.string.unknown_response));
+            verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+        }
     }
 
     @Test
     public void testLoginAttemptsRemoteLoginAndErrorsWhenUnauthorized() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
-        when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(new AccountResponse(0, new AccountError(0, UNAUTHORIZED.name())));
-        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
 
-        interactor.login(new WeakReference<>(view), username, qwertyPassword);
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class); MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
+            when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(new AccountResponse(0, new AccountError(0, UNAUTHORIZED.name())));
+            when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
 
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(view).enableLoginButton(true);
-        verify(view).showErrorDialog(activity.getString(R.string.unauthorized));
-        verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+            interactor.login(new WeakReference<>(view), username, qwertyPassword);
+
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(view).enableLoginButton(true);
+            verify(view).showErrorDialog(activity.getString(R.string.unauthorized));
+            verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+        }
     }
 
     @Test
     public void testLoginAttemptsRemoteLoginAndErrorsWhenTimeIsWrong() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
 
-        when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(accountResponse);
-        when(userService.fetchUserDetails(ArgumentMatchers.anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
-        when(userService.saveUserCredentials(username, qwertyPassword, loginResponseData)).thenReturn(userDataBundle);
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class); MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        when(userService.validateDeviceTime(ArgumentMatchers.any(), ArgumentMatchers.anyLong())).thenReturn(TimeStatus.TIME_MISMATCH);
-        when(userService.isUserInPioneerGroup(username)).thenReturn(true);
-        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
-        Whitebox.setInternalState(AllConstants.class, "TIME_CHECK", true);
+            when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(accountResponse);
+            when(userService.fetchUserDetails(ArgumentMatchers.anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
+            when(userService.saveUserCredentials(username, qwertyPassword, loginResponseData)).thenReturn(userDataBundle);
 
-        interactor.login(new WeakReference<>(view), username, qwertyPassword);
+            when(userService.validateDeviceTime(ArgumentMatchers.any(), ArgumentMatchers.anyLong())).thenReturn(TimeStatus.TIME_MISMATCH);
+            when(userService.isUserInPioneerGroup(username)).thenReturn(true);
+            when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
+            when(coreLibrary.isTimecheckDisabled()).thenReturn(true);
 
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(view).enableLoginButton(true);
-        verify(view).showErrorDialog(activity.getString(TimeStatus.TIME_MISMATCH.getMessage()));
-        verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+            interactor.login(new WeakReference<>(view), username, qwertyPassword);
+
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(view).enableLoginButton(true);
+            verify(view).showErrorDialog(activity.getString(TimeStatus.TIME_MISMATCH.getMessage()));
+            verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+        }
     }
 
     @Test
     public void testLoginAttemptsRemoteLoginAndErrorsWhenTimeZoneIsWrong() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
-        when(userService.fetchUserDetails(ArgumentMatchers.anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
-        when(userService.saveUserCredentials(username, qwertyPassword, loginResponseData)).thenReturn(userDataBundle);
-        when(userService.validateDeviceTime(ArgumentMatchers.any(), ArgumentMatchers.anyLong())).thenReturn(TimeStatus.TIMEZONE_MISMATCH);
-        when(userService.isUserInPioneerGroup(username)).thenReturn(true);
-        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
-        Whitebox.setInternalState(AllConstants.class, "TIME_CHECK", true);
 
-        interactor.login(new WeakReference<>(view), username, qwertyPassword);
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class); MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(view).enableLoginButton(true);
-        verify(view).showErrorDialog(activity.getString(TimeStatus.TIMEZONE_MISMATCH.getMessage(), TimeZone.getTimeZone("Africa/Nairobi").getDisplayName()));
-        verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+            when(userService.fetchUserDetails(ArgumentMatchers.anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
+            when(userService.saveUserCredentials(username, qwertyPassword, loginResponseData)).thenReturn(userDataBundle);
+            when(userService.validateDeviceTime(ArgumentMatchers.any(), ArgumentMatchers.anyLong())).thenReturn(TimeStatus.TIMEZONE_MISMATCH);
+            when(userService.isUserInPioneerGroup(username)).thenReturn(true);
+            when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
+            when(coreLibrary.isTimecheckDisabled()).thenReturn(true);
+
+            interactor.login(new WeakReference<>(view), username, qwertyPassword);
+
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(view).enableLoginButton(true);
+            verify(view).showErrorDialog(activity.getString(TimeStatus.TIMEZONE_MISMATCH.getMessage(), TimeZone.getTimeZone("Africa/Nairobi").getDisplayName()));
+            verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+        }
     }
 
     @Test
     public void testLoginAttemptsRemoteLoginAndErrorsWithErrorFromEnum() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
-        when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(new AccountResponse(0, new AccountError(0, SUCCESS_WITH_EMPTY_RESPONSE.name())));
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class); MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        when(userService.validateDeviceTime(ArgumentMatchers.any(), ArgumentMatchers.anyLong())).thenReturn(TimeStatus.TIMEZONE_MISMATCH);
-        when(userService.isUserInPioneerGroup(username)).thenReturn(true);
-        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
-        Whitebox.setInternalState(AllConstants.class, "TIME_CHECK", true);
+            when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(new AccountResponse(0, new AccountError(0, SUCCESS_WITH_EMPTY_RESPONSE.name())));
 
-        interactor.login(new WeakReference<>(view), username, qwertyPassword);
+            when(userService.validateDeviceTime(ArgumentMatchers.any(), ArgumentMatchers.anyLong())).thenReturn(TimeStatus.TIMEZONE_MISMATCH);
+            when(userService.isUserInPioneerGroup(username)).thenReturn(true);
+            when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
+            when(coreLibrary.isTimecheckDisabled()).thenReturn(true);
 
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(view).enableLoginButton(true);
-        verify(view).showErrorDialog(LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE.message());
-        verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+            interactor.login(new WeakReference<>(view), username, qwertyPassword);
+
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(view).enableLoginButton(true);
+            verify(view).showErrorDialog(LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE.message());
+            verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+        }
     }
 
     @Test
     @Config(shadows = {ShadowNetworkUtils.class})
     public void testLoginAttemptsRemoteLoginAndNavigatesToHome() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
-        when(userService.fetchUserDetails(ArgumentMatchers.anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
-        when(userService.validateDeviceTime(ArgumentMatchers.any(), ArgumentMatchers.anyLong())).thenReturn(TimeStatus.TIMEZONE_MISMATCH);
-        when(userService.isUserInPioneerGroup(username)).thenReturn(true);
-        when(userService.saveUserCredentials(username, qwertyPassword, loginResponseData)).thenReturn(userDataBundle);
-        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class); MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        interactor.login(new WeakReference<>(view), username, qwertyPassword);
+            when(userService.fetchUserDetails(ArgumentMatchers.anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
+            when(userService.validateDeviceTime(ArgumentMatchers.any(), ArgumentMatchers.anyLong())).thenReturn(TimeStatus.TIMEZONE_MISMATCH);
+            when(userService.isUserInPioneerGroup(username)).thenReturn(true);
+            when(userService.saveUserCredentials(username, qwertyPassword, loginResponseData)).thenReturn(userDataBundle);
+            when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
 
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(view).enableLoginButton(true);
-        verify(view).goToHome(true);
+            interactor.login(new WeakReference<>(view), username, qwertyPassword);
+
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(view).enableLoginButton(true);
+            verify(view).goToHome(true);
+        }
     }
 
 
     @Test
     public void testLoginWithLocalFlagShouldAttemptRemoteLoginAndResetAppForNewUserAndStartsLogin() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
-        Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
-        Whitebox.setInternalState(interactor, "resetAppHelper", resetAppHelper);
-        when(view.getAppCompatActivity()).thenReturn(activity);
-        when(syncConfiguration.clearDataOnNewTeamLogin()).thenReturn(true);
-        when(userService.fetchUserDetails(ArgumentMatchers.anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
-        when(userService.saveUserCredentials(username, qwertyPassword, loginResponseData)).thenReturn(userDataBundle);
-        when(userService.isUserInPioneerGroup(username)).thenReturn(false);
-        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
 
-        interactor = spy(interactor);
-        interactor.loginWithLocalFlag(new WeakReference<>(view), false, username, qwertyPassword);
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class); MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(view).enableLoginButton(true);
-        verify(view).showClearDataDialog(dialogCaptor.capture());
-        dialogCaptor.getValue().onClick(dialogInterface, DialogInterface.BUTTON_POSITIVE);
-        verify(dialogInterface).dismiss();
-        verify(resetAppHelper).startResetProcess(ArgumentMatchers.eq(activity), onCompleteClearDataCaptor.capture());
-        onCompleteClearDataCaptor.getValue().onComplete();
-        verify(interactor).login(ArgumentMatchers.any(), ArgumentMatchers.eq(username), ArgumentMatchers.eq(qwertyPassword));
+            when(view.getAppCompatActivity()).thenReturn(activity);
+            when(syncConfiguration.clearDataOnNewTeamLogin()).thenReturn(true);
+            when(userService.fetchUserDetails(ArgumentMatchers.anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
+            when(userService.saveUserCredentials(username, qwertyPassword, loginResponseData)).thenReturn(userDataBundle);
+            when(userService.isUserInPioneerGroup(username)).thenReturn(false);
+            when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
 
+            interactor = spy(interactor);
+            interactor.loginWithLocalFlag(new WeakReference<>(view), false, username, qwertyPassword);
+
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(view).enableLoginButton(true);
+            verify(view).showClearDataDialog(dialogCaptor.capture());
+            dialogCaptor.getValue().onClick(dialogInterface, DialogInterface.BUTTON_POSITIVE);
+            verify(dialogInterface).dismiss();
+            verify(resetAppHelper).startResetProcess(ArgumentMatchers.eq(activity), onCompleteClearDataCaptor.capture());
+            onCompleteClearDataCaptor.getValue().onComplete();
+            verify(interactor).login(ArgumentMatchers.any(), ArgumentMatchers.eq(username), ArgumentMatchers.eq(qwertyPassword));
+        }
     }
 
 
     @Test
     public void testLoginWithLocalFlagShouldFailsForDifferentTeam() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
-        Whitebox.setInternalState(interactor, "resetAppHelper", resetAppHelper);
-        Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
-        when(syncConfiguration.clearDataOnNewTeamLogin()).thenReturn(false);
-        when(view.getAppCompatActivity()).thenReturn(activity);
-        when(userService.fetchUserDetails(ArgumentMatchers.anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
-        when(userService.saveUserCredentials(username, qwertyPassword, loginResponseData)).thenReturn(userDataBundle);
-        when(userService.isUserInPioneerGroup(username)).thenReturn(false);
-        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
 
-        interactor.loginWithLocalFlag(new WeakReference<>(view), false, username, qwertyPassword);
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class); MockedStatic<Executors> e = Mockito.mockStatic(Executors.class)) {
+            e.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
 
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(view).enableLoginButton(true);
-        verify(view, never()).goToHome(true);
-        verify(view, never()).showClearDataDialog(dialogCaptor.capture());
-        verify(view).showErrorDialog(activity.getString(R.string.unauthorized_group));
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
+            Whitebox.setInternalState(interactor, "resetAppHelper", resetAppHelper);
+            when(syncConfiguration.clearDataOnNewTeamLogin()).thenReturn(false);
+            when(userService.fetchUserDetails(ArgumentMatchers.anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
+            when(userService.saveUserCredentials(username, qwertyPassword, loginResponseData)).thenReturn(userDataBundle);
+            when(userService.isUserInPioneerGroup(username)).thenReturn(false);
+            when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
 
+            interactor.loginWithLocalFlag(new WeakReference<>(view), false, username, qwertyPassword);
+
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(view).showProgress(true);
+            verify(view).getAppCompatActivity();
+            verify(view, never()).goToHome(true);
+            verify(view, never()).showClearDataDialog(dialogCaptor.capture());
+            verify(view).enableLoginButton(true);
+            verify(view).showErrorDialog(activity.getString(R.string.unauthorized_group));
+
+        }
     }
-
 
     @Test
     public void testLocalLoginShouldShowErrorWhenNotAuthenticated() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
-        when(allSharedPreferences.fetchForceRemoteLogin(username)).thenReturn(false);
-        when(allSharedPreferences.fetchRegisteredANM()).thenReturn(username);
-        when(allSharedPreferences.isRegisteredANM(username)).thenReturn(true);
-        when(userService.isUserInValidGroup(username, qwertyPassword)).thenReturn(false);
 
-        interactor.login(new WeakReference<>(view), username, qwertyPassword);
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class); MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(view).enableLoginButton(true);
-        verify(view).showErrorDialog(activity.getString(R.string.unauthorized));
-        verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+            when(allSharedPreferences.fetchForceRemoteLogin(username)).thenReturn(false);
+            when(allSharedPreferences.fetchRegisteredANM()).thenReturn(username);
+            when(allSharedPreferences.isRegisteredANM(username)).thenReturn(true);
+            when(userService.isUserInValidGroup(username, qwertyPassword)).thenReturn(false);
+
+            interactor.login(new WeakReference<>(view), username, qwertyPassword);
+
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(view).enableLoginButton(true);
+            verify(view).showErrorDialog(activity.getString(R.string.unauthorized));
+            verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+        }
     }
 
     @Test
     @Config(shadows = {ShadowNetworkUtils.class})
     public void testLocalLoginShouldShowNavigateToHomeAndReleaseIds() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
-        when(context.getUniqueIdRepository()).thenReturn(uniqueIdRepository);
-        when(allSharedPreferences.fetchForceRemoteLogin(username)).thenReturn(false);
-        when(allSharedPreferences.fetchRegisteredANM()).thenReturn(username);
-        when(allSharedPreferences.isRegisteredANM(username)).thenReturn(true);
-        when(userService.isUserInValidGroup(username, qwertyPassword)).thenReturn(true);
-        when(userService.fetchUserDetails(ArgumentMatchers.anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
-        when(userService.saveUserCredentials(username, qwertyPassword, loginResponseData)).thenReturn(userDataBundle);
 
-        interactor.login(new WeakReference<>(view), username, qwertyPassword);
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class); MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(view).enableLoginButton(true);
-        verify(view, never()).showErrorDialog(ArgumentMatchers.anyString());
-        verify(view).goToHome(false);
-        verify(userService).localLoginWith(username);
-        verify(uniqueIdRepository, timeout(ASYNC_TIMEOUT)).releaseReservedIds();
+            when(context.getUniqueIdRepository()).thenReturn(uniqueIdRepository);
+            when(allSharedPreferences.fetchForceRemoteLogin(username)).thenReturn(false);
+            when(allSharedPreferences.fetchRegisteredANM()).thenReturn(username);
+            when(allSharedPreferences.isRegisteredANM(username)).thenReturn(true);
+            when(userService.isUserInValidGroup(username, qwertyPassword)).thenReturn(true);
+            when(userService.fetchUserDetails(ArgumentMatchers.anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
+            when(userService.saveUserCredentials(username, qwertyPassword, loginResponseData)).thenReturn(userDataBundle);
+
+            interactor.login(new WeakReference<>(view), username, qwertyPassword);
+
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(view).enableLoginButton(true);
+            verify(view, never()).showErrorDialog(ArgumentMatchers.anyString());
+            verify(view).goToHome(false);
+            verify(userService).localLoginWith(username);
+            verify(uniqueIdRepository, timeout(ASYNC_TIMEOUT)).releaseReservedIds();
+        }
     }
 
     @Test
@@ -518,41 +576,46 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testRemoteLoginWithAccountNotFullySetupNavigatesToChangePasswordActivity() {
-        String issuerEndpoint = "https://my-server.com/oauth/issuer";
 
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
-        AccountError accountError = new AccountError(0, AccountError.ACCOUNT_NOT_FULLY_SETUP);
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class); MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        Whitebox.setInternalState(accountError, "errorDescription", INVALID_GRANT.message());
+            String issuerEndpoint = "https://my-server.com/oauth/issuer";
 
-        AccountResponse accountResponse = new AccountResponse(400, accountError);
+            AccountError accountError = new AccountError(0, AccountError.ACCOUNT_NOT_FULLY_SETUP);
 
-        LoginInteractorShadow interactorSpy = spy(this.interactor);
-        Activity activitySpy = spy(this.activity);
+            Whitebox.setInternalState(accountError, "errorDescription", INVALID_GRANT.message());
 
-        when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(accountResponse);
-        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
-        when(interactor.getLoginView()).thenReturn(view);
-        Mockito.doReturn(activitySpy).when(view).getActivityContext();
+            AccountResponse accountResponse = new AccountResponse(400, accountError);
 
-        interactorSpy.login(new WeakReference<>(view), username, qwertyPassword);
+            LoginInteractorShadow interactorSpy = spy(this.interactor);
+            Activity activitySpy = spy(this.activity);
 
-        ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
+            when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(accountResponse);
+            when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
+            when(interactor.getLoginView()).thenReturn(view);
+            Mockito.doReturn(activitySpy).when(view).getActivityContext();
 
-        verify(interactorSpy, Mockito.atLeastOnce()).showPasswordResetView(urlCaptor.capture());
-        assertNotNull(urlCaptor.getValue());
-        assertEquals(issuerEndpoint, urlCaptor.getValue());
+            interactorSpy.login(new WeakReference<>(view), username, qwertyPassword);
 
-        ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
-        verify(activitySpy, Mockito.atLeastOnce()).startActivity(intentCaptor.capture());
-        assertNotNull(intentCaptor.getValue());
+            ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
 
-        String paramInBundle = intentCaptor.getValue().getStringExtra(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL);
-        assertNotNull(paramInBundle);
-        assertEquals(issuerEndpoint, paramInBundle);
+            verify(interactorSpy, Mockito.atLeastOnce()).showPasswordResetView(urlCaptor.capture());
+            assertNotNull(urlCaptor.getValue());
+            assertEquals(issuerEndpoint, urlCaptor.getValue());
 
-        //Assert user service fetch details was never invoked
-        verify(userService, never()).fetchUserDetails(ArgumentMatchers.anyString());
+            ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+            verify(activitySpy, Mockito.atLeastOnce()).startActivity(intentCaptor.capture());
+            assertNotNull(intentCaptor.getValue());
+
+            String paramInBundle = intentCaptor.getValue().getStringExtra(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL);
+            assertNotNull(paramInBundle);
+            assertEquals(issuerEndpoint, paramInBundle);
+
+            //Assert user service fetch details was never invoked
+            verify(userService, never()).fetchUserDetails(ArgumentMatchers.anyString());
+        }
     }
 
 }

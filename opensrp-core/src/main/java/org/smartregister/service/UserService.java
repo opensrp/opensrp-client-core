@@ -196,8 +196,7 @@ public class UserService {
         Date serverTime = getServerTime(userInfo);
         Date deviceTime = getDeviceTime();
 
-        if (serverTimeZone != null && deviceTimeZone != null && serverTime != null
-                && deviceTime != null) {
+        if (serverTimeZone != null && deviceTimeZone != null && serverTime != null && deviceTime != null) {
             if (serverTimeZone.getRawOffset() == deviceTimeZone.getRawOffset()) {
                 long timeDiff = Math.abs(serverTime.getTime() - deviceTime.getTime());
                 if (timeDiff <= serverTimeThreshold) {
