@@ -1,12 +1,12 @@
 package org.smartregister.view.viewpager;
 
-import org.junit.Assert;
+import android.util.AttributeSet;
 
-import org.junit.Ignore;
-import org.junit.Test;
 import androidx.test.core.app.ApplicationProvider;
+
+import org.junit.Assert;
+import org.junit.Test;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.view.ViewAttributes;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
@@ -21,9 +21,9 @@ public class OpenSRPViewPagerTest extends BaseUnitTest {
     }
 
     @Test
-    @Ignore
     public void assertOpenSRPViewPagerInitializationTest2() {
-        OpenSRPViewPager openSRPViewPager = new OpenSRPViewPager(ApplicationProvider.getApplicationContext(), ViewAttributes.attrs);
+        AttributeSet attributeSet = ApplicationProvider.getApplicationContext().getResources().getXml(android.R.layout.activity_list_item);
+        OpenSRPViewPager openSRPViewPager = new OpenSRPViewPager(ApplicationProvider.getApplicationContext(), attributeSet);
         Assert.assertNotNull(openSRPViewPager);
     }
 

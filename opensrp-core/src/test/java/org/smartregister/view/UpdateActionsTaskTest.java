@@ -84,11 +84,9 @@ public class UpdateActionsTaskTest extends BaseUnitTest {
             when(actionService.fetchNewActions()).thenReturn(fetched);
             when(syncConfiguration.disableActionService()).thenReturn(false);
 
-
             UpdateActionsTask updateActionsTask = new UpdateActionsTask(null, actionService, formSubmissionSyncService, progressIndicator, allFormVersionSyncService);
             updateActionsTask.updateFromServer(status -> assertEquals(fetched, status));
 
-            // FIXME indicator visibility not working
             InOrder inOrder = inOrder(actionService, progressIndicator);
             inOrder.verify(progressIndicator).setVisible();
             inOrder.verify(actionService).fetchNewActions();

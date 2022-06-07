@@ -6,20 +6,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.robolectric.Robolectric;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
-import org.smartregister.BaseUnitTest;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.R;
 import org.smartregister.util.Utils;
 import org.smartregister.view.LocationPickerView;
@@ -29,7 +31,7 @@ import org.smartregister.view.contract.MeContract;
  * Created by ndegwamartin on 2020-03-24.
  */
 
-public class MeFragmentTest extends BaseUnitTest {
+public class MeFragmentTest extends BaseRobolectricUnitTest {
     @Mock
     protected MeContract.Presenter presenter;
     @Mock
@@ -49,17 +51,15 @@ public class MeFragmentTest extends BaseUnitTest {
     private MeFragment meFragment;
     private LayoutInflater layoutInflater;
 
-    @Mock
-    private ViewGroup viewGroup;
-
     @Before
     public void setUp() throws Exception {
 
         meFragment = Mockito.mock(MeFragment.class, Mockito.CALLS_REAL_METHODS);
+        activity = Mockito.spy(Robolectric.buildActivity(FragmentActivity.class).create().get());
 
         ReflectionHelpers.setField(meFragment, "presenter", presenter);
 
-        layoutInflater = LayoutInflater.from(ApplicationProvider.getApplicationContext());
+        layoutInflater = Mockito.spy(LayoutInflater.from(ApplicationProvider.getApplicationContext()));
 
         Mockito.doReturn(meLocationSection).when(view).findViewById(R.id.me_location_section);
         Mockito.doReturn(settingSection).when(view).findViewById(R.id.setting_section);
@@ -74,23 +74,21 @@ public class MeFragmentTest extends BaseUnitTest {
         Assert.assertNotNull(meFragment.presenter);
     }
 
-    /*
+
     @Test
     public void testOnCreateInvokesInitializePresenterMethod() {
-
+        MeFragmentTestImpl meFragment = Mockito.spy(new MeFragmentTestImpl());
         meFragment.onCreate(bundle);
         Mockito.verify(meFragment).initializePresenter();
     }
 
-     */
 
     @Test
-    @Ignore
     public void testOnCreateViewReturnsCorrectLayoutView() {
 
-        View layoutView = meFragment.onCreateView(layoutInflater, viewGroup, bundle);
+        View layoutView = meFragment.onCreateView(layoutInflater, (ViewGroup) activity.getWindow().getDecorView().getRootView(), bundle);
         Assert.assertNotNull(layoutView);
-        Mockito.verify(layoutInflater).inflate(R.layout.fragment_me, viewGroup, false);
+        Mockito.verify(layoutInflater).inflate(R.layout.fragment_me, (ViewGroup) activity.getWindow().getDecorView().getRootView(), false);
     }
 
     @Test
@@ -116,5 +114,27 @@ public class MeFragmentTest extends BaseUnitTest {
     public void tearDown() throws Exception {
         meFragment = null;
         layoutInflater = null;
+    }
+
+    public static class MeFragmentTestImpl extends MeFragment {
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            initializePresenter();
+        }
+
+        @Override
+        protected void initializePresenter() {
+        }
+
+        @Override
+        protected void onViewClicked(View view) {
+            //Do Nothing
+        }
+
+        @Override
+        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+            //Do nothing
+        }
     }
 }

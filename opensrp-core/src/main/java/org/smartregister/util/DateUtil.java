@@ -127,16 +127,21 @@ public class DateUtil {
             dateCalendar.set(Calendar.SECOND, 0);
             dateCalendar.set(Calendar.MILLISECOND, 0);
 
-            Calendar today = Calendar.getInstance();
-            today.set(Calendar.HOUR_OF_DAY, 0);
-            today.set(Calendar.MINUTE, 0);
-            today.set(Calendar.SECOND, 0);
-            today.set(Calendar.MILLISECOND, 0);
+            Calendar today = getDateToday();
 
             long timeDiff = Math.abs(dateCalendar.getTimeInMillis() - today.getTimeInMillis());
             return getDuration(timeDiff, getLocale());
         }
         return null;
+    }
+
+    public static Calendar getDateToday() {
+        Calendar today = Calendar.getInstance();
+        today.set(Calendar.HOUR_OF_DAY, 0);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
+        today.set(Calendar.MILLISECOND, 0);
+        return today;
     }
 
     public static String getDuration(long timeDiff) {

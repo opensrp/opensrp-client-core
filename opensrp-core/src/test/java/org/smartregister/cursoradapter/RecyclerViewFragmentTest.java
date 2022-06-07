@@ -61,11 +61,9 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
         FragmentScenario<RecyclerViewFragmentMock> scenario = FragmentScenario.launchInContainer(RecyclerViewFragmentMock.class);
         Assert.assertNotNull(scenario);
         final RecyclerViewFragmentMock[] recyclerViewFragmentMockRef = new RecyclerViewFragmentMock[1];
-        scenario.onFragment(fragment -> {
-            recyclerViewFragmentMockRef[0] = fragment;
-            assertNotNull(fragment.getSearchView());
-        });
+        scenario.onFragment(fragment -> recyclerViewFragmentMockRef[0] = fragment);
 
+        assertNotNull(recyclerViewFragmentMockRef[0].getSearchView());
         assertEquals(R.id.edt_search, recyclerViewFragmentMockRef[0].getSearchView().getId());
     }
 

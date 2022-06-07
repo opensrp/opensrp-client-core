@@ -8,11 +8,21 @@ import org.smartregister.login.presenter.BaseLoginPresenter;
 public class TestLoginPresenter extends BaseLoginPresenter {
     @Override
     public void processViewCustomizations() {
-
+        //Do nothing
     }
 
     @Override
     public boolean isServerSettingsSet() {
         return false;
+    }
+
+    @Override
+    public void setLanguage() {
+        //Do nothing
+    }
+
+    @Override
+    public void positionViews() {
+        //Do nothing
     }
 }

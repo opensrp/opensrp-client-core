@@ -1,5 +1,25 @@
 package org.smartregister.util;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.smartregister.TestUtils.getContext;
+import static org.smartregister.util.Utils.getDefaultLocale;
+import static org.smartregister.util.Utils.getUserDefaultTeamId;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -24,10 +44,9 @@ import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
@@ -47,6 +66,7 @@ import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,26 +77,6 @@ import java.util.List;
 import java.util.Map;
 
 import edu.emory.mathcs.backport.java.util.Collections;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.smartregister.TestUtils.getContext;
-import static org.smartregister.util.Utils.getDefaultLocale;
-import static org.smartregister.util.Utils.getUserDefaultTeamId;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
@@ -361,13 +361,11 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    @Ignore
     public void testGetPropertiesShouldGetPropertyFile() {
         AppProperties appProperties = Utils.getProperties(ApplicationProvider.getApplicationContext());
-        assertTrue(appProperties.getPropertyBoolean("property_4"));
-        assertEquals("property_1", appProperties.getProperty("property_1"));
-        assertEquals("property_2", appProperties.getProperty("property_2"));
-        assertEquals("property_3", appProperties.getProperty("property_3"));
+        assertTrue(appProperties.getPropertyBoolean("system.toaster.centered"));
+        assertEquals("10", appProperties.getProperty("SYNC_DOWNLOAD_BATCH_SIZE"));
+        assertEquals("-1", appProperties.getProperty("PORT"));
     }
 
     @Test
@@ -645,27 +643,44 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         LoginResponseData loginData = new LoginResponseData();
         assertNull(getUserDefaultTeamId(loginData));
 
-        loginData.team =  new TeamMember();
+        loginData.team = new TeamMember();
         assertNull(getUserDefaultTeamId(loginData));
     }
 
-    @Ignore
     @Test
-    public void getDurationShouldReturnValidDurationString() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+    public void getDurationShouldReturnValidDurationString() throws ParseException {
+        try (MockedStatic<DateUtil> dateUtilMockedStatic = Mockito.mockStatic(DateUtil.class, Mockito.CALLS_REAL_METHODS)) {
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(1, Calendar.DAY_OF_MONTH);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
-        assertEquals("1d", Utils.getDuration(dateFormat.format(calendar.getTime())));
+            Calendar baseCalendar = Calendar.getInstance();
+            baseCalendar.set(Calendar.HOUR_OF_DAY, 0);
+            baseCalendar.set(Calendar.MINUTE, 0);
+            baseCalendar.set(Calendar.SECOND, 0);
+            baseCalendar.set(Calendar.MILLISECOND, 0);
 
-        calendar.add(5, Calendar.WEEK_OF_YEAR);
-        assertEquals("5w 1d", Utils.getDuration(calendar.getTime().toString()));
+            String timestampSuffix = getTimestampSuffix(dateFormat.format(baseCalendar.getTime()));
+            baseCalendar.setTime(dateFormat.parse("2022-02-06" + timestampSuffix));
 
-        calendar.add(-1, Calendar.DAY_OF_MONTH);
-        assertEquals("5w", Utils.getDuration(calendar.getTime().toString()));
+            dateUtilMockedStatic.when(DateUtil::getDateToday).thenReturn(baseCalendar);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(DateUtil.getDateToday().getTime());
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+
+            assertEquals("1d", Utils.getDuration(dateFormat.format(calendar.getTime())));
+
+            calendar.add(Calendar.WEEK_OF_YEAR, 5);
+            assertEquals("5w 1d", Utils.getDuration(dateFormat.format(calendar.getTime())));
+
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            assertEquals("5w", Utils.getDuration(dateFormat.format(calendar.getTime())));
+        }
     }
 
+    private String getTimestampSuffix(String systemDate) {
+        return systemDate.substring(systemDate.indexOf('T'));
+    }
 
     @Test
     public void getDurationShouldReturnEmptyString() {
@@ -689,10 +704,10 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     public void getPropertiesShouldLoadPropertiesInPropertiesFile() {
         AppProperties appProperties = Utils.getProperties(ApplicationProvider.getApplicationContext());
 
-        assertEquals(6, appProperties.size());
+        assertEquals(5, appProperties.size());
         assertEquals("", appProperties.getProperty("DRISHTI_BASE_URL"));
         assertEquals("false", appProperties.getProperty("SHOULD_VERIFY_CERTIFICATE"));
-        assertEquals("false", appProperties.getProperty("system.toaster.centered"));
+        assertEquals("true", appProperties.getProperty("system.toaster.centered"));
         assertEquals("10", appProperties.getProperty("SYNC_DOWNLOAD_BATCH_SIZE"));
     }
 
@@ -708,13 +723,13 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testComposeApiCallParamsStringWithSingleParamValue() {
-        List <Pair<String,String>> apiParams = Collections.singletonList(Pair.create("identifier", "global_configs"));
+        List<Pair<String, String>> apiParams = Collections.singletonList(Pair.create("identifier", "global_configs"));
         assertEquals("&identifier=global_configs", Utils.composeApiCallParamsString(apiParams));
     }
 
     @Test
     public void testComposeApiCallParamsStringWithMultipleParamValues() {
-        List <Pair<String,String>> apiParams = new ArrayList<>();
+        List<Pair<String, String>> apiParams = new ArrayList<>();
         apiParams.add(Pair.create("identifier", "global_configs"));
         apiParams.add(Pair.create("serverVersion", "21"));
         assertEquals("&identifier=global_configs&serverVersion=21", Utils.composeApiCallParamsString(apiParams));

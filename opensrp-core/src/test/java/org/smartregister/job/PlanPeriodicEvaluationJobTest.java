@@ -3,11 +3,11 @@ package org.smartregister.job;
 import android.content.Context;
 import android.content.Intent;
 
+import com.evernote.android.job.DailyJob;
 import com.evernote.android.job.Job;
 import com.evernote.android.job.util.support.PersistableBundleCompat;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -27,7 +27,6 @@ public class PlanPeriodicEvaluationJobTest extends BaseRobolectricUnitTest {
     @Mock
     private Context context;
 
-    @Ignore("Difficulty mocking static class Job.Params")
     @Test
     public void onRunDailyJobShouldStartServiceAndReturnSuccess() {
         PlanPeriodicEvaluationJob planIntentServiceJob = Mockito.spy(new PlanPeriodicEvaluationJob());
@@ -47,7 +46,7 @@ public class PlanPeriodicEvaluationJobTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(persistableBundleCompat).when(params).getExtras();
 
         // Assert the return value & execute method under test
-        Assert.assertEquals(Job.Result.SUCCESS, planIntentServiceJob.onRunDailyJob(params));
+        Assert.assertEquals(DailyJob.DailyJobResult.SUCCESS, planIntentServiceJob.onRunDailyJob(params));
 
         ArgumentCaptor<Intent> intentArgumentCaptor = ArgumentCaptor.forClass(Intent.class);
         Mockito.verify(context).startService(intentArgumentCaptor.capture());
