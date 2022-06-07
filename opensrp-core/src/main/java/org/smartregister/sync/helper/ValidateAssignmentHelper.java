@@ -10,6 +10,7 @@ import androidx.annotation.VisibleForTesting;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.Response;
@@ -142,23 +143,26 @@ public class ValidateAssignmentHelper extends BaseHelper {
         LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
         boolean removed = false;
         UserAssignmentDTO removedAssignments = UserAssignmentDTO.builder().jurisdictions(existingJurisdictions).organizationIds(existingOrganizations).plans(existingPlans).build();
+        org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
+        boolean shouldIgnore = opensrpContext.getAppProperties().isTrue(AllConstants.PROPERTY.IGNORE_LOCATION_DELETION);
+        if(!shouldIgnore) {
+            if (!Utils.isEmptyCollection(removedAssignments.getPlans())) {
+                planDefinitionRepository.deletePlans(removedAssignments.getPlans());
+                removed = true;
+            }
 
-        if (!Utils.isEmptyCollection(removedAssignments.getPlans())) {
-            planDefinitionRepository.deletePlans(removedAssignments.getPlans());
-            removed = true;
-        }
-
-        if (!Utils.isEmptyCollection(removedAssignments.getOrganizationIds())) {
-            ids.removeAll(removedAssignments.getOrganizationIds());
-            userService.saveOrganizations(new ArrayList<>(ids));
-            removed = true;
-        }
-        if (!Utils.isEmptyCollection(removedAssignments.getJurisdictions())) {
-            locationRepository.deleteLocations(removedAssignments.getJurisdictions());
-            removeLocationsFromHierarchy(locationTree, removedAssignments.getJurisdictions());
-            prefsIds.removeAll(removedAssignments.getJurisdictions());
-            userService.saveJurisdictionIds(prefsIds);
-            removed = true;
+            if (!Utils.isEmptyCollection(removedAssignments.getOrganizationIds())) {
+                ids.removeAll(removedAssignments.getOrganizationIds());
+                userService.saveOrganizations(new ArrayList<>(ids));
+                removed = true;
+            }
+            if (!Utils.isEmptyCollection(removedAssignments.getJurisdictions())) {
+                locationRepository.deleteLocations(removedAssignments.getJurisdictions());
+                removeLocationsFromHierarchy(locationTree, removedAssignments.getJurisdictions());
+                prefsIds.removeAll(removedAssignments.getJurisdictions());
+                userService.saveJurisdictionIds(prefsIds);
+                removed = true;
+            }
         }
         return removedAssignments.toBuilder().isRemoved(removed).build();
 
