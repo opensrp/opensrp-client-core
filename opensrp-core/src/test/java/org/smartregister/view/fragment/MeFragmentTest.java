@@ -125,6 +125,7 @@ public class MeFragmentTest extends BaseRobolectricUnitTest {
 
         @Override
         protected void initializePresenter() {
+            // Do Nothing
         }
 
         @Override

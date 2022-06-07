@@ -2,14 +2,14 @@ package org.smartregister.view.activity;
 
 import android.content.Intent;
 
-import org.junit.Assert;
+import androidx.test.core.app.ApplicationProvider;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
-import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -28,7 +28,7 @@ public class NativeHomeActivityTest extends BaseRobolectricUnitTest {
     public void setUp() {
         Whitebox.setInternalState(CoreLibrary.getInstance().context(), "ziggyService", ziggyService);
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), NativeHomeActivityMock.class);
-        homeActivity = Robolectric.buildActivity(NativeHomeActivityMock.class)
+        homeActivity = Robolectric.buildActivity(NativeHomeActivityMock.class, intent)
                 .create()
                 .start()
                 .resume()

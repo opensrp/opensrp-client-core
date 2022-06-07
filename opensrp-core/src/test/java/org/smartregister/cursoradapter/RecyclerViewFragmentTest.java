@@ -18,7 +18,6 @@ import androidx.fragment.app.testing.FragmentScenario;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ApplicationProvider;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -59,7 +58,7 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
     @Test
     public void testGetSearchView2() {
         FragmentScenario<RecyclerViewFragmentMock> scenario = FragmentScenario.launchInContainer(RecyclerViewFragmentMock.class);
-        Assert.assertNotNull(scenario);
+        assertNotNull(scenario);
         final RecyclerViewFragmentMock[] recyclerViewFragmentMockRef = new RecyclerViewFragmentMock[1];
         scenario.onFragment(fragment -> recyclerViewFragmentMockRef[0] = fragment);
 
