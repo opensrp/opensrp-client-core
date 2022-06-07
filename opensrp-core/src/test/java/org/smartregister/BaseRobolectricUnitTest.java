@@ -19,7 +19,7 @@ import org.smartregister.view.UnitTest;
  * Created by onaio on 29/08/2017.
  */
 
-@Config(shadows = {ShadowLocalBroadcastManager.class, FontTextViewShadow.class, ShadowDrawableResourcesImpl.class, ShadowAppDatabase.class, ShadowJobManager.class, ShadowSQLiteDatabase.class}, sdk = Build.VERSION_CODES.O_MR1)
+@Config(shadows = {ShadowLocalBroadcastManager.class, FontTextViewShadow.class, ShadowDrawableResourcesImpl.class, ShadowAppDatabase.class, ShadowJobManager.class, ShadowSQLiteDatabase.class}, sdk = Build.VERSION_CODES.S)
 public abstract class BaseRobolectricUnitTest extends UnitTest {
 
     public static final int ASYNC_TIMEOUT = 2000;

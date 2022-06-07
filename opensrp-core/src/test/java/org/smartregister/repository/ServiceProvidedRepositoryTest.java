@@ -34,7 +34,7 @@ public class ServiceProvidedRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         serviceProvidedRepository = new ServiceProvidedRepository();
         serviceProvidedRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);

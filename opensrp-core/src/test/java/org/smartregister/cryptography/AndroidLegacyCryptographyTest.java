@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.annotation.Config;
 
 import java.security.KeyStore;
@@ -31,8 +31,8 @@ public class AndroidLegacyCryptographyTest {
     @Before
     public void setUp() throws KeyStoreException {
 
-        MockitoAnnotations.initMocks(this);
-        androidLegacyCryptography = new AndroidLegacyCryptography(RuntimeEnvironment.application);
+        
+        androidLegacyCryptography = new AndroidLegacyCryptography(ApplicationProvider.getApplicationContext());
         androidLegacyCryptography.setKeyStore(keystore);
     }
 

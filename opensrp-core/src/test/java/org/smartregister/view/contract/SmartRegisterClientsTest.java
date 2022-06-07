@@ -42,7 +42,7 @@ public class SmartRegisterClientsTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
 
         Mockito.when(applicationContext.getString(R.string.fp_register_service_mode_condom)).thenReturn("Condom");
         Mockito.when(context.applicationContext()).thenReturn(applicationContext);

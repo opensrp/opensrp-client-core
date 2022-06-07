@@ -11,7 +11,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
@@ -29,7 +29,7 @@ public class AccountAuthenticatorTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        accountAuthenticator = new AccountAuthenticator(RuntimeEnvironment.application);
+        accountAuthenticator = new AccountAuthenticator(ApplicationProvider.getApplicationContext());
     }
 
     @Test

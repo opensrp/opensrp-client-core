@@ -14,11 +14,6 @@ public class CacheTest extends BaseUnitTest {
     @Mock
     private CacheableData<String> cacheableData;
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-    }
-
     @Test
     public void shouldGetAndCacheValueOnlyWhenItDoesNotExist() throws Exception {
         Cache<String> cache = new Cache<String>();

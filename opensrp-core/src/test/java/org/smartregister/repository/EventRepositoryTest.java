@@ -31,7 +31,7 @@ public class EventRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         eventRepository = new EventRepository(context, TABLE_NAME, new String[]{ID_COLUMN, obsDETAILS_COLUMN, attributeDETAILS_COLUMN});
     }
 

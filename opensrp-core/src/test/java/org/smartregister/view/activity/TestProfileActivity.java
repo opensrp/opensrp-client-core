@@ -1,9 +1,10 @@
 package org.smartregister.view.activity;
 
 import android.os.Bundle;
-import org.smartregister.R;
 
 import androidx.viewpager.widget.ViewPager;
+
+import org.smartregister.R;
 
 /**
  * Created by Vincent Karuri on 13/04/2021

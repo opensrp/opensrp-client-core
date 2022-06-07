@@ -27,7 +27,7 @@ public class FormSubmissionTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         formSubmission = new FormSubmissionMock("", "", "", "",
                 "", 0l, formInstance);
         Mockito.when(formInstance.getSubFormByName(Mockito.anyString())).thenReturn(subForm);

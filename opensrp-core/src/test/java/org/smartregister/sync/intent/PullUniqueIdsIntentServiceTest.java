@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
@@ -59,11 +59,11 @@ public class PullUniqueIdsIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
         CoreLibrary.getInstance().context().allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
         pullUniqueIdsIntentService = Mockito.spy(PullUniqueIdsIntentService.class);
-        Whitebox.setInternalState(pullUniqueIdsIntentService, "mBase", RuntimeEnvironment.application);
+        Whitebox.setInternalState(pullUniqueIdsIntentService, "mBase", ApplicationProvider.getApplicationContext());
         Whitebox.setInternalState(pullUniqueIdsIntentService, "uniqueIdRepo", uniqueIdRepo);
         Mockito.doReturn(httpAgent).when(pullUniqueIdsIntentService).getHttpAgent();
     }

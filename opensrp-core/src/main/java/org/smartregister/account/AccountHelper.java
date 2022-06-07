@@ -67,7 +67,7 @@ public class AccountHelper {
      */
     public static Account getOauthAccountByNameAndType(String accountName, String accountType) {
 
-        Account[] accounts = accountManager.getAccountsByType(accountType);
+        Account[]  accounts = accountManager.getAccountsByType(accountType);
         return accounts.length > 0 ? selectAccount(accounts, accountName) : null;
     }
 

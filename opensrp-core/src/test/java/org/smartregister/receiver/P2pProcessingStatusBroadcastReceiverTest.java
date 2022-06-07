@@ -5,7 +5,7 @@ import android.content.Intent;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 
@@ -26,7 +26,7 @@ public class P2pProcessingStatusBroadcastReceiverTest extends BaseRobolectricUni
         intent.putExtra(AllConstants.PeerToPeer.KEY_IS_PROCESSING, true);
 
         // Call the method under test
-        p2pProcessingStatusBroadcastReceiver.onReceive(RuntimeEnvironment.application, intent);
+        p2pProcessingStatusBroadcastReceiver.onReceive(ApplicationProvider.getApplicationContext(), intent);
 
         Mockito.verify(statusUpdate).onStatusUpdate(true);
     }
@@ -39,7 +39,7 @@ public class P2pProcessingStatusBroadcastReceiverTest extends BaseRobolectricUni
         Intent intent = new Intent();
 
         // Call the method under test
-        p2pProcessingStatusBroadcastReceiver.onReceive(RuntimeEnvironment.application, intent);
+        p2pProcessingStatusBroadcastReceiver.onReceive(ApplicationProvider.getApplicationContext(), intent);
 
         Mockito.verify(statusUpdate, Mockito.never()).onStatusUpdate(Mockito.anyBoolean());
     }

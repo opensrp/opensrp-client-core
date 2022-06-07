@@ -32,7 +32,7 @@ public class TimelineEventRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         timelineEventRepository = new TimelineEventRepository();
         timelineEventRepository.updateMasterRepository(repository);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);

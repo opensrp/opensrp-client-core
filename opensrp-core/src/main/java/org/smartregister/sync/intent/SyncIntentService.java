@@ -1,5 +1,18 @@
 package org.smartregister.sync.intent;
 
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.CLIENT_PROCESSING;
+import static org.smartregister.AllConstants.PerformanceMonitoring.EVENT_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
+
 import android.content.Context;
 import android.content.Intent;
 import android.util.Pair;
@@ -42,37 +55,22 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static org.smartregister.AllConstants.COUNT;
-import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
-import static org.smartregister.AllConstants.PerformanceMonitoring.CLIENT_PROCESSING;
-import static org.smartregister.AllConstants.PerformanceMonitoring.EVENT_SYNC;
-import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
-import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
-import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
-import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
-
 public class SyncIntentService extends BaseSyncIntentService {
     public static final String SYNC_URL = "/rest/event/sync";
     protected static final int EVENT_PULL_LIMIT = 250;
     protected static final int EVENT_PUSH_LIMIT = 50;
     private static final String ADD_URL = "rest/event/add";
+    protected ValidateAssignmentHelper validateAssignmentHelper;
     private Context context;
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
     private Trace eventSyncTrace;
     private Trace processClientTrace;
     private String team;
-
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
-
-    protected ValidateAssignmentHelper validateAssignmentHelper;
     private long totalRecords;
     private int fetchedRecords = 0;
-    private int totalRecordsCount = 0 ;
+    private int totalRecordsCount = 0;
     //this variable using to track the sync request goes along with add events/clients
     private boolean isEmptyToAdd = true;
 
@@ -353,7 +351,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 stopTrace(eventSyncTrace);
                 updateProgress(eventsUploadedCount, totalEventCount);
 
-                if((totalEventCount - eventsUploadedCount) > 0)
+                if ((totalEventCount - eventsUploadedCount) > 0)
                     pushECToServer(db);
                 break;
             }
@@ -490,7 +488,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         return baseUrl;
     }
 
-    protected Integer getEventBatchSize(){
+    protected Integer getEventBatchSize() {
         return EVENT_PUSH_LIMIT;
     }
 

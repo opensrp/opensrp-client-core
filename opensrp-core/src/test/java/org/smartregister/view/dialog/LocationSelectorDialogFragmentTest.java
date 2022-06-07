@@ -33,9 +33,8 @@ public class LocationSelectorDialogFragmentTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        org.mockito.MockitoAnnotations.initMocks(this);
 
-//        Intent intent = new Intent(RuntimeEnvironment.application, LocationSelectorDialogFragmentTestActivity.class);
+//        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LocationSelectorDialogFragmentTestActivity.class);
 //        controller = Robolectric.buildActivity(LocationSelectorDialogFragmentTestActivity.class, intent);
 //        activity = controller.start().resume().get();
 //
@@ -73,7 +72,7 @@ public class LocationSelectorDialogFragmentTest extends BaseUnitTest {
     @Test
     public void assertOnCreateViewTestSetsUpTheActivity() throws Exception {
         destroyController();
-//        Intent intent = new Intent(RuntimeEnvironment.application, LocationSelectorDialogFragmentTestActivity.class);
+//        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LocationSelectorDialogFragmentTestActivity.class);
 //        controller = Robolectric.buildActivity(LocationSelectorDialogFragmentTestActivity.class, intent);
 //        activity = controller.get();
 //        controller.setup();

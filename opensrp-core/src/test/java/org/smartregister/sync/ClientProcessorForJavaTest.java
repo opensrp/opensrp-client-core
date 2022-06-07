@@ -1,5 +1,14 @@
 package org.smartregister.sync;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.smartregister.sync.ClientProcessorForJava.JSON_ARRAY;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -17,7 +26,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.reflect.Whitebox;
@@ -30,8 +38,8 @@ import org.smartregister.SyncConfiguration;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.Event;
-import org.smartregister.domain.db.EventClient;
 import org.smartregister.domain.Obs;
+import org.smartregister.domain.db.EventClient;
 import org.smartregister.domain.jsonmapping.ClassificationRule;
 import org.smartregister.domain.jsonmapping.ClientClassification;
 import org.smartregister.domain.jsonmapping.Column;
@@ -54,40 +62,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.smartregister.sync.ClientProcessorForJava.JSON_ARRAY;
-
 
 public class ClientProcessorForJavaTest extends BaseUnitTest {
-    @Mock
-    private CoreLibrary coreLibrary;
-
-    @Mock
-    private org.smartregister.Context opensrpContext;
-
-
-    @Mock
-    private Context context;
-
-    @Captor
-    private ArgumentCaptor<String> closeCaseArgumentCaptor;
-
-    @Captor
-    private ArgumentCaptor detailsRepositoryAddArgumentCaptor;
-
-    private ClientProcessorForJava clientProcessor;
     private static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm"))
             .serializeNulls().create();
+    @Mock
+    private CoreLibrary coreLibrary;
+    @Mock
+    private org.smartregister.Context opensrpContext;
+    @Mock
+    private Context context;
+    @Captor
+    private ArgumentCaptor<String> closeCaseArgumentCaptor;
+    @Captor
+    private ArgumentCaptor detailsRepositoryAddArgumentCaptor;
+    private ClientProcessorForJava clientProcessor;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+
         clientProcessor = new ClientProcessorForJava(context);
     }
 

@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
@@ -52,7 +52,6 @@ public class FormActivityTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        org.mockito.MockitoAnnotations.initMocks(this);
         org.smartregister.Context context = org.smartregister.Context.getInstance();
 
         context.sharedRepositories();
@@ -63,7 +62,7 @@ public class FormActivityTest extends BaseUnitTest {
         when(anmLocationController.get()).thenReturn(locationJson);
         FormActivityMock.setContext(context_);
         when(context_.ziggyService()).thenReturn(ziggyService);
-        Intent intent = new Intent(RuntimeEnvironment.application, FormActivity.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), FormActivity.class);
         intent.putExtra(FORM_NAME_PARAM, "birthnotificationpregnancystatusfollowup");
         intent.putExtra(ENTITY_ID_PARAM, "entityID");
         intent.putExtra(FIELD_OVERRIDES_PARAM, "");

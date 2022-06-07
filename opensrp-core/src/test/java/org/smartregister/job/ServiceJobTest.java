@@ -33,7 +33,7 @@ public abstract class ServiceJobTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         initializeMocks();
     }
 

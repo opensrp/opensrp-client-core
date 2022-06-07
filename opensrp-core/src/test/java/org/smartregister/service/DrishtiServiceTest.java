@@ -29,7 +29,7 @@ public class DrishtiServiceTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         drishtiService = new DrishtiService(httpAgent, "http://base.drishti.url");
     }
 

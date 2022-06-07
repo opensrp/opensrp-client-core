@@ -31,7 +31,7 @@ public class CommonPersonObjectSortTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         emptyDetails = Collections.emptyMap();
         controller = new CommonPersonObjectController(allCommonsRepository, allBeneficiaries, new Cache<String>(), new Cache<CommonPersonObjectClients>(), "name", "bindtype", "name", CommonPersonObjectController.ByColumnAndByDetails.byDetails);
     }

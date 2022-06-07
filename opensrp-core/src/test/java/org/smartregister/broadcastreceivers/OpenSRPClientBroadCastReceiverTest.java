@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.activity.SecuredActivity;
@@ -34,7 +34,7 @@ public class OpenSRPClientBroadCastReceiverTest extends BaseRobolectricUnitTest 
     @Test
     public void onReceiveShouldLogoutUserWhenActionTimeChanged() {
         Intent intent = new Intent(Intent.ACTION_TIME_CHANGED);
-        openSRPClientBroadCastReceiver.onReceive(RuntimeEnvironment.application, intent);
+        openSRPClientBroadCastReceiver.onReceive(ApplicationProvider.getApplicationContext(), intent);
 
         Mockito.verify(drishtiApplication).logoutCurrentUser();
     }
@@ -42,7 +42,7 @@ public class OpenSRPClientBroadCastReceiverTest extends BaseRobolectricUnitTest 
     @Test
     public void onReceiveShouldLogoutUserWhenActionTimeZoneChanged() {
         Intent intent = new Intent(Intent.ACTION_TIMEZONE_CHANGED);
-        openSRPClientBroadCastReceiver.onReceive(RuntimeEnvironment.application, intent);
+        openSRPClientBroadCastReceiver.onReceive(ApplicationProvider.getApplicationContext(), intent);
 
         Mockito.verify(drishtiApplication).logoutCurrentUser();
     }

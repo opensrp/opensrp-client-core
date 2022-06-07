@@ -1,16 +1,17 @@
 package org.smartregister;
 
+import static org.junit.Assert.assertEquals;
+
 import android.accounts.Account;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import androidx.test.core.app.ApplicationProvider;
+
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.p2p.P2PLibrary;
@@ -26,8 +27,6 @@ import org.smartregister.util.AppProperties;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Ephraim Kigamba - ekigamba@ona.io on 2019-05-31
@@ -48,24 +47,18 @@ public class CoreLibraryTest extends BaseUnitTest {
     @Mock
     private SenderTransferDao senderTransferDao;
 
-    @Before
-    public void setUp() {
-
-        MockitoAnnotations.initMocks(this);
-    }
-
     @Test
     public void initP2pLibrary() {
         String expectedUsername = "nurse1";
         String expectedTeamIdPassword = "908980dslkjfljsdlf";
 
-        Mockito.doReturn(RuntimeEnvironment.application)
+        Mockito.doReturn(ApplicationProvider.getApplicationContext())
                 .when(context)
                 .applicationContext();
 
         AllSharedPreferences allSharedPreferences
                 = new AllSharedPreferences(
-                PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application.getApplicationContext())
+                PreferenceManager.getDefaultSharedPreferences(ApplicationProvider.getApplicationContext().getApplicationContext())
         );
 
         allSharedPreferences.updateANMUserName(expectedUsername);
@@ -246,7 +239,7 @@ public class CoreLibraryTest extends BaseUnitTest {
         CoreLibrary originalCoreLibrary = CoreLibrary.getInstance();
         CoreLibrary mockCoreLibrary = Mockito.spy(originalCoreLibrary);
 
-        android.content.Context mockApplicationContext = Mockito.spy(RuntimeEnvironment.application);
+        android.content.Context mockApplicationContext = Mockito.spy(ApplicationProvider.getApplicationContext());
         Mockito.doReturn(context).when(mockCoreLibrary).context();
         Mockito.doReturn(mockApplicationContext).when(context).applicationContext();
         String prefName = mockApplicationContext.getPackageName() + "_preferences";

@@ -73,7 +73,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
         if (opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN)
                 && localLogin
-                && (HttpURLConnection.HTTP_UNAUTHORIZED == getSharedPreferences().getLastAuthenticationHttpStatus())
+                && HttpURLConnection.HTTP_UNAUTHORIZED == getSharedPreferences().getLastAuthenticationHttpStatus()
                 && NetworkUtils.isNetworkAvailable()) {
             localLogin = false;
         }
@@ -92,7 +92,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
             remoteLogin(userName, password, CoreLibrary.getInstance().getAccountAuthenticatorXml());
         }
 
-        Timber.i("Login result finished " + DateTime.now().toString());
+        Timber.i("Login result finished " + DateTime.now());
     }
 
     private void localLogin(WeakReference<BaseLoginContract.View> view, String userName, char[] password) {

@@ -39,7 +39,7 @@ public class ChildRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         childRepository = new ChildRepository();
     }
 

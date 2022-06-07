@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.Mother;
@@ -27,7 +28,7 @@ import org.smartregister.view.contract.LocationDetails;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class ChildDetailControllerTest {
+public class ChildDetailControllerTest extends BaseUnitTest {
 
     @Mock
     private Context context;
@@ -43,7 +44,6 @@ public class ChildDetailControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
         DateUtil.fakeIt(new LocalDate(2012, 8, 1));
         controller = new ChildDetailController(context, caseId, allEligibleCouples, allBeneficiaries, allTimelineEvents);
     }

@@ -23,7 +23,7 @@ public class AllReportsTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         allReports = new AllReports(repository);
     }
 

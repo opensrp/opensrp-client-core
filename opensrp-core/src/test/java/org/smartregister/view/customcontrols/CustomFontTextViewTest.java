@@ -2,7 +2,7 @@ package org.smartregister.view.customcontrols;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.BaseUnitTest;
 
 /**
@@ -12,7 +12,7 @@ public class CustomFontTextViewTest extends BaseUnitTest {
 
     @Test
     public void testCustomFontTextViewCreationShouldCreateValidCustomFontTextView() {
-        CustomFontTextView customFontTextView = new CustomFontTextView(RuntimeEnvironment.application);
+        CustomFontTextView customFontTextView = new CustomFontTextView(ApplicationProvider.getApplicationContext());
         Assert.assertNotNull(customFontTextView);
         Assert.assertTrue(customFontTextView instanceof  CustomFontTextView);
     }

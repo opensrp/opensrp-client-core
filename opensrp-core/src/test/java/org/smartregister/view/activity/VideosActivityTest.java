@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.android.controller.ActivityController;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
@@ -50,14 +50,13 @@ public class VideosActivityTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        org.mockito.MockitoAnnotations.initMocks(this);
         CoreLibrary.init(context_);
         when(context_.applicationContext()).thenReturn(applicationContext);
         when(context_.anmLocationController()).thenReturn(anmLocationController);
         when(anmLocationController.get()).thenReturn(locationJson);
         VideoActivityMock.setContext(context_);
         when(context_.ziggyService()).thenReturn(ziggyService);
-        Intent intent = new Intent(RuntimeEnvironment.application, VideoActivityMock.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), VideoActivityMock.class);
         controller = Robolectric.buildActivity(VideoActivityMock.class, intent);
         activity = controller.get();
         controller.create()

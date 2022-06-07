@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.R;
 import org.smartregister.domain.Response;
@@ -110,7 +110,7 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
                 .organizationIds(Collections.singleton(1234L))
                 .plans(Collections.singleton("plan1"))
                 .build();
-        doReturn(RuntimeEnvironment.application.getString(R.string.opensrp_url)).when(validateAssignmentHelper).getFormattedBaseUrl();
+        doReturn(ApplicationProvider.getApplicationContext().getString(R.string.opensrp_url)).when(validateAssignmentHelper).getFormattedBaseUrl();
         locationTree = gson.fromJson(locationHierarchy, LocationTree.class);
     }
 

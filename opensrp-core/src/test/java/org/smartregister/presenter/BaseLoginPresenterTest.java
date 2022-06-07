@@ -36,7 +36,7 @@ public class BaseLoginPresenterTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         presenter = new TestLoginPresenter();
         Mockito.doReturn(view).when(mLoginView).get();
         Whitebox.setInternalState(presenter, "mLoginView", mLoginView);

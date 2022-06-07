@@ -22,7 +22,9 @@ import static java.util.Arrays.asList;
 import static org.smartregister.util.EasyMap.create;
 import static org.smartregister.util.EasyMap.mapOf;
 
-public class ChildRepositoryTest extends AndroidTestCase {
+import androidx.test.platform.app.InstrumentationRegistry;
+
+public class ChildRepositoryTest extends InstrumentationRegistry {
     private ChildRepository repository;
     private TimelineEventRepository timelineEventRepository;
     private MotherRepository motherRepository;

@@ -1,13 +1,24 @@
 package org.smartregister.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import static org.smartregister.AllConstants.ENGLISH_LOCALE;
+import static org.smartregister.AllConstants.KANNADA_LOCALE;
+
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
@@ -37,25 +48,7 @@ import java.util.LinkedHashMap;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.AllConstants.ENGLISH_LOCALE;
-import static org.smartregister.AllConstants.KANNADA_LOCALE;
-
 public class UserServiceTest extends BaseUnitTest {
-
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
     private Repository repository;
@@ -86,7 +79,7 @@ public class UserServiceTest extends BaseUnitTest {
 
     private LoginResponseData loginResponseData;
 
-        private byte[] password = "Password Z".getBytes();
+    private byte[] password = "Password Z".getBytes();
 
     private String userName = "johndoe";
 
@@ -95,7 +88,6 @@ public class UserServiceTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        initMocks(this);
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
         when(configuration.getDrishtiApplication()).thenReturn(drishtiApplication);
         doReturn(repository).when(drishtiApplication).getRepository();

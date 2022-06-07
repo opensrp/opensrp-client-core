@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Report;
 import org.smartregister.domain.ReportsCategory;
 import org.smartregister.repository.AllReports;
@@ -23,7 +23,7 @@ import org.smartregister.view.contract.IndicatorReport;
 import java.util.Arrays;
 import java.util.List;
 
-public class ReportIndicatorListViewControllerTest {
+public class ReportIndicatorListViewControllerTest extends BaseUnitTest {
     @Mock
     private Context context;
 
@@ -33,7 +33,6 @@ public class ReportIndicatorListViewControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
         DateUtil.fakeIt(LocalDate.parse("2012-10-10"));
         controller = new ReportIndicatorListViewController(context, allReports, ReportsCategory.FPS.value());
     }

@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.util.AppExecutors;
 import org.smartregister.view.ListContract;
 
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
-public class ListInteractorTest implements Executor {
+public class ListInteractorTest extends BaseUnitTest implements Executor {
 
     private AppExecutors appExecutors = Mockito.spy(new AppExecutors(Mockito.spy(this), Mockito.spy(this), Mockito.spy(this)));
 
@@ -23,7 +23,6 @@ public class ListInteractorTest implements Executor {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         interactor = new ListInteractor<>(appExecutors);
     }
 

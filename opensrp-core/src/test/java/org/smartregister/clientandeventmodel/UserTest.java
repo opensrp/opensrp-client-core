@@ -28,7 +28,7 @@ public class UserTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         user = new UserMock("");
         list.add("admin");
         list.add("member");

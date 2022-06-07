@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
+        classpath "com.android.tools.build:gradle:4.2.2"
         classpath 'org.apache.commons:commons-lang3:3.12.0'
     }
 }
@@ -165,6 +165,7 @@ configurations.all {
 dependencies {
 
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.test:monitor:1.5.0'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     implementation 'net.zetetic:android-database-sqlcipher:4.5.1'
     implementation 'androidx.multidex:multidex:2.0.1'
@@ -236,8 +237,6 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:30.0.2')
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-perf' // Add the dependency for the Performance Monitoring library
-
-    androidTestImplementation group: 'junit', name: 'junit', version: '4.13.2'
 
     testImplementation project(path: ':opensrp-core')
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'//test do we need it

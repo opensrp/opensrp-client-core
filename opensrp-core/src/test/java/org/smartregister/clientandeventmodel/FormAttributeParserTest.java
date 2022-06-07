@@ -47,7 +47,7 @@ public class FormAttributeParserTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         parser = new FormAttributeParser(context);
     }
 

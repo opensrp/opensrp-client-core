@@ -42,7 +42,7 @@ public class PNCDetailControllerTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         DateUtil.fakeIt(new LocalDate(2012, 8, 1));
         controller = new PNCDetailController(context, caseId, allEligibleCouples, allBeneficiaries, allTimelineEvents);
     }

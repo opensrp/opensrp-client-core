@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.android.controller.ActivityController;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
@@ -50,14 +50,13 @@ public class EligibleDetailActivityTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        org.mockito.MockitoAnnotations.initMocks(this);
         CoreLibrary.init(context_);
         when(context_.applicationContext()).thenReturn(applicationContext);
         when(context_.anmLocationController()).thenReturn(anmLocationController);
         when(anmLocationController.get()).thenReturn(locationJson);
         EligibleCoupleDetailActivityMock.setContext(context_);
         when(context_.ziggyService()).thenReturn(ziggyService);
-        Intent intent = new Intent(RuntimeEnvironment.application, EligibleCoupleDetailActivityMock.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), EligibleCoupleDetailActivityMock.class);
         intent.putExtra("caseId", "caseID");
         controller = Robolectric.buildActivity(EligibleCoupleDetailActivityMock.class, intent);
         activity = controller.get();

@@ -43,7 +43,7 @@ public class EligibleCoupleRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         eligibleCoupleRepository = new EligibleCoupleRepository();
     }
 

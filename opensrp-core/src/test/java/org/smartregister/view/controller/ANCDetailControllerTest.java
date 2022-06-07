@@ -45,7 +45,7 @@ public class ANCDetailControllerTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         DateUtil.fakeIt(new LocalDate(2012, 8, 1));
         controller = new ANCDetailController(context, caseId, allEligibleCouples, allBeneficiaries, allTimelineEvents);
     }

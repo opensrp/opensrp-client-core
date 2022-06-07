@@ -74,7 +74,7 @@ public class ANCSmartRegisterControllerTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         emptyMap = Collections.emptyMap();
         controller = new ANCSmartRegisterController(sericeProvidedService, alertService, allBeneficiaries, new Cache<String>(), new Cache<ANCClients>());
     }

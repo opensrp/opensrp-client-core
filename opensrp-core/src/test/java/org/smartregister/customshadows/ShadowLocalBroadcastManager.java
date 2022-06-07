@@ -8,7 +8,7 @@ import android.content.IntentFilter;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.shadows.Provider;
@@ -66,7 +66,7 @@ public class ShadowLocalBroadcastManager {
                     Robolectric.getForegroundThreadScheduler().post(new Runnable() {
                         @Override
                         public void run() {
-                            receiver.onReceive(RuntimeEnvironment.application, broadcastIntent);
+                            receiver.onReceive(ApplicationProvider.getApplicationContext(), broadcastIntent);
                         }
                     });
                 }

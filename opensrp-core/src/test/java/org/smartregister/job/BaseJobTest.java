@@ -9,7 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -38,7 +38,7 @@ public class BaseJobTest extends BaseRobolectricUnitTest {
     @Test
     public void getApplicationContextShouldReturnSameContextInstance() {
         BaseJob baseJob =Mockito.mock(BaseJob.class, Mockito.CALLS_REAL_METHODS);
-        ReflectionHelpers.setField(baseJob, "mContextReference", new WeakReference<Context>(RuntimeEnvironment.application));
-        Assert.assertEquals(RuntimeEnvironment.application, baseJob.getApplicationContext());
+        ReflectionHelpers.setField(baseJob, "mContextReference", new WeakReference<Context>(ApplicationProvider.getApplicationContext()));
+        Assert.assertEquals(ApplicationProvider.getApplicationContext(), baseJob.getApplicationContext());
     }
 }

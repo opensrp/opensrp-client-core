@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
@@ -130,7 +130,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertFillValueFromHashMapReturnsValue() {
-        android.widget.TextView view = new android.widget.TextView(RuntimeEnvironment.application);
+        android.widget.TextView view = new android.widget.TextView(ApplicationProvider.getApplicationContext());
         HashMap<String, String> map = new HashMap<String, String>();
         String field = "field";
         map.put(field, "2017-10-20");
@@ -143,7 +143,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertFillValueFromCommonPersonObjectClientReturnsValue() {
-        android.widget.TextView view = new android.widget.TextView(RuntimeEnvironment.application);
+        android.widget.TextView view = new android.widget.TextView(ApplicationProvider.getApplicationContext());
 
         String field = "field";
         HashMap<String, String> map = new HashMap<String, String>();
@@ -159,7 +159,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertFillValueTextFieldReturnsValue() throws Exception {
-        android.widget.TextView view = new android.widget.TextView(RuntimeEnvironment.application);
+        android.widget.TextView view = new android.widget.TextView(ApplicationProvider.getApplicationContext());
         String value = "value";
         view.setText(value);
         Utils.fillValue(view, value);
@@ -229,8 +229,8 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertAddToRowReturnsTableRow() {
-        TableRow mockRow = new TableRow(RuntimeEnvironment.application);
-        TableRow row = Utils.addToRow(RuntimeEnvironment.application, "hello world", mockRow);
+        TableRow mockRow = new TableRow(ApplicationProvider.getApplicationContext());
+        TableRow row = Utils.addToRow(ApplicationProvider.getApplicationContext(), "hello world", mockRow);
         assertEquals(mockRow, row);
         android.widget.TextView view = (android.widget.TextView) row.getChildAt(0);
         assertEquals(view.getText().toString(), "hello world");
@@ -238,8 +238,8 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertAddToRowWeihtReturnsTableRow() {
-        TableRow mockRow = new TableRow(RuntimeEnvironment.application);
-        TableRow row = Utils.addToRow(RuntimeEnvironment.application, "hello world", mockRow, 25);
+        TableRow mockRow = new TableRow(ApplicationProvider.getApplicationContext());
+        TableRow row = Utils.addToRow(ApplicationProvider.getApplicationContext(), "hello world", mockRow, 25);
         assertEquals(mockRow, row);
         android.widget.TextView view = (android.widget.TextView) row.getChildAt(0);
         assertEquals(view.getText().toString(), "hello world");
@@ -247,8 +247,8 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertAddToRowcompatReturnsTableRow() {
-        TableRow mockRow = new TableRow(RuntimeEnvironment.application);
-        TableRow row = Utils.addToRow(RuntimeEnvironment.application, "hello world", mockRow, true);
+        TableRow mockRow = new TableRow(ApplicationProvider.getApplicationContext());
+        TableRow row = Utils.addToRow(ApplicationProvider.getApplicationContext(), "hello world", mockRow, true);
         assertEquals(mockRow, row);
         android.widget.TextView view = (android.widget.TextView) row.getChildAt(0);
         assertEquals(view.getText().toString(), "hello world");
@@ -256,8 +256,8 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertAddToRowWeightCompatReturnsTableRow() {
-        TableRow mockRow = new TableRow(RuntimeEnvironment.application);
-        TableRow row = Utils.addToRow(RuntimeEnvironment.application, "<b>hello world</b>", mockRow, true, 25);
+        TableRow mockRow = new TableRow(ApplicationProvider.getApplicationContext());
+        TableRow row = Utils.addToRow(ApplicationProvider.getApplicationContext(), "<b>hello world</b>", mockRow, true, 25);
         assertEquals(mockRow, row);
         android.widget.TextView view = (android.widget.TextView) row.getChildAt(0);
         assertEquals(view.getText().toString(), "hello world");
@@ -363,7 +363,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     @Test
     @Ignore
     public void testGetPropertiesShouldGetPropertyFile() {
-        AppProperties appProperties = Utils.getProperties(RuntimeEnvironment.application);
+        AppProperties appProperties = Utils.getProperties(ApplicationProvider.getApplicationContext());
         assertTrue(appProperties.getPropertyBoolean("property_4"));
         assertEquals("property_1", appProperties.getProperty("property_1"));
         assertEquals("property_2", appProperties.getProperty("property_2"));
@@ -471,18 +471,18 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testGetAppIdShouldReturnAppId() {
-        assertEquals("org.smartregister.test", Utils.getAppId(RuntimeEnvironment.application));
+        assertEquals("org.smartregister.test", Utils.getAppId(ApplicationProvider.getApplicationContext()));
     }
 
     @Test
     public void testGetAppVersionShouldReturnAppVersion() {
-        assertNull(Utils.getAppVersion(RuntimeEnvironment.application));
+        assertNull(Utils.getAppVersion(ApplicationProvider.getApplicationContext()));
     }
 
     @Test
     public void testLogoutUserShouldInvokeRequiredMethods() {
         org.smartregister.Context opensrpContext = Mockito.mock(org.smartregister.Context.class);
-        Context context = spy(RuntimeEnvironment.application);
+        Context context = spy(ApplicationProvider.getApplicationContext());
         AllSharedPreferences allSharedPreferences = Mockito.mock(AllSharedPreferences.class);
         Mockito.doReturn("string").when(allSharedPreferences).fetchRegisteredANM();
         Mockito.doReturn(allSharedPreferences).when(opensrpContext).allSharedPreferences();
@@ -541,7 +541,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void isConnectedToNetworkShouldReturnFalseWhenActiveNetworkInfoIsNotAvailable() {
-        Context context = spy(RuntimeEnvironment.application);
+        Context context = spy(ApplicationProvider.getApplicationContext());
 
         NetworkInfo networkInfo = mock(NetworkInfo.class);
         doReturn(false).when(networkInfo).isConnected();
@@ -556,7 +556,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void isConnectedToNetworkShouldReturnTrueWhenActiveNetworkInfoIsNotAvailable() {
-        Context context = spy(RuntimeEnvironment.application);
+        Context context = spy(ApplicationProvider.getApplicationContext());
 
         NetworkInfo networkInfo = mock(NetworkInfo.class);
         doReturn(true).when(networkInfo).isConnected();
@@ -582,7 +582,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void readAssetContents() {
-        String contents = Utils.readAssetContents(RuntimeEnvironment.application, "test_file.txt");
+        String contents = Utils.readAssetContents(ApplicationProvider.getApplicationContext(), "test_file.txt");
 
         assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
                 , contents);
@@ -687,7 +687,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void getPropertiesShouldLoadPropertiesInPropertiesFile() {
-        AppProperties appProperties = Utils.getProperties(RuntimeEnvironment.application);
+        AppProperties appProperties = Utils.getProperties(ApplicationProvider.getApplicationContext());
 
         assertEquals(6, appProperties.size());
         assertEquals("", appProperties.getProperty("DRISHTI_BASE_URL"));

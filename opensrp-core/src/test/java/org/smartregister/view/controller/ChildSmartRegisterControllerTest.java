@@ -69,7 +69,7 @@ public class ChildSmartRegisterControllerTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         controller = new ChildSmartRegisterController(serviceProvidedService, alertService, allBeneficiaries, new Cache<String>(), new Cache<SmartRegisterClients>());
     }
 

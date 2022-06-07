@@ -30,7 +30,7 @@ public class CommonPersonObjectSearchFilterTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         emptyDetails = Collections.emptyMap();
         CommonPersonObjectController controller = new CommonPersonObjectController(allCommonsRepository,
                 allBeneficiaries,

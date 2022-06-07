@@ -16,7 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
@@ -177,8 +177,8 @@ public class FormUtilsTest extends BaseUnitTest {
 
     @Test
     public void getFormJsonShouldReturnCorrectFormWithSameLength() throws IOException {
-        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(context_).getResources();
-        Mockito.doReturn(RuntimeEnvironment.application.getApplicationContext()).when(context_).getApplicationContext();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(context_).getResources();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext().getApplicationContext()).when(context_).getApplicationContext();
         Assert.assertEquals(10011, formUtils.getFormJson("test_basic_form").toString().length());
     }
 

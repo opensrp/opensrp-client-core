@@ -38,7 +38,7 @@ public class MotherRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         motherRepository = new MotherRepository();
     }
 

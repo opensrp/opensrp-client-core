@@ -2,9 +2,8 @@ package org.smartregister.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.TimelineEvent;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.repository.AllBeneficiaries;
@@ -12,23 +11,26 @@ import org.smartregister.repository.AllEligibleCouples;
 import org.smartregister.repository.AllTimelineEvents;
 import org.smartregister.util.EasyMap;
 
-public class EligibleCoupleServiceTest extends BaseUnitTest {
-    @Mock
+public class EligibleCoupleServiceTest {
+
     private AllTimelineEvents allTimelineEvents;
-    @Mock
+
     private AllEligibleCouples allEligibleCouples;
-    @Mock
+
     private AllBeneficiaries allBeneficiaries;
 
     private EligibleCoupleService service;
 
     @Before
     public void setUp() throws Exception {
+        allTimelineEvents = Mockito.mock(AllTimelineEvents.class);
+        allEligibleCouples = Mockito.mock(AllEligibleCouples.class);
+        allBeneficiaries = Mockito.mock(AllBeneficiaries.class);
         service = new EligibleCoupleService(allEligibleCouples, allTimelineEvents, allBeneficiaries);
     }
 
     @Test
-    public void shouldCreateTimelineEventWhenECIsRegistered() throws Exception {
+    public void shouldCreateTimelineEventWhenECIsRegistered() {
         FormSubmission submission = Mockito.mock(FormSubmission.class);
         Mockito.when(submission.entityId()).thenReturn("entity id 1");
         Mockito.when(submission.getFieldValue("submissionDate")).thenReturn("2012-01-01");
@@ -39,7 +41,7 @@ public class EligibleCoupleServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void shouldCloseEC() throws Exception {
+    public void shouldCloseEC() {
         FormSubmission submission = Mockito.mock(FormSubmission.class);
         Mockito.when(submission.entityId()).thenReturn("entity id 1");
 
@@ -50,18 +52,18 @@ public class EligibleCoupleServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void shouldNotCreateTimelineEventWhenECIsRegisteredWithoutSubmissionDate() throws Exception {
+    public void shouldNotCreateTimelineEventWhenECIsRegisteredWithoutSubmissionDatex() {
         FormSubmission submission = Mockito.mock(FormSubmission.class);
         Mockito.when(submission.entityId()).thenReturn("entity id 1");
         Mockito.when(submission.getFieldValue("submissionDate")).thenReturn(null);
 
         service.register(submission);
 
-        Mockito.verifyNoInteractions(allTimelineEvents);
+        Mockito.verify(allTimelineEvents, Mockito.never()).add(ArgumentMatchers.any(TimelineEvent.class));
     }
 
     @Test
-    public void shouldCreateTimelineEventAndUpdateEntityWhenFPChangeIsReported() throws Exception {
+    public void shouldCreateTimelineEventAndUpdateEntityWhenFPChangeIsReported() {
         FormSubmission submission = Mockito.mock(FormSubmission.class);
         Mockito.when(submission.entityId()).thenReturn("entity id 1");
         Mockito.when(submission.getFieldValue("currentMethod")).thenReturn("condom");
@@ -75,7 +77,7 @@ public class EligibleCoupleServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void shouldUseFormSubmissionDateAsChangeDateWhenFPMethodIsChangedAndChangeDateIsBlank() throws Exception {
+    public void shouldUseFormSubmissionDateAsChangeDateWhenFPMethodIsChangedAndChangeDateIsBlank() {
         FormSubmission submission = Mockito.mock(FormSubmission.class);
         Mockito.when(submission.entityId()).thenReturn("entity id 1");
         Mockito.when(submission.getFieldValue("currentMethod")).thenReturn("condom");

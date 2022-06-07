@@ -10,7 +10,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.dto.UserAssignmentDTO;
 import org.smartregister.receiver.ValidateAssignmentReceiver.UserAssignmentListener;
@@ -49,7 +49,7 @@ public class ValidateAssignmentReceiverTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setup() {
-        ValidateAssignmentReceiver.init(RuntimeEnvironment.application);
+        ValidateAssignmentReceiver.init(ApplicationProvider.getApplicationContext());
         validateAssignmentReceiver = ValidateAssignmentReceiver.getInstance();
     }
 
@@ -111,7 +111,7 @@ public class ValidateAssignmentReceiverTest extends BaseRobolectricUnitTest {
         validateAssignmentReceiver.addListener(listener2);
         Intent intent = new Intent();
         intent.putExtra(ValidateAssignmentHelper.ASSIGNMENTS_REMOVED, assignment);
-        validateAssignmentReceiver.onReceive(RuntimeEnvironment.application, intent);
+        validateAssignmentReceiver.onReceive(ApplicationProvider.getApplicationContext(), intent);
         verify(listener).onUserAssignmentRevoked(assignment);
         verify(listener2).onUserAssignmentRevoked(assignment);
     }

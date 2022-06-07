@@ -38,7 +38,7 @@ public class FormsVersionRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         formsVersionRepository = new FormsVersionRepository();
         formsVersionRepository.updateMasterRepository(repository);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);

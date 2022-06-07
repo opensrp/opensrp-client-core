@@ -13,7 +13,7 @@ import android.widget.TextView;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.R;
 
@@ -32,7 +32,7 @@ public class DatePickerUtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testThemeDatePickerShouldAddNumberPickersInTheRightOrder() {
-        View view = LayoutInflater.from(RuntimeEnvironment.application)
+        View view = LayoutInflater.from(ApplicationProvider.getApplicationContext())
                 .inflate(R.layout.test_html, null);
         DatePicker datePicker = view.findViewById(R.id.test_date_picker);
 
@@ -68,7 +68,7 @@ public class DatePickerUtilsTest extends BaseRobolectricUnitTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testThemeDatePickerShouldThrowExceptionWhenInValidYmDOrderIsProvided() {
-        View view = LayoutInflater.from(RuntimeEnvironment.application)
+        View view = LayoutInflater.from(ApplicationProvider.getApplicationContext())
                 .inflate(R.layout.test_html, null);
         DatePicker datePicker = Mockito.spy(view.findViewById(R.id.test_date_picker));
 

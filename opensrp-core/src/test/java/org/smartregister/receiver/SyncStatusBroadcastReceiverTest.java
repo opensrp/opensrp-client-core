@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.domain.FetchStatus;
@@ -34,7 +34,7 @@ public class SyncStatusBroadcastReceiverTest extends BaseRobolectricUnitTest {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
 
         // Call the method under test
-        syncStatusBroadcastReceiver.onReceive(RuntimeEnvironment.application, intent);
+        syncStatusBroadcastReceiver.onReceive(ApplicationProvider.getApplicationContext(), intent);
 
 
         // Verify onSyncStart
@@ -58,7 +58,7 @@ public class SyncStatusBroadcastReceiverTest extends BaseRobolectricUnitTest {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
 
         // Call the method under test
-        syncStatusBroadcastReceiver.onReceive(RuntimeEnvironment.application, intent);
+        syncStatusBroadcastReceiver.onReceive(ApplicationProvider.getApplicationContext(), intent);
 
 
         // Verify expected behaviours and properties
@@ -83,7 +83,7 @@ public class SyncStatusBroadcastReceiverTest extends BaseRobolectricUnitTest {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, false);
 
         // Call the method under test
-        syncStatusBroadcastReceiver.onReceive(RuntimeEnvironment.application, intent);
+        syncStatusBroadcastReceiver.onReceive(ApplicationProvider.getApplicationContext(), intent);
 
 
         // Verify expected behaviours and properties
@@ -113,7 +113,7 @@ public class SyncStatusBroadcastReceiverTest extends BaseRobolectricUnitTest {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, false);
 
         // Call the method under test
-        syncStatusBroadcastReceiver.onReceive(RuntimeEnvironment.application, intent);
+        syncStatusBroadcastReceiver.onReceive(ApplicationProvider.getApplicationContext(), intent);
 
 
         // Verify expected behaviours and properties

@@ -45,7 +45,7 @@ public class FormSubmissionSyncServiceTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         service = new FormSubmissionSyncService(formSubmissionService, httpAgent, repository, allSettings, allSharedPreferences, configuration);
 
         formInstanceJSON = "{form:{bind_type: 'ec'}}";

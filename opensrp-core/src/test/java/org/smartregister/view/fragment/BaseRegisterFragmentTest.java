@@ -34,7 +34,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
@@ -171,9 +171,9 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         SecuredNativeSmartRegisterActivity.NavBarOptionsProvider provider = baseRegisterFragment.getNavBarOptionsProvider();
 
         doReturn(opensrpContext).when(baseRegisterFragment).context();
-        doReturn(RuntimeEnvironment.application.getResources().getString(R.string.search_hint)).when(opensrpContext).getStringResource(R.string.search_hint);
+        doReturn(ApplicationProvider.getApplicationContext().getResources().getString(R.string.search_hint)).when(opensrpContext).getStringResource(R.string.search_hint);
 
-        String hint = RuntimeEnvironment.application.getResources().getString(R.string.search_hint);
+        String hint = ApplicationProvider.getApplicationContext().getResources().getString(R.string.search_hint);
         Assert.assertEquals(hint, provider.searchHint());
     }
 

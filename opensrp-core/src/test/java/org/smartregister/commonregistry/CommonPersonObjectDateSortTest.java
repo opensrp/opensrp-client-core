@@ -31,7 +31,7 @@ public class CommonPersonObjectDateSortTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         emptyDetails = Collections.emptyMap();
     }
 

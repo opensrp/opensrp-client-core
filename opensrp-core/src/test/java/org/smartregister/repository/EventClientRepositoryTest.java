@@ -71,7 +71,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);

@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
@@ -32,7 +32,7 @@ public class LocationPickerViewTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        locationPickerView = new LocationPickerView(RuntimeEnvironment.application);
+        locationPickerView = new LocationPickerView(ApplicationProvider.getApplicationContext());
     }
 
     @Test

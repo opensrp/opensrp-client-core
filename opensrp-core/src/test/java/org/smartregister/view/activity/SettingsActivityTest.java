@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
@@ -53,14 +53,13 @@ public class SettingsActivityTest extends BaseUnitTest {
     @Mock
     private View view;
 
-    private EditTextPreference baseUrlEditTextPreference = new EditTextPreference(RuntimeEnvironment.application);
+    private EditTextPreference baseUrlEditTextPreference = new EditTextPreference(ApplicationProvider.getApplicationContext());
 
 
     @Before
     public void setUp() throws Exception {
-        org.mockito.MockitoAnnotations.initMocks(this);
         CoreLibrary.init(context_);
-        Intent intent = new Intent(RuntimeEnvironment.application, SettingsActivity.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), SettingsActivity.class);
         controller = Robolectric.buildActivity(SettingsActivity.class, intent);
         activity = controller.get();
         controller.setup();
@@ -113,6 +112,6 @@ public class SettingsActivityTest extends BaseUnitTest {
 
         Toast toast = ShadowToast.getLatestToast();
         assertEquals(Toast.LENGTH_SHORT, toast.getDuration());
-        assertEquals(RuntimeEnvironment.application.getString(R.string.invalid_url_massage), ShadowToast.getTextOfLatestToast());
+        assertEquals(ApplicationProvider.getApplicationContext().getString(R.string.invalid_url_massage), ShadowToast.getTextOfLatestToast());
     }
 }

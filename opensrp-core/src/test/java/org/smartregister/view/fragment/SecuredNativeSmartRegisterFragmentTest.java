@@ -1,7 +1,6 @@
 package org.smartregister.view.fragment;
 
 import android.graphics.drawable.Drawable;
-import androidx.fragment.app.FragmentActivity;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +10,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
@@ -24,7 +24,7 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
@@ -47,95 +47,64 @@ import org.smartregister.view.dialog.VillageFilter;
 @Config(shadows = {FontTextViewShadow.class})
 public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
 
+    public static final String TEST_SEARCH_HINT = "Test Search Hint";
+    public static final String MY_TEST_SEARCH_TEXT = "My Testing Search Text";
+    private static final String GENERIC_TEXT_PHRASE = "Move the Earth";
     @Mock
     private View searchCancelButton;
-
     @Mock
     private EditText searchView;
-
     @Mock
     private SmartRegisterPaginatedAdapter clientsAdapter;
-
     @Mock
     private TextView serviceModeView;
-
     private SecuredNativeSmartRegisterFragment securedNativeSmartRegisterFragment;
-
     @Mock
     private SecuredNativeSmartRegisterActivity.NavBarOptionsProvider navBarOptionsProvider;
-
     @Mock
     private SecuredNativeSmartRegisterActivity.DefaultOptionsProvider defaultOptionsProvider;
-
     @Mock
     private SecuredNativeSmartRegisterFragment.SearchCancelHandler searchCancelHandler;
-
     @Mock
     private ServiceModeOption serviceModeOption;
-
     @Mock
     private SortOption sortOption;
-
     @Mock
     private FilterOption filterOption;
-
     @Mock
     private View view;
-
     @Mock
     private LinearLayout linearLayout;
-
     @Mock
     private Button buttonBackHome;
-
     @Mock
     private SecuredNativeSmartRegisterActivity.ClientsHeaderProvider headerProvider;
-
     @Mock
     private FragmentActivity activity;
-
     @Mock
     private CustomFontTextView customFontTextView;
-
     @Mock
     private TextView appliedVillageFilterView;
-
     @Mock
     private TextView appliedSortView;
-
     @Mock
     private SecuredNativeSmartRegisterFragment.NavBarActionsHandler navBarActionsHandler;
-
     @Mock
     private SecuredNativeSmartRegisterFragment.PaginationViewHandler paginationViewHandler;
-
     @Spy
     private ListView clientsView;
-
     @Captor
     private ArgumentCaptor<ECSearchOption> ecSearchOptionArgumentCaptor;
-
     @Captor
     private ArgumentCaptor<VillageFilter> villageFilterArgumentCaptor;
-
     @Captor
     private ArgumentCaptor<ServiceModeOption> serviceModeOptionArgumentCaptor;
-
     @Captor
     private ArgumentCaptor<SortOption> sortOptionArgumentCaptor;
-
     private Drawable drawable = null;
-
-    public static final String TEST_SEARCH_HINT = "Test Search Hint";
-
-    public static final String MY_TEST_SEARCH_TEXT = "My Testing Search Text";
-
-    private static final String GENERIC_TEXT_PHRASE = "Move the Earth";
-
 
     @Before
     public void setUp() throws Exception {
-        org.mockito.MockitoAnnotations.initMocks(this);
 
         securedNativeSmartRegisterFragment = Mockito.mock(SecuredNativeSmartRegisterFragment.class, Mockito.CALLS_REAL_METHODS);
 
@@ -162,8 +131,8 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
         Mockito.doReturn(activity).when(clientsView).getContext();
         ReflectionHelpers.setField(securedNativeSmartRegisterFragment, "clientsView", clientsView);
 
-        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(activity).getResources();
-        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(securedNativeSmartRegisterFragment).getResources();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(activity).getResources();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(securedNativeSmartRegisterFragment).getResources();
 
         Mockito.doNothing().when(clientsView).addFooterView(ArgumentMatchers.any(View.class));
     }
@@ -182,7 +151,7 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
     @Test
     public void testSetupSearchView() {
 
-        View parent = LayoutInflater.from(RuntimeEnvironment.application).inflate(R.layout.smart_register_activity, null, false);
+        View parent = LayoutInflater.from(ApplicationProvider.getApplicationContext()).inflate(R.layout.smart_register_activity, null, false);
 
         View parentSpy = Mockito.spy(parent);
 
@@ -219,7 +188,7 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
     public void testSetupSearchViewOnTextChangeListenerRefreshesClientsAdapterList() {
         securedNativeSmartRegisterFragment.setClientsAdapter(clientsAdapter);
 
-        View parent = LayoutInflater.from(RuntimeEnvironment.application).inflate(R.layout.smart_register_activity, null, false);
+        View parent = LayoutInflater.from(ApplicationProvider.getApplicationContext()).inflate(R.layout.smart_register_activity, null, false);
         View parentSpy = Mockito.spy(parent);
 
         Mockito.doReturn(searchCancelButton).when(parentSpy).findViewById(R.id.btn_search_cancel);
@@ -240,7 +209,7 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
     public void testSetupSearchViewOnTextChangeListenerSetsCorrectStateForSearchCancelButton() {
         securedNativeSmartRegisterFragment.setClientsAdapter(clientsAdapter);
 
-        View parent = LayoutInflater.from(RuntimeEnvironment.application).inflate(R.layout.smart_register_activity, null, false);
+        View parent = LayoutInflater.from(ApplicationProvider.getApplicationContext()).inflate(R.layout.smart_register_activity, null, false);
         View parentSpy = Mockito.spy(parent);
 
         Mockito.doReturn(searchCancelButton).when(parentSpy).findViewById(R.id.btn_search_cancel);
@@ -299,7 +268,7 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
 
         SecuredNativeSmartRegisterFragment securedNativeSmartRegisterFragmentSpy = Mockito.spy(securedNativeSmartRegisterFragment);
         Mockito.doReturn(customFontTextView).when(securedNativeSmartRegisterFragmentSpy).getCustomFontTextViewHeader();
-        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(securedNativeSmartRegisterFragmentSpy).getResources();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(securedNativeSmartRegisterFragmentSpy).getResources();
 
         securedNativeSmartRegisterFragmentSpy.onServiceModeSelection(serviceModeOption, view);
         Assert.assertNotNull(serviceModeOption);
@@ -320,7 +289,7 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
 
         SecuredNativeSmartRegisterFragment securedNativeSmartRegisterFragmentSpy = Mockito.spy(securedNativeSmartRegisterFragment);
         Mockito.doReturn(customFontTextView).when(securedNativeSmartRegisterFragmentSpy).getCustomFontTextViewHeader();
-        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(securedNativeSmartRegisterFragmentSpy).getResources();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(securedNativeSmartRegisterFragmentSpy).getResources();
 
         securedNativeSmartRegisterFragmentSpy.onServiceModeSelection(serviceModeOption, view);
 
@@ -345,7 +314,7 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
 
         SecuredNativeSmartRegisterFragment securedNativeSmartRegisterFragmentSpy = Mockito.spy(securedNativeSmartRegisterFragment);
         Mockito.doReturn(customFontTextView).when(securedNativeSmartRegisterFragmentSpy).getCustomFontTextViewHeader();
-        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(securedNativeSmartRegisterFragmentSpy).getResources();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(securedNativeSmartRegisterFragmentSpy).getResources();
 
         securedNativeSmartRegisterFragmentSpy.onSortSelection(sortOption);
 
@@ -371,7 +340,7 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
 
         SecuredNativeSmartRegisterFragment securedNativeSmartRegisterFragmentSpy = Mockito.spy(securedNativeSmartRegisterFragment);
         Mockito.doReturn(customFontTextView).when(securedNativeSmartRegisterFragmentSpy).getCustomFontTextViewHeader();
-        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(securedNativeSmartRegisterFragmentSpy).getResources();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(securedNativeSmartRegisterFragmentSpy).getResources();
 
         securedNativeSmartRegisterFragmentSpy.onFilterSelection(filterOption);
 
@@ -400,14 +369,14 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
     @Test
     public void testSetupNavBarViewsInitsViewCorrectly() {
 
-        View parent = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.smart_register_activity, null, false);
+        View parent = LayoutInflater.from(ApplicationProvider.getApplicationContext().getApplicationContext()).inflate(R.layout.smart_register_activity, null, false);
 
         View parentSpy = Mockito.spy(parent);
 
         Mockito.doReturn(buttonBackHome).when(parentSpy).findViewById(R.id.btn_back_to_home);
         Mockito.doReturn(customFontTextView).when(securedNativeSmartRegisterFragment).getCustomFontTextViewHeader();
 
-        Mockito.doReturn(LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext())).when(activity).getLayoutInflater();
+        Mockito.doReturn(LayoutInflater.from(ApplicationProvider.getApplicationContext().getApplicationContext())).when(activity).getLayoutInflater();
         Mockito.doReturn(activity).when(clientsView).getContext();
         Mockito.doReturn(clientsView).when(parentSpy).findViewById(R.id.list);
 

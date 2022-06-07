@@ -14,6 +14,5 @@ public class SaveTeamLocationsTask {
     public void execute() {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(() -> LocationHelper.getInstance().locationIdsFromHierarchy());
-        ;
     }
 }

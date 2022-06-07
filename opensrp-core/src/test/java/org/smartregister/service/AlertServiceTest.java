@@ -38,7 +38,7 @@ public class AlertServiceTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         service = new AlertService(alertRepository, commonFtsObject, allCommonsRepositoryMap);
     }
 

@@ -3,6 +3,7 @@ package org.smartregister.view;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -22,7 +23,11 @@ public abstract class UnitTest {
 
     @Before
     public void setUpSuper() {
-        autoCloseable = MockitoAnnotations.openMocks(this);
+        try {
+            autoCloseable = MockitoAnnotations.openMocks(this);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 
     @After
@@ -31,5 +36,10 @@ public abstract class UnitTest {
             autoCloseable.close();
         Context.destroyInstance();
         CoreLibrary.destroyInstance();
+        try {
+            Mockito.validateMockitoUsage();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -70,7 +70,6 @@ public class CursorAdapterFragmentTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        org.mockito.MockitoAnnotations.initMocks(this);
         CoreLibrary.init(context_);
         HouseHoldSmartRegisterActivity.setContext(context_);
         String[] columns = new String[]{"_id", "relationalid", "FWHOHFNAME", "FWGOBHHID", "FWJIVHHID", "existing_Mauzapara", "ELCO"};

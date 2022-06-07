@@ -7,7 +7,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -32,7 +32,7 @@ public class RepositoryRobolectricTest extends BaseRobolectricUnitTest {
         DrishtiRepository drishtiRepository2 = Mockito.mock(DrishtiRepository.class);
 
         // Mock fetching the database path
-        Context context = Mockito.spy(RuntimeEnvironment.application);
+        Context context = Mockito.spy(ApplicationProvider.getApplicationContext());
         Mockito.doReturn(Mockito.mock(File.class)).when(context).getDatabasePath("drishti.db");
 
         // Execute the method under test
@@ -50,7 +50,7 @@ public class RepositoryRobolectricTest extends BaseRobolectricUnitTest {
         DrishtiRepository drishtiRepository2 = Mockito.mock(DrishtiRepository.class);
 
         // Mock fetching the database path
-        Context context = Mockito.spy(RuntimeEnvironment.application);
+        Context context = Mockito.spy(ApplicationProvider.getApplicationContext());
         Mockito.doReturn(Mockito.mock(File.class)).when(context).getDatabasePath("drishti.db");
 
         // Execute the method under test

@@ -5,8 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.util.AppExecutors;
 import org.smartregister.view.ListContract;
 import org.smartregister.view.presenter.ListPresenter;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-public class ListPresenterTest {
+public class ListPresenterTest extends BaseUnitTest {
 
     @Mock
     private ListContract.View<ListContract.Identifiable> view;
@@ -27,7 +27,7 @@ public class ListPresenterTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+
         listPresenter = new ListPresenter<>();
         Whitebox.setInternalState(listPresenter, "interactor", interactor);
     }
@@ -44,7 +44,7 @@ public class ListPresenterTest {
     }
 
     @Test
-public void testOnItemsFetchShouldInvokeRefreshView() {
+    public void testOnItemsFetchShouldInvokeRefreshView() {
         listPresenter.with(view);
         List<ListContract.Identifiable> identifiables = new ArrayList<>();
         listPresenter.onItemsFetched(identifiables);

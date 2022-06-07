@@ -41,7 +41,7 @@ public class Hia2ReportRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         Whitebox.setInternalState(DrishtiApplication.getInstance(),"repository",repository);
         when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);

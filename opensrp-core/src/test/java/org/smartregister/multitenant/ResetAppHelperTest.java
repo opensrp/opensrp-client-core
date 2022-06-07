@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.Context;
@@ -148,7 +148,7 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
     public void clearP2PDb() {
         P2POptions p2POptions = new P2POptions(true);
 
-        P2PLibrary.Options p2PLibraryOptions = new P2PLibrary.Options(RuntimeEnvironment.application, "team-id", "username", Mockito.mock(P2PAuthorizationService.class), Mockito.mock(ReceiverTransferDao.class), Mockito.mock(SenderTransferDao.class));
+        P2PLibrary.Options p2PLibraryOptions = new P2PLibrary.Options(ApplicationProvider.getApplicationContext(), "team-id", "username", Mockito.mock(P2PAuthorizationService.class), Mockito.mock(ReceiverTransferDao.class), Mockito.mock(SenderTransferDao.class));
         P2PLibrary.init(p2PLibraryOptions);
         ReflectionHelpers.setField(CoreLibrary.getInstance(), "p2POptions", p2POptions);
 

@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormData;
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class FormSubmissionServiceTest {
+public class FormSubmissionServiceTest extends BaseUnitTest {
     @Mock
     private ZiggyService ziggyService;
     @Mock
@@ -51,7 +52,6 @@ public class FormSubmissionServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
         service = new FormSubmissionService(ziggyService, formDataRepository, allSettings);
     }
 

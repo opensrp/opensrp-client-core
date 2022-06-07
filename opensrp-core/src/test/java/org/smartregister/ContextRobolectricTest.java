@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.commonregistry.CommonRepository;
@@ -321,6 +321,6 @@ public class ContextRobolectricTest extends BaseRobolectricUnitTest {
 
     @Test
     public void getColorResource() {
-        Assert.assertEquals(RuntimeEnvironment.application.getColor(R.color.alert_complete_green), Context.getInstance().getColorResource(R.color.alert_complete_green));
+        Assert.assertEquals(ApplicationProvider.getApplicationContext().getColor(R.color.alert_complete_green), Context.getInstance().getColorResource(R.color.alert_complete_green));
     }
 }

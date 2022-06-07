@@ -52,7 +52,7 @@ public class AllFormVersionSyncServiceTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         service = Mockito.spy(new AllFormVersionSyncService(httpAgent,
                 configuration,
                 formsVersionRepository));

@@ -133,9 +133,14 @@ public class HTTPAgent {
         if (setOauthToken) {
             AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
             if (AccountHelper.getOauthAccountByNameAndType(allSharedPreferences.fetchRegisteredANM(), authenticatorXml.getAccountType()) != null)
-                urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(AccountHelper.getOAuthToken(allSharedPreferences.fetchRegisteredANM(), authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).toString());
+                urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(getBearerToken()).toString());
         }
         return urlConnection;
+    }
+
+    @VisibleForTesting
+    protected String getBearerToken() {
+        return AccountHelper.getOAuthToken(allSharedPreferences.fetchRegisteredANM(), CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
     }
 
     @VisibleForTesting

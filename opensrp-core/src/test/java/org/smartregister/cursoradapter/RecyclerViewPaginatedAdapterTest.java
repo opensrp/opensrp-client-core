@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -62,7 +62,7 @@ public class RecyclerViewPaginatedAdapterTest extends BaseUnitTest {
 
     private RecyclerViewPaginatedAdapter adapter;
 
-    private Context context = RuntimeEnvironment.application;
+    private Context context = ApplicationProvider.getApplicationContext();
 
     @Before
     public void setUp() {

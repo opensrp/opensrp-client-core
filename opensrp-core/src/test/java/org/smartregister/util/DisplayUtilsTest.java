@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.BaseUnitTest;
 
 /**
@@ -30,14 +30,6 @@ public class DisplayUtilsTest extends BaseUnitTest {
 
     @Mock
     private WindowManager windowManager;
-
-
-    @Before
-    public void setUp() {
-
-        MockitoAnnotations.initMocks(this);
-
-    }
 
     @Test
     public void testGetScreenDpiReturnsCorrectValuesForLowDensity() {
@@ -211,7 +203,7 @@ public class DisplayUtilsTest extends BaseUnitTest {
 
         Mockito.doReturn(windowManager).when(context).getWindowManager();
 
-        DisplayManager displayManager = (DisplayManager) RuntimeEnvironment.application.getSystemService(Context.DISPLAY_SERVICE);
+        DisplayManager displayManager = (DisplayManager) ApplicationProvider.getApplicationContext().getSystemService(Context.DISPLAY_SERVICE);
 
         Display display = displayManager.getDisplays()[0];
 
@@ -234,7 +226,7 @@ public class DisplayUtilsTest extends BaseUnitTest {
 
         Mockito.doReturn(windowManager).when(context).getWindowManager();
 
-        DisplayManager displayManager = (DisplayManager) RuntimeEnvironment.application.getSystemService(Context.DISPLAY_SERVICE);
+        DisplayManager displayManager = (DisplayManager) ApplicationProvider.getApplicationContext().getSystemService(Context.DISPLAY_SERVICE);
 
         Display display = displayManager.getDisplays()[0];
 
@@ -257,7 +249,7 @@ public class DisplayUtilsTest extends BaseUnitTest {
 
         Mockito.doReturn(windowManager).when(context).getWindowManager();
 
-        DisplayManager displayManager = (DisplayManager) RuntimeEnvironment.application.getSystemService(Context.DISPLAY_SERVICE);
+        DisplayManager displayManager = (DisplayManager) ApplicationProvider.getApplicationContext().getSystemService(Context.DISPLAY_SERVICE);
 
         Display display = displayManager.getDisplays()[0];//Default width by height 320 by 470
 
