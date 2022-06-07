@@ -21,9 +21,6 @@ public class FileUtilitiesTest {
     private String FILE_NAME = "newFile.txt";
     private File existentDirectory;
 
-    public FileUtilitiesTest() {
-    }
-
     @Before
     public void setUp() {
         existentDirectory = storageDirectory.getRoot();

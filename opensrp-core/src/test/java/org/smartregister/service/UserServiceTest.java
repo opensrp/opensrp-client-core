@@ -323,7 +323,7 @@ public class UserServiceTest extends BaseUnitTest {
         Whitebox.setInternalState(keyStore, "initialized", true);
         Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
         when(keyStore.containsAlias(userName)).thenReturn(true);
-        KeyStore.PrivateKeyEntry privateKeyEntry = Mockito.mock(KeyStore.PrivateKeyEntry.class);
+        KeyStore.PrivateKeyEntry privateKeyEntry = mock(KeyStore.PrivateKeyEntry.class);
         when(keyStore.getEntry(userName, null)).thenReturn(privateKeyEntry);
         userService = spy(userService);
         doReturn(password).when(userService).decryptString(privateKeyEntry, "RandomSECURE_TEXT");

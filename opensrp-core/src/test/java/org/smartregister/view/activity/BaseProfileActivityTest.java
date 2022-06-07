@@ -1,14 +1,12 @@
 package org.smartregister.view.activity;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -18,7 +16,6 @@ import com.google.android.material.tabs.TabLayout;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
@@ -26,38 +23,26 @@ import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowToast;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.R;
-import org.smartregister.helper.ImageRenderHelper;
-import org.smartregister.view.contract.BaseProfileContract;
 
 public class BaseProfileActivityTest extends BaseRobolectricUnitTest {
 
-    @Mock
-    private View view;
-
-    @Mock
-    private Button button;
-
-    @Mock
-    private AppBarLayout appBarLayout;
-
-    @Mock
-    private CollapsingToolbarLayout collapsingToolbarLayout;
-
-    @Mock
-    private Toolbar toolbar;
-
-    @Mock
-    private ActionBar actionBar;
-
-
+    private final String INTENT_KEY = "intent_key";
     @Mock
     protected TabLayout tabLayout;
-
     @Mock
     protected ViewPager viewPager;
-
-
-    private final String INTENT_KEY = "intent_key";
+    @Mock
+    private View view;
+    @Mock
+    private Button button;
+    @Mock
+    private AppBarLayout appBarLayout;
+    @Mock
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    @Mock
+    private Toolbar toolbar;
+    @Mock
+    private ActionBar actionBar;
     private TestProfileActivity profileActivity;
 
     @Before

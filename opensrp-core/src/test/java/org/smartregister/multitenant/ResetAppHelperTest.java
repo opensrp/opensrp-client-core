@@ -9,13 +9,13 @@ import static org.mockito.Mockito.spy;
 import android.content.SharedPreferences;
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
+import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.Context;
@@ -224,7 +224,7 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
     @Test
     public void testShowProgressText() {
 
-        AppExecutors appExecutors = Mockito.spy(new AppExecutors());
+        AppExecutors appExecutors = spy(new AppExecutors());
 
         Mockito.doReturn(new TestExecutorService()).when(appExecutors).mainThread();
 

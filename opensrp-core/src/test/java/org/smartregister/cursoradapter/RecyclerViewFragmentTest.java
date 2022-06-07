@@ -18,10 +18,10 @@ import androidx.fragment.app.testing.FragmentScenario;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ApplicationProvider;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.reflect.internal.WhiteboxImpl;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -59,11 +59,14 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
     @Test
     public void testGetSearchView2() {
         FragmentScenario<RecyclerViewFragmentMock> scenario = FragmentScenario.launchInContainer(RecyclerViewFragmentMock.class);
+        Assert.assertNotNull(scenario);
+        final RecyclerViewFragmentMock[] recyclerViewFragmentMockRef = new RecyclerViewFragmentMock[1];
         scenario.onFragment(fragment -> {
-
+            recyclerViewFragmentMockRef[0] = fragment;
             assertNotNull(fragment.getSearchView());
-            assertEquals(R.id.edt_search, fragment.getSearchView().getId());
         });
+
+        assertEquals(R.id.edt_search, recyclerViewFragmentMockRef[0].getSearchView().getId());
     }
 
     @Test
@@ -107,8 +110,8 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
         FragmentScenario<RecyclerViewFragmentMock> scenario = FragmentScenario.launchInContainer(RecyclerViewFragmentMock.class);
         scenario.onFragment(fragment -> {
 
-            RecyclerViewFragmentMock fragmentSpy = Mockito.spy(fragment);
-            fragmentSpy.onCreateView(LayoutInflater.from(ApplicationProvider.getApplicationContext()), (ViewGroup) fragmentSpy.getView().getParent(), Mockito.mock(Bundle.class));
+            RecyclerViewFragmentMock fragmentSpy = spy(fragment);
+            fragmentSpy.onCreateView(LayoutInflater.from(ApplicationProvider.getApplicationContext()), (ViewGroup) fragmentSpy.getView().getParent(), mock(Bundle.class));
             verify(fragmentSpy).onInitialization();
             verify(fragmentSpy).setupSearchView(any(View.class));
             verify(fragmentSpy).onResumption();
