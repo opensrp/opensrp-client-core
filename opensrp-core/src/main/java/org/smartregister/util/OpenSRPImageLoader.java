@@ -276,7 +276,8 @@ public class OpenSRPImageLoader {
         try {
             final Context context = contextWeakReference.get();
             if (context != null) {
-                if (entityId == null || entityId.isEmpty()) {
+                if (CoreLibrary.getInstance().context().getAppProperties().isTrue(AllConstants.PROPERTY.DISABLE_PROFILE_IMAGES_FEATURE)
+                        || (entityId == null || entityId.isEmpty())) {
 
                     Glide.with(context).load(opensrpImageListener.getDefaultImageResId()).into(opensrpImageListener.getImageView());
 
