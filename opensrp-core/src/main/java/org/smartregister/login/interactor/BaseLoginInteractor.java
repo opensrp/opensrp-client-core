@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import androidx.annotation.VisibleForTesting;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -40,6 +42,8 @@ import org.smartregister.view.contract.BaseLoginContract;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import timber.log.Timber;
 
@@ -51,6 +55,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     private static final int MINIMUM_JOB_FLEX_VALUE = 5;
     private BaseLoginContract.Presenter mLoginPresenter;
     private RemoteLoginTask remoteLoginTask;
+    private boolean localLogin;
 
     private ResetAppHelper resetAppHelper;
 
@@ -68,18 +73,27 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
     @Override
     public void login(WeakReference<BaseLoginContract.View> view, String userName, char[] password) {
+        getLoginView().showProgress(true);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(() -> {
 
-        boolean localLogin = !getSharedPreferences().fetchForceRemoteLogin(userName);
-        org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
-        if (opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN)
-                && localLogin
-                && HttpURLConnection.HTTP_UNAUTHORIZED == getSharedPreferences().getLastAuthenticationHttpStatus()
-                && NetworkUtils.isNetworkAvailable()) {
-            localLogin = false;
-        }
+            localLogin = !getSharedPreferences().fetchForceRemoteLogin(userName);
+            org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
+            if ((NetworkUtils.isNetworkAvailable() && isAuthTokenExpired(userName)) || (opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN)
+                    && localLogin
+                    && HttpURLConnection.HTTP_UNAUTHORIZED == getSharedPreferences().getLastAuthenticationHttpStatus()
+                    && NetworkUtils.isNetworkAvailable())) {
+                localLogin = false;
+            }
 
-        loginWithLocalFlag(view, localLogin && getSharedPreferences().isRegisteredANM(userName), userName, password);
+            getLoginView().getAppCompatActivity().runOnUiThread(() -> loginWithLocalFlag(view, localLogin && getSharedPreferences().isRegisteredANM(userName), userName, password));
 
+        });
+    }
+
+    @VisibleForTesting
+    protected boolean isAuthTokenExpired(String userName) {
+        return !AccountHelper.isAccessTokenValid(userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
     }
 
     public void loginWithLocalFlag(WeakReference<BaseLoginContract.View> view, boolean localLogin, String userName, char[] password) {

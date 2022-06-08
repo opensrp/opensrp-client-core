@@ -164,6 +164,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
+        interactor = spy(interactor);
         initCoreLibrary();
         CoreLibrary.init(context);
         when(presenter.getOpenSRPContext()).thenReturn(context);
@@ -208,6 +209,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(mAccountManager).when(coreLibrary).getAccountManager();
         Mockito.doReturn(ApplicationProvider.getApplicationContext()).when(context).applicationContext();
         Mockito.doReturn(syncConfiguration).when(coreLibrary).getSyncConfiguration();
+        Mockito.doReturn(false).when(interactor).isAuthTokenExpired(ArgumentMatchers.anyString());
         Whitebox.setInternalState(interactor, "resetAppHelper", resetAppHelper);
     }
 
@@ -226,25 +228,31 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testLoginAttemptsRemoteLoginAndErrorsWithBaseURLIsMissing() {
-        when(allSharedPreferences.fetchBaseURL("")).thenReturn("");
-        interactor.login(new WeakReference<>(view), "johndoe", password);
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(allSharedPreferences).savePreference("DRISHTI_BASE_URL", activity.getString(R.string.opensrp_url));
-        verify(view).enableLoginButton(true);
-        verify(view).showErrorDialog(activity.getString(R.string.remote_login_base_url_missing_error));
-        verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+        try (MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            when(allSharedPreferences.fetchBaseURL("")).thenReturn("");
+            interactor.login(new WeakReference<>(view), "johndoe", password);
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(allSharedPreferences).savePreference("DRISHTI_BASE_URL", activity.getString(R.string.opensrp_url));
+            verify(view).enableLoginButton(true);
+            verify(view).showErrorDialog(activity.getString(R.string.remote_login_base_url_missing_error));
+            verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+        }
     }
 
     @Test
     public void testLoginAttemptsRemoteLoginAndErrorsWithGenericError() {
-        interactor.login(new WeakReference<>(view), "johndoe", password);
-        verify(view).hideKeyboard();
-        verify(view).enableLoginButton(false);
-        verify(allSharedPreferences, never()).savePreference("DRISHTI_BASE_URL", activity.getString(R.string.opensrp_url));
-        verify(view, never()).enableLoginButton(true);
-        verify(view).showErrorDialog(activity.getString(R.string.remote_login_generic_error));
-        verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+        try (MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            interactor.login(new WeakReference<>(view), "johndoe", password);
+            verify(view).hideKeyboard();
+            verify(view).enableLoginButton(false);
+            verify(allSharedPreferences, never()).savePreference("DRISHTI_BASE_URL", activity.getString(R.string.opensrp_url));
+            verify(view, never()).enableLoginButton(true);
+            verify(view).showErrorDialog(activity.getString(R.string.remote_login_generic_error));
+            verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+        }
     }
 
 
@@ -439,7 +447,6 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
             when(userService.isUserInPioneerGroup(username)).thenReturn(false);
             when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
 
-            interactor = spy(interactor);
             interactor.loginWithLocalFlag(new WeakReference<>(view), false, username, qwertyPassword);
 
             verify(view).hideKeyboard();
@@ -536,20 +543,22 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testLocalLoginShouldInitiateRemoteLoginIfTimeCheckEnabled() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "uniqueIdRepository", uniqueIdRepository);
-        when(allSharedPreferences.fetchForceRemoteLogin(username)).thenReturn(false);
-        when(allSharedPreferences.fetchRegisteredANM()).thenReturn(username);
-        when(userService.isUserInValidGroup(username, qwertyPassword)).thenReturn(true);
-        Whitebox.setInternalState(AllConstants.class, "TIME_CHECK", true);
-        when(userService.validateDeviceTime(ArgumentMatchers.any(), ArgumentMatchers.anyLong())).thenReturn(TimeStatus.TIME_MISMATCH);
-        interactor = spy(interactor);
+        try (MockedStatic<Executors> executor = Mockito.mockStatic(Executors.class)) {
+            executor.when(Executors::newSingleThreadExecutor).thenReturn(new TestExecutorService());
+            Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
+            Whitebox.setInternalState(CoreLibrary.getInstance().context(), "uniqueIdRepository", uniqueIdRepository);
+            when(allSharedPreferences.fetchForceRemoteLogin(username)).thenReturn(false);
+            when(allSharedPreferences.fetchRegisteredANM()).thenReturn(username);
+            when(userService.isUserInValidGroup(username, qwertyPassword)).thenReturn(true);
+            Whitebox.setInternalState(AllConstants.class, "TIME_CHECK", true);
+            when(userService.validateDeviceTime(ArgumentMatchers.any(), ArgumentMatchers.anyLong())).thenReturn(TimeStatus.TIME_MISMATCH);
 
-        interactor.login(new WeakReference<>(view), username, qwertyPassword);
+            interactor.login(new WeakReference<>(view), username, qwertyPassword);
 
-        verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
-        verify(userService, never()).localLoginWith(username);
-        verify(interactor).loginWithLocalFlag(ArgumentMatchers.any(), ArgumentMatchers.eq(false), ArgumentMatchers.eq(username), ArgumentMatchers.eq(qwertyPassword));
+            verify(view, never()).goToHome(ArgumentMatchers.anyBoolean());
+            verify(userService, never()).localLoginWith(username);
+            verify(interactor).loginWithLocalFlag(ArgumentMatchers.any(), ArgumentMatchers.eq(false), ArgumentMatchers.eq(username), ArgumentMatchers.eq(qwertyPassword));
+        }
     }
 
 
@@ -589,7 +598,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
             AccountResponse accountResponse = new AccountResponse(400, accountError);
 
-            LoginInteractorShadow interactorSpy = spy(this.interactor);
+            LoginInteractorShadow interactorSpy = this.interactor;
             Activity activitySpy = spy(this.activity);
 
             when(httpAgent.oauth2authenticate(ArgumentMatchers.anyString(), ArgumentMatchers.any(char[].class), ArgumentMatchers.eq(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD), ArgumentMatchers.eq("https://my-server.com/"))).thenReturn(accountResponse);

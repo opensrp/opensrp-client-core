@@ -1016,6 +1016,10 @@ public class Utils {
         }
     }
 
+    public static String toStringNullable(@Nullable Object value) {
+        return value != null ? value.toString() : null;
+    }
+
     public String getName() {
         return getPrefferedName();
     }

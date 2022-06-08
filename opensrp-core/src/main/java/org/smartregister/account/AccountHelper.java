@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import org.smartregister.CoreLibrary;
 
+import java.util.Calendar;
+
 import timber.log.Timber;
 
 /**
@@ -14,49 +16,8 @@ import timber.log.Timber;
  */
 public class AccountHelper {
 
-    private static AccountManager accountManager = CoreLibrary.getInstance().getAccountManager();
-
     public final static int MAX_AUTH_RETRIES = 1;
-
-
-    public static final class CONFIGURATION_CONSTANTS {
-
-        public static final String IS_KEYCLOAK_CONFIGURED = "is_keycloack_configured";
-        public final static String TOKEN_ENDPOINT_URL = "token_endpoint_url";
-        public final static String AUTHORIZATION_ENDPOINT_URL = "authorization_endpoint_url";
-        public final static String ISSUER_ENDPOINT_URL = "issuer_endpoint_url";
-        public static final String USERINFO_ENDPOINT_URL = "userinfo_endpoint_url";
-    }
-
-    public static final class OAUTH {
-
-        public final static String ACCOUNT_CONFIGURATION_ENDPOINT = "/rest/config/keycloak";
-        public final static String TOKEN_ENDPOINT = "/oauth/token";
-        public final static String PASSWORD_RESET_ENDPOINT = "/account";
-
-        public static final class GRANT_TYPE {
-            public final static String PASSWORD = "password";
-            public final static String REFRESH_TOKEN = "refresh_token";
-
-        }
-    }
-
-    public static final class INTENT_KEY {
-
-        public final static String ACCOUNT_TYPE = "ACCOUNT_TYPE";
-        public final static String AUTH_TYPE = "AUTH_TYPE";
-        public final static String ACCOUNT_NAME = "ACCOUNT_NAME";
-        public final static String IS_NEW_ACCOUNT = "IS_NEW_ACCOUNT";
-        public final static String ACCOUNT_REFRESH_TOKEN = "ACCOUNT_REFRESH_TOKEN";
-        public final static String ACCOUNT_LOCAL_PASSWORD_SALT = "ACCOUNT_LOCAL_PASSWORD_SALT";
-        public final static String ACCOUNT_LOCAL_PASSWORD = "ACCOUNT_LOCAL_PASSWORD";
-        public final static String ACCOUNT_ROLES = "ACCOUNT_ROLES";
-    }
-
-    public static final class TOKEN_TYPE {
-        public final static String PROVIDER = "provider";
-        public final static String ADMIN = "admin";
-    }
+    private static AccountManager accountManager = CoreLibrary.getInstance().getAccountManager();
 
     /**
      * Gets OAuth Account by the account name and account type
@@ -67,7 +28,7 @@ public class AccountHelper {
      */
     public static Account getOauthAccountByNameAndType(String accountName, String accountType) {
 
-        Account[]  accounts = accountManager.getAccountsByType(accountType);
+        Account[] accounts = accountManager.getAccountsByType(accountType);
         return accounts.length > 0 ? selectAccount(accounts, accountName) : null;
     }
 
@@ -134,7 +95,6 @@ public class AccountHelper {
             accountManager.invalidateAuthToken(accountType, authToken);
     }
 
-
     /**
      * @param accountName   name of account within account manage
      * @param accountType   unique name to identify our account type in the Account Manager
@@ -157,8 +117,61 @@ public class AccountHelper {
     public static AccountManagerFuture<Bundle> reAuthenticateUserAfterSessionExpired(String accountName, String accountType, String authTokenType) {
         Account account = getOauthAccountByNameAndType(accountName, accountType);
         return accountManager.updateCredentials(account, authTokenType, null, null, null, null);
+    }
 
+    /**
+     * A Helper method to check if the Access Token is valid
+     */
+    public static boolean isAccessTokenValid(String accountName, String accountType) {
+        String createdAt = getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_ACCESS_TOKEN_CREATED_AT, accountName, accountType);
+        String accountExpires = getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_ACCESS_TOKEN_EXPIRES_IN, accountName, accountType);
+        Long createdAtLong = createdAt != null ? Long.parseLong(createdAt) : null;
+        Long accountExpiresLong = accountExpires != null ? Long.parseLong(accountExpires) : null;
+        Long now = Calendar.getInstance().getTimeInMillis() / 1000;
+        Long expiry = createdAtLong != null && accountExpiresLong != null ? createdAtLong + accountExpiresLong : 0l;
+        return now < expiry;
+    }
 
+    public static final class CONFIGURATION_CONSTANTS {
+
+        public static final String IS_KEYCLOAK_CONFIGURED = "is_keycloack_configured";
+        public final static String TOKEN_ENDPOINT_URL = "token_endpoint_url";
+        public final static String AUTHORIZATION_ENDPOINT_URL = "authorization_endpoint_url";
+        public final static String ISSUER_ENDPOINT_URL = "issuer_endpoint_url";
+        public static final String USERINFO_ENDPOINT_URL = "userinfo_endpoint_url";
+    }
+
+    public static final class OAUTH {
+
+        public final static String ACCOUNT_CONFIGURATION_ENDPOINT = "/rest/config/keycloak";
+        public final static String TOKEN_ENDPOINT = "/oauth/token";
+        public final static String PASSWORD_RESET_ENDPOINT = "/account";
+
+        public static final class GRANT_TYPE {
+            public final static String PASSWORD = "password";
+            public final static String REFRESH_TOKEN = "refresh_token";
+
+        }
+    }
+
+    public static final class INTENT_KEY {
+
+        public final static String ACCOUNT_TYPE = "ACCOUNT_TYPE";
+        public final static String AUTH_TYPE = "AUTH_TYPE";
+        public final static String ACCOUNT_NAME = "ACCOUNT_NAME";
+        public final static String IS_NEW_ACCOUNT = "IS_NEW_ACCOUNT";
+        public final static String ACCOUNT_REFRESH_TOKEN = "ACCOUNT_REFRESH_TOKEN";
+        public final static String ACCOUNT_LOCAL_PASSWORD_SALT = "ACCOUNT_LOCAL_PASSWORD_SALT";
+        public final static String ACCOUNT_LOCAL_PASSWORD = "ACCOUNT_LOCAL_PASSWORD";
+        public final static String ACCOUNT_ROLES = "ACCOUNT_ROLES";
+        public final static String ACCOUNT_REFRESH_TOKEN_EXPIRES_IN = "ACCOUNT_REFRESH_TOKEN_EXPIRES_IN";
+        public final static String ACCOUNT_ACCESS_TOKEN_EXPIRES_IN = "ACCOUNT_ACCESS_TOKEN_EXPIRES_IN";
+        public final static String ACCOUNT_ACCESS_TOKEN_CREATED_AT = "ACCOUNT_ACCESS_TOKEN_CREATED_AT";
+    }
+
+    public static final class TOKEN_TYPE {
+        public final static String PROVIDER = "provider";
+        public final static String ADMIN = "admin";
     }
 
 }

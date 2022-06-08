@@ -47,6 +47,7 @@ import org.smartregister.view.controller.ANMLocationController;
 import org.smartregister.view.controller.ECSmartRegisterController;
 import org.smartregister.view.controller.VillageController;
 
+@Ignore
 @Config(shadows = {ShadowContext.class, FontTextViewShadow.class, AndroidTreeViewShadow.class, ShadowDrawableResourcesImpl.class}, sdk = Build.VERSION_CODES.O_MR1)
 public class NativeECSmartRegisterActivityTest extends BaseUnitTest {
 
