@@ -3,7 +3,7 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
-        maven{  url "https://plugins.gradle.org/m2/" }
+        maven { url "https://plugins.gradle.org/m2/" }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
@@ -38,11 +38,11 @@ subprojects {
 
     group = 'org.smartregister'
 
-    ext.androidToolsBuildGradle     = '4.2.2'
-    ext.androidBuildToolsVersion    = '30.0.2'
-    ext.androidMinSdkVersion        = 18
-    ext.androidCompileSdkVersion    = 31
-    ext.androidTargetSdkVersion     = 31
+    ext.androidToolsBuildGradle = '4.2.2'
+    ext.androidBuildToolsVersion = '30.0.2'
+    ext.androidMinSdkVersion = 18
+    ext.androidCompileSdkVersion = 31
+    ext.androidTargetSdkVersion = 31
 
     ext.androidAnnotationsVersion = '3.0.1'
     ext.androidAnnotationsAPIVersion = '3.0.1'

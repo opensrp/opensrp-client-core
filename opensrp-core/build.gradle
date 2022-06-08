@@ -26,7 +26,7 @@ apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'maven-publish'
 
 jacoco {
-    toolVersion = "0.8.5"
+    toolVersion = "0.8.8"
 }
 
 android {
@@ -54,7 +54,7 @@ android {
         debug {
             minifyEnabled false
             debuggable true
-            testCoverageEnabled = true
+            testCoverageEnabled = false
             signingConfig signingConfigs.config
             zipAlignEnabled true
             buildConfigField "String", "TRUST_MANAGER_ALGORITHM", "\"X509\""
@@ -170,7 +170,7 @@ dependencies {
     implementation 'net.zetetic:android-database-sqlcipher:4.5.1'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.3'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
     implementation group: 'com.google.guava', name: 'guava', version: '31.1-android'
@@ -199,12 +199,12 @@ dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    implementation 'com.google.android.material:material:1.6.0'
-    implementation 'androidx.recyclerview:recyclerview:1.2.0'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.security:security-crypto:1.0.0'
 
-    implementation('com.google.android.material:material:1.6.0') {
+    implementation('com.google.android.material:material:1.6.1') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 
@@ -228,7 +228,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
-    implementation 'org.smartregister:opensrp-client-utils:0.0.4-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-client-utils:0.0.6-SNAPSHOT'
 
     implementation 'org.smartregister:opensrp-plan-evaluator:1.6.7-SNAPSHOT'
 

@@ -108,6 +108,7 @@ public class UpdateActionsTaskTest extends BaseUnitTest {
         when(allFormVersionSyncService.downloadAllPendingFormFromServer()).thenReturn(DownloadStatus.nothingDownloaded);
 
         UpdateActionsTask updateActionsTask = new UpdateActionsTask(null, actionService, formSubmissionSyncService, progressIndicator, allFormVersionSyncService);
+        assertNotNull(updateActionsTask);
         updateActionsTask.updateFromServer(status -> assertEquals(nothingFetched, status));
     }
 
@@ -121,6 +122,7 @@ public class UpdateActionsTaskTest extends BaseUnitTest {
         when(allSharedPreferences.fetchLanguagePreference()).thenReturn("en");
 
         UpdateActionsTask updateActionsTask = new UpdateActionsTask(androidContext, actionService, formSubmissionSyncService, progressIndicator, allFormVersionSyncService);
+        assertNotNull(updateActionsTask);
         updateActionsTask.updateFromServer(status -> fail("Should not have updated from server as the user is not logged in."));
 
         verifyNoInteractions(actionService);
@@ -137,6 +139,7 @@ public class UpdateActionsTaskTest extends BaseUnitTest {
             when(allSharedPreferences.fetchLanguagePreference()).thenReturn("en");
 
             UpdateActionsTask updateActionsTask = new UpdateActionsTask(androidContext, actionService, formSubmissionSyncService, progressIndicator, allFormVersionSyncService);
+            assertNotNull(updateActionsTask);
             updateActionsTask.updateFromServer(status -> Assert.assertNull(status));
 
             verify(formSubmissionSyncService).sync();
