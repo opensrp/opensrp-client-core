@@ -361,7 +361,7 @@ public class UserServiceTest extends BaseUnitTest {
         Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
         String user = "johndoe";
         when(keyStore.containsAlias(user)).thenReturn(true);
-        KeyStore.PrivateKeyEntry privateKeyEntry = Mockito.mock(KeyStore.PrivateKeyEntry.class);
+        KeyStore.PrivateKeyEntry privateKeyEntry = mock(KeyStore.PrivateKeyEntry.class);
         when(keyStore.getEntry(user, null)).thenReturn(privateKeyEntry);
         when(allSharedPreferences.fetchPioneerUser()).thenReturn(user);
         assertTrue(userService.isUserInPioneerGroup(user));
