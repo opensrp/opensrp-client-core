@@ -6,11 +6,17 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.powermock.api.mockito.internal.verification.VerifyNoMoreInteractions;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
@@ -22,6 +28,7 @@ import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.service.UserService;
+import org.smartregister.util.AppProperties;
 import org.smartregister.util.SyncUtils;
 import org.smartregister.view.controller.ANMLocationController;
 
@@ -61,6 +68,9 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
 
     @Mock
     private SyncUtils syncUtils;
+
+    @Mock
+    private Context context;
 
     @Mock
     private AllSettings settingsRepository;
@@ -281,6 +291,47 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
 
         verify(locationRepository).deleteLocations(Collections.singleton("b4d3fbde-3686-4472-b3c4-7e28ba455168"));
         verify(userService).saveJurisdictionIds(userAssignment.getJurisdictions());
+
+    }
+
+    @Test
+    public void testValidateUserAssignmentShouldNotClearRemovedAssignments() throws Exception {
+        CoreLibrary originalCoreLibrary = CoreLibrary.getInstance();
+        CoreLibrary mockCoreLibrary = Mockito.spy(originalCoreLibrary);
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", mockCoreLibrary);
+        AppProperties appProperties = new AppProperties();
+        appProperties.setProperty(AllConstants.PROPERTY.IGNORE_LOCATION_DELETION, Boolean.TRUE.toString());
+        Mockito.doReturn(appProperties).when(context).getAppProperties();
+        Mockito.doReturn(context).when(mockCoreLibrary).context();
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", mockCoreLibrary);
+
+
+        when(allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED)).thenReturn(true);
+        when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.success, gson.toJson(userAssignment)));
+        Set<Long> organizations = new HashSet<>(Arrays.asList(1234L, 1235L));
+        List<String> jurisdictions = Arrays.asList("67c5e0a4-132f-457b-b573-9abf5ec95c75", "b4d3fbde-3686-4472-b3c4-7e28ba455168");
+        when(userService.fetchOrganizations()).thenReturn(organizations);
+        when(locationRepository.getAllLocationIds()).thenReturn(new ArrayList<>(jurisdictions));
+        when(userService.fetchJurisdictionIds()).thenReturn(new HashSet<>(jurisdictions));
+        when(planDefinitionRepository.findAllPlanDefinitionIds()).thenReturn(new HashSet<>(Arrays.asList("plan1", "plan12")));
+        locationTree.deleteLocation("b4d3fbde-3686-4472-b3c4-7e28ba455168");
+        when(settingsRepository.fetchANMLocation()).thenReturn(gson.toJson(locationTree));
+
+        validateAssignmentHelper.validateUserAssignment();
+
+        verify(allSharedPreferences, never()).savePreference(anyString(), eq("0"));
+        verify(allSharedPreferences, never()).saveLastSyncDate(0);
+
+        verify(allSharedPreferences).getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
+        verify(httpAgent).fetch(anyString());
+        verify(planDefinitionRepository).findAllPlanDefinitionIds();
+        verify(locationRepository).getAllLocationIds();
+        verify(userService).fetchOrganizations();
+
+        verifyNoMoreInteractions(planDefinitionRepository);
+        verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(locationRepository);
+
 
     }
 }
