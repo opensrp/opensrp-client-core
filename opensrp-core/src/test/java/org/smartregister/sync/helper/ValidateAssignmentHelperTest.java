@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.powermock.api.mockito.internal.verification.VerifyNoMoreInteractions;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
@@ -297,12 +296,12 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
     @Test
     public void testValidateUserAssignmentShouldNotClearRemovedAssignments() throws Exception {
         CoreLibrary originalCoreLibrary = CoreLibrary.getInstance();
-        CoreLibrary mockCoreLibrary = Mockito.spy(originalCoreLibrary);
+        CoreLibrary mockCoreLibrary = spy(originalCoreLibrary);
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", mockCoreLibrary);
         AppProperties appProperties = new AppProperties();
         appProperties.setProperty(AllConstants.PROPERTY.IGNORE_LOCATION_DELETION, Boolean.TRUE.toString());
-        Mockito.doReturn(appProperties).when(context).getAppProperties();
-        Mockito.doReturn(context).when(mockCoreLibrary).context();
+        doReturn(appProperties).when(context).getAppProperties();
+        doReturn(context).when(mockCoreLibrary).context();
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", mockCoreLibrary);
 
 
