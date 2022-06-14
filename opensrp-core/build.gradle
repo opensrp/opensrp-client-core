@@ -291,8 +291,8 @@ makeJar.dependsOn(clearJar, build)
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
 
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.required.set(true)
+        html.required.set(true)
     }
 
     getReports().getXml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"))
