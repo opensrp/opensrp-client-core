@@ -159,7 +159,7 @@ afterEvaluate {
     assembleDebug.dependsOn(copyTestResources)
 }
 configurations.all {
-    resolutionStrategy.force 'commons-codec:commons-codec:1.10'
+    resolutionStrategy.force 'commons-codec:commons-codec:1.15'
 }
 
 dependencies {
