@@ -39,4 +39,4 @@ jobs:
         run: ./gradlew :opensrp-core:clean :opensrp-core:testDebugUnitTest --stacktrace  
  
       - name: Generate & upload library snapshot artifact AAR (Android Archive) file
-        run: ./gradlew :opensrp-core:uploadArchives -PmavenLocal=false --stacktrace
+        run: ./gradlew :opensrp-core:uploadArchives -PmavenLocal=false --stacktrace -PsonatypeUsername=${{ secrets.NEXUS_USERNAME }} -PsonatypePassword=${{ secrets.NEXUS_PASSWORD }}
