@@ -234,9 +234,9 @@ dependencies {
 
     implementation 'xerces:xercesImpl:2.12.0'
 
-    implementation platform('com.google.firebase:firebase-bom:30.0.2')
-    implementation 'com.google.firebase:firebase-crashlytics'
-    implementation 'com.google.firebase:firebase-perf' // Add the dependency for the Performance Monitoring library
+    compileOnly platform('com.google.firebase:firebase-bom:30.0.2')
+    compileOnly 'com.google.firebase:firebase-crashlytics'
+    compileOnly 'com.google.firebase:firebase-perf' // Add the dependency for the Performance Monitoring library
 
     testImplementation project(path: ':opensrp-core')
 
@@ -263,6 +263,10 @@ dependencies {
     testImplementation (group: 'org.robolectric', name: 'shadows-multidex', version: "$robolectricVersion"){
         exclude group: 'com.google.guava', module: 'guava'
     }
+
+    testRuntimeOnly platform('com.google.firebase:firebase-bom:30.0.2')
+    testRuntimeOnly 'com.google.firebase:firebase-crashlytics'
+    testRuntimeOnly 'com.google.firebase:firebase-perf' // Add the dependency for the Performance Monitoring library
 
     // PowerMock
     def powerMockVersion = '2.0.9'

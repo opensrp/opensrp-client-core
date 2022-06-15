@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
+import java.util.Arrays;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 13-04-2021.

@@ -1,33 +1,5 @@
 package org.smartregister.repository;
 
-import android.content.ContentValues;
-import android.database.SQLException;
-
-import androidx.test.core.app.ApplicationProvider;
-
-import net.sqlcipher.MatrixCursor;
-import net.sqlcipher.database.SQLiteDatabase;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.powermock.reflect.Whitebox;
-import org.robolectric.util.ReflectionHelpers;
-import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.CoreLibrary;
-import org.smartregister.domain.UniqueId;
-import org.smartregister.view.activity.DrishtiApplication;
-
-import java.util.Date;
-import java.util.List;
-
-import edu.emory.mathcs.backport.java.util.Collections;
-
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -43,32 +15,52 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import android.content.ContentValues;
+import android.database.SQLException;
+
+import androidx.test.core.app.ApplicationProvider;
+
+import net.sqlcipher.MatrixCursor;
+import net.sqlcipher.database.SQLiteDatabase;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.powermock.reflect.Whitebox;
+import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.CoreLibrary;
+import org.smartregister.domain.UniqueId;
+import org.smartregister.view.activity.DrishtiApplication;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 /**
  * Created by ndegwamartin on 2019-12-02.
  */
 public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
+    private static final String testUsername = "testUser1";
     @Mock
     private Repository repository;
-
     @Mock
     private SQLiteDatabase sqLiteDatabase;
-
     @Captor
     private ArgumentCaptor<ContentValues> contentValuesArgumentCaptor;
-
     @Captor
     private ArgumentCaptor<String> stringArgumentCaptor;
-
     @Captor
     private ArgumentCaptor<String[]> argsCaptor;
-
     private UniqueIdRepository uniqueIdRepository;
-
-    private static final String testUsername = "testUser1";
 
     @Before
     public void setUp() {
-        
+
 
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()));
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", allSharedPreferences);
