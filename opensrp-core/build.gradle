@@ -91,7 +91,7 @@ android {
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
         buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
         buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
-        buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
+        buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
     }
     sourceSets.main.jni.srcDirs = [] //disable automatic ndk-build call
     sourceSets {
@@ -199,7 +199,6 @@ dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.security:security-crypto:1.0.0'
@@ -236,7 +235,8 @@ dependencies {
 
     compileOnly platform('com.google.firebase:firebase-bom:30.0.2')
     compileOnly 'com.google.firebase:firebase-crashlytics'
-    compileOnly 'com.google.firebase:firebase-perf' // Add the dependency for the Performance Monitoring library
+    compileOnly 'com.google.firebase:firebase-perf'
+    // Add the dependency for the Performance Monitoring library
 
     testImplementation project(path: ':opensrp-core')
 
@@ -252,7 +252,7 @@ dependencies {
 
     //Robolectric
     def robolectricVersion = '4.8.1'
-    testImplementation (group: 'org.robolectric', name: 'robolectric', version: "$robolectricVersion"){
+    testImplementation(group: 'org.robolectric', name: 'robolectric', version: "$robolectricVersion") {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.apache.maven', module: 'maven-model'
         exclude group: 'com.android.support'
@@ -260,13 +260,14 @@ dependencies {
         exclude group: 'com.thoughtworks.xstream', module: 'xstream'
     }
 
-    testImplementation (group: 'org.robolectric', name: 'shadows-multidex', version: "$robolectricVersion"){
+    testImplementation(group: 'org.robolectric', name: 'shadows-multidex', version: "$robolectricVersion") {
         exclude group: 'com.google.guava', module: 'guava'
     }
 
     testRuntimeOnly platform('com.google.firebase:firebase-bom:30.0.2')
     testRuntimeOnly 'com.google.firebase:firebase-crashlytics'
-    testRuntimeOnly 'com.google.firebase:firebase-perf' // Add the dependency for the Performance Monitoring library
+    testRuntimeOnly 'com.google.firebase:firebase-perf'
+    // Add the dependency for the Performance Monitoring library
 
     // PowerMock
     def powerMockVersion = '2.0.9'

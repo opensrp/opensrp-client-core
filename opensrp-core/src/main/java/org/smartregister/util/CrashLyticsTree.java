@@ -26,16 +26,21 @@ public class CrashLyticsTree extends Timber.Tree {
         if (userName == null) {
             userName = DrishtiApplication.getInstance().getUsername();
         }
-        CustomKeysAndValues customKeysAndValues = new CustomKeysAndValues.Builder().putInt(CRASHLYTICS_KEY_PRIORITY, priority)
-                .putString(CRASHLYTICS_KEY_TAG, tag)
-                .putString(CRASHLYTICS_KEY_MESSAGE, message)
-                .build();
-        FirebaseCrashlytics.getInstance().setCustomKeys(customKeysAndValues);
-        FirebaseCrashlytics.getInstance().setUserId(userName);
-        if (t == null) {
-            FirebaseCrashlytics.getInstance().recordException(new Exception(message));
-        } else {
-            FirebaseCrashlytics.getInstance().recordException(t);
+        try {
+            CustomKeysAndValues customKeysAndValues = new CustomKeysAndValues.Builder().putInt(CRASHLYTICS_KEY_PRIORITY, priority)
+                    .putString(CRASHLYTICS_KEY_TAG, tag)
+                    .putString(CRASHLYTICS_KEY_MESSAGE, message)
+                    .build();
+            FirebaseCrashlytics.getInstance().setCustomKeys(customKeysAndValues);
+            FirebaseCrashlytics.getInstance().setUserId(userName);
+            if (t == null) {
+                FirebaseCrashlytics.getInstance().recordException(new Exception(message));
+            } else {
+                FirebaseCrashlytics.getInstance().recordException(t);
+            }
+
+        } catch (NoClassDefFoundError e) {//We might not have Firebase in the classpath e.g. in another depending Library
+            e.printStackTrace();
         }
     }
 }
