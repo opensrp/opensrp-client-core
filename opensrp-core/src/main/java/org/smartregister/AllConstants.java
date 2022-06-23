@@ -248,6 +248,10 @@ public class AllConstants {
         String NULL_EVENT_SYNC_STATUS = "nullEventSyncStatus";
     }
 
+    public interface EC_CLIENT_TYPE {
+        public static final String CHILD = "child"; //The default OpenSRP Client Type
+    }
+
     public static class Immunizations {
         public static final String BCG = "bcg";
 

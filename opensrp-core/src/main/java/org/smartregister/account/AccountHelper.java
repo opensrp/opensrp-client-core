@@ -123,8 +123,8 @@ public class AccountHelper {
      * A Helper method to check if the Access Token is valid
      */
     public static boolean isAccessTokenValid(String accountName, String accountType) {
-        String createdAt = getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_ACCESS_TOKEN_CREATED_AT, accountName, accountType);
-        String accountExpires = getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_ACCESS_TOKEN_EXPIRES_IN, accountName, accountType);
+        String createdAt = getAccountManagerValue(INTENT_KEY.ACCOUNT_ACCESS_TOKEN_CREATED_AT, accountName, accountType);
+        String accountExpires = getAccountManagerValue(INTENT_KEY.ACCOUNT_REFRESH_TOKEN_EXPIRES_IN, accountName, accountType);
         Long createdAtLong = createdAt != null ? Long.parseLong(createdAt) : null;
         Long accountExpiresLong = accountExpires != null ? Long.parseLong(accountExpires) : null;
         Long now = Calendar.getInstance().getTimeInMillis() / 1000;
