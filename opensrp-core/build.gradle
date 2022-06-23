@@ -92,8 +92,7 @@ android {
         buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
         buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
         buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
-    }
-    sourceSets.main.jni.srcDirs = [] //disable automatic ndk-build call
+    } 
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -237,8 +236,6 @@ dependencies {
     compileOnly 'com.google.firebase:firebase-crashlytics'
     compileOnly 'com.google.firebase:firebase-perf'
     // Add the dependency for the Performance Monitoring library
-
-    testImplementation project(path: ':opensrp-core')
 
     //Mockito
     def mockitoVersion = '4.6.1'

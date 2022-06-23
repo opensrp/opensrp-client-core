@@ -322,7 +322,7 @@ public class ClientProcessorForJava {
             }
 
             String baseEntityId = client.getBaseEntityId();
-            String clientType = client.getClientType() != null ? client.getClientType() : (client.getRelationships() != null ? AllConstants.EC_CLIENT_TYPE.CHILD : null);
+            String clientType = client.getClientType() != null ? client.getClientType() : (client.getRelationships() != null ? AllConstants.ECClientType.CHILD : null);
 
             for (String tableName : closesCase) {
                 closeCase(tableName, baseEntityId);
@@ -363,7 +363,7 @@ public class ClientProcessorForJava {
                 executeInsertStatement(contentValues, tableName);
 
                 String entityId = contentValues.getAsString(CommonRepository.BASE_ENTITY_ID_COLUMN);
-                String clientType = client.getClientType() != null ? client.getClientType() : (client.getRelationships() != null ? AllConstants.EC_CLIENT_TYPE.CHILD : null);
+                String clientType = client.getClientType() != null ? client.getClientType() : (client.getRelationships() != null ? AllConstants.ECClientType.CHILD : null);
                 updateFTSsearch(tableName, clientType, entityId, contentValues);
                 Long timestamp = getEventDate(event.getEventDate());
                 addContentValuesToDetailsTable(contentValues, timestamp);
