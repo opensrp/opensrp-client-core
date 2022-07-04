@@ -249,7 +249,7 @@ public class AllConstants {
     }
 
     public interface ECClientType {
-        public static final String CHILD = "child"; //The default OpenSRP Client Type
+        String CHILD = "child"; //The default OpenSRP Client Type
     }
 
     public static class Immunizations {
