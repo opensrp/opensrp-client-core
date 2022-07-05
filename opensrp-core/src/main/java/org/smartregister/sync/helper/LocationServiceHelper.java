@@ -472,6 +472,9 @@ public class LocationServiceHelper extends BaseHelper {
                     location.setSyncStatus(BaseRepository.TYPE_Synced);
 
                     locationRepository.addOrUpdate(location);
+                    if (location.getLocationTags() == null) {
+                        return;
+                    }
 
                     for (LocationTag tag : location.getLocationTags()) {
                         LocationTag locationTag = new LocationTag();
