@@ -263,8 +263,8 @@ dependencies {
 
     testRuntimeOnly platform('com.google.firebase:firebase-bom:30.0.2')
     testRuntimeOnly 'com.google.firebase:firebase-crashlytics'
-    testRuntimeOnly 'com.google.firebase:firebase-perf'
     // Add the dependency for the Performance Monitoring library
+    testRuntimeOnly 'com.google.firebase:firebase-perf'
 
     // PowerMock
     def powerMockVersion = '2.0.9'
