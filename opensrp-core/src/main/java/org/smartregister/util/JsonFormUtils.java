@@ -22,6 +22,7 @@ import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
+import org.smartregister.domain.Observation;
 import org.smartregister.domain.tag.FormTag;
 import org.smartregister.repository.AllSharedPreferences;
 
@@ -1346,5 +1347,30 @@ public class JsonFormUtils {
         }
 
         return userLocationId;
+    }
+
+    /**
+     * This helper method creates and adds an Observation to the supplied parameter of type Event
+     *
+     * @param key   The form field key
+     * @param value The form field value
+     * @param type  The Enum type of the Observation {@link Observation.TYPE}
+     * @param event The Event to add the Observation to
+     */
+    public static void addFormSubmissionFieldObservation(String key, String value, Observation.TYPE type, Event event) throws JSONException {
+        //In case it is an unsynced Event and we are updating, we need to remove the previous Observation with the same form field tag
+        //Form fields should always be unique per submission
+
+        List<Obs> obsList = event.getObs();
+        if (obsList != null && obsList.size() > 0) {
+            obsList.removeIf(obs -> obs.getFormSubmissionField().equals(key));
+        }
+
+        // Process new observation
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(KEY, key);
+        jsonObject.put(VALUE, value);
+        jsonObject.put(OPENMRS_DATA_TYPE, type != null ? type : AllConstants.TEXT);
+        addObservation(event, jsonObject);
     }
 }

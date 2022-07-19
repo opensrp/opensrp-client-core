@@ -37,6 +37,7 @@ import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
+import org.smartregister.domain.Observation;
 import org.smartregister.domain.tag.FormTag;
 
 import java.text.ParseException;
@@ -1557,5 +1558,33 @@ public class JsonFormUtilsTest extends BaseUnitTest {
         assertNotNull(obs.getKeyValPairs().get(value));
         assertEquals("Usé, endommagé, ou cassé", obs.getKeyValPairs().get(value));
         assertEquals(value, obs.getValue());
+    }
+
+    @Test
+    public void testAddFormSubmissionFieldObservationAddsObservationCorrectly() throws JSONException {
+        Event event = new Event();
+        Assert.assertNull(event.getObs());
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(KEY, AllConstants.DATA_STRATEGY);
+        jsonObject.put(VALUE, AllConstants.DATA_CAPTURE_STRATEGY.NORMAL);
+        jsonObject.put(JsonFormUtils.OPENMRS_DATA_TYPE, Observation.TYPE.TEXT);
+
+        JsonFormUtils.addObservation(event, jsonObject);
+
+        Assert.assertNotNull(event.getObs());
+        Assert.assertEquals(AllConstants.DATA_CAPTURE_STRATEGY.NORMAL, event.getObs().get(0).getValue());
+
+        JsonFormUtils.addFormSubmissionFieldObservation(AllConstants.DATA_STRATEGY, AllConstants.DATA_CAPTURE_STRATEGY.ADVANCED, Observation.TYPE.TEXT, event);
+
+        List<Obs> obsList = event.getObs();
+        Assert.assertNotNull(obsList);
+        Assert.assertEquals(1, obsList.size());
+
+        Obs obResult = obsList.get(0);
+        Assert.assertNotNull(obResult);
+
+        Assert.assertEquals(AllConstants.DATA_STRATEGY, obResult.getFormSubmissionField());
+        Assert.assertEquals(AllConstants.DATA_CAPTURE_STRATEGY.ADVANCED, obResult.getValue());
     }
 }
