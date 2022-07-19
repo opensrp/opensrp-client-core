@@ -1563,7 +1563,7 @@ public class JsonFormUtilsTest extends BaseUnitTest {
     @Test
     public void testAddFormSubmissionFieldObservationAddsObservationCorrectly() throws JSONException {
         Event event = new Event();
-        Assert.assertNull(event.getObs());
+        assertNull(event.getObs());
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(KEY, AllConstants.DATA_STRATEGY);
@@ -1572,19 +1572,19 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
         JsonFormUtils.addObservation(event, jsonObject);
 
-        Assert.assertNotNull(event.getObs());
-        Assert.assertEquals(AllConstants.DATA_CAPTURE_STRATEGY.NORMAL, event.getObs().get(0).getValue());
+        assertNotNull(event.getObs());
+        assertEquals(AllConstants.DATA_CAPTURE_STRATEGY.NORMAL, event.getObs().get(0).getValue());
 
         JsonFormUtils.addFormSubmissionFieldObservation(AllConstants.DATA_STRATEGY, AllConstants.DATA_CAPTURE_STRATEGY.ADVANCED, Observation.TYPE.TEXT, event);
 
         List<Obs> obsList = event.getObs();
-        Assert.assertNotNull(obsList);
-        Assert.assertEquals(1, obsList.size());
+        assertNotNull(obsList);
+        assertEquals(1, obsList.size());
 
         Obs obResult = obsList.get(0);
-        Assert.assertNotNull(obResult);
+        assertNotNull(obResult);
 
-        Assert.assertEquals(AllConstants.DATA_STRATEGY, obResult.getFormSubmissionField());
-        Assert.assertEquals(AllConstants.DATA_CAPTURE_STRATEGY.ADVANCED, obResult.getValue());
+        assertEquals(AllConstants.DATA_STRATEGY, obResult.getFormSubmissionField());
+        assertEquals(AllConstants.DATA_CAPTURE_STRATEGY.ADVANCED, obResult.getValue());
     }
 }
