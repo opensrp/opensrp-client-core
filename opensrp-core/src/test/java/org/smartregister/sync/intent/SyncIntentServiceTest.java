@@ -439,7 +439,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
         Whitebox.invokeMethod(syncIntentService, "pushECToServer", eventClientRepository);
 
-        verify(eventClientRepository).markEventsAsSynced(pendingEvents);
+        verify(eventClientRepository).markEventsAsSynced(pendingEvents, null, null);
         verify(syncIntentService).updateProgress(1, 2);
 
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
