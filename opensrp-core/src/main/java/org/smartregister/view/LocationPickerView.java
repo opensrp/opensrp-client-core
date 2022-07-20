@@ -11,6 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ListView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -64,6 +65,13 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
         ListView locationsLV = locationPickerDialog.findViewById(R.id.locations_lv);
 
         String defaultLocation = LocationHelper.getInstance().getDefaultLocation();
+
+        // if the default location is empty, pick the first location listed under the user's OPERATIONAL_AREAS
+        if (StringUtils.isEmpty(defaultLocation)) {
+            String operationalAreas = Utils.getAllSharedPreferences().getPreference(AllConstants.OPERATIONAL_AREAS);
+            int i = operationalAreas.indexOf(",");
+            defaultLocation = operationalAreas.substring(0, i >= 0 ? i : operationalAreas.length());
+        }
 
         Set<String> uniqueLocations = new HashSet<>(LocationHelper.getInstance().locationNamesFromHierarchy(defaultLocation));
 
