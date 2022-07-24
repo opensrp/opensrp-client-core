@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.DateUtil;
@@ -29,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -61,7 +63,9 @@ public class JsonFormUtils {
     public static final String ENCOUNTER = "encounter";
     public static final String ENCOUNTER_LOCATION = "encounter_location";
 
-    public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy");
+    public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
+
+    public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
     //public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
     //2007-03-31T04:00:00.000Z
     public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -107,6 +111,7 @@ public class JsonFormUtils {
                 .withDateCreated(new Date());
 
         client.setClientApplicationVersion(formTag.appVersion);
+        client.setClientApplicationVersionName(formTag.appVersionName);
         client.setClientDatabaseVersion(formTag.databaseVersion);
 
         client.withRelationships(new HashMap<String, List<String>>()).withAddresses(addresses)
@@ -148,6 +153,7 @@ public class JsonFormUtils {
         event.setTeamId(formTag.teamId);
 
         event.setClientApplicationVersion(formTag.appVersion);
+        event.setClientApplicationVersionName(formTag.appVersionName);
         event.setClientDatabaseVersion(formTag.databaseVersion);
 
         for (int i = 0; i < fields.length(); i++) {
@@ -1050,7 +1056,8 @@ public class JsonFormUtils {
     }
 
     public static String generateRandomUUIDString() {
-        return UUID.randomUUID().toString();
+        String userName = CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM();
+        return UUID.randomUUID().toString()+"-"+userName;
     }
 
     public static void addToJSONObject(JSONObject jsonObject, String key, String value) {

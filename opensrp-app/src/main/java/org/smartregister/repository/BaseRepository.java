@@ -43,9 +43,9 @@ public class BaseRepository {
         return repository;
     }
 
-    protected String generateRandomUUIDString() {
-        return UUID.randomUUID().toString();
-    }
+//    protected String generateRandomUUIDString() {
+//        return UUID.randomUUID().toString();
+//    }
 
     public SQLiteDatabase getWritableDatabase() {
         return this.repository.getWritableDatabase();
