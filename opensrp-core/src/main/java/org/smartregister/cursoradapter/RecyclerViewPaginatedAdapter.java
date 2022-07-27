@@ -1,16 +1,20 @@
 package org.smartregister.cursoradapter;
 
+import static android.os.Looper.getMainLooper;
+
 import android.database.Cursor;
+import android.os.Handler;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.ViewGroup;
 
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.commonregistry.CommonRepository;
 
 /**
- * Created by keyman on 09/07/18.
+ * Created by keyman on 09/07/18
  */
 public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> extends RecyclerViewCursorAdapter {
     private final RecyclerViewProvider<RecyclerView.ViewHolder> listItemProvider;
@@ -42,7 +46,10 @@ public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> ext
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
         if (listItemProvider.isFooterViewHolder(viewHolder)) {
-            listItemProvider.getFooterView(viewHolder, getCurrentPageCount(), getTotalPageCount(), hasNextPage(), hasPreviousPage());
+            // make sure counts are updated before updating the view
+            (new Handler(getMainLooper())).post(() -> {
+                listItemProvider.getFooterView(viewHolder, getCurrentPageCount(), getTotalPageCount(), hasNextPage(), hasPreviousPage());
+            });
         } else {
             CommonPersonObject personinlist = commonRepository.readAllcommonforCursorAdapter(cursor);
             CommonPersonObjectClient pClient = new CommonPersonObjectClient(personinlist.getCaseId(),
