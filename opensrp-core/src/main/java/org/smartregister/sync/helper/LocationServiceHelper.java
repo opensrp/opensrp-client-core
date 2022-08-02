@@ -1,5 +1,27 @@
 package org.smartregister.sync.helper;
 
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.JURISDICTION_IDS;
+import static org.smartregister.AllConstants.LocationConstants.DISPLAY;
+import static org.smartregister.AllConstants.LocationConstants.LOCATION;
+import static org.smartregister.AllConstants.LocationConstants.LOCATIONS;
+import static org.smartregister.AllConstants.LocationConstants.SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS;
+import static org.smartregister.AllConstants.LocationConstants.TEAM;
+import static org.smartregister.AllConstants.LocationConstants.UUID;
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.LOCATION_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.STRUCTURE;
+import static org.smartregister.AllConstants.RETURN_COUNT;
+import static org.smartregister.AllConstants.TYPE;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
+
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -44,28 +66,6 @@ import java.util.List;
 import java.util.Set;
 
 import timber.log.Timber;
-
-import static org.smartregister.AllConstants.COUNT;
-import static org.smartregister.AllConstants.JURISDICTION_IDS;
-import static org.smartregister.AllConstants.LocationConstants.DISPLAY;
-import static org.smartregister.AllConstants.LocationConstants.LOCATION;
-import static org.smartregister.AllConstants.LocationConstants.LOCATIONS;
-import static org.smartregister.AllConstants.LocationConstants.SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS;
-import static org.smartregister.AllConstants.LocationConstants.TEAM;
-import static org.smartregister.AllConstants.LocationConstants.UUID;
-import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
-import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
-import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.LOCATION_SYNC;
-import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.STRUCTURE;
-import static org.smartregister.AllConstants.RETURN_COUNT;
-import static org.smartregister.AllConstants.TYPE;
-import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
-import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
-import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 public class LocationServiceHelper extends BaseHelper {
 
@@ -466,21 +466,22 @@ public class LocationServiceHelper extends BaseHelper {
                     new TypeToken<List<Location>>() {
                     }.getType()
             );
-
+            if (locations.isEmpty()) {
+                Timber.e("Empty/Null location response payload");
+                return;
+            }
             for (Location location : locations) {
                 try {
                     location.setSyncStatus(BaseRepository.TYPE_Synced);
-
                     locationRepository.addOrUpdate(location);
                     if (location.getLocationTags() == null) {
+                        Timber.e("Empty/Null location tags %s", location.getLocationTags());
                         return;
                     }
-
                     for (LocationTag tag : location.getLocationTags()) {
                         LocationTag locationTag = new LocationTag();
                         locationTag.setLocationId(location.getId());
                         locationTag.setName(tag.getName());
-
                         locationTagRepository.addOrUpdate(locationTag);
                     }
                 } catch (Exception e) {
