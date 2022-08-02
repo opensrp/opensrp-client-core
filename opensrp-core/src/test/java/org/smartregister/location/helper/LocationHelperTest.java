@@ -30,7 +30,6 @@ import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.Repository;
 import org.smartregister.repository.SettingsRepository;
-import org.smartregister.sync.helper.LocationServiceHelper;
 import org.smartregister.util.AssetHandler;
 import org.smartregister.view.controller.ANMLocationController;
 
