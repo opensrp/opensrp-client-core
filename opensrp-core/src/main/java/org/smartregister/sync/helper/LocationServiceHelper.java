@@ -63,6 +63,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import timber.log.Timber;
@@ -470,7 +471,7 @@ public class LocationServiceHelper extends BaseHelper {
                 Timber.e("Empty/Null location response payload");
                 return;
             }
-            for (Location location : locations) {
+            for (Location location : Objects.requireNonNull(locations)) {
                 try {
                     location.setSyncStatus(BaseRepository.TYPE_Synced);
                     locationRepository.addOrUpdate(location);
