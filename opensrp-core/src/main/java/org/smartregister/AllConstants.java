@@ -470,6 +470,7 @@ public class AllConstants {
         public static final String ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN = "allow.offline.login.with.invalid.token";
         public static final String IGNORE_LOCATION_DELETION = "ignore.location.deletion";
         public static final String ENABLE_SEARCH_BUTTON ="enable.search.button";
+        public static final String CLEAN_DUPLICATE_MOTHER_IDS = "clean.duplicate.mother.ids";
     }
 
     public interface FORCED_LOGOUT {

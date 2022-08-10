@@ -626,7 +626,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
         eventClientRepository.fetchClientByBaseEntityIds(baseEntityIds);
 
-        Mockito.verify(eventClientRepository).fetchClients(query, baseEntityIds.toArray(new String[0]));
+        verify(eventClientRepository).fetchClients(query, baseEntityIds.toArray(new String[0]));
     }
 
     @Test

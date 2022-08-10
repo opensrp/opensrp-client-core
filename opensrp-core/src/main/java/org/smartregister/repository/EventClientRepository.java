@@ -23,11 +23,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
+import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.ClientRelationship;
 import org.smartregister.domain.Event;
+import org.smartregister.domain.UniqueId;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.EventClient;
@@ -2323,5 +2325,102 @@ public class EventClientRepository extends BaseRepository {
                 + " WHERE "
                 + event_column.taskId.name()
                 + " IN (" + StringUtils.repeat("?", ",", taskIds.size()) + ")", taskIds.toArray(new String[0]));
+    }
+
+    public void cleanDuplicateMotherIds() throws Exception{
+        String username = Context.getInstance().userService().getAllSharedPreferences().fetchRegisteredANM();
+        //TODO crashlytics logs with username to show which devices had duplicates and were synced
+        SQLiteDatabase database = getReadableDatabase();
+        setSyncStatusUnsyncedValidStatusInvalid(database);
+
+        UniqueIdRepository uniqueIdRepository = Context.getInstance().getUniqueIdRepository();
+        //TODO get new unique ids from the server
+
+        List<String> motherBaseEntityIdsWithDuplicates = new ArrayList<>();
+        String fetchDuplicateZeirIdsSql =
+                "WITH duplicateCaregivers AS ( " +
+                        "    WITH allCaregivers AS ( " +
+                        "        SELECT baseEntityId, json_extract(json, '$.identifiers.M_ZEIR_ID') m_zeir_id, syncStatus FROM client " +
+                        "    ) " +
+                        "    SELECT b.* FROM (SELECT baseEntityId, m_zeir_id FROM (allCaregivers) GROUP BY m_zeir_id HAVING count(m_zeir_id) > 1) a " +
+                        "    INNER JOIN (allCaregivers) b ON b.m_zeir_id = a.m_zeir_id " +
+                        "    ORDER BY m_zeir_id " +
+                        ") " +
+                        "SELECT baseEntityId, m_zeir_id, lag(m_zeir_id) over(order by m_zeir_id) AS prev_m_zeir_id " +
+                        "FROM duplicateCaregivers;";
+
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(fetchDuplicateZeirIdsSql, new String[]{});
+            while(cursor.moveToNext()){
+                motherBaseEntityIdsWithDuplicates.add(cursor.getString(cursor.getColumnIndex("baseEntityId")));
+
+                String mZeirId = cursor.getString(cursor.getColumnIndex("m_zeir_id"));
+                String prevZeirId = null;
+                try {
+                    prevZeirId = cursor.getString(cursor.getColumnIndex("prev_m_zeir_id"));
+                } catch (NullPointerException e) {
+                    Timber.d("null prev_m_zeir_id %s", e.getMessage());
+                }
+
+                if (!StringUtils.isBlank(prevZeirId) && (prevZeirId.equals(mZeirId))) {
+                    motherBaseEntityIdsWithDuplicates.add(cursor.getString(cursor.getColumnIndex("baseEntityId")));
+                }
+            }
+
+        } catch (Exception e){
+            Timber.e(e);
+        } finally {
+            if(cursor!=null && !cursor.isClosed()){
+                cursor.close();
+            }
+        }
+
+        Timber.d("###### %s , username %s", motherBaseEntityIdsWithDuplicates.toString(), username);
+
+        for (String baseEntityId : motherBaseEntityIdsWithDuplicates) {
+            JSONObject client = getClientByBaseEntityId(baseEntityId);
+            JSONObject identifiers = getClientByBaseEntityId(baseEntityId).getJSONObject("identifiers");
+
+            UniqueId uniqueId = uniqueIdRepository.getNextUniqueId();
+            String newZeirId = uniqueId != null ? uniqueId.getOpenmrsId() : null;
+
+            if (StringUtils.isBlank(newZeirId))
+                throw new Exception(String.format("NO Unique Id Found to assign to %s, ProviderId ", baseEntityId, username));
+
+            identifiers.put("m_zeir_id", newZeirId);
+
+            client.put("identifiers", identifiers);
+
+            addorUpdateClient(baseEntityId, client);
+            markClientValidationStatus(baseEntityId, false);
+
+            uniqueIdRepository.close(newZeirId);
+        }
+
+        // TODO Log the successes
+//        if (motherBaseEntityIdsWithDuplicates.size() > 0) {
+//            FirebaseCrashlytics.getInstance().recordException(new Exception(String.format("Successful duplicates processed %s , ProviderId %s", motherBaseEntityIdsWithDuplicates.toString(), username)));
+//        } else {
+//            FirebaseCrashlytics.getInstance().recordException(new Exception(String.format("NO Duplicates to clean up for ProviderId %s", motherBaseEntityIdsWithDuplicates.toString(), username)));
+//        }
+    }
+
+    public void setSyncStatusUnsyncedValidStatusInvalid(SQLiteDatabase db) {
+        String updateClientTableValidAndsyncStatus = "UPDATE client SET syncStatus = '%s', validationStatus = '%s'";
+        String updateEventTableValidAndSyncStatus = "UPDATE event SET syncStatus = '%s', validationStatus = '%s'";
+
+        try {
+            db.execSQL(String.format(updateClientTableValidAndsyncStatus, BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_InValid));
+        } catch (Exception e) {
+            Timber.e(e, "setSyncStatusUnsyncedValidStatusInvalid -> set client validation and sync status");
+        }
+
+        try {
+            db.execSQL(String.format(updateEventTableValidAndSyncStatus, BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_InValid));
+        } catch (Exception e) {
+            Timber.e(e, "setSyncStatusUnsyncedValidStatusInvalid -> set event validation and sync status");
+        }
+
     }
 }
