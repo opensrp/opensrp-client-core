@@ -3,8 +3,12 @@
 
 package org.smartregister.repository;
 
+import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Pair;
 
@@ -35,6 +39,7 @@ import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
+import org.smartregister.sync.intent.PullUniqueIdsIntentService;
 import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
@@ -71,6 +76,25 @@ public class EventClientRepository extends BaseRepository {
     protected Table eventTable;
 
     protected int FORM_SUBMISSION_IDS_PAGE_SIZE = 250;
+
+    private PullUniqueIdsIntentService mPullUniqueIdsIntentService;
+    private boolean mBound;
+    private final ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            PullUniqueIdsIntentService.PullUniqueIdsIntentServiceBinder binder = (PullUniqueIdsIntentService.PullUniqueIdsIntentServiceBinder) service;
+            mPullUniqueIdsIntentService = binder.getPullUniqueIdsIntentService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
 
     public EventClientRepository() {
         this.clientTable = Table.client;
@@ -2327,14 +2351,13 @@ public class EventClientRepository extends BaseRepository {
                 + " IN (" + StringUtils.repeat("?", ",", taskIds.size()) + ")", taskIds.toArray(new String[0]));
     }
 
-    public void cleanDuplicateMotherIds() throws Exception{
+    public void cleanDuplicateMotherIds(android.content.Context context) throws Exception{
         String username = Context.getInstance().userService().getAllSharedPreferences().fetchRegisteredANM();
-        //TODO crashlytics logs with username to show which devices had duplicates and were synced
         SQLiteDatabase database = getReadableDatabase();
         setSyncStatusUnsyncedValidStatusInvalid(database);
 
         UniqueIdRepository uniqueIdRepository = Context.getInstance().getUniqueIdRepository();
-        //TODO get new unique ids from the server
+
 
         List<String> motherBaseEntityIdsWithDuplicates = new ArrayList<>();
         String fetchDuplicateZeirIdsSql =
@@ -2385,8 +2408,18 @@ public class EventClientRepository extends BaseRepository {
             UniqueId uniqueId = uniqueIdRepository.getNextUniqueId();
             String newZeirId = uniqueId != null ? uniqueId.getOpenmrsId() : null;
 
-            if (StringUtils.isBlank(newZeirId))
-                throw new Exception(String.format("NO Unique Id Found to assign to %s, ProviderId ", baseEntityId, username));
+            if (StringUtils.isBlank(newZeirId)){
+                Timber.e("No unique id found for mother with baseEntityId %s", baseEntityId);
+                Intent intent = new Intent(context, PullUniqueIdsIntentService.class);
+
+                context.bindService(intent,  connection, android.content.Context.BIND_AUTO_CREATE);
+                // block until we are done pulling the ids
+                while(!mPullUniqueIdsIntentService.getHasFinished()){
+                    // do nothing
+                };
+                newZeirId = uniqueId != null ? uniqueId.getOpenmrsId() : null;
+
+            }
 
             identifiers.put("m_zeir_id", newZeirId);
 
@@ -2398,20 +2431,17 @@ public class EventClientRepository extends BaseRepository {
             uniqueIdRepository.close(newZeirId);
         }
 
-        // TODO Log the successes
-//        if (motherBaseEntityIdsWithDuplicates.size() > 0) {
-//            FirebaseCrashlytics.getInstance().recordException(new Exception(String.format("Successful duplicates processed %s , ProviderId %s", motherBaseEntityIdsWithDuplicates.toString(), username)));
-//        } else {
-//            FirebaseCrashlytics.getInstance().recordException(new Exception(String.format("NO Duplicates to clean up for ProviderId %s", motherBaseEntityIdsWithDuplicates.toString(), username)));
-//        }
+        if (motherBaseEntityIdsWithDuplicates.size() > 0) {
+            Timber.e("Successful duplicates processed %s , ProviderId %s", motherBaseEntityIdsWithDuplicates.toString(), username);
+        }
     }
 
     public void setSyncStatusUnsyncedValidStatusInvalid(SQLiteDatabase db) {
-        String updateClientTableValidAndsyncStatus = "UPDATE client SET syncStatus = '%s', validationStatus = '%s'";
+        String updateClientTableValidAndSyncStatus = "UPDATE client SET syncStatus = '%s', validationStatus = '%s'";
         String updateEventTableValidAndSyncStatus = "UPDATE event SET syncStatus = '%s', validationStatus = '%s'";
 
         try {
-            db.execSQL(String.format(updateClientTableValidAndsyncStatus, BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_InValid));
+            db.execSQL(String.format(updateClientTableValidAndSyncStatus, BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_InValid));
         } catch (Exception e) {
             Timber.e(e, "setSyncStatusUnsyncedValidStatusInvalid -> set client validation and sync status");
         }
@@ -2421,6 +2451,8 @@ public class EventClientRepository extends BaseRepository {
         } catch (Exception e) {
             Timber.e(e, "setSyncStatusUnsyncedValidStatusInvalid -> set event validation and sync status");
         }
+
+
 
     }
 }

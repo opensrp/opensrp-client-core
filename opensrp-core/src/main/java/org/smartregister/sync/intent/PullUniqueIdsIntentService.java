@@ -5,6 +5,8 @@ package org.smartregister.sync.intent;
  */
 
 import android.content.Intent;
+import android.os.Binder;
+import android.os.IBinder;
 
 import androidx.annotation.VisibleForTesting;
 
@@ -26,6 +28,9 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
     public static final String ID_URL = "/uniqueids/get";
     public static final String IDENTIFIERS = "identifiers";
     private UniqueIdRepository uniqueIdRepo;
+    // Binder given to clients
+    private final IBinder binder = new PullUniqueIdsIntentServiceBinder();
+    private boolean hasFinished;
 
 
     public PullUniqueIdsIntentService() {
@@ -48,9 +53,11 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
             JSONObject ids = fetchOpenMRSIds(configs.getUniqueIdSource(), numberToGenerate);
             if (ids != null && ids.has(IDENTIFIERS)) {
                 parseResponse(ids);
+                hasFinished = true;
             }
         } catch (Exception e) {
             Timber.e(e);
+            hasFinished = true;
         }
     }
 
@@ -95,9 +102,24 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    @Override
+    public IBinder onBind(Intent intent){
+        return binder;
+    }
+
     @VisibleForTesting
     protected HTTPAgent getHttpAgent() {
         return CoreLibrary.getInstance().context().getHttpAgent();
+    }
+
+    public class PullUniqueIdsIntentServiceBinder extends Binder {
+        public PullUniqueIdsIntentService getPullUniqueIdsIntentService(){
+            return PullUniqueIdsIntentService.this;
+        }
+    }
+
+    public boolean getHasFinished(){
+        return hasFinished;
     }
 
 }
