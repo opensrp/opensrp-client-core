@@ -27,13 +27,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
-import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.ClientRelationship;
 import org.smartregister.domain.Event;
-import org.smartregister.domain.UniqueId;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.EventClient;
@@ -2351,7 +2349,7 @@ public class EventClientRepository extends BaseRepository {
                 + " IN (" + StringUtils.repeat("?", ",", taskIds.size()) + ")", taskIds.toArray(new String[0]));
     }
 
-    public void cleanDuplicateMotherIds(android.content.Context context) throws Exception{
+    public DuplicateZeirIdStatus cleanDuplicateMotherIds() throws Exception{
         String username = Context.getInstance().userService().getAllSharedPreferences().fetchRegisteredANM();
         SQLiteDatabase database = getReadableDatabase();
         setSyncStatusUnsyncedValidStatusInvalid(database);
@@ -2410,15 +2408,7 @@ public class EventClientRepository extends BaseRepository {
 
             if (StringUtils.isBlank(newZeirId)){
                 Timber.e("No unique id found for mother with baseEntityId %s", baseEntityId);
-                Intent intent = new Intent(context, PullUniqueIdsIntentService.class);
-
-                context.bindService(intent,  connection, android.content.Context.BIND_AUTO_CREATE);
-                // block until we are done pulling the ids
-                while(!mPullUniqueIdsIntentService.getHasFinished()){
-                    // do nothing
-                };
-                newZeirId = uniqueId != null ? uniqueId.getOpenmrsId() : null;
-
+                return DuplicateZeirIdStatus.PENDING;
             }
 
             identifiers.put("m_zeir_id", newZeirId);
@@ -2434,6 +2424,7 @@ public class EventClientRepository extends BaseRepository {
         if (motherBaseEntityIdsWithDuplicates.size() > 0) {
             Timber.e("Successful duplicates processed %s , ProviderId %s", motherBaseEntityIdsWithDuplicates.toString(), username);
         }
+        return DuplicateZeirIdStatus.CLEANED;
     }
 
     public void setSyncStatusUnsyncedValidStatusInvalid(SQLiteDatabase db) {
@@ -2452,7 +2443,6 @@ public class EventClientRepository extends BaseRepository {
             Timber.e(e, "setSyncStatusUnsyncedValidStatusInvalid -> set event validation and sync status");
         }
 
-
-
     }
+
 }
