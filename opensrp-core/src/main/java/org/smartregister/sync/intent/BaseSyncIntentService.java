@@ -32,8 +32,6 @@ public abstract class BaseSyncIntentService extends IntentService {
         httpAgent.setReadTimeout(coreLibrary.getSyncConfiguration().getReadTimeout());
     }
 
-    public abstract IBinder onBind(Intent intent);
-
     /**
      * A helper class for building the url request for intent services
      */

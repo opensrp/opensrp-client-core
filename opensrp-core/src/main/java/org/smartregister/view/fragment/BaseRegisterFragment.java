@@ -115,7 +115,6 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
                 return new DialogOption[]{
                 };
             }
-SyncStatusBroadcastReceiver
             @Override
             public DialogOption[] sortingOptions() {
                 return new DialogOption[]{
