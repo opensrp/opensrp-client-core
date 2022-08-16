@@ -19,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.domain.DuplicateZeirIdStatus;
+import org.smartregister.repository.UniqueIdRepository;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -113,6 +115,23 @@ public class AppHealthUtils {
                 //Overridden: Do nothing
             });
         }
+    }
+
+    public static Long getUniqueIdCount(){
+        UniqueIdRepository uniqueIdRepository = CoreLibrary.getInstance().context().getUniqueIdRepository();
+        return uniqueIdRepository.countUnUsedIds();
+    }
+
+    public static DuplicateZeirIdStatus cleanUniqueZeirIds(){
+
+        try {
+            return CoreLibrary.getInstance().context().getEventClientRepository()
+                    .cleanDuplicateMotherIds();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public interface HealthStatsView {
