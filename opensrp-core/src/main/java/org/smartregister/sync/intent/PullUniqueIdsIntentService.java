@@ -28,8 +28,6 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
     public static final String ID_URL = "/uniqueids/get";
     public static final String IDENTIFIERS = "identifiers";
     private UniqueIdRepository uniqueIdRepo;
-    // Binder given to clients
-    private final IBinder binder = new PullUniqueIdsIntentServiceBinder();
 
     public PullUniqueIdsIntentService() {
         super("PullUniqueOpenMRSUniqueIdsService");
@@ -102,11 +100,4 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
     protected HTTPAgent getHttpAgent() {
         return CoreLibrary.getInstance().context().getHttpAgent();
     }
-
-    public class PullUniqueIdsIntentServiceBinder extends Binder {
-        public PullUniqueIdsIntentService getPullUniqueIdsIntentService(){
-            return PullUniqueIdsIntentService.this;
-        }
-    }
-
 }
