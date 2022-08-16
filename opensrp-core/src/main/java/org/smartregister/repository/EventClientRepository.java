@@ -3,11 +3,8 @@
 
 package org.smartregister.repository;
 
-import android.content.ComponentName;
 import android.content.ContentValues;
-import android.content.ServiceConnection;
 import android.database.Cursor;
-import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Pair;
 
@@ -78,23 +75,6 @@ public class EventClientRepository extends BaseRepository {
     protected int FORM_SUBMISSION_IDS_PAGE_SIZE = 250;
 
     private PullUniqueIdsIntentService mPullUniqueIdsIntentService;
-    private boolean mBound;
-    private final ServiceConnection connection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            PullUniqueIdsIntentService.PullUniqueIdsIntentServiceBinder binder = (PullUniqueIdsIntentService.PullUniqueIdsIntentServiceBinder) service;
-            mPullUniqueIdsIntentService = binder.getPullUniqueIdsIntentService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            mBound = false;
-        }
-    };
 
     public EventClientRepository() {
         this.clientTable = Table.client;
