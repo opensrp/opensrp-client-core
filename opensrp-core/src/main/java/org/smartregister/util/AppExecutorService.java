@@ -11,13 +11,14 @@ import java.util.concurrent.Executors;
 
 /**
  * Global ExecutorService for the whole application.
+ * The ExecutorService provides methods to manage the lifecycle of the Executor
  *
- * This provides a single thread Executor and main thread Executor for use
+ * This provides a single thread (single task) Executor and main thread Executor for use
  */
 public class AppExecutorService {
 
-    private ExecutorService executorService;
-    private Executor mainThread;
+    private final ExecutorService executorService;
+    private final Executor mainThread;
 
     public AppExecutorService(ExecutorService executorService, Executor mainThread) {
         this.executorService = executorService;
