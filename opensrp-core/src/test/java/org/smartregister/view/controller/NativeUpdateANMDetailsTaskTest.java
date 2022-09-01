@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.login.interactor.TestExecutorService;
 import org.smartregister.util.AppExecutorService;
 import org.smartregister.view.contract.HomeContext;
 
@@ -26,6 +27,7 @@ public class NativeUpdateANMDetailsTaskTest extends BaseUnitTest {
 
     @Test
     public void fetchGetsHomeContext() {
+        Mockito.when(appExecutorService.executorService()).thenReturn(new TestExecutorService());
         NativeAfterANMDetailsFetchListener listener = Mockito.mock(NativeAfterANMDetailsFetchListener.class);
         Mockito.when(anmController.getHomeContext()).thenReturn(Mockito.mock(HomeContext.class));
         updateANMDetailsTask.fetch(listener);
