@@ -14,10 +14,10 @@ public class NativeUpdateANMDetailsTask {
 
     public NativeUpdateANMDetailsTask(ANMController anmController) {
         this.anmController = anmController;
+        this.appExecutors = new AppExecutorService();
     }
 
     public void fetch(final NativeAfterANMDetailsFetchListener afterFetchListener) {
-        appExecutors = new AppExecutorService();
         appExecutors.executorService().execute(() -> {
             if (!lock.tryLock()) {
                 logWarn("Update ANM details is in progress, so going away.");

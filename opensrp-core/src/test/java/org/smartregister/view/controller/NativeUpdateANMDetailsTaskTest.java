@@ -5,7 +5,9 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.util.AppExecutorService;
 import org.smartregister.view.contract.HomeContext;
 
 public class NativeUpdateANMDetailsTaskTest extends BaseUnitTest {
@@ -13,10 +15,13 @@ public class NativeUpdateANMDetailsTaskTest extends BaseUnitTest {
     private NativeUpdateANMDetailsTask updateANMDetailsTask;
     @Mock
     private ANMController anmController;
+    @Mock
+    AppExecutorService appExecutorService;
 
     @Before
     public void setUp() throws Exception {
         updateANMDetailsTask = new NativeUpdateANMDetailsTask(anmController);
+        Whitebox.setInternalState(updateANMDetailsTask, "appExecutors", appExecutorService);
     }
 
     @Test
