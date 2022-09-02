@@ -14,10 +14,10 @@ public class UpdateANMDetailsTask {
 
     public UpdateANMDetailsTask(ANMController anmController) {
         this.anmController = anmController;
+        appExecutors = new AppExecutorService();
     }
 
     public void fetch(final AfterANMDetailsFetchListener afterFetchListener) {
-        appExecutors = new AppExecutorService();
         appExecutors.executorService().execute(() -> {
             if (!lock.tryLock()) {
                 logWarn("Update ANM details is in progress, so going away.");
