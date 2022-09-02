@@ -25,7 +25,7 @@ public class UpdateANMDetailsTaskTest extends BaseUnitTest {
     }
 
     @Test
-    public void fetchReturnsAnmDetailsJson() {
+    public void fetchReturnsAnmDetailsJsonString() {
         Mockito.when(appExecutorService.executorService()).thenReturn(new TestExecutorService());
         Mockito.when(appExecutorService.mainThread()).thenReturn(new TestExecutorService());
         AfterANMDetailsFetchListener listener = Mockito.mock(AfterANMDetailsFetchListener.class);
