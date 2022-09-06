@@ -1,6 +1,5 @@
 package org.smartregister.view.activity;
 
-import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -21,7 +20,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -46,6 +44,7 @@ import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.domain.ReportMonth;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.util.AppExecutorService;
 import org.smartregister.util.PaginationHolder;
 import org.smartregister.util.ViewHelper;
 import org.smartregister.view.contract.SmartRegisterClient;
@@ -76,6 +75,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     private final PaginationViewHandler paginationViewHandler = new PaginationViewHandler();
     private final NavBarActionsHandler navBarActionsHandler = new NavBarActionsHandler();
     private final SearchCancelHandler searchCancelHandler = new SearchCancelHandler();
+    private final AppExecutorService appExecutorService = new AppExecutorService();
     private ListView clientsView;
     private ProgressBar clientsProgressView;
     private TextView serviceModeView;
@@ -145,30 +145,19 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
 
     @Override
     protected void onResumption() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                publishProgress();
-                setupAdapter();
-                return null;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                clientsProgressView.setVisibility(VISIBLE);
-                clientsView.setVisibility(INVISIBLE);
-            }
-
-            @Override
-            protected void onPostExecute(Void result) {
+        // On Pre-Execute
+        clientsProgressView.setVisibility(VISIBLE);
+        clientsView.setVisibility(INVISIBLE);
+        appExecutorService.executorService().execute(() -> {
+            // publishProgress();
+            setupAdapter();
+            appExecutorService.mainThread().execute(() -> {
                 clientsView.setAdapter(clientsAdapter);
                 paginationViewHandler.refresh();
                 clientsProgressView.setVisibility(View.GONE);
                 clientsView.setVisibility(VISIBLE);
-
-            }
-        }.executeOnExecutor(THREAD_POOL_EXECUTOR);
+            });
+        });
     }
 
     protected void setupViews() {
