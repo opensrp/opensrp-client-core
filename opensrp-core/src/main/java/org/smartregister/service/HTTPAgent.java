@@ -681,7 +681,11 @@ public class HTTPAgent {
     }
 
     public AccountResponse oauth2authenticate(String username, char[] password, String grantType, String tokenEndpointURL) {
+        StringBuffer requestParamBuilder = getRequestParams(username, password);
+        return oauth2authenticateCore(requestParamBuilder, grantType, tokenEndpointURL);
+    }
 
+    private StringBuffer getRequestParams(String username, char[] password) {
         StringBuffer requestParamBuilder = new StringBuffer();
         requestParamBuilder.append("&username=").append(username);
         String urlEncodedPassword = new String(password);
@@ -691,7 +695,7 @@ public class HTTPAgent {
             Timber.e(e);
         }
         requestParamBuilder.append("&password=").append(urlEncodedPassword);
-        return oauth2authenticateCore(requestParamBuilder, grantType, tokenEndpointURL);
+        return requestParamBuilder;
     }
 
     public AccountResponse oauth2authenticateRefreshToken(String refreshToken) {
