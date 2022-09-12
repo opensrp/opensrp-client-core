@@ -2,7 +2,6 @@ package org.smartregister.sync.intent;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.IBinder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,7 +17,7 @@ import timber.log.Timber;
 /**
  * Created by Vincent Karuri on 26/08/2019
  */
-public abstract class BaseSyncIntentService extends IntentService {
+public class BaseSyncIntentService extends IntentService {
 
     public BaseSyncIntentService(String name) {
         super(name);

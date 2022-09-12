@@ -5,9 +5,6 @@ package org.smartregister.sync.intent;
  */
 
 import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
-
 import androidx.annotation.VisibleForTesting;
 
 import org.json.JSONArray;

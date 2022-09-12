@@ -74,8 +74,6 @@ public class EventClientRepository extends BaseRepository {
 
     protected int FORM_SUBMISSION_IDS_PAGE_SIZE = 250;
 
-    private PullUniqueIdsIntentService mPullUniqueIdsIntentService;
-
     public EventClientRepository() {
         this.clientTable = Table.client;
         this.eventTable = Table.event;
@@ -2338,7 +2336,6 @@ public class EventClientRepository extends BaseRepository {
 
         UniqueIdRepository uniqueIdRepository = Context.getInstance().getUniqueIdRepository();
 
-
         List<String> motherBaseEntityIdsWithDuplicates = new ArrayList<>();
         String fetchDuplicateZeirIdsSql =
                 "WITH duplicateCaregivers AS ( " +
@@ -2355,7 +2352,7 @@ public class EventClientRepository extends BaseRepository {
         Cursor cursor = null;
         try {
             cursor = database.rawQuery(fetchDuplicateZeirIdsSql, new String[]{});
-            while(cursor.moveToNext()){
+            while (cursor.moveToNext()) {
                 motherBaseEntityIdsWithDuplicates.add(cursor.getString(cursor.getColumnIndex("baseEntityId")));
 
                 String mZeirId = cursor.getString(cursor.getColumnIndex("m_zeir_id"));
@@ -2374,7 +2371,7 @@ public class EventClientRepository extends BaseRepository {
         } catch (Exception e){
             Timber.e(e);
         } finally {
-            if(cursor!=null && !cursor.isClosed()){
+            if (cursor!=null && !cursor.isClosed()) {
                 cursor.close();
             }
         }
@@ -2394,7 +2391,6 @@ public class EventClientRepository extends BaseRepository {
             }
 
             identifiers.put("m_zeir_id", newZeirId);
-
             client.put("identifiers", identifiers);
 
             addorUpdateClient(baseEntityId, client);
