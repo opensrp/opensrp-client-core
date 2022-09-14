@@ -3,6 +3,8 @@
 
 package org.smartregister.repository;
 
+import static org.smartregister.AllConstants.ROWID;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.text.TextUtils;
@@ -36,10 +38,11 @@ import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
-import org.smartregister.sync.intent.PullUniqueIdsIntentService;
 import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.JsonFormUtils;
+import org.smartregister.util.PullUniqueIDs;
 import org.smartregister.util.Utils;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -56,8 +59,6 @@ import java.util.Set;
 
 import timber.log.Timber;
 
-import static org.smartregister.AllConstants.ROWID;
-
 /**
  * Created by keyman on 27/07/2017.
  */
@@ -68,6 +69,10 @@ public class EventClientRepository extends BaseRepository {
     private static final String _ID = "_id";
 
     public static final String VARCHAR = "VARCHAR";
+
+    public static final String ZEIR_ID = "ZEIR_ID";
+
+    public static final String M_ZEIR_ID = "M_ZEIR_ID";
 
     protected Table clientTable;
     protected Table eventTable;
@@ -2329,78 +2334,92 @@ public class EventClientRepository extends BaseRepository {
                 + " IN (" + StringUtils.repeat("?", ",", taskIds.size()) + ")", taskIds.toArray(new String[0]));
     }
 
-    public DuplicateZeirIdStatus cleanDuplicateMotherIds() throws Exception{
+    public DuplicateZeirIdStatus cleanDuplicateMotherIds() throws Exception {
         String username = Context.getInstance().userService().getAllSharedPreferences().fetchRegisteredANM();
-        SQLiteDatabase database = getReadableDatabase();
-        setSyncStatusUnsyncedValidStatusInvalid(database);
+//        SQLiteDatabase database = getReadableDatabase();
+//        setSyncStatusUnsyncedValidStatusInvalid(database);
 
         UniqueIdRepository uniqueIdRepository = Context.getInstance().getUniqueIdRepository();
 
-        List<String> motherBaseEntityIdsWithDuplicates = new ArrayList<>();
-        String fetchDuplicateZeirIdsSql =
-                "WITH duplicateCaregivers AS ( " +
-                        "    WITH allCaregivers AS ( " +
-                        "        SELECT baseEntityId, json_extract(json, '$.identifiers.M_ZEIR_ID') m_zeir_id, syncStatus FROM client " +
-                        "    ) " +
-                        "    SELECT b.* FROM (SELECT baseEntityId, m_zeir_id FROM (allCaregivers) GROUP BY m_zeir_id HAVING count(m_zeir_id) > 1) a " +
-                        "    INNER JOIN (allCaregivers) b ON b.m_zeir_id = a.m_zeir_id " +
-                        "    ORDER BY m_zeir_id " +
-                        ") " +
-                        "SELECT baseEntityId, m_zeir_id, lag(m_zeir_id) over(order by m_zeir_id) AS prev_m_zeir_id " +
-                        "FROM duplicateCaregivers;";
+        Map<String, String> duplicates = Context.getInstance().zeirIdCleanupRepository().getClientsWithDuplicateZeirIds();
+        long unusedIdsCount = uniqueIdRepository.countUnUsedIds();
 
-        Cursor cursor = null;
-        try {
-            cursor = database.rawQuery(fetchDuplicateZeirIdsSql, new String[]{});
-            while (cursor.moveToNext()) {
-                motherBaseEntityIdsWithDuplicates.add(cursor.getString(cursor.getColumnIndex("baseEntityId")));
+        Timber.d("%d duplicates for provider: %s - %s", duplicates.size(), username, duplicates.toString());
 
-                String mZeirId = cursor.getString(cursor.getColumnIndex("m_zeir_id"));
-                String prevZeirId = null;
-                try {
-                    prevZeirId = cursor.getString(cursor.getColumnIndex("prev_m_zeir_id"));
-                } catch (NullPointerException e) {
-                    Timber.d("null prev_m_zeir_id %s", e.getMessage());
-                }
-
-                if (!StringUtils.isBlank(prevZeirId) && (prevZeirId.equals(mZeirId))) {
-                    motherBaseEntityIdsWithDuplicates.add(cursor.getString(cursor.getColumnIndex("baseEntityId")));
-                }
-            }
-
-        } catch (Exception e){
-            Timber.e(e);
-        } finally {
-            if (cursor!=null && !cursor.isClosed()) {
-                cursor.close();
-            }
+        if (duplicates.size() > 0) {
+            Timber.d(
+                    "%s: %d duplicates for provider: %s - %s\nUnused Unique IDs: %d",
+                    this.getClass().getSimpleName(),
+                    duplicates.size(),
+                    username,
+                    duplicates,
+                    unusedIdsCount
+            );
         }
 
-        Timber.d("###### %s , username %s", motherBaseEntityIdsWithDuplicates.toString(), username);
+        for (Map.Entry<String, String> duplicate : duplicates.entrySet()) {
+            String baseEntityId = duplicate.getKey();
+            String zeirId = duplicate.getValue();
 
-        for (String baseEntityId : motherBaseEntityIdsWithDuplicates) {
-            JSONObject client = getClientByBaseEntityId(baseEntityId);
-            JSONObject identifiers = getClientByBaseEntityId(baseEntityId).getJSONObject("identifiers");
+            JSONObject clientJson = getClientByBaseEntityId(baseEntityId);
+            JSONObject identifiers = clientJson.getJSONObject(AllConstants.IDENTIFIERS);
+
+            long unusedIds = uniqueIdRepository.countUnUsedIds();
+            if (unusedIds <= 2) {
+                Timber.e("%s: No more unique IDs available to assign to %s - %s; provider: %s", this.getClass().getSimpleName(), baseEntityId, zeirId, username);
+                new PullUniqueIDs();
+            }
 
             UniqueId uniqueId = uniqueIdRepository.getNextUniqueId();
             String newZeirId = uniqueId != null ? uniqueId.getOpenmrsId() : null;
 
-            if (StringUtils.isBlank(newZeirId)){
-                Timber.e("No unique id found for mother with baseEntityId %s", baseEntityId);
+            if (StringUtils.isBlank(newZeirId)) {
+                Timber.e("No unique ID found to assign to %s; provider: %s", baseEntityId, username);
                 return DuplicateZeirIdStatus.PENDING;
             }
 
-            identifiers.put("m_zeir_id", newZeirId);
-            client.put("identifiers", identifiers);
+            String eventType = AllConstants.EventType.BITRH_REGISTRATION;
+            String clientType = clientJson.getString(AllConstants.CLIENT_TYPE);
 
-            addorUpdateClient(baseEntityId, client);
+            if (AllConstants.CHILD_TYPE.equals(clientType)) {
+                identifiers.put(ZEIR_ID, newZeirId.replaceAll("-", ""));
+            } else if (AllConstants.Entity.MOTHER.equals(clientType)) {
+                identifiers.put(M_ZEIR_ID, newZeirId);
+                eventType = AllConstants.EventType.NEW_WOMAN_REGISTRATION;
+            }
+            clientJson.put(AllConstants.IDENTIFIERS, identifiers);
+
+            // Add events to process this
+            addorUpdateClient(baseEntityId, clientJson);
+
+            // fetch the birth/new woman registration event
+            List<EventClient> registrationEvent = getEvents(
+                    Collections.singletonList(baseEntityId),
+                    Collections.singletonList(BaseRepository.TYPE_Synced),
+                    Collections.singletonList(eventType)
+            );
+            Event event = null;
+            if (!registrationEvent.isEmpty())
+                event = registrationEvent.get(0).getEvent();
+
+            Client client = convert(clientJson, Client.class);
+
+            // reprocess the event
+            DrishtiApplication.getInstance().getClientProcessor().processClient(Collections.singletonList(new EventClient(event, client)));
             markClientValidationStatus(baseEntityId, false);
 
             uniqueIdRepository.close(newZeirId);
+
+            Timber.d("%s: %s - %s updated to %s; provider: %s", this.getClass().getSimpleName(), baseEntityId, zeirId, newZeirId, username);
         }
 
-        if (motherBaseEntityIdsWithDuplicates.size() > 0) {
-            Timber.e("Successful duplicates processed %s , ProviderId %s", motherBaseEntityIdsWithDuplicates.toString(), username);
+        if (duplicates.size() > 0) {
+            Timber.d("%s: Successfully processed %d duplicates for provider: %s - %s",
+                    this.getClass().getSimpleName(),
+                    duplicates.size(),
+                    username,
+                    duplicates
+            );
         }
         return DuplicateZeirIdStatus.CLEANED;
     }
