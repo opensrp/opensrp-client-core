@@ -2336,8 +2336,6 @@ public class EventClientRepository extends BaseRepository {
 
     public DuplicateZeirIdStatus cleanDuplicateMotherIds() throws Exception {
         String username = Context.getInstance().userService().getAllSharedPreferences().fetchRegisteredANM();
-//        SQLiteDatabase database = getReadableDatabase();
-//        setSyncStatusUnsyncedValidStatusInvalid(database);
 
         UniqueIdRepository uniqueIdRepository = Context.getInstance().getUniqueIdRepository();
 
@@ -2422,24 +2420,6 @@ public class EventClientRepository extends BaseRepository {
             );
         }
         return DuplicateZeirIdStatus.CLEANED;
-    }
-
-    public void setSyncStatusUnsyncedValidStatusInvalid(SQLiteDatabase db) {
-        String updateClientTableValidAndSyncStatus = "UPDATE client SET syncStatus = '%s', validationStatus = '%s'";
-        String updateEventTableValidAndSyncStatus = "UPDATE event SET syncStatus = '%s', validationStatus = '%s'";
-
-        try {
-            db.execSQL(String.format(updateClientTableValidAndSyncStatus, BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_InValid));
-        } catch (Exception e) {
-            Timber.e(e, "setSyncStatusUnsyncedValidStatusInvalid -> set client validation and sync status");
-        }
-
-        try {
-            db.execSQL(String.format(updateEventTableValidAndSyncStatus, BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_InValid));
-        } catch (Exception e) {
-            Timber.e(e, "setSyncStatusUnsyncedValidStatusInvalid -> set event validation and sync status");
-        }
-
     }
 
 }
