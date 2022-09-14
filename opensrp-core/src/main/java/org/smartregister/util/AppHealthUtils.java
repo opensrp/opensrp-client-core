@@ -120,11 +120,6 @@ public class AppHealthUtils {
         }
     }
 
-    public static Long getUniqueIdCount(){
-        UniqueIdRepository uniqueIdRepository = CoreLibrary.getInstance().context().getUniqueIdRepository();
-        return uniqueIdRepository.countUnUsedIds();
-    }
-
     @Nullable
     public static DuplicateZeirIdStatus cleanUniqueZeirIds(){
         try {

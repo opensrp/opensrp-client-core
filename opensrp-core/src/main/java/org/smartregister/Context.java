@@ -51,6 +51,7 @@ import org.smartregister.repository.TaskNotesRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.repository.TimelineEventRepository;
 import org.smartregister.repository.UniqueIdRepository;
+import org.smartregister.repository.ZeirIdCleanupRepository;
 import org.smartregister.service.ANMService;
 import org.smartregister.service.ActionService;
 import org.smartregister.service.AlertService;
@@ -229,6 +230,7 @@ public class Context {
     private ManifestRepository manifestRepository;
     private ClientFormRepository clientFormRepository;
     private ClientRelationshipRepository clientRelationshipRepository;
+    private ZeirIdCleanupRepository zeirIdCleanupRepository;
 
     private static final String SHARED_PREFERENCES_FILENAME = "%s_preferences";
 
@@ -1250,6 +1252,14 @@ public class Context {
             clientRelationshipRepository = new ClientRelationshipRepository();
         }
         return clientRelationshipRepository;
+    }
+
+
+    public ZeirIdCleanupRepository zeirIdCleanupRepository() {
+        if (zeirIdCleanupRepository == null) {
+            zeirIdCleanupRepository = new ZeirIdCleanupRepository();
+        }
+        return zeirIdCleanupRepository;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
