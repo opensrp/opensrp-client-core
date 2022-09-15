@@ -1,5 +1,18 @@
 package org.smartregister.sync.intent;
 
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.CLIENT_PROCESSING;
+import static org.smartregister.AllConstants.PerformanceMonitoring.EVENT_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
+
 import android.content.Context;
 import android.content.Intent;
 import android.util.Pair;
@@ -37,29 +50,20 @@ import org.smartregister.view.activity.DrishtiApplication;
 
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import timber.log.Timber;
-
-import static org.smartregister.AllConstants.COUNT;
-import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
-import static org.smartregister.AllConstants.PerformanceMonitoring.CLIENT_PROCESSING;
-import static org.smartregister.AllConstants.PerformanceMonitoring.EVENT_SYNC;
-import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
-import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
-import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
-import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 public class SyncIntentService extends BaseSyncIntentService {
     public static final String SYNC_URL = "/rest/event/sync";
     protected static final int EVENT_PULL_LIMIT = 250;
     protected static final int EVENT_PUSH_LIMIT = 50;
     private static final String ADD_URL = "rest/event/add";
+    private static final String FAILED_CLIENTS = "failed_clients";
+    private static final String FAILED_EVENTS = "failed_events";
     private Context context;
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
@@ -72,7 +76,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     protected ValidateAssignmentHelper validateAssignmentHelper;
     private long totalRecords;
     private int fetchedRecords = 0;
-    private int totalRecordsCount = 0 ;
+    private int totalRecordsCount = 0;
     //this variable using to track the sync request goes along with add events/clients
     private boolean isEmptyToAdd = true;
 
@@ -307,35 +311,35 @@ public class SyncIntentService extends BaseSyncIntentService {
         int totalEventCount = db.getUnSyncedEventsCount();
         int eventsUploadedCount = 0;
 
-
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
         }
 
         for (int i = 0; i < syncUtils.getNumOfSyncAttempts(); i++) {
-            Map<String, Object> pendingEvents = db.getUnSyncedEvents(getEventBatchSize());
+            Map<String, Object> pendingEventsClients = db.getUnSyncedEvents(getEventBatchSize());
 
-            if (pendingEvents.isEmpty()) {
+            if (pendingEventsClients.isEmpty()) {
                 break;
             }
             // create request body
             JSONObject request = new JSONObject();
             try {
-                if (pendingEvents.containsKey(AllConstants.KEY.CLIENTS)) {
-                    Object value = pendingEvents.get(AllConstants.KEY.CLIENTS);
+                if (pendingEventsClients.containsKey(AllConstants.KEY.CLIENTS)) {
+                    Object value = pendingEventsClients.get(AllConstants.KEY.CLIENTS);
                     request.put(AllConstants.KEY.CLIENTS, value);
 
                     if (value instanceof List) {
                         eventsUploadedCount += ((List) value).size();
                     }
                 }
-                if (pendingEvents.containsKey(AllConstants.KEY.EVENTS)) {
-                    request.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
+                if (pendingEventsClients.containsKey(AllConstants.KEY.EVENTS)) {
+                    request.put(AllConstants.KEY.EVENTS, pendingEventsClients.get(AllConstants.KEY.EVENTS));
                 }
             } catch (JSONException e) {
                 Timber.e(e);
             }
+
             isEmptyToAdd = false;
             String jsonPayload = request.toString();
             startEventTrace(PUSH, eventsUploadedCount);
@@ -344,22 +348,60 @@ public class SyncIntentService extends BaseSyncIntentService {
                             baseUrl,
                             ADD_URL),
                     jsonPayload);
+
             if (response.isFailure()) {
                 Timber.e("Events sync failed.");
                 isSuccessfulPushSync = false;
             } else {
-                db.markEventsAsSynced(pendingEvents);
+                // do not mark items in list of failed events/clients as synced
+                Set<String> failedClients = null;
+                Set<String> failedEvents = null;
+
+                String responseData = response.payload();
+                if (StringUtils.isNotEmpty(responseData)) {
+                    try {
+                        JSONObject failedEventClients = new JSONObject(responseData);
+                        failedClients = getFailed(FAILED_CLIENTS, failedEventClients);
+                        failedEvents = getFailed(FAILED_EVENTS, failedEventClients);
+                    } catch (JSONException e) {
+                        Timber.e(e);
+                    }
+                }
+
+                db.markEventsAsSynced(pendingEventsClients, failedEvents, failedClients);
+
                 Timber.i("Events synced successfully.");
+
                 stopTrace(eventSyncTrace);
                 updateProgress(eventsUploadedCount, totalEventCount);
 
-                if((totalEventCount - eventsUploadedCount) > 0)
+                if ((totalEventCount - eventsUploadedCount) > 0)
                     pushECToServer(db);
+
                 break;
             }
         }
 
         return isSuccessfulPushSync;
+    }
+
+    private Set<String> getFailed(String recordType, JSONObject failedEventClients) {
+        Set<String> set = null;
+
+        try {
+            JSONArray failed = failedEventClients.getJSONArray(recordType);
+
+            if (failed.length() > 0) {
+                set = new HashSet<>();
+                for (int i = 0; i < failed.length(); i++) {
+                    set.add(failed.getString(i));
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+
+        return set;
     }
 
     private void startEventTrace(String action, int count) {
@@ -490,8 +532,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         return baseUrl;
     }
 
-    protected Integer getEventBatchSize(){
+    protected Integer getEventBatchSize() {
         return EVENT_PUSH_LIMIT;
     }
-
 }

@@ -78,9 +78,7 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
         Collections.sort(sortedLocations);
         sortedLocations.add(0, defaultLocation);
 
-        List<String> translatedLocations = sortedLocations.stream().map(e -> {
-            return Utils.getTranslatedLocation(e);
-        }).collect(Collectors.toList());
+        List<String> translatedLocations = sortedLocations.stream().map(Utils::getTranslatedLocation).collect(Collectors.toList());
 
         serviceLocationsAdapter = new ServiceLocationsAdapter(context, translatedLocations);
         locationsLV.setAdapter(serviceLocationsAdapter);
