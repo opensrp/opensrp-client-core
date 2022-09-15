@@ -14,7 +14,7 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.commonregistry.CommonRepository;
 
 /**
- * Created by keyman on 09/07/18
+ * Created by keyman on 09/07/18.
  */
 public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> extends RecyclerViewCursorAdapter {
     private final RecyclerViewProvider<RecyclerView.ViewHolder> listItemProvider;
