@@ -1,11 +1,22 @@
 package org.smartregister.sync.intent;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.smartregister.sync.intent.SyncIntentService.EVENT_PUSH_LIMIT;
+
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,18 +46,10 @@ import org.smartregister.util.SyncUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.smartregister.sync.intent.SyncIntentService.EVENT_PUSH_LIMIT;
+import java.util.Set;
 
 /**
  * Created by Richard Kareko on 7/21/20.
@@ -393,7 +396,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         syncIntentService = spy(syncIntentService);
         ResponseStatus responseStatus = ResponseStatus.success;
         Mockito.doReturn(new Response<>(responseStatus, eventSyncPayload).withTotalRecords(2l),
-                new Response<>(responseStatus, null).withTotalRecords(0l))
+                        new Response<>(responseStatus, null).withTotalRecords(0l))
                 .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
 
         syncIntentService.pullECFromServer();
@@ -447,6 +450,57 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         String requestString = stringArgumentCaptor.getAllValues().get(1);
         assertEquals(expectedRequest.toString(), requestString);
 
+    }
+
+    @Test
+    public void testPushECToServerVerifyMarkEventsAsSyncedForFailedEventsAndClients() throws Exception {
+        syncIntentService = spy(syncIntentService);
+        List<JSONObject> clients = new ArrayList<>();
+
+        JSONObject client = new JSONObject(clientJson);
+        clients.add(client);
+
+        List<JSONObject> events = new ArrayList<>();
+        JSONObject event = new JSONObject(eventJson);
+        events.add(event);
+
+        Map<String, Object> pendingEvents = new HashMap<>();
+        pendingEvents.put(AllConstants.KEY.CLIENTS, clients);
+        pendingEvents.put(AllConstants.KEY.EVENTS, events);
+
+        JSONObject expectedRequest = new JSONObject();
+        Object value = pendingEvents.get(AllConstants.KEY.CLIENTS);
+        expectedRequest.put(AllConstants.KEY.CLIENTS, value);
+        expectedRequest.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
+
+        JSONObject failed = new JSONObject();
+        failed.put("failed_clients", new JSONArray("[\"1234-5678\"]"));
+        failed.put("failed_events", new JSONArray("[\"9876-5432\"]"));
+
+        Set<String> failedClients = new HashSet();
+        failedClients.add("1234-5678");
+        Set<String> failedEvents = new HashSet();
+        failedEvents.add("9876-5432");
+
+        Whitebox.setInternalState(syncIntentService, "httpAgent", httpAgent);
+        when(eventClientRepository.getUnSyncedEventsCount()).thenReturn(2);
+        when(eventClientRepository.getUnSyncedEvents(EVENT_PUSH_LIMIT)).thenReturn(pendingEvents, new HashMap<>()); // return empty map on 2nd iteration
+        Mockito.doReturn(new Response<>(ResponseStatus.success, failed.toString()))
+                .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+
+        SyncConfiguration syncConfiguration = Mockito.mock(SyncConfiguration.class);
+        Mockito.doReturn(1).when(syncConfiguration).getSyncMaxRetries();
+        ReflectionHelpers.setField(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
+
+        Whitebox.invokeMethod(syncIntentService, "pushECToServer", eventClientRepository);
+
+        verify(eventClientRepository).markEventsAsSynced(pendingEvents, failedEvents, failedClients);
+        verify(syncIntentService).updateProgress(1, 2);
+
+        String syncUrl = stringArgumentCaptor.getAllValues().get(0);
+        assertEquals("https://sample-stage.smartregister.org/opensrp/rest/event/add", syncUrl);
+        String requestString = stringArgumentCaptor.getAllValues().get(1);
+        assertEquals(expectedRequest.toString(), requestString);
     }
 
     @Test
