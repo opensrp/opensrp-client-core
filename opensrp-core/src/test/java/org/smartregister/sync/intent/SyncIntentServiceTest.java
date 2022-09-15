@@ -16,6 +16,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
+import com.google.firebase.perf.metrics.Trace;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -489,8 +491,11 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
                 .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
 
         SyncConfiguration syncConfiguration = Mockito.mock(SyncConfiguration.class);
+        Trace trace = Mockito.mock(Trace.class);
         Mockito.doReturn(1).when(syncConfiguration).getSyncMaxRetries();
+        Mockito.doReturn(true).when(syncConfiguration).firebasePerformanceMonitoringEnabled();
         ReflectionHelpers.setField(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
+        ReflectionHelpers.setField(syncIntentService, "eventSyncTrace", trace);
 
         Whitebox.invokeMethod(syncIntentService, "pushECToServer", eventClientRepository);
 
