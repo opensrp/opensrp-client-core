@@ -21,7 +21,6 @@ import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.DuplicateZeirIdStatus;
-import org.smartregister.repository.UniqueIdRepository;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
