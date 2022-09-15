@@ -471,8 +471,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         pendingEvents.put(AllConstants.KEY.EVENTS, events);
 
         JSONObject expectedRequest = new JSONObject();
-        Object value = pendingEvents.get(AllConstants.KEY.CLIENTS);
-        expectedRequest.put(AllConstants.KEY.CLIENTS, value);
+        expectedRequest.put(AllConstants.KEY.CLIENTS, pendingEvents.get(AllConstants.KEY.CLIENTS));
         expectedRequest.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
 
         JSONObject failed = new JSONObject();
