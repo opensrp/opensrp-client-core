@@ -1,7 +1,6 @@
 package org.smartregister.repository;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -761,12 +760,12 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
         when(sqliteDatabase.rawQuery(eq(DUPLICATES_SQL), any())).thenReturn(getDuplicateZeirIdsCursor());
         when(sqliteDatabase.rawQuery("SELECT COUNT (*) FROM unique_ids WHERE status=?", new String[]{"not_used"}) ).thenReturn(getUniqueIdCountCursor());
-        when(sqliteDatabase.rawQuery("SELECT json FROM client WHERE baseEntityId = ? ", new String[]{"1b6fca83-26d0-46d2-bfba-254de5c4424a"}) ).thenReturn(getClientJsonOBjectCursor());
+        when(sqliteDatabase.rawQuery("SELECT json FROM client WHERE baseEntityId = ? ", new String[]{"1b6fca83-26d0-46d2-bfba-254de5c4424a"}) ).thenReturn(getClientJsonObjectCursor());
         when(sqliteDatabase.query("unique_ids", new String[]{"_id", "openmrs_id", "status", "used_by", "synced_by", "created_at", "updated_at"},  "status = ?", new String[]{"not_used"}, null, null, "created_at ASC", "1")).thenReturn(getUniqueIdCursor());
 
         DuplicateZeirIdStatus duplicateZeirIdStatus =  eventClientRepository.cleanDuplicateMotherIds();
         Assert.assertEquals(DuplicateZeirIdStatus.CLEANED, duplicateZeirIdStatus);
-        Mockito.verify(sqliteDatabase, times(1)).insert(eq("client"), eq(null), any());
+        verify(sqliteDatabase, times(1)).insert(eq("client"), eq(null), any());
     }
 
     public MatrixCursor getDuplicateZeirIdsCursor() {
@@ -787,7 +786,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         return cursor;
     }
 
-    public MatrixCursor getClientJsonOBjectCursor() {
+    public MatrixCursor getClientJsonObjectCursor() {
         String clientString = "{\n" +
                 "  \"type\": \"Client\",\n" +
                 "  \"clientType\": \"mother\",\n" +

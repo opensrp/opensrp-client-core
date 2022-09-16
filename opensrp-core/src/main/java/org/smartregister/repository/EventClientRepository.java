@@ -6,6 +6,7 @@ package org.smartregister.repository;
 import static org.smartregister.AllConstants.ROWID;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -38,9 +39,9 @@ import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
+import org.smartregister.sync.intent.PullUniqueIdsIntentService;
 import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.JsonFormUtils;
-import org.smartregister.util.PullUniqueIDs;
 import org.smartregister.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -2365,7 +2366,8 @@ public class EventClientRepository extends BaseRepository {
             long unusedIds = uniqueIdRepository.countUnUsedIds();
             if (unusedIds <= 2) {
                 Timber.e("%s: No more unique IDs available to assign to %s - %s; provider: %s", this.getClass().getSimpleName(), baseEntityId, zeirId, username);
-                new PullUniqueIDs();
+                android.content.Context applicationContext = CoreLibrary.getInstance().context().applicationContext();
+                applicationContext.startService(new Intent(applicationContext, PullUniqueIdsIntentService.class));
             }
 
             UniqueId uniqueId = uniqueIdRepository.getNextUniqueId();
