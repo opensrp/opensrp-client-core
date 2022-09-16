@@ -25,6 +25,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -1220,5 +1221,15 @@ public class HTTPAgentTest {
         Assert.assertTrue(printWriterAppendedValues.contains("Content-Type: text/plain; charset=UTF-8"));
 
         Mockito.verify(printWriter, Mockito.times(7)).flush();
+    }
+
+    @Test
+    public void testOauth2authenticateEncodesPasswordCorrectly() {
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        StringBuffer stringBuffer = ReflectionHelpers.callInstanceMethod(httpAgentSpy, "getRequestParams",
+                ReflectionHelpers.ClassParameter.from(String.class, "testUser"),
+                ReflectionHelpers.ClassParameter.from(char[].class, "abc123%^&.".toCharArray()));
+        Assert.assertEquals("&username=testUser&password=abc123%25%5E%26.", stringBuffer.toString());
     }
 }

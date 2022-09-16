@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
@@ -33,6 +34,13 @@ public class LocationPickerViewTest extends BaseRobolectricUnitTest {
     @Before
     public void setUp() throws Exception {
         locationPickerView = new LocationPickerView(RuntimeEnvironment.application);
+    }
+
+    @Test
+    public void testConstructors() {
+        Assert.assertNotNull(new LocationPickerView(RuntimeEnvironment.application));
+        Assert.assertNotNull(new LocationPickerView(RuntimeEnvironment.application, Robolectric.buildAttributeSet().build()));
+        Assert.assertNotNull(new LocationPickerView(RuntimeEnvironment.application, Robolectric.buildAttributeSet().build(), 0));
     }
 
     @Test
