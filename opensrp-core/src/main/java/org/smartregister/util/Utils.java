@@ -400,7 +400,6 @@ public class Utils {
         return is;
     }
 
-    @TargetApi(VERSION_CODES.HONEYCOMB)
     public static <T> void startAsyncTask(AsyncTask<T, ?, ?> asyncTask, T[] params) {
         if (params == null) {
             @SuppressWarnings("unchecked")

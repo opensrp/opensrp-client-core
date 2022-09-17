@@ -1,9 +1,7 @@
 package org.smartregister.task;
 
 import org.smartregister.location.helper.LocationHelper;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import org.smartregister.util.AppExecutors;
 
 /**
  * Created by ndegwamartin on 26/06/2018.
@@ -12,7 +10,7 @@ import java.util.concurrent.Executors;
 public class SaveTeamLocationsTask {
 
     public void execute() {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.execute(() -> LocationHelper.getInstance().locationIdsFromHierarchy());
+        AppExecutors appExecutors = new AppExecutors();
+        appExecutors.diskIO().execute(() -> LocationHelper.getInstance().locationIdsFromHierarchy());
     }
 }

@@ -27,6 +27,7 @@ import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.event.Listener;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
+import org.smartregister.util.AppExecutors;
 import org.smartregister.util.EasyMap;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
@@ -36,8 +37,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import timber.log.Timber;
 
@@ -52,6 +51,7 @@ public class RemoteLoginTask {
     private final Listener<LoginResponse> afterLoginCheck;
     private boolean cancelled;
     private BaseLoginContract.View mLoginView;
+    private final AppExecutors appExecutors = new AppExecutors();
 
     public RemoteLoginTask(BaseLoginContract.View loginView, String username, char[] password, AccountAuthenticatorXml accountAuthenticatorXml, Listener<LoginResponse> afterLoginCheck) {
         mLoginView = loginView;
@@ -75,20 +75,12 @@ public class RemoteLoginTask {
     }
 
     public void execute() {
-
-        mLoginView.showProgress(true);
-
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-        executorService.execute(() -> {
-
+        appExecutors.mainThread().execute(() -> mLoginView.showProgress(true));
+        appExecutors.diskIO().execute(() -> {
             LoginResponse loginResponse = doInBackground();
-
-            mLoginView.getAppCompatActivity().runOnUiThread(() -> {
-
+            appExecutors.mainThread().execute(() -> {
                 mLoginView.showProgress(false);
                 afterLoginCheck.onEvent(loginResponse);
-
             });
 
         });
@@ -96,6 +88,7 @@ public class RemoteLoginTask {
     }
 
     protected LoginResponse doInBackground() {
+
 
         LoginResponse loginResponse;
         try {
@@ -170,8 +163,7 @@ public class RemoteLoginTask {
                     }
 
                     if (getOpenSRPContext().userService().getDecryptedPassphraseValue(username) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
-
-                        mLoginView.getAppCompatActivity().runOnUiThread(() -> mLoginView.updateProgressMessage(getOpenSRPContext().applicationContext().getString(R.string.loading_client_settings)));
+                        this.appExecutors.mainThread().execute(() -> mLoginView.updateProgressMessage(getOpenSRPContext().applicationContext().getString(R.string.loading_client_settings)));
 
                         SyncSettingsServiceHelper syncSettingsServiceHelper = new SyncSettingsServiceHelper(getOpenSRPContext().configuration().dristhiBaseURL(), getOpenSRPContext().getHttpAgent());
 

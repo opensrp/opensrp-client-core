@@ -88,6 +88,14 @@ public class AllSharedPreferences {
         preferences.edit().putString(AllConstants.PIONEER_USER, username).commit();
     }
 
+    public void saveUserId(String username, String userId) {
+        preferences.edit().putString(AllConstants.USER_ID_PREFIX + username, userId).commit();
+    }
+
+    public String getUserId(String userName) {
+        return StringUtils.isNotBlank(userName) ? preferences.getString(AllConstants.USER_ID_PREFIX + userName, null) : "";
+    }
+
     public void saveDefaultLocalityId(String username, String localityId) {
         if (username != null) {
             preferences.edit().putString(AllConstants.DEFAULT_LOCALITY_ID_PREFIX + username, localityId)
