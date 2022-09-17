@@ -992,7 +992,7 @@ public class Utils {
         String key = getLocationKeyFromName(locationName);
         String translatedLocationName = getTranslatedIdentifier(key);
 
-        return StringUtils.isNotEmpty(translatedLocationName) ? translatedLocationName : locationName;
+        return StringUtils.isNotEmpty(translatedLocationName) && !translatedLocationName.equals(key) ? translatedLocationName : locationName;
     }
 
     /**
