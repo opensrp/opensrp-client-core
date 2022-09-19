@@ -39,7 +39,6 @@ public class AppHealthUtilsTest extends BaseRobolectricUnitTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        Mockito.when(context.getApplicationContext()).thenReturn(ApplicationProvider.getApplicationContext());
         Mockito.when(context.getPackageName()).thenReturn(PACKAGE_NAME);
     }
 
@@ -96,5 +95,17 @@ public class AppHealthUtilsTest extends BaseRobolectricUnitTest {
     public void testRefreshFileSystemWhenAndroidVersionIsAboveKitKat() {
         AppHealthUtils.refreshFileSystem(context, false);
         Mockito.verify(context, Mockito.never()).sendBroadcast(ArgumentMatchers.any(Intent.class));
+    }
+
+    @Test
+    public void testTriggerDBCopying() throws Exception {
+        CoreLibrary coreLibrary = Mockito.mock(CoreLibrary.class);
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        Context mockedContext = Mockito.mock(Context.class);
+        Mockito.doReturn("Exporting Database…").when(mockedContext).getString(Mockito.anyInt());
+        AppHealthUtils.triggerDBCopying(mockedContext);
+        Thread.sleep(ASYNC_TIMEOUT);
+        ArgumentCaptor<Context> contextArgumentCaptor = ArgumentCaptor.forClass(Context.class);
+        Assert.assertNotNull(contextArgumentCaptor.getValue().getString(Mockito.anyInt()));
     }
 }

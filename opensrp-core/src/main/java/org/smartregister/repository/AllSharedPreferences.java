@@ -102,6 +102,10 @@ public class AllSharedPreferences {
         return null;
     }
 
+    public String fetchDefaultLocationId() {
+        return preferences.getString(AllConstants.CURRENT_LOCATION_ID, null);
+    }
+
     public void saveUserLocalityId(String username, String localityId) {
         if (username != null) {
             preferences.edit().putString(AllConstants.USER_LOCALITY_ID_PREFIX + username, localityId)

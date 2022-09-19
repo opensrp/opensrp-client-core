@@ -106,9 +106,7 @@ public class AllConstants {
     public static final String IN_AREA = "in_area";
     public static final String DATASTORE_MANAGER_DIR = "data";
     public static final int ANIMATION_FADE_IN_TIME = 250;
-
     public static final String CURRENT_LOCATION_ID = "CURRENT_LOCATION_ID";
-
     public static final String LAST_SYNC_TIMESTAMP = "LAST_SYNC_TIMESTAMP";
     public static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
     public static final Boolean TIME_CHECK = false;
