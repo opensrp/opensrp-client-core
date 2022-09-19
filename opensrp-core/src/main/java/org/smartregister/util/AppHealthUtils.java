@@ -79,13 +79,11 @@ public class AppHealthUtils {
 
     public static void triggerDBCopying(Context context) {
         Utils.showToast(context, context.getString(R.string.export_db_notification));
-
         Executor executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
             Utils.copyDatabase(AllConstants.DATABASE_NAME, createCopyDBName(context), context);
             refreshFileSystem(context, Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT);
-
             handler.post(() -> Utils.showToast(context, context.getString(R.string.database_download_success)));
         });
     }

@@ -3,6 +3,7 @@ package org.smartregister.util;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.test.core.app.ApplicationProvider;
@@ -102,7 +103,11 @@ public class AppHealthUtilsTest extends BaseRobolectricUnitTest {
         CoreLibrary coreLibrary = Mockito.mock(CoreLibrary.class);
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
         Context mockedContext = Mockito.mock(Context.class);
+        Toast toast = Mockito.mock(Toast.class);
         Mockito.doReturn("Exporting Database…").when(mockedContext).getString(Mockito.anyInt());
+        Utils utils = Mockito.mock(Utils.class);
+        Mockito.doNothing().when(utils).showToast(ArgumentMatchers.any(), ArgumentMatchers.anyString());
+        Mockito.doReturn(toast).when(Toast.makeText(ArgumentMatchers.any(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt()));
         AppHealthUtils.triggerDBCopying(mockedContext);
         Thread.sleep(ASYNC_TIMEOUT);
         ArgumentCaptor<Context> contextArgumentCaptor = ArgumentCaptor.forClass(Context.class);
