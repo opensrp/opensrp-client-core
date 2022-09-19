@@ -32,7 +32,6 @@ public class ValidateIntentService extends BaseSyncIntentService {
 
     private Context context;
     private HTTPAgent httpAgent;
-    private static final int FETCH_LIMIT = 100;
     private static final String VALIDATE_SYNC_PATH = "rest/validate/sync";
     private org.smartregister.Context openSRPContext = CoreLibrary.getInstance().context();
 
@@ -54,7 +53,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
 
         try {
             super.onHandleIntent(intent);
-            int fetchLimit = FETCH_LIMIT;
+            int fetchLimit = CoreLibrary.getInstance().getSyncConfiguration().getSyncValidationBatchSize();
 
             List<String> clientIds = eventClientRepository.getUnValidatedClientBaseEntityIds(fetchLimit);
             if (!clientIds.isEmpty()) {

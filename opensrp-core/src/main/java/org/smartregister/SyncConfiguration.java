@@ -227,13 +227,41 @@ public abstract class SyncConfiguration {
         return true;
     }
 
-
     /**
      * Specifies whether to skip locally saved task marked as {@link org.smartregister.repository.BaseRepository#TYPE_Unsynced}
      * when fetching tasks from the server, during sync
+     *
      * @return {@link Boolean}
      */
-    public boolean skipUnsyncedTasksOnFetchFromServer(){
+    public boolean skipUnsyncedTasksOnFetchFromServer() {
         return false;
+    }
+
+    /**
+     * Specifies the batch size of clients and events to be pulled from the server in a single request
+     *
+     * @return {@link Integer}
+     */
+    public int getSyncPullBatchSize() {
+        return 250;
+    }
+
+    /**
+     * Specifies the batch size of clients and events to be pushed to the server in a single request
+     *
+     * @return {@link Integer}
+     */
+    public int getSyncPushBatchSize() {
+        return 50;
+    }
+
+    /**
+     * Specifies the batch size of clients and event IDs that
+     * are sent to server for validation in a single request
+     *
+     * @return {@link Integer}
+     */
+    public int getSyncValidationBatchSize() {
+        return 100;
     }
 }

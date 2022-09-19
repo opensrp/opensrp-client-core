@@ -59,8 +59,6 @@ import timber.log.Timber;
 
 public class SyncIntentService extends BaseSyncIntentService {
     public static final String SYNC_URL = "/rest/event/sync";
-    protected static final int EVENT_PULL_LIMIT = 250;
-    protected static final int EVENT_PUSH_LIMIT = 50;
     private static final String ADD_URL = "rest/event/add";
     private static final String FAILED_CLIENTS = "failed_clients";
     private static final String FAILED_EVENTS = "failed_events";
@@ -511,7 +509,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     public int getEventPullLimit() {
-        return EVENT_PULL_LIMIT;
+        return CoreLibrary.getInstance().getSyncConfiguration().getSyncPullBatchSize();
     }
 
     public HTTPAgent getHttpAgent() {
@@ -533,6 +531,6 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     protected Integer getEventBatchSize() {
-        return EVENT_PUSH_LIMIT;
+        return CoreLibrary.getInstance().getSyncConfiguration().getSyncPushBatchSize();
     }
 }
