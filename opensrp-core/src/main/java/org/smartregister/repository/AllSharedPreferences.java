@@ -117,6 +117,10 @@ public class AllSharedPreferences {
         }
     }
 
+    public String fetchDefaultLocationId() {
+        return preferences.getString(AllConstants.CURRENT_LOCATION_ID, null);
+    }
+
     public String fetchUserLocalityId(String username) {
         if (username != null) {
             return preferences.getString(AllConstants.USER_LOCALITY_ID_PREFIX + username, null);
