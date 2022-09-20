@@ -10,24 +10,38 @@ import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.repository.AllSharedPreferences;
 
 import java.time.LocalDate;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.smartregister.BaseRobolectricUnitTest.ASYNC_TIMEOUT;
+
 /**
  * Created by ndegwamartin on 29/06/2021.
  */
-public class AppHealthUtilsTest extends BaseRobolectricUnitTest {
+@PrepareForTest({Toast.class,Utils.class})
+public class AppHealthUtilsTest extends BaseUnitTest {
+
+    @Rule
+    public PowerMockRule rule = new PowerMockRule();
 
     @Mock
     private Context context;
@@ -95,20 +109,30 @@ public class AppHealthUtilsTest extends BaseRobolectricUnitTest {
     @Test
     public void testRefreshFileSystemWhenAndroidVersionIsAboveKitKat() {
         AppHealthUtils.refreshFileSystem(context, false);
-        Mockito.verify(context, Mockito.never()).sendBroadcast(ArgumentMatchers.any(Intent.class));
+        Mockito.verify(context, Mockito.never()).sendBroadcast(any(Intent.class));
     }
 
     @Test
     public void testTriggerDBCopying() throws Exception {
         CoreLibrary coreLibrary = Mockito.mock(CoreLibrary.class);
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
-        Context mockedContext = Mockito.mock(Context.class);
-        Toast toast = Mockito.mock(Toast.class);
-        Mockito.doReturn("Exporting Database…").when(mockedContext).getString(Mockito.anyInt());
-        Utils utils = Mockito.mock(Utils.class);
-        Mockito.doNothing().when(utils).showToast(ArgumentMatchers.any(), ArgumentMatchers.anyString());
-        Mockito.doReturn(toast).when(Toast.makeText(ArgumentMatchers.any(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt()));
-        AppHealthUtils.triggerDBCopying(mockedContext);
+        AllSharedPreferences allSharedPreferences = Mockito.mock(AllSharedPreferences.class);
+        org.smartregister.Context mockedContext = Mockito.mock(org.smartregister.Context.class);
+        PowerMockito.mockStatic(Toast.class);
+        PowerMockito.mockStatic(Utils.class);
+       // PowerMockito.mockStatic(CoreLibrary.class);
+        Context context = Mockito.mock(Context.class);
+
+        Toast toastMock = Mockito.mock(Toast.class);
+        Mockito.when(Toast.makeText(any(Context.class),ArgumentMatchers.anyString(),ArgumentMatchers.anyInt())).thenReturn(toastMock);
+//        Mockito.when(Utils.getBooleanProperty(ArgumentMatchers.anyString())).thenReturn(false);
+//        Mockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
+//        Mockito.when(coreLibrary.context()).thenReturn(mockedContext);
+//        Mockito.when(mockedContext.allSharedPreferences()).thenReturn(allSharedPreferences);
+//        Mockito.when(allSharedPreferences.fetchRegisteredANM()).thenReturn("ANM");
+
+
+        AppHealthUtils.triggerDBCopying(context);
         Thread.sleep(ASYNC_TIMEOUT);
         ArgumentCaptor<Context> contextArgumentCaptor = ArgumentCaptor.forClass(Context.class);
         Assert.assertNotNull(contextArgumentCaptor.getValue().getString(Mockito.anyInt()));
