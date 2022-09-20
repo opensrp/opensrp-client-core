@@ -71,7 +71,6 @@ public class BaseProfileActivityTest extends BaseRobolectricUnitTest {
 
         Mockito.verify(actionBar).setDisplayHomeAsUpEnabled(true);
         Mockito.verify(profileActivity).setContentView(ArgumentMatchers.anyInt());
-        ;
         Mockito.verify(profileActivity).findViewById(R.id.btn_profile_registration_info);
         Mockito.verify(profileActivity).findViewById(R.id.collapsing_toolbar_appbarlayout);
         Mockito.verify(profileActivity).findViewById(R.id.collapsing_toolbar);
