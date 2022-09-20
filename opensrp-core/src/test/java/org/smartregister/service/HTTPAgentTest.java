@@ -22,6 +22,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -481,22 +482,22 @@ public class HTTPAgentTest {
             ioUtilsMockedStatic.when(() -> IOUtils.toString(inputStream)).thenReturn(TOKEN_REQUEST_SERVER_RESPONSE);
             Mockito.doReturn(syncConfiguration).when(coreLibrary).getSyncConfiguration();
 
-        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+            HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
 
-        Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(TEST_TOKEN_ENDPOINT);
-        Mockito.doReturn(TestSyncConfiguration.OAUTH_CLIENT_ID).when(syncConfiguration).getOauthClientId();
-        Mockito.doReturn(TestSyncConfiguration.OAUTH_CLIENT_SECRET).when(syncConfiguration).getOauthClientSecret();
+            Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(TEST_TOKEN_ENDPOINT);
+            Mockito.doReturn(TestSyncConfiguration.OAUTH_CLIENT_ID).when(syncConfiguration).getOauthClientId();
+            Mockito.doReturn(TestSyncConfiguration.OAUTH_CLIENT_SECRET).when(syncConfiguration).getOauthClientSecret();
 
-        Mockito.doReturn(outputStream).when(httpURLConnection).getOutputStream();
-        Mockito.doReturn(inputStream).when(httpURLConnection).getInputStream();
+            Mockito.doReturn(outputStream).when(httpURLConnection).getOutputStream();
+            Mockito.doReturn(inputStream).when(httpURLConnection).getInputStream();
 
-        Mockito.doThrow(new MalformedURLException()).when(httpURLConnection).getResponseCode();
+            Mockito.doThrow(new MalformedURLException()).when(httpURLConnection).getResponseCode();
 
-        AccountResponse response = httpAgentSpy.oauth2authenticate(TEST_USERNAME, TEST_PASSWORD, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD, TEST_TOKEN_ENDPOINT);
-        Assert.assertNotNull(response);
-        Assert.assertNotNull(response.getAccountError());
-        Assert.assertEquals(0, response.getAccountError().getStatusCode());
-        Assert.assertEquals(LoginResponse.MALFORMED_URL.name(), response.getAccountError().getError());
+            AccountResponse response = httpAgentSpy.oauth2authenticate(TEST_USERNAME, TEST_PASSWORD, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD, TEST_TOKEN_ENDPOINT);
+            Assert.assertNotNull(response);
+            Assert.assertNotNull(response.getAccountError());
+            Assert.assertEquals(0, response.getAccountError().getStatusCode());
+            Assert.assertEquals(LoginResponse.MALFORMED_URL.name(), response.getAccountError().getError());
         }
 
     }
@@ -1291,5 +1292,15 @@ public class HTTPAgentTest {
             Mockito.verify(printWriter, Mockito.times(7)).flush();
         }
 
+    }
+
+    @Test
+    public void testOauth2authenticateEncodesPasswordCorrectly() {
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        StringBuffer stringBuffer = ReflectionHelpers.callInstanceMethod(httpAgentSpy, "getRequestParams",
+                ReflectionHelpers.ClassParameter.from(String.class, "testUser"),
+                ReflectionHelpers.ClassParameter.from(char[].class, "abc123%^&.".toCharArray()));
+        Assert.assertEquals("&username=testUser&password=abc123%25%5E%26.", stringBuffer.toString());
     }
 }

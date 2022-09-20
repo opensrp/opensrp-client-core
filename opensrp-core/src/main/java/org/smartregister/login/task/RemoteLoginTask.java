@@ -71,7 +71,7 @@ public class RemoteLoginTask {
 
     public void cancel(boolean cancelled) {
         this.cancelled = cancelled;
-        mLoginView.showProgress(false);
+        mLoginView.showProgress(!cancelled);
     }
 
     public void execute() {
@@ -162,7 +162,7 @@ public class RemoteLoginTask {
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_NAME, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_NAME));
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_REFRESH_TOKEN, response.getRefreshToken());
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_ACCESS_TOKEN_EXPIRES_IN, Utils.toStringNullable(response.getExpiresIn()));
-                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_ACCESS_TOKEN_CREATED_AT, Utils.toStringNullable(Calendar.getInstance().getTimeInMillis()));
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_REFRESH_TOKEN_CREATED_AT, Utils.toStringNullable(Calendar.getInstance().getTimeInMillis()));
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_REFRESH_TOKEN_EXPIRES_IN, Utils.toStringNullable(response.getRefreshExpiresIn()));
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_ROLES, user.getRoles() != null ? user.getRoles().toString() : Collections.EMPTY_LIST.toString());
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

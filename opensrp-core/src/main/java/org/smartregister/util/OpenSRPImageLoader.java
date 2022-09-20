@@ -292,15 +292,6 @@ public class OpenSRPImageLoader {
 
                     if (imageRecord != null) {
 
-                        // Non existent image record, display image with defaultImageResId
-                        if (imageRecord == null) {
-
-                            Glide.with(context)
-                                    .load(opensrpImageListener.getDefaultImageResId())
-                                    .into(opensrpImageListener.getImageView());
-                            return;
-                        }
-
                         Glide.with(context).load(imageRecord.getFilepath())
                                 .apply(new RequestOptions()
                                         .skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)) //Images already on device so skip caching
@@ -329,8 +320,6 @@ public class OpenSRPImageLoader {
                                 .placeholder(opensrpImageListener.getDefaultImageResId())
                                 .error(opensrpImageListener.getErrorImageResId())
                                 .into(opensrpImageListener.getImageView());
-
-
                     }
                 }
             }

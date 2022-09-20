@@ -74,7 +74,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
                         accountManager.setAuthToken(account, authTokenType, authToken);
                         accountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_ACCESS_TOKEN_EXPIRES_IN, Utils.toStringNullable(accountResponse.getExpiresIn()));
                         accountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_REFRESH_TOKEN_EXPIRES_IN, Utils.toStringNullable(accountResponse.getRefreshExpiresIn()));
-                        accountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_ACCESS_TOKEN_CREATED_AT, Utils.toStringNullable(Calendar.getInstance().getTimeInMillis()));
+                        accountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_REFRESH_TOKEN_CREATED_AT, Utils.toStringNullable(Calendar.getInstance().getTimeInMillis()));
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             accountManager.notifyAccountAuthenticated(account);
