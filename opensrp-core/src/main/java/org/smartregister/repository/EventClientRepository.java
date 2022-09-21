@@ -2365,10 +2365,10 @@ public class EventClientRepository extends BaseRepository {
         Map<String, String> duplicates = Context.getInstance().zeirIdCleanupRepository().getClientsWithDuplicateZeirIds();
         long unusedIdsCount = uniqueIdRepository.countUnUsedIds();
 
-        Timber.d("%d duplicates for provider: %s - %s", duplicates.size(), username, duplicates.toString());
+        Timber.e("%d duplicates for provider: %s - %s", duplicates.size(), username, duplicates.toString());
 
         if (duplicates.size() > 0) {
-            Timber.d(
+            Timber.e(
                     "%s: %d duplicates for provider: %s - %s\nUnused Unique IDs: %d",
                     this.getClass().getSimpleName(),
                     duplicates.size(),
@@ -2386,7 +2386,7 @@ public class EventClientRepository extends BaseRepository {
             JSONObject identifiers = clientJson.getJSONObject(AllConstants.IDENTIFIERS);
 
             long unusedIds = uniqueIdRepository.countUnUsedIds();
-            if (unusedIds <= 2) {
+            if (unusedIds <= 30) { // Mske sure we have enough unused IDs left
                 Timber.e("%s: No more unique IDs available to assign to %s - %s; provider: %s", this.getClass().getSimpleName(), baseEntityId, zeirId, username);
                 android.content.Context applicationContext = CoreLibrary.getInstance().context().applicationContext();
                 applicationContext.startService(new Intent(applicationContext, PullUniqueIdsIntentService.class));
@@ -2432,7 +2432,7 @@ public class EventClientRepository extends BaseRepository {
 
             uniqueIdRepository.close(newZeirId);
 
-            Timber.d("%s: %s - %s updated to %s; provider: %s", this.getClass().getSimpleName(), baseEntityId, zeirId, newZeirId, username);
+            Timber.e("%s: %s - %s updated to %s; provider: %s", this.getClass().getSimpleName(), baseEntityId, zeirId, newZeirId, username);
         }
 
         if (duplicates.size() > 0) {

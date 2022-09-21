@@ -765,6 +765,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
         DuplicateZeirIdStatus duplicateZeirIdStatus =  eventClientRepository.cleanDuplicateMotherIds();
         Assert.assertEquals(DuplicateZeirIdStatus.CLEANED, duplicateZeirIdStatus);
+        verify(sqliteDatabase, times(1)).rawQuery(eq(DUPLICATES_SQL), any());
         verify(sqliteDatabase, times(1)).insert(eq("client"), eq(null), any());
     }
 
