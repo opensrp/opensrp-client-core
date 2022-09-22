@@ -82,6 +82,7 @@ dependencies {
         transitive=true
         exclude group: 'com.ibm.fhir', module: 'fhir-model'
     }
+    implementation 'androidx.work:work-runtime:2.7.1'
 
     jarJar 'com.ibm.fhir:fhir-model:4.7.0'
 
