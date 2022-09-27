@@ -41,4 +41,29 @@ public class ClientFormResponseTest {
         Assert.assertEquals(1, clientFormResponse.getClientForm().getId());
         Assert.assertEquals("[\"test json\"]", clientFormResponse.getClientForm().getJson());
     }
+
+    @Test
+    public void testSetterAndGetterForClientForm() {
+        ClientFormResponse clientFormResponse = new ClientFormResponse(null, null);
+
+        ClientFormDTO clientFormDTO = new ClientFormDTO();
+        clientFormDTO.setId(1);
+        clientFormDTO.setJson("[\"test json\"]");
+
+        ClientFormMetadataDTO clientFormMetadataDTO = new ClientFormMetadataDTO();
+        Date now = Calendar.getInstance().getTime();
+        clientFormMetadataDTO.setCreatedAt(now);
+        clientFormMetadataDTO.setId(1L);
+        clientFormMetadataDTO.setIdentifier("referral/anc_form");
+        clientFormMetadataDTO.setJurisdiction("test jurisdiction");
+        clientFormMetadataDTO.setLabel("ANC Referral form");
+        clientFormMetadataDTO.setModule("ANC");
+        clientFormMetadataDTO.setVersion("0.0.1");
+
+        clientFormResponse.setClientForm(clientFormDTO);
+        clientFormResponse.setClientFormMetadata(clientFormMetadataDTO);
+
+        Assert.assertEquals(clientFormMetadataDTO, clientFormResponse.getClientFormMetadata());
+        Assert.assertEquals(clientFormDTO, clientFormResponse.getClientForm());
+    }
 }
