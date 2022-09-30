@@ -378,6 +378,6 @@ public class UserServiceTest extends BaseUnitTest {
         String providerBaseEntityId = "00ab-88dc-ea11-8471-ad90";
         String providerName = "provider";
         userService.saveUserId(providerName, providerBaseEntityId);
-        Mockito.verify(userService).saveUserId(providerName, providerBaseEntityId);
+        verify(userService).saveUserId(providerName, providerBaseEntityId);
     }
 }
