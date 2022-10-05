@@ -747,10 +747,10 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
         // testing with Json Object
         String result = Utils.extractTranslatableValue(object.toString());
-        Assert.assertEquals(result,value);
+        assertEquals(result,value);
         // testing backward compatibility.
         String  result2 = Utils.extractTranslatableValue(value);
-        Assert.assertEquals(result2,value);
+        assertEquals(result2,value);
 
     }
 }
