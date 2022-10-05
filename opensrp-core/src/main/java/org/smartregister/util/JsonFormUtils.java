@@ -534,7 +534,7 @@ public class JsonFormUtils {
         List<Object> vall = new ArrayList<>();
 
         String formSubmissionField = getString(jsonObject, KEY);
-        String obsValue = value;
+        String obsValue = Utils.extractTranslatableValue(value);
 
         String dataType = getString(jsonObject, OPENMRS_DATA_TYPE);
         if (StringUtils.isBlank(dataType)) {

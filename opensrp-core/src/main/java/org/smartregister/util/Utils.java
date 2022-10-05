@@ -62,6 +62,7 @@ import org.apache.commons.text.WordUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
+import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -1022,5 +1023,20 @@ public class Utils {
 
     public String getName() {
         return getPrefferedName();
+    }
+
+    public static String extractTranslatableValue(String value)
+    {
+        try {
+            if (value.startsWith("{") && value.endsWith("}")) {
+                JSONObject valueObject = new JSONObject(value);
+                return valueObject.getString(AllConstants.VALUE);
+            }
+        }
+        catch (Exception e)
+        {
+            Timber.e(e);
+        }
+        return  value;
     }
 }
