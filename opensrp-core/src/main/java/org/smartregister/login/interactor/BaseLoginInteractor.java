@@ -55,7 +55,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     private static final int MINIMUM_JOB_FLEX_VALUE = 5;
     private BaseLoginContract.Presenter mLoginPresenter;
     private RemoteLoginTask remoteLoginTask;
-    private boolean localLogin;
+    private boolean isLocalLogin;
 
     private ResetAppHelper resetAppHelper;
 
@@ -77,23 +77,22 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(() -> {
 
-            localLogin = !getSharedPreferences().fetchForceRemoteLogin(userName);
+            isLocalLogin = !getSharedPreferences().fetchForceRemoteLogin(userName);
             org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
-            if ((NetworkUtils.isNetworkAvailable() && isAuthTokenExpired(userName)) || (opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN)
-                    && localLogin
-                    && HttpURLConnection.HTTP_UNAUTHORIZED == getSharedPreferences().getLastAuthenticationHttpStatus()
-                    && NetworkUtils.isNetworkAvailable())) {
-                localLogin = false;
+            if (NetworkUtils.isNetworkAvailable() && (isRefreshTokenExpired(userName) || (opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN)
+                    && isLocalLogin
+                    && HttpURLConnection.HTTP_UNAUTHORIZED == getSharedPreferences().getLastAuthenticationHttpStatus()))) {
+                isLocalLogin = false;
             }
 
-            getLoginView().getAppCompatActivity().runOnUiThread(() -> loginWithLocalFlag(view, localLogin && getSharedPreferences().isRegisteredANM(userName), userName, password));
+            getLoginView().getAppCompatActivity().runOnUiThread(() -> loginWithLocalFlag(view, isLocalLogin && getSharedPreferences().isRegisteredANM(userName), userName, password));
 
         });
     }
 
     @VisibleForTesting
-    protected boolean isAuthTokenExpired(String userName) {
-        return !AccountHelper.isAccessTokenValid(userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
+    protected boolean isRefreshTokenExpired(String userName) {
+        return !AccountHelper.isRefreshTokenValid(userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
     }
 
     public void loginWithLocalFlag(WeakReference<BaseLoginContract.View> view, boolean localLogin, String userName, char[] password) {

@@ -120,10 +120,11 @@ public class AccountHelper {
     }
 
     /**
-     * A Helper method to check if the Access Token is valid
+     * A Helper method to check if the Refresh Token is valid.
+     * Note: We only need to manually enter credentials if the Refresh Token is expired
      */
-    public static boolean isAccessTokenValid(String accountName, String accountType) {
-        String createdAt = getAccountManagerValue(INTENT_KEY.ACCOUNT_ACCESS_TOKEN_CREATED_AT, accountName, accountType);
+    public static boolean isRefreshTokenValid(String accountName, String accountType) {
+        String createdAt = getAccountManagerValue(INTENT_KEY.ACCOUNT_REFRESH_TOKEN_CREATED_AT, accountName, accountType);
         String accountExpires = getAccountManagerValue(INTENT_KEY.ACCOUNT_REFRESH_TOKEN_EXPIRES_IN, accountName, accountType);
         Long createdAtLong = createdAt != null ? Long.parseLong(createdAt) : null;
         Long accountExpiresLong = accountExpires != null ? Long.parseLong(accountExpires) : null;
@@ -166,7 +167,7 @@ public class AccountHelper {
         public final static String ACCOUNT_ROLES = "ACCOUNT_ROLES";
         public final static String ACCOUNT_REFRESH_TOKEN_EXPIRES_IN = "ACCOUNT_REFRESH_TOKEN_EXPIRES_IN";
         public final static String ACCOUNT_ACCESS_TOKEN_EXPIRES_IN = "ACCOUNT_ACCESS_TOKEN_EXPIRES_IN";
-        public final static String ACCOUNT_ACCESS_TOKEN_CREATED_AT = "ACCOUNT_ACCESS_TOKEN_CREATED_AT";
+        public final static String ACCOUNT_REFRESH_TOKEN_CREATED_AT = "ACCOUNT_ACCESS_TOKEN_CREATED_AT";
     }
 
     public static final class TOKEN_TYPE {

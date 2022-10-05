@@ -80,6 +80,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -672,12 +673,21 @@ public class HTTPAgent {
     }
 
     public AccountResponse oauth2authenticate(String username, char[] password, String grantType, String tokenEndpointURL) {
+        StringBuffer requestParamBuilder = getRequestParams(username, password);
+        return oauth2authenticateCore(requestParamBuilder, grantType, tokenEndpointURL);
+    }
 
+    private StringBuffer getRequestParams(String username, char[] password) {
         StringBuffer requestParamBuilder = new StringBuffer();
         requestParamBuilder.append("&username=").append(username);
-        requestParamBuilder.append("&password=").append(password);
-
-        return oauth2authenticateCore(requestParamBuilder, grantType, tokenEndpointURL);
+        String urlEncodedPassword = new String(password);
+        try {
+            urlEncodedPassword = URLEncoder.encode(urlEncodedPassword, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            Timber.e(e);
+        }
+        requestParamBuilder.append("&password=").append(urlEncodedPassword);
+        return requestParamBuilder;
     }
 
     public AccountResponse oauth2authenticateRefreshToken(String refreshToken) {

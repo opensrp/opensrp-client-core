@@ -1,9 +1,14 @@
 package org.smartregister.cursoradapter;
 
+import static android.os.Looper.getMainLooper;
+
 import android.database.Cursor;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import android.os.Handler;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -14,11 +19,10 @@ import org.smartregister.commonregistry.CommonRepository;
  */
 public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> extends RecyclerViewCursorAdapter {
     private final RecyclerViewProvider<RecyclerView.ViewHolder> listItemProvider;
-    private CommonRepository commonRepository;
-
     public int totalcount = 0;
     public int currentlimit = 20;
     public int currentoffset = 0;
+    private CommonRepository commonRepository;
 
     public RecyclerViewPaginatedAdapter(Cursor cursor,
                                         RecyclerViewProvider<RecyclerView.ViewHolder>
@@ -42,7 +46,9 @@ public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> ext
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
         if (listItemProvider.isFooterViewHolder(viewHolder)) {
-            listItemProvider.getFooterView(viewHolder, getCurrentPageCount(), getTotalPageCount(), hasNextPage(), hasPreviousPage());
+            // make sure counts are updated before updating the view
+            updateFooterViewCounts(listItemProvider, viewHolder);
+
         } else {
             CommonPersonObject personinlist = commonRepository.readAllcommonforCursorAdapter(cursor);
             CommonPersonObjectClient pClient = new CommonPersonObjectClient(personinlist.getCaseId(),
@@ -50,6 +56,11 @@ public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> ext
             pClient.setColumnmaps(personinlist.getColumnmaps());
             listItemProvider.getView(cursor, pClient, viewHolder);
         }
+    }
+
+    @VisibleForTesting
+    protected void updateFooterViewCounts(RecyclerViewProvider<RecyclerView.ViewHolder> listItemProvider, RecyclerView.ViewHolder viewHolder) {
+        new Handler(getMainLooper()).post(() -> listItemProvider.getFooterView(viewHolder, getCurrentPageCount(), getTotalPageCount(), hasNextPage(), hasPreviousPage()));
     }
 
     // Pagination
@@ -90,28 +101,28 @@ public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> ext
         currentoffset = currentoffset - currentlimit;
     }
 
-    public void setTotalcount(int totalcount) {
-        this.totalcount = totalcount;
-    }
-
     public int getTotalcount() {
         return totalcount;
     }
 
-    public void setCurrentoffset(int currentoffset) {
-        this.currentoffset = currentoffset;
+    public void setTotalcount(int totalcount) {
+        this.totalcount = totalcount;
     }
 
     public int getCurrentoffset() {
         return currentoffset;
     }
 
-    public void setCurrentlimit(int currentlimit) {
-        this.currentlimit = currentlimit;
+    public void setCurrentoffset(int currentoffset) {
+        this.currentoffset = currentoffset;
     }
 
     public int getCurrentlimit() {
         return currentlimit;
+    }
+
+    public void setCurrentlimit(int currentlimit) {
+        this.currentlimit = currentlimit;
     }
 
 }

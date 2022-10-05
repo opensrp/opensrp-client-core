@@ -16,6 +16,7 @@ import com.google.android.material.tabs.TabLayout;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
@@ -69,13 +70,14 @@ public class BaseProfileActivityTest extends BaseRobolectricUnitTest {
         profileActivity.onCreation();
 
         Mockito.verify(actionBar).setDisplayHomeAsUpEnabled(true);
-        Assert.assertNotNull(profileActivity.getProfileAppBarLayout());
-        Assert.assertNotNull(profileActivity.getSupportActionBar());
-        Assert.assertNotNull(profileActivity.getProfileAppBarLayout());
-        Assert.assertNotNull(profileActivity.imageRenderHelper);
-        Assert.assertNotNull(profileActivity.tabLayout);
-        Assert.assertNotNull(profileActivity.getViewPager());
-
+        Mockito.verify(profileActivity).setContentView(ArgumentMatchers.anyInt());
+        Mockito.verify(profileActivity).findViewById(R.id.btn_profile_registration_info);
+        Mockito.verify(profileActivity).findViewById(R.id.collapsing_toolbar_appbarlayout);
+        Mockito.verify(profileActivity).findViewById(R.id.collapsing_toolbar);
+        Mockito.verify(profileActivity).findViewById(R.id.tabs);
+        Mockito.verify(profileActivity).findViewById(R.id.viewpager);
+        Mockito.verify(profileActivity).getSupportActionBar();
+        Mockito.verify(profileActivity).setSupportActionBar(toolbar);
         Mockito.verify(profileActivity).initializePresenter();
         Mockito.verify(profileActivity).setupViewPager(Mockito.any(ViewPager.class));
 
