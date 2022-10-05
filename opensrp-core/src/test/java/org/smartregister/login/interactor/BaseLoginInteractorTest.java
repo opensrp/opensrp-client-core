@@ -209,7 +209,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(mAccountManager).when(coreLibrary).getAccountManager();
         Mockito.doReturn(ApplicationProvider.getApplicationContext()).when(context).applicationContext();
         Mockito.doReturn(syncConfiguration).when(coreLibrary).getSyncConfiguration();
-        Mockito.doReturn(false).when(interactor).isAuthTokenExpired(ArgumentMatchers.anyString());
+        Mockito.doReturn(false).when(interactor).isRefreshTokenExpired(ArgumentMatchers.anyString());
         Whitebox.setInternalState(interactor, "resetAppHelper", resetAppHelper);
     }
 

@@ -1,9 +1,17 @@
 package org.smartregister.cursoradapter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import android.content.Context;
 import android.database.Cursor;
-import androidx.recyclerview.widget.RecyclerView;
 import android.widget.LinearLayout;
+
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -11,10 +19,10 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
-import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -22,12 +30,6 @@ import org.smartregister.commonregistry.CommonRepository;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 
 /**
@@ -99,10 +101,11 @@ public class RecyclerViewPaginatedAdapterTest extends BaseUnitTest {
 
     @Test
     public void testOnBindViewFootHolder() {
-        adapter.setTotalcount(20);
+        RecyclerViewPaginatedAdapter adapterSpy = Mockito.spy(adapter);
+        adapterSpy.setTotalcount(20);
         when(listItemProvider.isFooterViewHolder(mockViewHolder)).thenReturn(true);
-        adapter.onBindViewHolder(mockViewHolder, mCursor);
-        verify(listItemProvider).getFooterView(mockViewHolder, 1, 1, false, false);
+        adapterSpy.onBindViewHolder(mockViewHolder, mCursor);
+        verify(adapterSpy).updateFooterViewCounts(listItemProvider, mockViewHolder);
 
     }
 
@@ -117,7 +120,7 @@ public class RecyclerViewPaginatedAdapterTest extends BaseUnitTest {
         String caseId = "case 1";
         String relationId = "identifier 123";
         String type = "bindtype";
-        CommonPersonObject personInList = new CommonPersonObject(caseId, relationId, details,type);
+        CommonPersonObject personInList = new CommonPersonObject(caseId, relationId, details, type);
         personInList.setColumnmaps(columnmaps);
         when(commonRepository.readAllcommonforCursorAdapter(mCursor)).thenReturn(personInList);
 
