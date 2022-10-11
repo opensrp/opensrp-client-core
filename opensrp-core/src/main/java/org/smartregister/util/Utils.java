@@ -1025,18 +1025,17 @@ public class Utils {
         return getPrefferedName();
     }
 
-    public static String extractTranslatableValue(String value)
-    {
-        try {
-            if (value.startsWith("{") && value.endsWith("}")) {
+    public static String extractTranslatableValue(String value) {
+        if (value.startsWith("{") && value.endsWith("}")) {
+            try {
                 JSONObject valueObject = new JSONObject(value);
                 return valueObject.getString(AllConstants.VALUE);
-            }
         }
-        catch (Exception e)
+        catch(Exception e)
         {
             Timber.e(e);
         }
+    }
         return  value;
     }
 }
