@@ -1,6 +1,5 @@
 package org.smartregister.view.contract;
 
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +13,9 @@ public class ECDetailTest {
     private String caseId = "1234-5678-1234";
 
     @Before
-    public void setup() {
-        ecDetail = new ECDetail(caseId, "Kogelo", "kisumu", "456", true,
-                "addres1", "sd-card/photos", new ArrayList<Child>(), null, null);
+    public void setup(){
+        ecDetail = new ECDetail(caseId,"Kogelo","kisumu", "456", true,
+                "addres1", "sd-card/photos", new ArrayList<Child>(),null, null );
     }
 
     @Test

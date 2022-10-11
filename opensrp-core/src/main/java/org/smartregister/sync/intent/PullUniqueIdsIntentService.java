@@ -5,7 +5,6 @@ package org.smartregister.sync.intent;
  */
 
 import android.content.Intent;
-
 import androidx.annotation.VisibleForTesting;
 
 import org.json.JSONArray;
@@ -26,7 +25,6 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
     public static final String ID_URL = "/uniqueids/get";
     public static final String IDENTIFIERS = "identifiers";
     private UniqueIdRepository uniqueIdRepo;
-
 
     public PullUniqueIdsIntentService() {
         super("PullUniqueOpenMRSUniqueIdsService");
@@ -99,5 +97,4 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
     protected HTTPAgent getHttpAgent() {
         return CoreLibrary.getInstance().context().getHttpAgent();
     }
-
 }

@@ -149,6 +149,7 @@ public class AllConstants {
 
     public static final String GPS = "gps";
 
+    public static final String IDENTIFIERS = "identifiers";
 
     public interface FORCED_LOGOUT {
         String MIN_ALLOWED_APP_VERSION_SETTING = "min_allowed_app_version_setting";
@@ -591,4 +592,14 @@ public class AllConstants {
         public static final String EVENTS = "events";
         public static final String CLIENTS = "clients";
     }
+
+    public static class EventType {
+        public static final String BITRH_REGISTRATION = "Birth Registration";
+        public static final String NEW_WOMAN_REGISTRATION = "New Woman Registration";
+    }
+
+    public static class Entity {
+        public static final String MOTHER = "mother";
+    }
+
 }

@@ -73,8 +73,7 @@ public class AndroidMCryptography extends BaseCryptography implements ICryptogra
 
             Cipher c = Cipher.getInstance(AES_MODE);
             c.init(Cipher.DECRYPT_MODE, getKey(keyAlias), new GCMParameterSpec(128, INITIALIZATION_VECTOR));
-            byte[] decodedBytes = c.doFinal(encrypted);
-            return decodedBytes;
+            return c.doFinal(encrypted);
         } catch (Exception e) {
 
             Timber.e(e);

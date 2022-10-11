@@ -1,5 +1,17 @@
 package org.smartregister.repository;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.smartregister.AllConstants.ROWID;
+import static org.smartregister.repository.BaseRepository.TYPE_InValid;
+import static org.smartregister.repository.BaseRepository.TYPE_Task_Unprocessed;
+import static org.smartregister.repository.BaseRepository.TYPE_Unsynced;
+import static org.smartregister.repository.BaseRepository.TYPE_Valid;
+
 import android.content.ContentValues;
 import android.util.Pair;
 
@@ -26,6 +38,7 @@ import org.smartregister.BaseUnitTest;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.SyncStatus;
+import org.smartregister.domain.DuplicateZeirIdStatus;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.EventClient;
@@ -43,15 +56,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.smartregister.AllConstants.ROWID;
-import static org.smartregister.repository.BaseRepository.TYPE_InValid;
-import static org.smartregister.repository.BaseRepository.TYPE_Task_Unprocessed;
-import static org.smartregister.repository.BaseRepository.TYPE_Unsynced;
-import static org.smartregister.repository.BaseRepository.TYPE_Valid;
 
 /**
  * Created by onaio on 29/08/2017.
@@ -739,5 +743,73 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         matrixCursor.addRow(new String[]{"10"});
         return matrixCursor;
     }
+
+    @Test
+    public void testCleanDuplicateMotherIdsShouldFixAndMarkDuplicateClientsUnSynced() throws Exception {
+        String DUPLICATES_SQL = "WITH duplicates AS ( " +
+                                    "  WITH clients AS ( " +
+                                    "    SELECT baseEntityId, COALESCE(json_extract(json, '$.identifiers.ZEIR_ID'), json_extract(json, '$.identifiers.M_ZEIR_ID')) zeir_id " +
+                                    "    FROM client " +
+                                    "  ) " +
+                                    "  SELECT b.* FROM (SELECT baseEntityId, zeir_id FROM clients GROUP BY zeir_id HAVING count(zeir_id) > 1) a " +
+                                    "  INNER JOIN clients b ON a.zeir_id=b.zeir_id " +
+                                    "  UNION " +
+                                    "  SELECT * FROM clients WHERE zeir_id IS NULL " +
+                                    ") " +
+                                    "SELECT baseEntityId, zeir_id, lag(zeir_id) over(order by zeir_id) AS prev_zeir_id FROM duplicates";
+
+        when(sqliteDatabase.rawQuery(eq(DUPLICATES_SQL), any())).thenReturn(getDuplicateZeirIdsCursor());
+        when(sqliteDatabase.rawQuery("SELECT COUNT (*) FROM unique_ids WHERE status=?", new String[]{"not_used"}) ).thenReturn(getUniqueIdCountCursor());
+        when(sqliteDatabase.rawQuery("SELECT json FROM client WHERE baseEntityId = ? ", new String[]{"1b6fca83-26d0-46d2-bfba-254de5c4424a"}) ).thenReturn(getClientJsonObjectCursor());
+        when(sqliteDatabase.query("unique_ids", new String[]{"_id", "openmrs_id", "status", "used_by", "synced_by", "created_at", "updated_at"},  "status = ?", new String[]{"not_used"}, null, null, "created_at ASC", "1")).thenReturn(getUniqueIdCursor());
+
+        DuplicateZeirIdStatus duplicateZeirIdStatus =  eventClientRepository.cleanDuplicateMotherIds();
+        Assert.assertEquals(DuplicateZeirIdStatus.CLEANED, duplicateZeirIdStatus);
+        verify(sqliteDatabase, times(1)).rawQuery(eq(DUPLICATES_SQL), any());
+        verify(sqliteDatabase, times(1)).insert(eq("client"), eq(null), any());
+    }
+
+    public MatrixCursor getDuplicateZeirIdsCursor() {
+        MatrixCursor cursor = new MatrixCursor(new String[]{"baseEntityId", "zeir_id", "prev_zeir_id"});
+        cursor.addRow(new Object[]{"1b6fca83-26d0-46d2-bfba-254de5c4424a", "11320561", "11320561"});
+        return cursor;
+    }
+
+    public MatrixCursor getUniqueIdCountCursor() {
+        MatrixCursor cursor = new MatrixCursor(new String[]{"count(*)"});
+        cursor.addRow(new Object[]{"12"});
+        return cursor;
+    }
+
+    public MatrixCursor getUniqueIdCursor() {
+        MatrixCursor cursor = new MatrixCursor(new String[]{"_id", "openmrs_id", "status", "used_by", "synced_by", "created_at", "updated_at"});
+        cursor.addRow(new Object[]{"1", "11432345", null, null, null, null, null});
+        return cursor;
+    }
+
+    public MatrixCursor getClientJsonObjectCursor() {
+        String clientString = "{\n" +
+                "  \"type\": \"Client\",\n" +
+                "  \"clientType\": \"mother\",\n" +
+                "  \"dateCreated\": \"2019-11-21T15:29:36.799+07:00\",\n" +
+                "  \"baseEntityId\": \"1b6fca83-26d0-46d2-bfba-254de5c4424a\",\n" +
+                "  \"identifiers\": {\n" +
+                "    \"M_ZEIR_ID\": \"1132056-1\"\n" +
+                "  },\n" +
+                "  \"firstName\": \"Test 2\",\n" +
+                "  \"lastName\": \"Duplicate\",\n" +
+                "  \"birthdate\": \"1970-01-01T14:00:00.000+07:00\",\n" +
+                "  \"birthdateApprox\": true,\n" +
+                "  \"deathdateApprox\": false,\n" +
+                "  \"gender\": \"Male\",\n" +
+                "  \"_id\": \"f187d396-c25e-4dd7-adc8-dc921c1f8ae4\",\n" +
+                "  \"_rev\": \"v1\"\n" +
+                "}";
+
+        MatrixCursor cursor = new MatrixCursor(new String[]{"json"});
+        cursor.addRow(new Object[]{clientString});
+        return cursor;
+    }
+
 
 }

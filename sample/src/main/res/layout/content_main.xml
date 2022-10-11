@@ -91,5 +91,29 @@
             android:text="@string/sync_stats_label" />
 
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/cryptography_layout"
+        android:layout_below="@+id/sync_stats_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true">
+        <TextView
+            android:id="@+id/encrypt_decrypt_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/encrypt_decrypt_string"
+         />
+
+
+        <ToggleButton
+            android:id="@+id/encrypt_decrypt_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="@string/encrypt"
+            android:textOn="@string/decrypt"
+            android:layout_marginLeft="100dp"/>
+    </LinearLayout>
 
 </RelativeLayout>
