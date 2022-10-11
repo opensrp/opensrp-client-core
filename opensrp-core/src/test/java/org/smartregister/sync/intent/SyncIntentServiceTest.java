@@ -27,7 +27,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
@@ -43,6 +42,7 @@ import org.smartregister.domain.ResponseStatus;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.sync.RequestParamsBuilder;
 import org.smartregister.util.SyncUtils;
 
 import java.io.IOException;
@@ -553,7 +553,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(new Response<>(responseStatus, null))
                 .when(httpAgent).fetch(stringArgumentCaptor.capture());
         String removeParamKey = "some-other-param-to-remove";
-        BaseSyncIntentService.RequestParamsBuilder builder = new BaseSyncIntentService.RequestParamsBuilder().configureSyncFilter("locationId", "location-1")
+        RequestParamsBuilder builder = new RequestParamsBuilder().configureSyncFilter("locationId", "location-1")
                 .addServerVersion(0).addEventPullLimit(250).addParam("region", "au-west").addParam("is_enabled", true).addParam("some-other-param", 85l)
                 .addParam(removeParamKey, 745).removeParam(removeParamKey);
         syncIntentService.getUrlResponse("https://sample-stage.smartregister.org/opensrp/rest/event/sync", builder, syncConfiguration, false);
@@ -573,7 +573,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(new Response<>(responseStatus, null))
                 .when(httpAgent).postWithJsonResponse(ArgumentMatchers.anyString(), stringArgumentCaptor.capture());
 
-        BaseSyncIntentService.RequestParamsBuilder builder = new BaseSyncIntentService.RequestParamsBuilder().configureSyncFilter("locationId", "location-2")
+        RequestParamsBuilder builder = new RequestParamsBuilder().configureSyncFilter("locationId", "location-2")
                 .addServerVersion(0).addEventPullLimit(500).addParam("region", "au-east").addParam("is_enabled", false).addParam("some-other-param", 36);
         syncIntentService.getUrlResponse("https://sample-stage.smartregister.org/opensrp/rest/event/sync", builder, syncConfiguration, true);
 

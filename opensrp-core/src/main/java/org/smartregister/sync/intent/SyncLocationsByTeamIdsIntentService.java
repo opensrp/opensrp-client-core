@@ -6,6 +6,7 @@ import org.smartregister.sync.helper.LocationServiceHelper;
 
 import timber.log.Timber;
 
+@Deprecated
 public class SyncLocationsByTeamIdsIntentService extends BaseSyncIntentService {
 
     private static final String TAG = "SyncLocationsByTeamIdsIntentService";

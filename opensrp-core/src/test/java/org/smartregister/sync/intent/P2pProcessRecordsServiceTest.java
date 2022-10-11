@@ -14,6 +14,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.TestP2pApplication;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.db.EventClient;
+import org.smartregister.domain.db.EventClientQueryResult;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.sync.ClientProcessorForJava;
@@ -65,7 +66,7 @@ public class P2pProcessRecordsServiceTest extends BaseRobolectricUnitTest {
         CoreLibrary.getInstance().context().allSharedPreferences().setLastPeerToPeerSyncProcessedEvent(maxEventClientRowId);
         List<EventClient> eventClientList = new ArrayList<>();
         eventClientList.add(new EventClient(null, null));
-        Mockito.doReturn(new P2pProcessRecordsService.EventClientQueryResult(maxEventClientRowId, eventClientList)).when(eventClientRepository).fetchEventClientsByRowId(maxEventClientRowId);
+        Mockito.doReturn(new EventClientQueryResult(maxEventClientRowId, eventClientList)).when(eventClientRepository).fetchEventClientsByRowId(maxEventClientRowId);
         Mockito.doReturn(maxEventClientRowId).when(eventClientRepository).getMaxRowId(EventClientRepository.Table.event);
         Mockito.doNothing().when(clientProcessorForJava).processClient(eventClientList);
 

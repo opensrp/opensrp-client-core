@@ -28,6 +28,7 @@ import timber.log.Timber;
 /**
  * Created by keyman on 11/10/2017.
  */
+@Deprecated
 public class ValidateIntentService extends BaseSyncIntentService {
 
     private Context context;

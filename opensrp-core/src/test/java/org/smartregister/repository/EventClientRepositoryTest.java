@@ -29,7 +29,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.reflect.Whitebox;
@@ -42,9 +41,9 @@ import org.smartregister.domain.DuplicateZeirIdStatus;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.EventClient;
+import org.smartregister.domain.db.EventClientQueryResult;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.ClientData;
-import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
@@ -350,7 +349,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         }
 
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(Object[].class))).thenReturn(matrixCursor);
-        P2pProcessRecordsService.EventClientQueryResult eventClientQueryResult = eventClientRepository.fetchEventClientsByRowId(0);
+        EventClientQueryResult eventClientQueryResult = eventClientRepository.fetchEventClientsByRowId(0);
 
         Assert.assertEquals(eventArray.length(), eventClientQueryResult.getMaxRowId());
     }

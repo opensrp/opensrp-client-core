@@ -26,6 +26,8 @@ import org.joda.time.LocalDate;
 import org.smartregister.cryptography.CryptographicHelper;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.sample.fragment.ReportFragment;
+import org.smartregister.sync.wm.worker.SyncAllLocationsWorker;
+import org.smartregister.sync.wm.workerrequest.SyncWorkRequest;
 import org.smartregister.util.AppHealthUtils;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.LangUtils;
@@ -152,6 +154,11 @@ public class MainActivity extends MultiLanguageActivity {
         ((TextView) findViewById(R.id.time)).setText(DateUtil.getDuration(new DateTime().minusYears(4).minusMonths(3).minusWeeks(2).minusDays(1)));
 
         new AppHealthUtils(findViewById(R.id.show_sync_stats));
+        findViewById(R.id.wmSync).setOnClickListener(v -> {
+            v.setVisibility(View.INVISIBLE);
+            SyncWorkRequest.INSTANCE
+                    .runWorker(getApplicationContext(), SyncAllLocationsWorker.class, SyncAllLocationsWorker.class.getName(), androidx.work.Data.EMPTY);
+        });
 
         // File encryption example section
         ToggleButton toggle = (ToggleButton) findViewById(R.id.encrypt_decrypt_toggle);

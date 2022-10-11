@@ -19,6 +19,7 @@ import timber.log.Timber;
  *
  * @author cozej4 https://github.com/cozej4
  */
+@Deprecated
 public class DocumentConfigurationIntentService extends BaseSyncIntentService {
     private HTTPAgent httpAgent;
     private ManifestRepository manifestRepository;

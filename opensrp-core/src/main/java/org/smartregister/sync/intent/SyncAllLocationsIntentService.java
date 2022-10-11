@@ -12,7 +12,7 @@ import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.PropertiesConverter;
 
 import timber.log.Timber;
-
+@Deprecated
 public class SyncAllLocationsIntentService extends BaseSyncIntentService {
     private static final String TAG = "SyncAllLocationsIntentService";
 

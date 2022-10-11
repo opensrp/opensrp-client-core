@@ -116,4 +116,12 @@
             android:layout_marginLeft="100dp"/>
     </LinearLayout>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sync_stats_layout"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/wmSync"
+        android:text="Run Sync locations" />
+
 </RelativeLayout>

@@ -9,7 +9,7 @@ import org.smartregister.util.NetworkUtils;
 
 import timber.log.Timber;
 
-
+@Deprecated
 public class ExtendedSyncIntentService extends BaseSyncIntentService {
 
     private ActionService actionService = CoreLibrary.getInstance().context().actionService();
