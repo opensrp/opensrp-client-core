@@ -1,5 +1,16 @@
 package org.smartregister.service;
 
+import static org.smartregister.AllConstants.ENGLISH_LANGUAGE;
+import static org.smartregister.AllConstants.ENGLISH_LOCALE;
+import static org.smartregister.AllConstants.JURISDICTION_IDS;
+import static org.smartregister.AllConstants.KANNADA_LANGUAGE;
+import static org.smartregister.AllConstants.KANNADA_LOCALE;
+import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
+import static org.smartregister.AllConstants.OPENSRP_LOCATION_URL_PATH;
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+import static org.smartregister.AllConstants.ORGANIZATION_IDS;
+import static org.smartregister.event.Event.ON_LOGOUT;
+
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
@@ -62,17 +73,6 @@ import javax.crypto.CipherOutputStream;
 import javax.security.auth.x500.X500Principal;
 
 import timber.log.Timber;
-
-import static org.smartregister.AllConstants.ENGLISH_LANGUAGE;
-import static org.smartregister.AllConstants.ENGLISH_LOCALE;
-import static org.smartregister.AllConstants.JURISDICTION_IDS;
-import static org.smartregister.AllConstants.KANNADA_LANGUAGE;
-import static org.smartregister.AllConstants.KANNADA_LOCALE;
-import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
-import static org.smartregister.AllConstants.OPENSRP_LOCATION_URL_PATH;
-import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
-import static org.smartregister.AllConstants.ORGANIZATION_IDS;
-import static org.smartregister.event.Event.ON_LOGOUT;
 
 public class UserService {
     private static final String KEYSTORE = "AndroidKeyStore";
@@ -404,6 +404,7 @@ public class UserService {
         saveJurisdictions(userInfo.jurisdictions);
         saveJurisdictionIds(userInfo.jurisdictionIds);
         saveOrganizations(getUserTeam(userInfo));
+        saveUserId(userName, userInfo.user.getBaseEntityId());
         if (loginSuccessful &&
                 (StringUtils.isBlank(getUserDefaultLocationId(userInfo)) ||
                         StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(username))) &&
@@ -847,5 +848,11 @@ public class UserService {
             }
         }
         return null;
+    }
+
+    public void saveUserId(String userName, String baseEntityId) {
+        if (userName != null) {
+            allSharedPreferences.saveUserId(userName, baseEntityId);
+        }
     }
 }

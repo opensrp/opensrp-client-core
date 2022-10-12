@@ -398,5 +398,13 @@ public class AllSharedPreferences {
     public int getLastAuthenticationHttpStatus() {
         return preferences.getInt(LAST_AUTHENTICATION_HTTP_STATUS, 0);
     }
+
+    public void saveUserId(String username, String userId) {
+        preferences.edit().putString(AllConstants.USER_ID_PREFIX + username, userId).apply();
+    }
+
+    public String getUserId(String userName) {
+        return StringUtils.isNotBlank(userName) ? preferences.getString(AllConstants.USER_ID_PREFIX + userName, null) : "";
+    }
 }
 
