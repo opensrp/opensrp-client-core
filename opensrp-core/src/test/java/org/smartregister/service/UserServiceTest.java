@@ -372,5 +372,11 @@ public class UserServiceTest extends BaseUnitTest {
         assertFalse(userService.isUserInPioneerGroup("john"));
     }
 
-
+    @Test
+    public void saveProviderBaseEntityIdOnSharedPref() {
+        String providerBaseEntityId = "00ab-88dc-ea11-8471-ad90";
+        String providerName = "provider";
+        userService.saveUserId(providerName, providerBaseEntityId);
+        verify(userService).saveUserId(providerName, providerBaseEntityId);
+    }
 }
