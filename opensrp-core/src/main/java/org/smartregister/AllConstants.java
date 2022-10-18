@@ -46,6 +46,7 @@ public class AllConstants {
     public static final String DEFAULT_TEAM_PREFIX = "dfltTeam-";
     public static final String DEFAULT_TEAM_ID_PREFIX = "dfltTeamId-";
     public static final String USER_LOCALITY_ID_PREFIX = "userLoc-";
+    public static final String USER_ID_PREFIX = "userId-";
     public static final String PIONEER_USER = "pioneerUser";
     public static final String LANGUAGE_PREFERENCE_KEY = "locale";
     public static final String CURRENT_LOCALITY = "current_locality";
@@ -135,6 +136,7 @@ public class AllConstants {
     public static final String OPENMRS_ATTRIBUTES = "openmrs_attributes";
     public static final String VALUE_OPENMRS_ATTRIBUTES = "value_openmrs_attributes";
     public static final String SECONDARY_VALUE = "secondary_value";
+    public static final String VALUE = "value";
     public static final String EXPANSION_PANEL = "expansion_panel";
     public static final String SPINNER = "spinner";
     public static final String ROWID = "rowid";

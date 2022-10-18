@@ -42,12 +42,15 @@ import com.google.gson.JsonPrimitive;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
@@ -732,6 +735,23 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         apiParams.add(Pair.create("identifier", "global_configs"));
         apiParams.add(Pair.create("serverVersion", "21"));
         assertEquals("&identifier=global_configs&serverVersion=21", Utils.composeApiCallParamsString(apiParams));
+    }
+
+    @Test
+    public  void testExtractTrabslatableValue() throws JSONException
+    {
+        JSONObject object = new JSONObject();
+        String value = "testValue";
+        object.put(AllConstants.VALUE,value);
+        object.put (AllConstants.TEXT , AllConstants.TEXT);
+
+        // testing with Json Object
+        String result = Utils.extractTranslatableValue(object.toString());
+        assertEquals(result,value);
+        // testing backward compatibility.
+        String  result2 = Utils.extractTranslatableValue(value);
+        assertEquals(result2,value);
+
     }
 }
 

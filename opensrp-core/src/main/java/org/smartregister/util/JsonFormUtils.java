@@ -353,7 +353,14 @@ public class JsonFormUtils {
                                     popupJson.put(KEY, secondaryValueKey);
                                     popupJson.put(OPENMRS_ENTITY, CONCEPT);
                                     popupJson.put(OPENMRS_ENTITY_ID, parentOpenMRSAttributes.getString(OPENMRS_ENTITY_ID));
-                                    popupJson.put(VALUE, valueOpenMRSAttribute.getString(OPENMRS_ENTITY_ID));
+                                    if(valueOpenMRSAttribute.has(VALUE))
+                                        popupJson.put(VALUE, valueOpenMRSAttribute.getString(VALUE));
+                                    else
+                                        popupJson.put(VALUE, valueOpenMRSAttribute.getString(OPENMRS_ENTITY_ID));
+                                    if(valueOpenMRSAttribute.has(TEXT))
+                                        popupJson.put(TEXT,valueOpenMRSAttribute.getString(TEXT));
+                                    if(valueOpenMRSAttribute.has(OPTIONS_FIELD_NAME))
+                                        popupJson.put(OPTIONS_FIELD_NAME,valueOpenMRSAttribute.getJSONArray(OPTIONS_FIELD_NAME));
                                     popupJson.put(AllConstants.TYPE, secondaryValueType);
 
                                     if (AllConstants.NATIVE_RADIO.equals(secondaryValueType) ||
@@ -534,7 +541,7 @@ public class JsonFormUtils {
         List<Object> vall = new ArrayList<>();
 
         String formSubmissionField = getString(jsonObject, KEY);
-        String obsValue = value;
+        String obsValue = Utils.extractTranslatableValue(value);
 
         String dataType = getString(jsonObject, OPENMRS_DATA_TYPE);
         if (StringUtils.isBlank(dataType)) {

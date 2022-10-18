@@ -18,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
@@ -188,7 +187,7 @@ public class UserServiceTest extends BaseUnitTest {
     @Test
     public void shouldDeleteDataAndSettingsWhenLogoutHappens() throws Exception {
         SyncConfiguration syncConfiguration = mock(SyncConfiguration.class);
-        Mockito.doReturn(false).when(syncConfiguration).clearDataOnNewTeamLogin();
+        doReturn(false).when(syncConfiguration).clearDataOnNewTeamLogin();
         ReflectionHelpers.setField(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
         Whitebox.setInternalState(drishtiApplication, "password", password);
 
@@ -373,5 +372,11 @@ public class UserServiceTest extends BaseUnitTest {
         assertFalse(userService.isUserInPioneerGroup("john"));
     }
 
-
+    @Test
+    public void saveProviderBaseEntityIdOnSharedPref() {
+        String providerBaseEntityId = "00ab-88dc-ea11-8471-ad90";
+        String providerName = "provider";
+        userService.saveUserId(providerName, providerBaseEntityId);
+        verify(userService).saveUserId(providerName, providerBaseEntityId);
+    }
 }
