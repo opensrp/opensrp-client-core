@@ -11,6 +11,7 @@ import android.os.Looper;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -19,12 +20,15 @@ import org.jetbrains.annotations.NotNull;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.domain.DuplicateZeirIdStatus;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+import timber.log.Timber;
 
 /**
  * Created by ndegwamartin on 26/06/2021.
@@ -113,6 +117,18 @@ public class AppHealthUtils {
                 //Overridden: Do nothing
             });
         }
+    }
+
+    @Nullable
+    public static DuplicateZeirIdStatus cleanUniqueZeirIds(){
+        try {
+            return CoreLibrary.getInstance().context().getEventClientRepository()
+                    .cleanDuplicateMotherIds();
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+
+        return null;
     }
 
     public interface HealthStatsView {
