@@ -55,6 +55,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -2404,7 +2405,12 @@ public class EventClientRepository extends BaseRepository {
             String clientType = clientJson.getString(AllConstants.CLIENT_TYPE);
 
             if (AllConstants.CHILD_TYPE.equals(clientType)) {
-                identifiers.put(ZEIR_ID, newZeirId.replaceAll("-", ""));
+                String identifierLabel = ZEIR_ID;
+                if (!identifiers.has(ZEIR_ID)) {
+                    identifierLabel = ZEIR_ID.toLowerCase(Locale.ROOT);
+                }
+
+                identifiers.put(identifierLabel, newZeirId.replaceAll("-", ""));
             } else if (AllConstants.Entity.MOTHER.equals(clientType)) {
                 identifiers.put(M_ZEIR_ID, newZeirId);
                 eventType = AllConstants.EventType.NEW_WOMAN_REGISTRATION;
