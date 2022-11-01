@@ -34,6 +34,12 @@ public class DuplicateCleanerWorker extends Worker {
         return !allSharedPreferences.getBooleanPreference(AllConstants.PREF_KEY.DUPLICATE_IDS_FIXED);
     }
 
+    /**
+     * Schedule this job to run periodically
+     *
+     * @param context
+     * @param mins - Duration after which the job repeatedly runs. This should be at least 15 mins
+     */
     public static void schedulePeriodically(Context context, int mins) {
         PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest.Builder(DuplicateCleanerWorker.class, mins, TimeUnit.MINUTES)
                 .build();
@@ -49,7 +55,7 @@ public class DuplicateCleanerWorker extends Worker {
 
         if (!allSharedPreferences.getBooleanPreference(AllConstants.PREF_KEY.DUPLICATE_IDS_FIXED)) {
             DuplicateZeirIdStatus duplicateZeirIdStatus = AppHealthUtils.cleanUniqueZeirIds();
-            Timber.i("Doing some cleaning work");
+            Timber.i("Started doing duplicate client-identifier cleanup");
             if (duplicateZeirIdStatus != null && duplicateZeirIdStatus.equals(DuplicateZeirIdStatus.CLEANED)) {
                 allSharedPreferences.saveBooleanPreference(AllConstants.PREF_KEY.DUPLICATE_IDS_FIXED, true);
                 WorkManager.getInstance(mContext).cancelWorkById(this.getId());
