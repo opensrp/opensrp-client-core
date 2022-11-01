@@ -165,7 +165,7 @@ dependencies {
 
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.test:monitor:1.5.0'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
     implementation 'net.zetetic:android-database-sqlcipher:4.5.1'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.3'
@@ -176,7 +176,7 @@ dependencies {
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation group: 'org.mozilla', name: 'rhino', version: '1.7.14'
-    implementation 'org.ocpsoft.prettytime:prettytime:4.0.4.Final'
+    implementation 'org.ocpsoft.prettytime:prettytime:5.0.6.Final'
     api 'joda-time:joda-time:2.10.14'
     implementation('com.github.bmelnychuk:atv:1.2.9') {
         exclude group: 'com.google.android', module: 'android'
@@ -230,7 +230,7 @@ dependencies {
 
     implementation 'org.smartregister:opensrp-plan-evaluator:1.6.7-SNAPSHOT'
 
-    implementation 'xerces:xercesImpl:2.12.0'
+    implementation 'xerces:xercesImpl:2.12.2'
 
     compileOnly platform('com.google.firebase:firebase-bom:30.0.2')
     compileOnly 'com.google.firebase:firebase-crashlytics'
@@ -246,8 +246,8 @@ dependencies {
     testImplementation("org.mockito:mockito-core:$mockitoVersion")
     testImplementation("org.mockito:mockito-inline:$mockitoVersion")
 
-    testImplementation "androidx.test:core:1.4.0-rc01"
-    testImplementation "androidx.test.ext:junit:1.1.3-rc01"
+    testImplementation "androidx.test:core:1.5.0-rc01"
+    testImplementation "androidx.test.ext:junit:1.1.4-rc01"
 
     testAnnotationProcessor group: 'com.jakewharton', name: 'butterknife', version: '10.2.3'
 
@@ -274,10 +274,10 @@ dependencies {
     def powerMockVersion = '2.0.9'
     testImplementation "org.powermock:powermock-core:$powerMockVersion"
 
-    def fragmentVersion = "1.5.0-rc01"
+    def fragmentVersion = "1.5.4"
     testImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
 
-    testImplementation 'org.skyscreamer:jsonassert:1.5.0'
+    testImplementation 'org.skyscreamer:jsonassert:1.5.1'
 }
 
 task clearJar(type: Delete) {
