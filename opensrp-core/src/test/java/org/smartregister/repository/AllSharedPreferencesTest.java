@@ -457,4 +457,17 @@ public class AllSharedPreferencesTest extends TestCase {
 
         assertTrue(allSharedPreferences.fetchTransactionsKilledFlag());
     }
+
+    @Test
+    public void saveBooleanPreferenceShouldCallSharedPreferencesEdit() {
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.doReturn(editor).when(preferences).edit();
+        Mockito.doReturn(true).when(editor).commit();
+        Mockito.doReturn(editor).when(editor).putBoolean(Mockito.anyString(), Mockito.anyBoolean());
+
+        allSharedPreferences.saveBooleanPreference("is-logged-in", true);
+
+        Mockito.verify(preferences, Mockito.times(1)).edit();
+        Mockito.verify(editor).putBoolean("is-logged-in", true);
+    }
 }
