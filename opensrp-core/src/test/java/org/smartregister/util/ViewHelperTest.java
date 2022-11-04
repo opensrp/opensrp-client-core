@@ -12,7 +12,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
@@ -54,12 +53,6 @@ public class ViewHelperTest extends BaseUnitTest {
 
     @Mock
     private Resources resources;
-
-    @Before
-    public void setUp() {
-        org.mockito.MockitoAnnotations.initMocks(this);
-    }
-
 
     @Test
     public void testGetPaginationViewInflatesCorrectLayout() {

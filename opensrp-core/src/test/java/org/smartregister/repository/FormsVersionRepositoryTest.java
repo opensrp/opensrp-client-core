@@ -2,7 +2,7 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -38,12 +38,12 @@ public class FormsVersionRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         formsVersionRepository = new FormsVersionRepository();
         formsVersionRepository.updateMasterRepository(repository);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getCursor());
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(), Mockito.isNull(), Mockito.isNull())).thenReturn(getCursor());
         Mockito.when(sqLiteDatabase.update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class))).thenReturn(1);
     }
 
@@ -104,7 +104,7 @@ public class FormsVersionRepositoryTest extends BaseUnitTest {
         data.put(FORM_DIR_NAME_COLUMN, "dir");
         data.put(SYNC_STATUS_COLUMN, SyncStatus.PENDING.value());
         formsVersionRepository.addFormVersion(data);
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(), Mockito.any(ContentValues.class));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class FormsVersionRepositoryTest extends BaseUnitTest {
         FormDefinitionVersion fd = new FormDefinitionVersion("", "", "");
         fd.setSyncStatus(SyncStatus.PENDING);
         formsVersionRepository.addFormVersionFromObject(fd);
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(), Mockito.any(ContentValues.class));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class FormsVersionRepositoryTest extends BaseUnitTest {
     @Test
     public void assertDeleteAllCallsDatabaseDelete() {
         formsVersionRepository.deleteAll();
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).delete(Mockito.anyString(), Mockito.isNull(String.class), Mockito.isNull(String[].class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).delete(Mockito.anyString(), Mockito.isNull(), Mockito.isNull());
     }
 
     @Test

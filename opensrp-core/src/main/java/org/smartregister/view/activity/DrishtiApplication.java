@@ -1,5 +1,7 @@
 package org.smartregister.view.activity;
 
+import static org.smartregister.util.Log.logError;
+
 import android.app.Application;
 import android.os.Build;
 
@@ -10,7 +12,6 @@ import androidx.multidex.MultiDex;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONObject;
-import org.smartregister.AllConstants;
 import org.smartregister.BuildConfig;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -19,7 +20,6 @@ import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.P2PClassifier;
-import org.smartregister.util.BitmapImageCache;
 import org.smartregister.util.CrashLyticsTree;
 import org.smartregister.util.CredentialsHelper;
 import org.smartregister.util.OpenSRPImageLoader;
@@ -30,36 +30,19 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-import static org.smartregister.util.Log.logError;
-
 public abstract class DrishtiApplication extends Application {
 
     protected static DrishtiApplication mInstance;
-    private static BitmapImageCache memoryImageCache;
     private static OpenSRPImageLoader cachedImageLoader;
+    private static CredentialsHelper credentialsHelper;
     protected Locale locale = null;
     protected Context context;
     protected Repository repository;
     private byte[] password;
     private String username;
-    private static CredentialsHelper credentialsHelper;
 
     public static synchronized <X extends DrishtiApplication> X getInstance() {
         return (X) mInstance;
-    }
-
-    @Nullable
-    public P2PClassifier<JSONObject> getP2PClassifier() {
-        return null;
-    }
-
-    public static BitmapImageCache getMemoryCacheInstance() {
-        if (memoryImageCache == null) {
-            memoryImageCache = new BitmapImageCache(BitmapImageCache
-                    .calculateMemCacheSize(AllConstants.ImageCache.MEM_CACHE_PERCENT));
-        }
-
-        return memoryImageCache;
     }
 
     public static String getAppDir() {
@@ -79,10 +62,16 @@ public abstract class DrishtiApplication extends Application {
         return cachedImageLoader;
     }
 
+    @Nullable
+    public P2PClassifier<JSONObject> getP2PClassifier() {
+        return null;
+    }
+
     @Override
     public void onCreate() {
         try {
             super.onCreate();
+
             initializeCrashLyticsTree();
 
             mInstance = this;

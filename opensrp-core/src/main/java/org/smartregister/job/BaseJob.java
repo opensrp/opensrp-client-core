@@ -1,6 +1,7 @@
 package org.smartregister.job;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobManager;
@@ -69,5 +70,13 @@ public abstract class BaseJob extends Job {
     //Custom app context method to aid unit testing
     public Context getApplicationContext() {
         return super.getContext();
+    }
+
+    protected void startIntentService(Intent intent) {
+        try {
+            getApplicationContext().startService(intent);
+        } catch (Exception e) {
+            Timber.e(e);
+        }
     }
 }

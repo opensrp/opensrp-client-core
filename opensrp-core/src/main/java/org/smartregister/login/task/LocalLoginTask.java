@@ -1,21 +1,22 @@
 package org.smartregister.login.task;
 
-import android.os.AsyncTask;
-
 import org.smartregister.CoreLibrary;
 import org.smartregister.event.Listener;
 import org.smartregister.service.UserService;
 import org.smartregister.view.contract.BaseLoginContract;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * Created by ndegwamartin on 13/06/2020.
  */
-public class LocalLoginTask extends AsyncTask<Void, Integer, Boolean> {
+public class LocalLoginTask {
 
-    private BaseLoginContract.View mLoginView;
     private final String mUsername;
     private final char[] mPassword;
     private final Listener<Boolean> mAfterLoginCheck;
+    private BaseLoginContract.View mLoginView;
 
     public LocalLoginTask(BaseLoginContract.View loginView, String username, char[] password, Listener<Boolean> afterLoginCheck) {
         mLoginView = loginView;
@@ -24,23 +25,25 @@ public class LocalLoginTask extends AsyncTask<Void, Integer, Boolean> {
         mAfterLoginCheck = afterLoginCheck;
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
+    public void execute() {
+
         mLoginView.showProgress(true);
-    }
 
-    @Override
-    protected Boolean doInBackground(Void... voids) {
-        return getUserService().isUserInValidGroup(mUsername, mPassword);
-    }
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    @Override
-    protected void onPostExecute(final Boolean loginResponse) {
-        super.onPostExecute(loginResponse);
+        executorService.execute(() -> {
 
-        mLoginView.showProgress(false);
-        mAfterLoginCheck.onEvent(loginResponse);
+            boolean loginResponse = getUserService().isUserInValidGroup(mUsername, mPassword);
+
+            mLoginView.getAppCompatActivity().runOnUiThread(() -> {
+
+                mLoginView.showProgress(false);
+                mAfterLoginCheck.onEvent(loginResponse);
+
+            });
+
+        });
+
     }
 
     private UserService getUserService() {

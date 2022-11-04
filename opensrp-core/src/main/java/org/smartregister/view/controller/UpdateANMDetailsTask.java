@@ -1,40 +1,37 @@
 package org.smartregister.view.controller;
 
-import android.os.AsyncTask;
+import static org.smartregister.util.Log.logWarn;
+
+import org.apache.commons.lang3.StringUtils;
+import org.smartregister.util.AppExecutorService;
 
 import java.util.concurrent.locks.ReentrantLock;
-
-import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
-import static org.smartregister.util.Log.logWarn;
 
 public class UpdateANMDetailsTask {
     private static final ReentrantLock lock = new ReentrantLock();
     private final ANMController anmController;
+    private AppExecutorService appExecutors;
 
     public UpdateANMDetailsTask(ANMController anmController) {
         this.anmController = anmController;
+        appExecutors = new AppExecutorService();
     }
 
     public void fetch(final AfterANMDetailsFetchListener afterFetchListener) {
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                if (!lock.tryLock()) {
-                    logWarn("Update ANM details is in progress, so going away.");
-                    cancel(true);
-                    return null;
-                }
+        appExecutors.executorService().execute(() -> {
+            if (!lock.tryLock()) {
+                logWarn("Update ANM details is in progress, so going away.");
+                appExecutors.executorService().shutdownNow();
+            } else {
+                String anm;
                 try {
-                    return anmController.get();
+                    anm = anmController.get();
                 } finally {
                     lock.unlock();
                 }
+                if (!StringUtils.isEmpty(anm))
+                    appExecutors.mainThread().execute(() -> afterFetchListener.afterFetch(anm));
             }
-
-            @Override
-            protected void onPostExecute(String anm) {
-                afterFetchListener.afterFetch(anm);
-            }
-        }.executeOnExecutor(THREAD_POOL_EXECUTOR);
+        });
     }
 }

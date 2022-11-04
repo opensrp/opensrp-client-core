@@ -38,7 +38,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -115,7 +115,7 @@ public class RecreateECUtilTest extends BaseUnitTest {
         when(clientProcessor.getColumnMappings(tableName)).thenReturn(null);
         Pair<List<Event>, List<Client>> eventsAndClients = recreateECUtil.createEventAndClients(database, tableName, query, params, "FamilyRegistration", "Family", formTag);
         assertNull(eventsAndClients);
-        verifyZeroInteractions(database);
+        verifyNoInteractions(database);
         verify(clientProcessor).getColumnMappings(tableName);
     }
 
@@ -123,7 +123,7 @@ public class RecreateECUtilTest extends BaseUnitTest {
     @Test
     public void testSaveEventAndClientsWithNullEC() {
         recreateECUtil.saveEventAndClients(null, database);
-        verifyZeroInteractions(database);
+        verifyNoInteractions(database);
     }
 
     @Test

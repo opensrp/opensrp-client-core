@@ -2,7 +2,7 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -34,7 +34,7 @@ public class ServiceProvidedRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         serviceProvidedRepository = new ServiceProvidedRepository();
         serviceProvidedRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
@@ -56,7 +56,7 @@ public class ServiceProvidedRepositoryTest extends BaseUnitTest {
     public void assertadCallsDatabaseInsert() {
         ServiceProvided serviceProvided = new ServiceProvided("", "", "", new HashMap<String, String>());
         serviceProvidedRepository.add(serviceProvided);
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(), Mockito.any(ContentValues.class));
     }
 
     public static final String ENTITY_ID_COLUMN = "entityId";
@@ -72,7 +72,7 @@ public class ServiceProvidedRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertAllReturnsList() {
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.anyString())).thenReturn(getCursor());
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.anyString())).thenReturn(getCursor());
         Assert.assertNotNull(serviceProvidedRepository.all());
     }
 

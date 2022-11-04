@@ -1,6 +1,6 @@
 package org.smartregister.service.intentservices;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 import org.smartregister.BaseUnitTest;

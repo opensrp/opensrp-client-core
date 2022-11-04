@@ -29,7 +29,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -77,7 +77,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
     @Mock
     private HTTPAgent httpAgent;
 
-    private Context context = RuntimeEnvironment.application;
+    private Context context = ApplicationProvider.getApplicationContext();
 
     private SyncIntentService syncIntentService;
 
@@ -166,12 +166,12 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
         CoreLibrary.getInstance().context().allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
         syncIntentService = new SyncIntentService();
         syncIntentService.init(context);
-        Whitebox.setInternalState(syncIntentService, "mBase", RuntimeEnvironment.application);
+        Whitebox.setInternalState(syncIntentService, "mBase", ApplicationProvider.getApplicationContext());
     }
 
     @Test

@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.BaseUnitTest;
 
 /**
@@ -19,9 +19,9 @@ public class AndroidMCryptographyTest extends BaseUnitTest {
     @Before
     public void setUp() throws Exception {
 
-        MockitoAnnotations.initMocks(this);
+        
 
-        androidMCryptography = new AndroidMCryptography(RuntimeEnvironment.application);
+        androidMCryptography = new AndroidMCryptography(ApplicationProvider.getApplicationContext());
     }
 
 

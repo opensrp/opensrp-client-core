@@ -41,7 +41,7 @@ class ChangePasswordActivityTest : BaseUnitTest() {
             Assert.assertNotNull(activity)
             Assert.assertNotNull(activity.intent)
 
-            val url: String =
+            val url: String? =
                 activity.intent.getStringExtra(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL)
             Assert.assertNotNull(url)
             Assert.assertEquals(

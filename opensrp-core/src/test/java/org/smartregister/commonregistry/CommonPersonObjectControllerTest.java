@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.repository.AllBeneficiaries;
@@ -38,7 +37,6 @@ public class CommonPersonObjectControllerTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
         CoreLibrary.init(context);
         emptyDetails = Collections.emptyMap();
         controller = new CommonPersonObjectController(allCommonsRepository,

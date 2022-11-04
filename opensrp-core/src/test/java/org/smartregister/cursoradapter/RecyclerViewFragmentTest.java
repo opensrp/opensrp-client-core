@@ -8,23 +8,23 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.testing.FragmentScenario;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.core.app.ApplicationProvider;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.powermock.reflect.internal.WhiteboxImpl;
-import org.robolectric.Robolectric;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.Context;
 import org.smartregister.R;
-import org.smartregister.view.activity.mock.BaseRegisterActivityMock;
 import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.SortOption;
 
@@ -34,8 +34,6 @@ import org.smartregister.view.dialog.SortOption;
 public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
 
     private RecyclerViewFragmentMock recyclerViewFragment;
-
-    private AppCompatActivity activity;
 
     @Mock
     private SortOption sortOption;
@@ -51,20 +49,6 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
         recyclerViewFragment = spy(new RecyclerViewFragmentMock());
     }
 
-    public void initWithActivity() {
-        activity = Robolectric.buildActivity(BaseRegisterActivityMock.class).create().start().resume().get();
-        activity.getSupportFragmentManager().beginTransaction().add(recyclerViewFragment, "recyclerViewFragment").commit();
-        Context.getInstance();
-        Context.getInstance().updateApplicationContext(activity.getApplicationContext());
-    }
-
-    @After
-    public void tearDown() {
-        if (activity != null) {
-            activity.getDelegate().onDestroy();
-        }
-    }
-
     @Test
     public void testGetAndSetTableName() {
         recyclerViewFragment.setTablename("ec_events");
@@ -72,19 +56,26 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testGetSearchView() {
-        initWithActivity();
-        assertNotNull(recyclerViewFragment.getSearchView());
-        assertEquals(R.id.edt_search, recyclerViewFragment.getSearchView().getId());
+    public void testGetSearchView2() {
+        FragmentScenario<RecyclerViewFragmentMock> scenario = FragmentScenario.launchInContainer(RecyclerViewFragmentMock.class);
+        assertNotNull(scenario);
+        final RecyclerViewFragmentMock[] recyclerViewFragmentMockRef = new RecyclerViewFragmentMock[1];
+        scenario.onFragment(fragment -> recyclerViewFragmentMockRef[0] = fragment);
+
+        assertNotNull(recyclerViewFragmentMockRef[0].getSearchView());
+        assertEquals(R.id.edt_search, recyclerViewFragmentMockRef[0].getSearchView().getId());
     }
 
     @Test
     public void testGetSearchCancelView() {
-        initWithActivity();
-        assertNotNull(recyclerViewFragment.getSearchCancelView());
-        assertEquals(R.id.btn_search_cancel, recyclerViewFragment.getSearchCancelView().getId());
-    }
+        FragmentScenario<RecyclerViewFragmentMock> scenario = FragmentScenario.launchInContainer(RecyclerViewFragmentMock.class);
+        scenario.onFragment(fragment -> {
 
+            assertNotNull(fragment.getSearchCancelView());
+            assertEquals(R.id.btn_search_cancel, fragment.getSearchCancelView().getId());
+        });
+
+    }
 
     @Test
     public void testGetCurrentVillageFilter() {
@@ -97,7 +88,6 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
         recyclerViewFragment.setCurrentSearchFilter(filterOption);
         assertEquals(filterOption, recyclerViewFragment.getCurrentSearchFilter());
     }
-
 
     @Test
     public void testGetCurrentSortOption() {
@@ -114,10 +104,15 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testOnCreateShouldSetupViewsAndInvokeResumption() {
-        initWithActivity();
-        verify(recyclerViewFragment).onInitialization();
-        verify(recyclerViewFragment).setupSearchView(any(View.class));
-        verify(recyclerViewFragment).onResumption();
+        FragmentScenario<RecyclerViewFragmentMock> scenario = FragmentScenario.launchInContainer(RecyclerViewFragmentMock.class);
+        scenario.onFragment(fragment -> {
+
+            RecyclerViewFragmentMock fragmentSpy = spy(fragment);
+            fragmentSpy.onCreateView(LayoutInflater.from(ApplicationProvider.getApplicationContext()), (ViewGroup) fragmentSpy.getView().getParent(), mock(Bundle.class));
+            verify(fragmentSpy).onInitialization();
+            verify(fragmentSpy).setupSearchView(any(View.class));
+            verify(fragmentSpy).onResumption();
+        });
     }
 
     @Test

@@ -44,7 +44,7 @@ public class SettingsRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         settingsRepository = new SettingsRepository();
         settingsRepository.updateMasterRepository(repository);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
@@ -71,26 +71,26 @@ public class SettingsRepositoryTest extends BaseUnitTest {
     @Test
     public void assertupdateSetting() {
         settingsRepository.updateSetting("KEY", "VALUE");
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).replace(anyString(), Mockito.isNull(String.class), any(ContentValues.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).replace(anyString(), Mockito.isNull(), any(ContentValues.class));
     }
 
     @Test
     public void assertupdateBLOB() {
         settingsRepository.updateBLOB("", new byte[]{});
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).replace(anyString(), Mockito.isNull(String.class), any(ContentValues.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).replace(anyString(), Mockito.isNull(), any(ContentValues.class));
     }
 
     @Test
     public void assertquerySetting() {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{SETTINGS_KEY_COLUMN, SETTINGS_VALUE_COLUMN});
         matrixCursor.addRow(new String[]{"KEY", "VALUE"});
-        Mockito.when(sqLiteDatabase.query(anyString(), any(String[].class), anyString(), any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), anyString())).thenReturn(matrixCursor);
+        Mockito.when(sqLiteDatabase.query(anyString(), any(String[].class), anyString(), any(String[].class), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), anyString())).thenReturn(matrixCursor);
         Assert.assertEquals(settingsRepository.querySetting("", ""), "KEY");
     }
 
     @Test
     public void assertqueryBlob() {
-        Mockito.when(sqLiteDatabase.query(anyString(), any(String[].class), anyString(), any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), anyString())).thenReturn(getCursor());
+        Mockito.when(sqLiteDatabase.query(anyString(), any(String[].class), anyString(), any(String[].class), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), anyString())).thenReturn(getCursor());
         Assert.assertEquals(settingsRepository.queryBLOB(""), null);
     }
 
@@ -109,7 +109,7 @@ public class SettingsRepositoryTest extends BaseUnitTest {
         Mockito.doReturn(1L).when(sqLiteDatabase).replace(Mockito.eq(SETTINGS_TABLE_NAME), Mockito.nullable(String.class), contentValuesArgumentCaptor.capture());
 
         settingsRepository.updateSetting(s);
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).replace(anyString(), Mockito.isNull(String.class), any(ContentValues.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).replace(anyString(), Mockito.isNull(), any(ContentValues.class));
 
         Assert.assertEquals(contentValuesArgumentCaptor.getValue().get(SETTINGS_KEY_COLUMN), "test");
     }

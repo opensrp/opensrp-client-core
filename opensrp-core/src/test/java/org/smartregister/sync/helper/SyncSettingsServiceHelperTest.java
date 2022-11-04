@@ -52,7 +52,7 @@ public class SyncSettingsServiceHelperTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         Mockito.doReturn(context).when(coreLibrary).context();
         Mockito.doReturn(httpAgent).when(context).getHttpAgent();
         Mockito.doReturn(allSharedPreferences).when(context).allSharedPreferences();

@@ -1,42 +1,37 @@
 package org.smartregister.view.controller;
 
-import android.os.AsyncTask;
+import static org.smartregister.util.Log.logWarn;
 
+import org.smartregister.util.AppExecutorService;
 import org.smartregister.view.contract.HomeContext;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
-import static org.smartregister.util.Log.logWarn;
-
 public class NativeUpdateANMDetailsTask {
     private static final ReentrantLock lock = new ReentrantLock();
     private final ANMController anmController;
+    private AppExecutorService appExecutors;
 
     public NativeUpdateANMDetailsTask(ANMController anmController) {
         this.anmController = anmController;
+        this.appExecutors = new AppExecutorService();
     }
 
     public void fetch(final NativeAfterANMDetailsFetchListener afterFetchListener) {
-        new AsyncTask<Void, Void, HomeContext>() {
-            @Override
-            protected HomeContext doInBackground(Void... params) {
-                if (!lock.tryLock()) {
-                    logWarn("Update ANM details is in progress, so going away.");
-                    cancel(true);
-                    return null;
-                }
+        appExecutors.executorService().execute(() -> {
+            if (!lock.tryLock()) {
+                logWarn("Update ANM details is in progress, so going away.");
+                appExecutors.executorService().shutdownNow();
+            } else {
+                HomeContext anm;
                 try {
-                    return anmController.getHomeContext();
+                    anm = anmController.getHomeContext();
                 } finally {
                     lock.unlock();
                 }
+                if (anm != null)
+                    afterFetchListener.afterFetch(anm);
             }
-
-            @Override
-            protected void onPostExecute(HomeContext anm) {
-                afterFetchListener.afterFetch(anm);
-            }
-        }.executeOnExecutor(THREAD_POOL_EXECUTOR);
+        });
     }
 }

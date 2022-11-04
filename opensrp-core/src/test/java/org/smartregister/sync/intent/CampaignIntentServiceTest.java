@@ -49,7 +49,7 @@ public class CampaignIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         campaignIntentService = Mockito.spy(new CampaignIntentService());
         Mockito.doNothing().when(campaignIntentService).sendBroadcast(ArgumentMatchers.any(Intent.class));
     }

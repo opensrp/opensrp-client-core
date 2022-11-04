@@ -50,7 +50,7 @@ public class ServiceLocationsAdapterTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         locationNames = new ArrayList<>();
         locationNames.add("test1"); locationNames.add("test2"); locationNames.add("test3");
     }

@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 
@@ -36,7 +35,6 @@ public class AccountHelperTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
 
         Account[] accounts = {new Account(CORE_ACCOUNT_NAME, CORE_ACCOUNT_TYPE)};
         Mockito.doReturn(accounts).when(accountManager).getAccountsByType(CORE_ACCOUNT_TYPE);

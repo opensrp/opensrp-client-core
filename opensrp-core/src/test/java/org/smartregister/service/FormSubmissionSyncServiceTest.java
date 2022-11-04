@@ -45,7 +45,7 @@ public class FormSubmissionSyncServiceTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         service = new FormSubmissionSyncService(formSubmissionService, httpAgent, repository, allSettings, allSharedPreferences, configuration);
 
         formInstanceJSON = "{form:{bind_type: 'ec'}}";
@@ -89,8 +89,8 @@ public class FormSubmissionSyncServiceTest extends BaseUnitTest {
 
         Mockito.verify(repository).getPendingFormSubmissions();
         Mockito.verifyNoMoreInteractions(repository);
-        Mockito.verifyZeroInteractions(allSettings);
-        Mockito.verifyZeroInteractions(httpAgent);
+        Mockito.verifyNoInteractions(allSettings);
+        Mockito.verifyNoInteractions(httpAgent);
     }
 
     @Test
@@ -124,7 +124,7 @@ public class FormSubmissionSyncServiceTest extends BaseUnitTest {
 
         Assert.assertEquals(FetchStatus.nothingFetched, fetchStatus);
         Mockito.verify(httpAgent).fetch("http://dristhi_base_url/form-submissions?anm-id=anm id 1&timestamp=122&batch-size=1");
-        Mockito.verifyZeroInteractions(formSubmissionService);
+        Mockito.verifyNoInteractions(formSubmissionService);
     }
 
     @Test
@@ -137,6 +137,6 @@ public class FormSubmissionSyncServiceTest extends BaseUnitTest {
         FetchStatus fetchStatus = service.pullFromServer();
 
         Assert.assertEquals(FetchStatus.fetchedFailed, fetchStatus);
-        Mockito.verifyZeroInteractions(formSubmissionService);
+        Mockito.verifyNoInteractions(formSubmissionService);
     }
 }

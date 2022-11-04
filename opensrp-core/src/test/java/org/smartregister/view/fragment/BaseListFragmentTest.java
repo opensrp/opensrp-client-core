@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.view.ListContract;
 
@@ -19,7 +18,6 @@ public class BaseListFragmentTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         baseListFragment = Mockito.mock(BaseListFragment.class, Mockito.CALLS_REAL_METHODS);
     }
 

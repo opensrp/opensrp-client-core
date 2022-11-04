@@ -12,8 +12,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.annotation.Config;
+import org.smartregister.BaseUnitTest;
 
 import java.io.UnsupportedEncodingException;
 
@@ -21,9 +22,7 @@ import java.io.UnsupportedEncodingException;
  * Created by ndegwamartin on 2019-05-22.
  */
 
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = Build.VERSION_CODES.O_MR1)
-public class CryptographicHelperTest {
+public class CryptographicHelperTest extends BaseUnitTest {
 
     public static final String SAMPLE_STRING = "I am a high security string that needs to be hidden from prying eyes";
 
@@ -39,9 +38,9 @@ public class CryptographicHelperTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
 
-        cryptographicHelper = CryptographicHelper.getInstance(RuntimeEnvironment.application);
+        cryptographicHelper = CryptographicHelper.getInstance(ApplicationProvider.getApplicationContext());
 
         Assert.assertNotNull(cryptographicHelper);
         cryptographicHelper.setMCryptography(androidMCryptography);

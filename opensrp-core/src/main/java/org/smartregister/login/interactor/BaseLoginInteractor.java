@@ -9,8 +9,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import androidx.annotation.VisibleForTesting;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,7 +40,10 @@ import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import timber.log.Timber;
 
@@ -48,11 +52,10 @@ import timber.log.Timber;
  */
 public abstract class BaseLoginInteractor implements BaseLoginContract.Interactor {
 
-    private BaseLoginContract.Presenter mLoginPresenter;
-
     private static final int MINIMUM_JOB_FLEX_VALUE = 5;
-
+    private BaseLoginContract.Presenter mLoginPresenter;
     private RemoteLoginTask remoteLoginTask;
+    private boolean isLocalLogin;
 
     private ResetAppHelper resetAppHelper;
 
@@ -70,18 +73,26 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
     @Override
     public void login(WeakReference<BaseLoginContract.View> view, String userName, char[] password) {
+        getLoginView().showProgress(true);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(() -> {
 
-        boolean localLogin = !getSharedPreferences().fetchForceRemoteLogin(userName);
-        org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
-        if (opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN)
-                && localLogin
-                && (HttpStatus.SC_UNAUTHORIZED == getSharedPreferences().getLastAuthenticationHttpStatus())
-                && NetworkUtils.isNetworkAvailable()) {
-            localLogin = false;
-        }
+            isLocalLogin = !getSharedPreferences().fetchForceRemoteLogin(userName);
+            org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
+            if (NetworkUtils.isNetworkAvailable() && (isRefreshTokenExpired(userName) || (opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN)
+                    && isLocalLogin
+                    && HttpURLConnection.HTTP_UNAUTHORIZED == getSharedPreferences().getLastAuthenticationHttpStatus()))) {
+                isLocalLogin = false;
+            }
 
-        loginWithLocalFlag(view, localLogin && getSharedPreferences().isRegisteredANM(userName), userName, password);
+            getLoginView().getAppCompatActivity().runOnUiThread(() -> loginWithLocalFlag(view, isLocalLogin && getSharedPreferences().isRegisteredANM(userName), userName, password));
 
+        });
+    }
+
+    @VisibleForTesting
+    protected boolean isRefreshTokenExpired(String userName) {
+        return !AccountHelper.isRefreshTokenValid(userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
     }
 
     public void loginWithLocalFlag(WeakReference<BaseLoginContract.View> view, boolean localLogin, String userName, char[] password) {
@@ -94,7 +105,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
             remoteLogin(userName, password, CoreLibrary.getInstance().getAccountAuthenticatorXml());
         }
 
-        Timber.i("Login result finished " + DateTime.now().toString());
+        Timber.i("Login result finished " + DateTime.now());
     }
 
     private void localLogin(WeakReference<BaseLoginContract.View> view, String userName, char[] password) {
@@ -106,7 +117,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
                 getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.unauthorized));
 
-            } else if (isAuthenticated && (!AllConstants.TIME_CHECK || TimeStatus.OK.equals(getUserService().validateStoredServerTimeZone()))) {
+            } else if (isAuthenticated && isValidTimecheck(getUserService().validateStoredServerTimeZone())) {
 
                 navigateToHomePage(userName);
 
@@ -147,28 +158,26 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 getSharedPreferences().savePreference("DRISHTI_BASE_URL", getApplicationContext().getString(R.string.opensrp_url));
             }
             if (!getSharedPreferences().fetchBaseURL("").isEmpty()) {
-                tryRemoteLogin(userName, password, accountAuthenticatorXml, loginResponse -> {
-                    getLoginView().enableLoginButton(true);
-                    if (loginResponse == LoginResponse.SUCCESS) {
-                        String username = loginResponse.payload() != null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
-                                ? loginResponse.payload().user.getUsername() : userName;
-                        if (getUserService().isUserInPioneerGroup(username)) {
-                            TimeStatus timeStatus = getUserService().validateDeviceTime(
-                                    loginResponse.payload(), AllConstants.MAX_SERVER_TIME_DIFFERENCE
-                            );
-                            if (!AllConstants.TIME_CHECK || timeStatus.equals(TimeStatus.OK)) {
 
-                                remoteLoginWith(username, loginResponse);
+                tryRemoteLogin(userName, password, accountAuthenticatorXml, loginResponse -> {
+
+                    getLoginView().enableLoginButton(true);
+
+                    if (loginResponse == LoginResponse.SUCCESS) {
+
+                        String username = getUsername(userName, loginResponse);
+
+                        if (getUserService().isUserInPioneerGroup(username)) {
+
+                            TimeStatus timeStatus = getUserService().validateDeviceTime(loginResponse.payload(), AllConstants.MAX_SERVER_TIME_DIFFERENCE);
+
+                            if (isValidTimecheck(timeStatus)) {
+
+                                postProcessRemoteLoginSuccess(username, loginResponse);
 
                             } else {
-                                if (timeStatus.equals(TimeStatus.TIMEZONE_MISMATCH)) {
-                                    TimeZone serverTimeZone = UserService.getServerTimeZone(loginResponse.payload());
 
-                                    getLoginView().showErrorDialog(getApplicationContext().getString(timeStatus.getMessage(),
-                                            serverTimeZone.getDisplayName()));
-                                } else {
-                                    getLoginView().showErrorDialog(getApplicationContext().getString(timeStatus.getMessage()));
-                                }
+                                postProcessRemoteLoginServerTimeMismatch(timeStatus, loginResponse);
                             }
                         } else {
 
@@ -216,6 +225,26 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         }
     }
 
+    private boolean isValidTimecheck(TimeStatus timeStatus) {
+        return !CoreLibrary.getInstance().isTimecheckDisabled() || TimeStatus.OK.equals(timeStatus);
+    }
+
+    private void postProcessRemoteLoginServerTimeMismatch(TimeStatus timeStatus, LoginResponse loginResponse) {
+        if (timeStatus.equals(TimeStatus.TIMEZONE_MISMATCH)) {
+
+            TimeZone serverTimeZone = UserService.getServerTimeZone(loginResponse.payload());
+            getLoginView().showErrorDialog(getApplicationContext().getString(timeStatus.getMessage(), serverTimeZone.getDisplayName()));
+
+        } else {
+            getLoginView().showErrorDialog(getApplicationContext().getString(timeStatus.getMessage()));
+        }
+    }
+
+    private String getUsername(String userName, LoginResponse loginResponse) {
+        return loginResponse.payload() != null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
+                ? loginResponse.payload().user.getUsername() : userName;
+    }
+
     private void tryRemoteLogin(final String userName, final char[] password, final AccountAuthenticatorXml accountAuthenticatorXml, final Listener<LoginResponse> afterLogincheck) {
         if (remoteLoginTask != null && !remoteLoginTask.isCancelled()) {
             remoteLoginTask.cancel(true);
@@ -224,7 +253,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         remoteLoginTask.execute();
     }
 
-    private void remoteLoginWith(String userName, LoginResponse loginResponse) {
+    private void postProcessRemoteLoginSuccess(String userName, LoginResponse loginResponse) {
         getUserService().processLoginResponseDataForUser(userName, loginResponse.payload());
         processServerSettings(loginResponse);
 

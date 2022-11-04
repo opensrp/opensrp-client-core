@@ -24,12 +24,13 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.R;
+import org.smartregister.view.contract.StatsFragmentContract;
 import org.smartregister.view.presenter.StatsFragmentPresenter;
 
 import java.util.HashMap;
@@ -50,9 +51,11 @@ public class StatsFragmentTest extends BaseUnitTest {
     @Mock
     private Bundle savedInstanceState;
 
+    @Spy
+    private StatsFragmentContract.View view;
+
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         statsFragment = Mockito.mock(StatsFragment.class, Mockito.CALLS_REAL_METHODS);
     }
 
@@ -79,7 +82,7 @@ public class StatsFragmentTest extends BaseUnitTest {
         View rootView = Mockito.spy(Mockito.mock(View.class));
         statsFragment = Mockito.spy(statsFragment);
 
-        presenter = Mockito.spy(Mockito.mock(StatsFragmentPresenter.class));
+        presenter = Mockito.spy(new StatsFragmentPresenter(view));
         ReflectionHelpers.setField(statsFragment, "presenter", presenter);
 
         Mockito.doReturn(btnRefreshStats).when(rootView).findViewById(R.id.refresh_button);
@@ -101,7 +104,7 @@ public class StatsFragmentTest extends BaseUnitTest {
         syncInfoMap.put(VALID_EVENTS, 7);
         syncInfoMap.put(VALID_CLIENTS, 8);
 
-        View rootView = LayoutInflater.from(RuntimeEnvironment.application).inflate(R.layout.fragment_stats, null);
+        View rootView = LayoutInflater.from(ApplicationProvider.getApplicationContext()).inflate(R.layout.fragment_stats, null);
 
         TextView tvSyncedEvents = rootView.findViewById(R.id.synced_events);
         TextView tvUnSyncedEvents = rootView.findViewById(R.id.unsynced_events);
@@ -126,7 +129,7 @@ public class StatsFragmentTest extends BaseUnitTest {
 
     @Test
     public void assertTestLabels() {
-        View rootView = LayoutInflater.from(RuntimeEnvironment.application).inflate(R.layout.fragment_stats, null);
+        View rootView = LayoutInflater.from(ApplicationProvider.getApplicationContext()).inflate(R.layout.fragment_stats, null);
         TextView tvSyncedEventsLabel = rootView.findViewById(R.id.synced_events_label);
         TextView tvUnsyncedEventsLabel = rootView.findViewById(R.id.unsynced_events_label);
         TextView tvTaskUnprocessedEventsLabel = rootView.findViewById(R.id.task_unprocessed_events_label);
@@ -145,7 +148,7 @@ public class StatsFragmentTest extends BaseUnitTest {
 
     @Test
     public void assertTestLabelsNotNull() {
-        View rootView = LayoutInflater.from(RuntimeEnvironment.application).inflate(R.layout.fragment_stats, null);
+        View rootView = LayoutInflater.from(ApplicationProvider.getApplicationContext()).inflate(R.layout.fragment_stats, null);
         TextView tvSyncedEventsLabel = rootView.findViewById(R.id.synced_events_label);
         TextView tvUnsyncedEventsLabel = rootView.findViewById(R.id.unsynced_events_label);
         TextView tvTaskUnprocessedEventsLabel = rootView.findViewById(R.id.task_unprocessed_events_label);
@@ -164,7 +167,7 @@ public class StatsFragmentTest extends BaseUnitTest {
 
     @Test
     public void testUpdatedLabels() {
-        View parentLayout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_stats, null, false);
+        View parentLayout = LayoutInflater.from(ApplicationProvider.getApplicationContext().getApplicationContext()).inflate(R.layout.fragment_stats, null, false);
         doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
 
         TextView tvSyncedEventsLabel = parentLayout.findViewById(R.id.synced_events_label);
@@ -183,13 +186,13 @@ public class StatsFragmentTest extends BaseUnitTest {
         Assert.assertNotNull(tvValidatedEventsLabel);
         Assert.assertNotNull(tvValidatedClientsLabel);
 
-        String synced_events = RuntimeEnvironment.application.getResources().getString(R.string.synced_events);
-        String unsynced_events = RuntimeEnvironment.application.getResources().getString(R.string.unsynced_events);
-        String task_unprocessed_events = RuntimeEnvironment.application.getResources().getString(R.string.task_unprocessed_events);
-        String synced_clients = RuntimeEnvironment.application.getResources().getString(R.string.synced_clients);
-        String unsynced_clients = RuntimeEnvironment.application.getResources().getString(R.string.unsynced_clients);
-        String validated_events = RuntimeEnvironment.application.getResources().getString(R.string.validated_events);
-        String validated_clients = RuntimeEnvironment.application.getResources().getString(R.string.validated_clients);
+        String synced_events = ApplicationProvider.getApplicationContext().getResources().getString(R.string.synced_events);
+        String unsynced_events = ApplicationProvider.getApplicationContext().getResources().getString(R.string.unsynced_events);
+        String task_unprocessed_events = ApplicationProvider.getApplicationContext().getResources().getString(R.string.task_unprocessed_events);
+        String synced_clients = ApplicationProvider.getApplicationContext().getResources().getString(R.string.synced_clients);
+        String unsynced_clients = ApplicationProvider.getApplicationContext().getResources().getString(R.string.unsynced_clients);
+        String validated_events = ApplicationProvider.getApplicationContext().getResources().getString(R.string.validated_events);
+        String validated_clients = ApplicationProvider.getApplicationContext().getResources().getString(R.string.validated_clients);
 
         Assert.assertEquals(synced_events, tvSyncedEventsLabel.getText().toString());
         Assert.assertEquals(unsynced_events, tvUnsyncedEventsLabel.getText().toString());

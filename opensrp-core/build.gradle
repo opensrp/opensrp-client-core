@@ -3,13 +3,11 @@ description = 'OpenSRP core client library'
 buildscript {
     repositories {
         google()
-        jcenter()
-        maven { url 'https://maven.fabric.io/public' }
+        mavenCentral()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
-        classpath 'org.apache.commons:commons-lang3:3.10'
-        classpath 'io.fabric.tools:gradle:1.31.2'
+        classpath 'org.apache.commons:commons-lang3:3.12.0'
     }
 }
 
@@ -19,23 +17,21 @@ allprojects {
         mavenLocal()
         google()
         jcenter()
-        maven { url 'https://maven.fabric.io/public' }
     }
 }
 
 apply plugin: 'com.android.library'
-//apply plugin: 'org.robolectric'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'maven-publish'
+
 jacoco {
-    toolVersion = "0.8.5"
+    toolVersion = "0.8.8"
 }
 
 android {
     compileSdkVersion androidCompileSdkVersion
     buildToolsVersion androidBuildToolsVersion
-    useLibrary 'org.apache.http.legacy'
 
     defaultPublishConfig !isReleaseBuild() ? "debug" : "release"
 
@@ -58,7 +54,7 @@ android {
         debug {
             minifyEnabled false
             debuggable true
-            testCoverageEnabled = true
+            testCoverageEnabled = false
             signingConfig signingConfigs.config
             zipAlignEnabled true
             buildConfigField "String", "TRUST_MANAGER_ALGORITHM", "\"X509\""
@@ -94,8 +90,9 @@ android {
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
         buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
-    }
-
+        buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
+        buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
+    } 
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -161,25 +158,26 @@ afterEvaluate {
     assembleDebug.dependsOn(copyTestResources)
 }
 configurations.all {
-    resolutionStrategy.force 'commons-codec:commons-codec:1.10'
+    resolutionStrategy.force 'commons-codec:commons-codec:1.15'
 }
 
 dependencies {
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
-    implementation 'net.zetetic:android-database-sqlcipher:4.2.0'
+
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.test:monitor:1.5.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+    implementation 'net.zetetic:android-database-sqlcipher:4.5.1'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'org.codehaus.jackson:jackson-core-asl:1.9.13'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.3'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation "org.apache.httpcomponents:httpmime:4.5.6"
-    implementation group: 'commons-codec', name: 'commons-codec', version: '1.10'
-    implementation group: 'com.google.guava', name: 'guava', version: '24.1-jre'
-    implementation group: 'commons-io', name: 'commons-io', version: '2.4'
-    implementation 'org.apache.commons:commons-lang3:3.9'
-    implementation 'org.mozilla:rhino:1.7R4'
-    implementation 'com.ocpsoft:ocpsoft-pretty-time:1.0.7'
-    api 'joda-time:joda-time:2.10.5'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
+    implementation group: 'com.google.guava', name: 'guava', version: '31.1-android'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation group: 'org.mozilla', name: 'rhino', version: '1.7.14'
+    implementation 'org.ocpsoft.prettytime:prettytime:5.0.6.Final'
+    api 'joda-time:joda-time:2.10.14'
     implementation('com.github.bmelnychuk:atv:1.2.9') {
         exclude group: 'com.google.android', module: 'android'
     }
@@ -188,33 +186,32 @@ dependencies {
         exclude group: 'com.google.android', module: 'android'
     }
 
-    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
-        transitive = true
-    }
-
-    implementation('ch.acra:acra:4.5.0') {
+    implementation('ch.acra:acra:4.11.1') {
         exclude group: 'org.json', module: 'json'
     }
 
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
-    implementation 'com.mcxiaoke.volley:library:1.0.19'
+    implementation 'com.github.bumptech.glide:glide:4.13.0'
+
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
+    annotationProcessor 'com.jakewharton:butterknife:10.2.3'
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    annotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
 
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.preference:preference:1.1.1'
-    implementation 'androidx.security:security-crypto:1.0.0-rc03'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation 'androidx.security:security-crypto:1.0.0'
 
-    implementation('com.google.android.material:material:1.1.0') {
+    implementation('com.google.android.material:material:1.6.1') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 
-    implementation('com.evernote:android-job:1.2.6') {
+    implementation('com.evernote:android-job:1.4.3') {
         exclude group: 'com.google.android', module: 'android'
     }
 
-    implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
+    implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
+
     implementation('de.hdodenhof:circleimageview:3.1.0') {
         exclude group: 'com.google.android', module: 'android'
     }
@@ -226,54 +223,37 @@ dependencies {
     }
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
-    implementation 'org.smartregister:opensrp-client-utils:0.0.4-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-client-utils:0.0.6-SNAPSHOT'
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:1.6.6-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-plan-evaluator:1.6.7-SNAPSHOT'
 
-    implementation 'xerces:xercesImpl:2.12.0'
+    implementation 'xerces:xercesImpl:2.12.2'
 
-    implementation('ch.acra:acra:4.5.0') {
-        exclude group: 'org.json', module: 'json'
-    }
-
-    implementation 'com.github.ybq:Android-SpinKit:1.2.0'
-    implementation 'com.mcxiaoke.volley:library:1.0.19'
-
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    annotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
-
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
-
-    implementation('com.android.support:design:28.0.0') {
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
-    }
-
-    implementation 'com.evernote:android-job:1.2.6'
-    implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
-    implementation 'de.hdodenhof:circleimageview:2.2.0'
-    implementation 'xerces:xercesImpl:2.12.0'
+    compileOnly platform('com.google.firebase:firebase-bom:30.0.2')
+    compileOnly 'com.google.firebase:firebase-crashlytics'
+    compileOnly 'com.google.firebase:firebase-perf'
 
     def work_version = "2.7.1"
     implementation "androidx.work:work-runtime:$work_version"
 
     // Add the dependency for the Performance Monitoring library
-    implementation 'com.google.firebase:firebase-perf:19.0.7'
 
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //Mockito
+    def mockitoVersion = '4.6.1'
+    testImplementation("org.mockito:mockito-core:$mockitoVersion")
+    testImplementation("org.mockito:mockito-inline:$mockitoVersion")
 
-    androidTestImplementation 'junit:junit:4.13'
+    testImplementation "androidx.test:core:1.5.0-rc01"
+    testImplementation "androidx.test.ext:junit:1.1.4-rc01"
 
-    testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
-    testImplementation 'org.mockito:mockito-core:3.1.0'
-    testImplementation "androidx.test:core:1.4.0"
-    testImplementation "androidx.test.ext:junit:1.1.2"
+    testAnnotationProcessor group: 'com.jakewharton', name: 'butterknife', version: '10.2.3'
 
-    testAnnotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
-
-    testImplementation('org.robolectric:robolectric:4.3.1') {
+    //Robolectric
+    def robolectricVersion = '4.8.1'
+    testImplementation(group: 'org.robolectric', name: 'robolectric', version: "$robolectricVersion") {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.apache.maven', module: 'maven-model'
         exclude group: 'com.android.support'
@@ -281,20 +261,23 @@ dependencies {
         exclude group: 'com.thoughtworks.xstream', module: 'xstream'
     }
 
-    testImplementation('org.robolectric:shadows-multidex:4.3.1') {
+    testImplementation(group: 'org.robolectric', name: 'shadows-multidex', version: "$robolectricVersion") {
         exclude group: 'com.google.guava', module: 'guava'
     }
 
-    // PowerMock
-    def powerMockVersion = '2.0.4'
-    testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
-    testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
-    testImplementation "org.powermock:powermock-module-javaagent:$powerMockVersion"
-    testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
-    testImplementation("org.powermock:powermock-classloading-xstream:$powerMockVersion")
+    testRuntimeOnly platform('com.google.firebase:firebase-bom:30.0.2')
+    testRuntimeOnly 'com.google.firebase:firebase-crashlytics'
+    // Add the dependency for the Performance Monitoring library
+    testImplementation 'com.google.firebase:firebase-perf'
 
-    def fragmentVersion = "1.2.5"
+    // PowerMock
+    def powerMockVersion = '2.0.9'
+    testImplementation "org.powermock:powermock-core:$powerMockVersion"
+
+    def fragmentVersion = "1.5.4"
     testImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
+
+    testImplementation 'org.skyscreamer:jsonassert:1.5.1'
 }
 
 task clearJar(type: Delete) {
@@ -313,8 +296,8 @@ makeJar.dependsOn(clearJar, build)
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
 
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.required.set(true)
+        html.required.set(true)
     }
 
     getReports().getXml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"))

@@ -1,6 +1,6 @@
 package org.smartregister.repository;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class ClientRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         clientRepository = new ClientRepository(context, new String[]{ID_COLUMN, obsDETAILS_COLUMN, attributeDETAILS_COLUMN});
     }
 

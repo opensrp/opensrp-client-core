@@ -6,23 +6,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
+import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
-import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Robolectric;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
-import org.smartregister.BaseUnitTest;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.R;
 import org.smartregister.util.Utils;
 import org.smartregister.view.LocationPickerView;
@@ -32,70 +31,40 @@ import org.smartregister.view.contract.MeContract;
  * Created by ndegwamartin on 2020-03-24.
  */
 
-@PrepareForTest({Utils.class})
-public class MeFragmentTest extends BaseUnitTest {
-
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
-
-    @Mock
-    private View view;
-
-    @Mock
-    private FragmentActivity activity;
-
-    @Mock
-    private Bundle bundle;
-
-    @Mock
-    private RelativeLayout meLocationSection;
-
-    @Mock
-    private RelativeLayout settingSection;
-
-    @Mock
-    private RelativeLayout logoutSection;
-
-    @Mock
-    private LocationPickerView facilitySelection;
-
-    public static final String TEST_SEARCH_HINT = "Test Search Hint";
-
-    public static final String MY_TEST_SEARCH_TEXT = "My Testing Search Text";
-
-    private static final String GENERIC_TEXT_PHRASE = "Move the Earth";
-
-    private MeFragment meFragment;
-
+public class MeFragmentTest extends BaseRobolectricUnitTest {
     @Mock
     protected MeContract.Presenter presenter;
-
-    private LayoutInflater layoutInflater;
-
     @Mock
-    private ViewGroup viewGroup;
+    private View view;
+    @Mock
+    private FragmentActivity activity;
+    @Mock
+    private Bundle bundle;
+    @Mock
+    private RelativeLayout meLocationSection;
+    @Mock
+    private RelativeLayout settingSection;
+    @Mock
+    private RelativeLayout logoutSection;
+    @Mock
+    private LocationPickerView facilitySelection;
+    private MeFragment meFragment;
+    private LayoutInflater layoutInflater;
 
     @Before
     public void setUp() throws Exception {
 
-        org.mockito.MockitoAnnotations.initMocks(this);
-
         meFragment = Mockito.mock(MeFragment.class, Mockito.CALLS_REAL_METHODS);
+        activity = Mockito.spy(Robolectric.buildActivity(FragmentActivity.class).create().get());
 
         ReflectionHelpers.setField(meFragment, "presenter", presenter);
 
-        layoutInflater = LayoutInflater.from(RuntimeEnvironment.application);
+        layoutInflater = Mockito.spy(LayoutInflater.from(ApplicationProvider.getApplicationContext()));
 
         Mockito.doReturn(meLocationSection).when(view).findViewById(R.id.me_location_section);
         Mockito.doReturn(settingSection).when(view).findViewById(R.id.setting_section);
         Mockito.doReturn(logoutSection).when(view).findViewById(R.id.logout_section);
         Mockito.doReturn(facilitySelection).when(view).findViewById(R.id.facility_selection);
-
-        PowerMockito.mockStatic(Utils.class);
-        PowerMockito.when(Utils.getBooleanProperty(AllConstants.PROPERTY.DISABLE_LOCATION_PICKER_VIEW)).thenReturn(true);
-
-        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(activity).getResources();
-
     }
 
     @Test
@@ -105,41 +74,68 @@ public class MeFragmentTest extends BaseUnitTest {
         Assert.assertNotNull(meFragment.presenter);
     }
 
-    /*
+
     @Test
     public void testOnCreateInvokesInitializePresenterMethod() {
-
+        MeFragmentTestImpl meFragment = Mockito.spy(new MeFragmentTestImpl());
         meFragment.onCreate(bundle);
         Mockito.verify(meFragment).initializePresenter();
     }
 
-     */
 
     @Test
-    @Ignore
     public void testOnCreateViewReturnsCorrectLayoutView() {
 
-        View layoutView = meFragment.onCreateView(layoutInflater, viewGroup, bundle);
+        View layoutView = meFragment.onCreateView(layoutInflater, (ViewGroup) activity.getWindow().getDecorView().getRootView(), bundle);
         Assert.assertNotNull(layoutView);
-        Mockito.verify(layoutInflater).inflate(R.layout.fragment_me, viewGroup, false);
+        Mockito.verify(layoutInflater).inflate(R.layout.fragment_me, (ViewGroup) activity.getWindow().getDecorView().getRootView(), false);
     }
 
     @Test
     public void testOnViewCreatedInvokesRequiredSetupMethods() {
 
-        meFragment.onViewCreated(view, bundle);
+        try (MockedStatic<Utils> utilsMockedStatic = Mockito.mockStatic(Utils.class)) {
+            utilsMockedStatic.when(() -> Utils.getBooleanProperty(AllConstants.PROPERTY.DISABLE_LOCATION_PICKER_VIEW)).thenReturn(true);
 
-        Mockito.verify(meFragment).setUpViews(view);
-        Mockito.verify(meFragment).setClickListeners();
+            Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(activity).getResources();
 
-        Mockito.verify(presenter).updateInitials();
-        Mockito.verify(presenter).updateName();
+            meFragment.onViewCreated(view, bundle);
+
+            Mockito.verify(meFragment).setUpViews(view);
+            Mockito.verify(meFragment).setClickListeners();
+
+            Mockito.verify(presenter).updateInitials();
+            Mockito.verify(presenter).updateName();
+        }
     }
 
 
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
         meFragment = null;
         layoutInflater = null;
+    }
+
+    public static class MeFragmentTestImpl extends MeFragment {
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            initializePresenter();
+        }
+
+        @Override
+        protected void initializePresenter() {
+            // Do Nothing
+        }
+
+        @Override
+        protected void onViewClicked(View view) {
+            //Do Nothing
+        }
+
+        @Override
+        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+            //Do nothing
+        }
     }
 }

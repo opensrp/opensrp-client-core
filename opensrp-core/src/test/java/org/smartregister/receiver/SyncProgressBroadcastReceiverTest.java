@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.domain.SyncProgress;
@@ -35,7 +35,7 @@ public class SyncProgressBroadcastReceiverTest extends BaseRobolectricUnitTest {
         intent.putExtra(AllConstants.SyncProgressConstants.SYNC_PROGRESS_DATA, syncProgress);
 
         // Call the method under test
-        syncProgressBroadcastReceiver.onReceive(RuntimeEnvironment.application, intent);
+        syncProgressBroadcastReceiver.onReceive(ApplicationProvider.getApplicationContext(), intent);
 
         // Verify that the listener was called
         Mockito.verify(syncProgressListener).onSyncProgress(syncProgress);
@@ -46,7 +46,7 @@ public class SyncProgressBroadcastReceiverTest extends BaseRobolectricUnitTest {
         Intent intent = new Intent();
 
         // Call the method under test
-        syncProgressBroadcastReceiver.onReceive(RuntimeEnvironment.application, intent);
+        syncProgressBroadcastReceiver.onReceive(ApplicationProvider.getApplicationContext(), intent);
 
         // Verify that the listener was called
         Mockito.verify(syncProgressListener, Mockito.never()).onSyncProgress(Mockito.nullable(SyncProgress.class));

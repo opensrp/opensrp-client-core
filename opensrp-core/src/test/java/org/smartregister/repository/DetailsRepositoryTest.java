@@ -2,7 +2,7 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -36,7 +36,7 @@ public class DetailsRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         detailsRepository = new DetailsRepository();
         detailsRepository.updateMasterRepository(repository);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
@@ -65,7 +65,7 @@ public class DetailsRepositoryTest extends BaseUnitTest {
 
         Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(null);
         detailsRepository.add("1", "key", "xyz", new Long(0));
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(), Mockito.any(ContentValues.class));
     }
 
     @Test

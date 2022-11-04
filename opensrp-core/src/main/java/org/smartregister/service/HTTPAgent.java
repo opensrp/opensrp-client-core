@@ -1,5 +1,27 @@
 package org.smartregister.service;
 
+import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
+import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
+import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
+import static org.smartregister.domain.LoginResponse.SUCCESS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION_UUID;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_NAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_UUID;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_ZONE;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_LOCATION;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_PREFERREDNAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_USERNAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE;
+import static org.smartregister.domain.LoginResponse.TIMEOUT;
+import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
+import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
+import static org.smartregister.util.HttpResponseUtil.getResponseBody;
+
 import android.content.Context;
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
@@ -13,8 +35,6 @@ import com.google.gson.Gson;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
-import org.apache.http.util.ByteArrayBuffer;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
@@ -68,46 +88,21 @@ import javax.net.ssl.HttpsURLConnection;
 
 import timber.log.Timber;
 
-import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
-import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
-import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
-import static org.smartregister.domain.LoginResponse.SUCCESS;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_DETAILS;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION_UUID;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_NAME;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_UUID;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_DETAILS;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_ZONE;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_DETAILS;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_LOCATION;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_PREFERREDNAME;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_USERNAME;
-import static org.smartregister.domain.LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE;
-import static org.smartregister.domain.LoginResponse.TIMEOUT;
-import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
-import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
-import static org.smartregister.util.HttpResponseUtil.getResponseBody;
-
 public class HTTPAgent {
 
     public static final int FILE_UPLOAD_CHUNK_SIZE_BYTES = 4096;
-
+    public static final int DOWNLOAD_BUFFER_SIZE = 1024;
+    private static final String DETAILS_URL = "/user-details?anm-id=";
     private Context context;
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
     private GZIPCompression gzipCompression;
-
     private String boundary = "***" + System.currentTimeMillis() + "***";
     private String twoHyphens = "--";
     private String crlf = "\r\n";
-
     private int connectTimeout = 60000;
     private int readTimeout = 60000;
     private Gson gson;
-
-    private static final String DETAILS_URL = "/user-details?anm-id=";
 
 
     public HTTPAgent(Context context, AllSharedPreferences
@@ -139,13 +134,18 @@ public class HTTPAgent {
         if (setOauthToken) {
             AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
             if (AccountHelper.getOauthAccountByNameAndType(allSharedPreferences.fetchRegisteredANM(), authenticatorXml.getAccountType()) != null)
-                urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(AccountHelper.getOAuthToken(allSharedPreferences.fetchRegisteredANM(), authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).toString());
+                urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(getBearerToken()).toString());
         }
         return urlConnection;
     }
 
     @VisibleForTesting
-    protected HttpURLConnection getHttpURLConnection(String requestURLPath) throws IOException, URISyntaxException{
+    protected String getBearerToken() {
+        return AccountHelper.getOAuthToken(allSharedPreferences.fetchRegisteredANM(), CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+    }
+
+    @VisibleForTesting
+    protected HttpURLConnection getHttpURLConnection(String requestURLPath) throws IOException, URISyntaxException {
         URI inputURI = new URI(requestURLPath.replaceAll(" ", "%20"));
         URL url = inputURI.normalize().toURL();
         return (HttpURLConnection) url.openConnection();
@@ -161,7 +161,7 @@ public class HTTPAgent {
             allSharedPreferences.updateLastAuthenticationHttpStatus(responseCode);
 
             //If unauthorized invalidate cache of old token retry
-            if (HttpStatus.SC_UNAUTHORIZED == responseCode) {
+            if (HttpURLConnection.HTTP_UNAUTHORIZED == responseCode) {
 
                 invalidateExpiredCachedAccessToken();
 
@@ -171,7 +171,7 @@ public class HTTPAgent {
 
             return processResponse(urlConnection);
 
-        } catch (IOException | URISyntaxException  exception ) {
+        } catch (IOException | URISyntaxException exception) {
             Timber.e(exception, "EXCEPTION %s", exception.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
@@ -195,7 +195,7 @@ public class HTTPAgent {
             allSharedPreferences.updateLastAuthenticationHttpStatus(responseCode);
 
             //If unauthorized invalidate cache of old token retry
-            if (HttpStatus.SC_UNAUTHORIZED == responseCode) {
+            if (HttpURLConnection.HTTP_UNAUTHORIZED == responseCode) {
 
                 invalidateExpiredCachedAccessToken();
 
@@ -205,7 +205,7 @@ public class HTTPAgent {
 
             return processResponse(urlConnection);
 
-        } catch (IOException | URISyntaxException  exception) {
+        } catch (IOException | URISyntaxException exception) {
             Timber.e(exception, "EXCEPTION: %s", exception.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
@@ -260,18 +260,18 @@ public class HTTPAgent {
             int statusCode = urlConnection.getResponseCode();
             InputStream inputStream;
             String responseString = "";
-            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
+            if (statusCode >= HttpURLConnection.HTTP_BAD_REQUEST)
                 inputStream = urlConnection.getErrorStream();
             else
                 inputStream = urlConnection.getInputStream();
             if (inputStream != null)
                 responseString = IOUtils.toString(inputStream);
-            if (statusCode == HttpStatus.SC_OK) {
+            if (statusCode == HttpURLConnection.HTTP_OK) {
 
                 Timber.d("response String: %s using request url %s", responseString, url);
                 LoginResponseData responseData = getResponseBody(responseString);
                 loginResponse = retrieveResponse(responseData);
-            } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
+            } else if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 Timber.e("Invalid credentials for: %s using %s", userName, url);
                 loginResponse = UNAUTHORIZED;
             } else if (StringUtils.isNotBlank(responseString)) {
@@ -286,7 +286,7 @@ public class HTTPAgent {
                 Timber.e("Bad response from Dristhi. Status code: %s username: %s using %s ", statusCode, userName, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
-        } catch (MalformedURLException | URISyntaxException  exception) {
+        } catch (MalformedURLException | URISyntaxException exception) {
             Timber.e(exception, "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
         } catch (SocketTimeoutException exception) {
@@ -320,7 +320,7 @@ public class HTTPAgent {
 
             allSharedPreferences.updateLastAuthenticationHttpStatus(responseCode);
             //If unauthorized invalidate cache of old token retry
-            if (HttpStatus.SC_UNAUTHORIZED == responseCode) {
+            if (HttpURLConnection.HTTP_UNAUTHORIZED == responseCode) {
 
                 AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
                 AccountHelper.invalidateAuthToken(authenticatorXml.getAccountType(), accessToken);
@@ -330,7 +330,7 @@ public class HTTPAgent {
             }
             return processResponse(urlConnection);
 
-        } catch (IOException | URISyntaxException  exception) {
+        } catch (IOException | URISyntaxException exception) {
             Timber.e(exception, "EXCEPTION %s", exception.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
@@ -346,7 +346,7 @@ public class HTTPAgent {
 
             InputStream inputStream = null;
 
-            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
+            if (statusCode >= HttpURLConnection.HTTP_BAD_REQUEST)
                 inputStream = urlConnection.getErrorStream();
             else
                 inputStream = urlConnection.getInputStream();
@@ -371,7 +371,7 @@ public class HTTPAgent {
         } finally {
             closeConnection(urlConnection);
         }
-        return new Response<>(statusCode >= HttpStatus.SC_BAD_REQUEST ? ResponseStatus.failure : ResponseStatus.success, responseString)
+        return new Response<>(statusCode >= HttpURLConnection.HTTP_BAD_REQUEST ? ResponseStatus.failure : ResponseStatus.success, responseString)
                 .withTotalRecords(Utils.tryParseLong(totalRecords, 0));
     }
 
@@ -443,7 +443,7 @@ public class HTTPAgent {
             Timber.e(exception, "Protocol exception %s", exception.toString());
         } catch (SocketTimeoutException exception) {
             Timber.e(exception, "SocketTimeout %s %s", TIMEOUT, exception.toString());
-        } catch (MalformedURLException | URISyntaxException  exception) {
+        } catch (MalformedURLException | URISyntaxException exception) {
             Timber.e(exception, "MalformedUrl %s %s", MALFORMED_URL, exception.toString());
         } catch (IOException exception) {
             Timber.e(exception, "IOException %s %s", NO_INTERNET_CONNECTIVITY, exception.toString());
@@ -558,6 +558,16 @@ public class HTTPAgent {
     }
 
     /**
+     * Sets the read timeout in milliseconds
+     * <p>
+     * Setting this will call {@link java.net.HttpURLConnection#setReadTimeout(int)}
+     * on the {@link java.net.HttpURLConnection} instance in {@link org.smartregister.service.HTTPAgent}
+     */
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
+    /**
      * Returns the connection timeout in milliseconds
      *
      * @return connection timeout value in milliseconds
@@ -574,16 +584,6 @@ public class HTTPAgent {
      */
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
-    }
-
-    /**
-     * Sets the read timeout in milliseconds
-     * <p>
-     * Setting this will call {@link java.net.HttpURLConnection#setReadTimeout(int)}
-     * on the {@link java.net.HttpURLConnection} instance in {@link org.smartregister.service.HTTPAgent}
-     */
-    public void setReadTimeout(int readTimeout) {
-        this.readTimeout = readTimeout;
     }
 
     public AccountResponse oauth2authenticateCore(StringBuffer requestParamBuffer, String grantType, String tokenEndpointURL) {
@@ -605,16 +605,8 @@ public class HTTPAgent {
 
             requestParamBuffer.append("&grant_type=").append(grantType);
 
-            if (allSharedPreferences.getPreferences().getBoolean(AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED, false)) {
+            urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + base64Auth);
 
-                requestParamBuffer.append("&client_id=").append(clientId);
-                requestParamBuffer.append("&client_secret=").append(clientSecret);
-
-            } else {
-
-                urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + base64Auth);
-
-            }
 
             byte[] postData = requestParamBuffer.toString().getBytes(CharEncoding.UTF_8);
             int postDataLength = postData.length;
@@ -634,12 +626,12 @@ public class HTTPAgent {
             writer.flush();
 
             int statusCode = urlConnection.getResponseCode();
-            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
+            if (statusCode >= HttpURLConnection.HTTP_BAD_REQUEST)
                 inputStream = urlConnection.getErrorStream();
             else
                 inputStream = urlConnection.getInputStream();
             String responseString = IOUtils.toString(inputStream);
-            if (statusCode == HttpStatus.SC_OK) {
+            if (statusCode == HttpURLConnection.HTTP_OK) {
 
                 Timber.d("response String: %s using request url %s", responseString, tokenEndpointURL);
 
@@ -653,7 +645,7 @@ public class HTTPAgent {
                 return new AccountResponse(statusCode, accountError);
 
             }
-        } catch (MalformedURLException | URISyntaxException  exception) {
+        } catch (MalformedURLException | URISyntaxException exception) {
             Timber.e(exception, "Failed to check credentials bad url %s", tokenEndpointURL);
             accountError = new AccountError(0, MALFORMED_URL.name());
 
@@ -720,7 +712,7 @@ public class HTTPAgent {
             int statusCode = urlConnection.getResponseCode();
             InputStream inputStream;
             String responseString = null;
-            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
+            if (statusCode >= HttpURLConnection.HTTP_BAD_REQUEST)
                 inputStream = urlConnection.getErrorStream();
             else
                 inputStream = urlConnection.getInputStream();
@@ -728,12 +720,12 @@ public class HTTPAgent {
             if (inputStream != null)
                 responseString = IOUtils.toString(inputStream);
 
-            if (statusCode == HttpStatus.SC_OK) {
+            if (statusCode == HttpURLConnection.HTTP_OK) {
 
                 Timber.d("response String: %s using request url %s", responseString, url);
                 LoginResponseData responseData = getResponseBody(responseString);
                 loginResponse = retrieveResponse(responseData);
-            } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
+            } else if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 Timber.e("Invalid credentials accessing: %s using token %s", url, oauthAccessToken);
                 loginResponse = UNAUTHORIZED;
             } else if (StringUtils.isNotBlank(responseString)) {
@@ -748,7 +740,7 @@ public class HTTPAgent {
                 Timber.e("Bad response from Server. Status code: %s using %s ", statusCode, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
-        } catch (MalformedURLException | URISyntaxException  exception) {
+        } catch (MalformedURLException | URISyntaxException exception) {
             Timber.e(exception, "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
         } catch (SocketTimeoutException exception) {
@@ -782,6 +774,8 @@ public class HTTPAgent {
     public Response<DownloadStatus> downloadFromURL(String downloadURL_, String fileName, Map<String, String> detailsMap) {
 
         HttpURLConnection httpUrlConnection = null;
+        BufferedInputStream bufferedInputStream = null;
+        FileOutputStream fos = null;
         try {
 
             File dir = getSDCardDownloadPath();
@@ -807,7 +801,7 @@ public class HTTPAgent {
             if (status == HttpURLConnection.HTTP_OK) {
 
                 if (StringUtils.isBlank(httpUrlConnection.getContentType()))
-                    return new Response<DownloadStatus>(ResponseStatus.success,
+                    return new Response<>(ResponseStatus.success,
                             DownloadStatus.nothingDownloaded);
 
                 int periodIndex = tempFileName.lastIndexOf(".");
@@ -821,22 +815,18 @@ public class HTTPAgent {
                 detailsMap.put(AllConstants.DownloadFileConstants.FILE_NAME, tempFileName);
                 detailsMap.put(AllConstants.DownloadFileConstants.FILE_PATH, file.getPath());
 
-                InputStream inputStream = httpUrlConnection.getInputStream();
-                BufferedInputStream bufferedInputStream = getBufferedInputStream(inputStream);
+                bufferedInputStream = getBufferedInputStream(httpUrlConnection.getInputStream());
 
                 Timber.d("DownloadFormService file content type : %s", httpUrlConnection.getContentType());
 
-                ByteArrayBuffer baf = new ByteArrayBuffer(9999);
-                int current = 0;
-                while ((current = bufferedInputStream.read()) != -1) {
-                    baf.append((byte) current);
-                }
+                fos = getFileOutputStream(file);
 
-                /* Convert the bytes to String */
-                FileOutputStream fos = getFileOutputStream(file);
-                fos.write(baf.toByteArray());
+                byte data[] = new byte[DOWNLOAD_BUFFER_SIZE];
+                int count;
+                while ((count = bufferedInputStream.read(data, 0, DOWNLOAD_BUFFER_SIZE)) != -1) {
+                    fos.write(data, 0, count);
+                }
                 fos.flush();
-                fos.close();
 
                 Timber.d("DownloadFormService %s %d %s",
                         "download finished in ", ((System.currentTimeMillis() - startTime) / 1000)
@@ -844,18 +834,29 @@ public class HTTPAgent {
 
             } else {
                 Timber.d("RESPONSE %s %s ", "Server returned non-OK status: ", status);
-                return new Response<DownloadStatus>(ResponseStatus.failure, DownloadStatus.failedDownloaded);
+                return new Response<>(ResponseStatus.failure, DownloadStatus.failedDownloaded);
             }
 
-        } catch (IOException | URISyntaxException  exception) {
+        } catch (IOException | URISyntaxException exception) {
             Timber.d(exception, "DownloadFormService");
-            return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.failedDownloaded);
+            return new Response<>(ResponseStatus.success, DownloadStatus.failedDownloaded);
         } finally {
+
+            try {
+                if (fos != null)
+                    fos.close();
+
+                if (bufferedInputStream != null)
+                    bufferedInputStream.close();
+
+            } catch (IOException e) {
+                Timber.e(e);
+            }
 
             closeConnection(httpUrlConnection);
         }
 
-        return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.downloaded);
+        return new Response<>(ResponseStatus.success, DownloadStatus.downloaded);
     }
 
     @VisibleForTesting
@@ -917,7 +918,7 @@ public class HTTPAgent {
             allSharedPreferences.updateLastAuthenticationHttpStatus(responseCode);
 
             //If unauthorized invalidate cache of old token retry
-            if (HttpStatus.SC_UNAUTHORIZED == responseCode) {
+            if (HttpURLConnection.HTTP_UNAUTHORIZED == responseCode) {
 
                 invalidateExpiredCachedAccessToken();
 
@@ -925,7 +926,7 @@ public class HTTPAgent {
 
             }
 
-            if (urlConnection.getResponseCode() == HttpStatus.SC_OK) {
+            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
                 inputStream = urlConnection.getInputStream();
 
@@ -951,7 +952,7 @@ public class HTTPAgent {
                 return false;
             }
 
-        } catch (IOException | URISyntaxException  exception ) {
+        } catch (IOException | URISyntaxException exception) {
 
             Timber.e(exception);
 
@@ -980,33 +981,33 @@ public class HTTPAgent {
 
             urlConnection = initializeHttp(baseUrl, true);
 
-            int statusCode =  urlConnection.getResponseCode();
+            int statusCode = urlConnection.getResponseCode();
 
             allSharedPreferences.updateLastAuthenticationHttpStatus(statusCode);
 
             //If unauthorized invalidate cache of old token retry
-            if (HttpStatus.SC_UNAUTHORIZED == statusCode) {
+            if (HttpURLConnection.HTTP_UNAUTHORIZED == statusCode) {
 
                 invalidateExpiredCachedAccessToken();
 
                 urlConnection = initializeHttp(baseUrl, true);
 
-                if (HttpStatus.SC_OK == urlConnection.getResponseCode()) {
+                if (HttpURLConnection.HTTP_OK == urlConnection.getResponseCode()) {
                     return true;
 
-                } else if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+                } else if (HttpURLConnection.HTTP_UNAUTHORIZED == urlConnection.getResponseCode()) {
 
                     Timber.i("User not authorized. User access was revoked, will log off user");
                     return false;
                 }
 
-            } else if (statusCode != HttpStatus.SC_OK) {
+            } else if (statusCode != HttpURLConnection.HTTP_OK) {
                 Timber.w("Error occurred verifying authorization, User will not be logged off");
             } else {
                 Timber.i("User is Authorized");
             }
 
-        } catch (IOException | URISyntaxException  exception) {
+        } catch (IOException | URISyntaxException exception) {
             Timber.e(exception);
         } finally {
 
@@ -1033,7 +1034,7 @@ public class HTTPAgent {
             urlConnection = getHttpURLConnection(baseUrl);
 
             int statusCode = urlConnection.getResponseCode();
-            if (statusCode == HttpStatus.SC_OK) {
+            if (statusCode == HttpURLConnection.HTTP_OK) {
 
                 inputStream = urlConnection.getInputStream();
 

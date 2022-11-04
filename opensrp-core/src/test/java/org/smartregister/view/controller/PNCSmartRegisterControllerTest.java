@@ -57,7 +57,7 @@ public class PNCSmartRegisterControllerTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         emptyMap = Collections.emptyMap();
         controller = new PNCSmartRegisterController(serviceProvidedService, alertService, allEligibleCouples, allBeneficiaries, new Cache<String>(), new Cache<PNCClients>(), preProcessor);
     }

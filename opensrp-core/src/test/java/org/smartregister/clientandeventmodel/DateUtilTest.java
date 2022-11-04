@@ -1,6 +1,6 @@
 package org.smartregister.clientandeventmodel;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;

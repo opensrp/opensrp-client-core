@@ -38,7 +38,7 @@ public class AppHealthUtilsTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         Mockito.when(context.getApplicationContext()).thenReturn(ApplicationProvider.getApplicationContext());
         Mockito.when(context.getPackageName()).thenReturn(PACKAGE_NAME);
     }

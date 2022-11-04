@@ -11,8 +11,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import org.apache.http.HttpStatus;
 import org.smartregister.CoreLibrary;
+import org.smartregister.util.Utils;
+
+import java.net.HttpURLConnection;
+import java.util.Calendar;
 
 import timber.log.Timber;
 
@@ -63,13 +66,16 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
                     Timber.d("Authenticate with saved credentials");
 
                     AccountResponse accountResponse = CoreLibrary.getInstance().context().getHttpAgent().oauth2authenticateRefreshToken(refreshToken);
-                    if (accountResponse.getStatus() == HttpStatus.SC_OK) {
+                    if (accountResponse.getStatus() == HttpURLConnection.HTTP_OK) {
                         authToken = accountResponse.getAccessToken();
                         refreshToken = accountResponse.getRefreshToken();
 
                         accountManager.setPassword(account, refreshToken);
                         accountManager.setAuthToken(account, authTokenType, authToken);
-                        
+                        accountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_ACCESS_TOKEN_EXPIRES_IN, Utils.toStringNullable(accountResponse.getExpiresIn()));
+                        accountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_REFRESH_TOKEN_EXPIRES_IN, Utils.toStringNullable(accountResponse.getRefreshExpiresIn()));
+                        accountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_REFRESH_TOKEN_CREATED_AT, Utils.toStringNullable(Calendar.getInstance().getTimeInMillis()));
+
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             accountManager.notifyAccountAuthenticated(account);
                         }

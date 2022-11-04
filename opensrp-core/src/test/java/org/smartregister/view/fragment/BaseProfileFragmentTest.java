@@ -1,13 +1,14 @@
 package org.smartregister.view.fragment;
 
 import android.os.Bundle;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.fragment.app.Fragment;
-import androidx.core.view.GestureDetectorCompat;
-import androidx.fragment.app.FragmentManager;
-
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.core.view.GestureDetectorCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,7 +17,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
@@ -68,8 +68,6 @@ public class BaseProfileFragmentTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-
-        MockitoAnnotations.initMocks(this);
         baseProfileFragment = Mockito.mock(BaseProfileFragment.class, Mockito.CALLS_REAL_METHODS);
     }
 

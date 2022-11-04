@@ -11,7 +11,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowAlarmManager;
 import org.robolectric.util.ReflectionHelpers;
@@ -58,11 +58,11 @@ public class ConnectivityChangeReceiverTest extends BaseRobolectricUnitTest {
 
         DrishtiSyncScheduler.setReceiverClass(BaseLoginActivity.class);
 
-        AlarmManager alarmManager = (AlarmManager) RuntimeEnvironment.application.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) ApplicationProvider.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         ShadowAlarmManager shadowAlarmManager = Shadows.shadowOf(alarmManager);
         Assert.assertNull(shadowAlarmManager.getNextScheduledAlarm());
 
-        connectivityChangeReceiver.onReceive(RuntimeEnvironment.application, intent);
+        connectivityChangeReceiver.onReceive(ApplicationProvider.getApplicationContext(), intent);
 
 
         ShadowAlarmManager.ScheduledAlarm scheduledAlarm = shadowAlarmManager.getNextScheduledAlarm();
@@ -82,16 +82,16 @@ public class ConnectivityChangeReceiverTest extends BaseRobolectricUnitTest {
         DrishtiSyncScheduler.setReceiverClass(BaseLoginActivity.class);
 
         // Create the alarm
-        DrishtiSyncScheduler.start(RuntimeEnvironment.application);
+        DrishtiSyncScheduler.start(ApplicationProvider.getApplicationContext());
 
-        AlarmManager alarmManager = (AlarmManager) RuntimeEnvironment.application.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) ApplicationProvider.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         ShadowAlarmManager shadowAlarmManager = Shadows.shadowOf(alarmManager);
 
         // Assert that the alarm was created
         Assert.assertNotNull(shadowAlarmManager.getNextScheduledAlarm());
 
 
-        connectivityChangeReceiver.onReceive(RuntimeEnvironment.application, intent);
+        connectivityChangeReceiver.onReceive(ApplicationProvider.getApplicationContext(), intent);
 
 
         // Assert that the alarm was cancelled

@@ -1,5 +1,11 @@
 package org.smartregister.service;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.spy;
+import static org.smartregister.domain.ResponseStatus.success;
+import static org.smartregister.service.DocumentConfigurationService.IDENTIFIERS;
+import static org.smartregister.service.DocumentConfigurationService.MANIFEST_FORMS_VERSION;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -9,12 +15,10 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
@@ -28,12 +32,6 @@ import org.smartregister.repository.ManifestRepository;
 import org.smartregister.shadows.ShadowUtils;
 
 import java.util.List;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.spy;
-import static org.smartregister.domain.ResponseStatus.success;
-import static org.smartregister.service.DocumentConfigurationService.IDENTIFIERS;
-import static org.smartregister.service.DocumentConfigurationService.MANIFEST_FORMS_VERSION;
 
 /**
  * Created by cozej4 on 2020-04-16.
@@ -103,7 +101,7 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
                 new Response<String>(
                         success,
                         jsonObject));
-        documentConfigurationService=spy(documentConfigurationService);
+        documentConfigurationService = spy(documentConfigurationService);
         Mockito.doNothing().when(manifestRepository).addOrUpdate(Mockito.any(Manifest.class));
         Mockito.doNothing().when(documentConfigurationService).syncClientForms(Mockito.any());
         documentConfigurationService.fetchManifest();
@@ -126,7 +124,7 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
         manifest.setFormVersion("0.0.1");
         Mockito.doReturn(manifest).when(manifestRepository).getActiveManifest();
         Mockito.doNothing().when(manifestRepository).addOrUpdate(Mockito.any(Manifest.class));
-        documentConfigurationService=spy(documentConfigurationService);
+        documentConfigurationService = spy(documentConfigurationService);
         Mockito.doNothing().when(documentConfigurationService).syncClientForms(Mockito.any());
         documentConfigurationService.fetchManifest();
 
@@ -154,7 +152,6 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    @Ignore
     public void saveManifestVersionShouldSaveVersionInSharedPreferences() {
 
         Assert.assertNull(CoreLibrary.getInstance().context().allSharedPreferences().fetchManifestVersion());

@@ -37,7 +37,7 @@ public class ECSmartRegisterControllerTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         emptyDetails = Collections.emptyMap();
         controller = new ECSmartRegisterController(allEligibleCouples, allBeneficiaries, new Cache<String>(), new Cache<ECClients>());
     }

@@ -30,7 +30,7 @@ public class ServiceProvidedServiceTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         service = new ServiceProvidedService(allServiceProvided);
     }
 

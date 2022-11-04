@@ -1,17 +1,16 @@
 package org.smartregister.util;
 
+import static org.mockito.ArgumentMatchers.eq;
+
+import androidx.test.core.app.ApplicationProvider;
+
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
-import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.BuildConfig;
 import org.smartregister.Context;
@@ -26,64 +25,49 @@ import org.smartregister.service.UserService;
 
 import java.util.Arrays;
 
-import static org.mockito.ArgumentMatchers.eq;
-
 /**
  * Created by ndegwamartin on 22/07/2020.
  */
-@PrepareForTest({CoreLibrary.class, SecurityHelper.class})
 public class CredentialsHelperTest extends BaseUnitTest {
 
+    private static final String TEST_USERNAME = "demo";
+    private static final char[] TEST_DUMMY_PASSWORD = "test_password".toCharArray();
+    private static final String TEST_ENCRYPTED_PWD = "4794#25%&%34&";
+    private static final String TEST_LOCATION_ID = "3SF43-4AG3-3SUI44";
+    private static final String TEST_TEAM_ID = "48SG2-23B4F2-F442-F3F44";
     @Mock
     private CoreLibrary coreLibrary;
-
     @Mock
     private Context context;
-
     @Mock
     private UserService userService;
-
     @Mock
     private SyncConfiguration syncConfiguration;
-
     @Mock
     private AllSharedPreferences allSharedPreferences;
-
     @Mock
     private LoginResponseData userInfo;
-
     private CredentialsHelper credentialsHelper;
-
-    private static final String TEST_USERNAME = "demo";
-
-    private static final char[] TEST_DUMMY_PASSWORD = "test_password".toCharArray();
-
-    private static final String TEST_ENCRYPTED_PWD = "4794#25%&%34&";
-
-    private static final String TEST_LOCATION_ID = "3SF43-4AG3-3SUI44";
-
-    private static final String TEST_TEAM_ID = "48SG2-23B4F2-F442-F3F44";
-
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
 
     @Before
     public void setUp() {
 
-        MockitoAnnotations.initMocks(this);
-        PowerMockito.mockStatic(CoreLibrary.class);
-        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
-        PowerMockito.when(coreLibrary.context()).thenReturn(context);
-        PowerMockito.when(context.applicationContext()).thenReturn(RuntimeEnvironment.application);
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class)) {
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
-        Mockito.doReturn(allSharedPreferences).when(context).allSharedPreferences();
-        Mockito.doReturn(userService).when(context).userService();
+            Mockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
+            Mockito.when(coreLibrary.context()).thenReturn(context);
+            Mockito.when(context.applicationContext()).thenReturn(ApplicationProvider.getApplicationContext());
 
-        Mockito.doReturn(syncConfiguration).when(coreLibrary).getSyncConfiguration();
+            Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
+            Mockito.doReturn(allSharedPreferences).when(context).allSharedPreferences();
+            Mockito.doReturn(userService).when(context).userService();
 
-        credentialsHelper = new CredentialsHelper(context);
-        Assert.assertNotNull(credentialsHelper);
+            Mockito.doReturn(syncConfiguration).when(coreLibrary).getSyncConfiguration();
+
+            credentialsHelper = new CredentialsHelper(context);
+            Assert.assertNotNull(credentialsHelper);
+        }
 
     }
 
@@ -120,18 +104,21 @@ public class CredentialsHelperTest extends BaseUnitTest {
     @Test
     public void testSaveCredentialsUpdatesSharedPreferencesWithEncryptedPassphrase() {
 
-        Mockito.doReturn(syncConfiguration).when(coreLibrary).getSyncConfiguration();
-        Mockito.doReturn(SyncFilter.TEAM_ID).when(syncConfiguration).getEncryptionParam();
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class)) {
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        credentialsHelper.saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, TEST_ENCRYPTED_PWD,TEST_USERNAME);
+            Mockito.doReturn(SyncFilter.TEAM_ID).when(syncConfiguration).getEncryptionParam();
 
-        ArgumentCaptor<String> encryptionValueArgCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> encryptionParamArgCaptor = ArgumentCaptor.forClass(String.class);
+            credentialsHelper.saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, TEST_ENCRYPTED_PWD, TEST_USERNAME);
 
-        Mockito.verify(allSharedPreferences, Mockito.times(1)).savePassphrase(encryptionValueArgCaptor.capture(), encryptionParamArgCaptor.capture(),eq(TEST_USERNAME));
+            ArgumentCaptor<String> encryptionValueArgCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<String> encryptionParamArgCaptor = ArgumentCaptor.forClass(String.class);
 
-        Assert.assertEquals(TEST_ENCRYPTED_PWD, encryptionValueArgCaptor.getValue());
-        Assert.assertEquals(SyncFilter.TEAM_ID.name(), encryptionParamArgCaptor.getValue());
+            Mockito.verify(allSharedPreferences, Mockito.times(1)).savePassphrase(encryptionValueArgCaptor.capture(), encryptionParamArgCaptor.capture(), eq(TEST_USERNAME));
+
+            Assert.assertEquals(TEST_ENCRYPTED_PWD, encryptionValueArgCaptor.getValue());
+            Assert.assertEquals(SyncFilter.TEAM_ID.name(), encryptionParamArgCaptor.getValue());
+        }
     }
 
     @Test
@@ -139,7 +126,7 @@ public class CredentialsHelperTest extends BaseUnitTest {
 
         Mockito.doReturn(SyncFilter.LOCATION_ID).when(syncConfiguration).getEncryptionParam();
 
-        credentialsHelper.saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, TEST_ENCRYPTED_PWD,TEST_USERNAME);
+        credentialsHelper.saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, TEST_ENCRYPTED_PWD, TEST_USERNAME);
 
         ArgumentCaptor<Integer> encryptionValueArgCaptor = ArgumentCaptor.forClass(Integer.class);
 
@@ -152,41 +139,55 @@ public class CredentialsHelperTest extends BaseUnitTest {
     public void generateLocalAuthCredentials() throws Exception {
 
         Assert.assertNotNull(credentialsHelper);
-        PowerMockito.mockStatic(SecurityHelper.class);
-        PowerMockito.when(SecurityHelper.getPasswordHash(TEST_DUMMY_PASSWORD)).thenReturn(null);
 
-        credentialsHelper.generateLocalAuthCredentials(TEST_DUMMY_PASSWORD);
+        try (MockedStatic<SecurityHelper> securityHelperMockedStatic = Mockito.mockStatic(SecurityHelper.class)) {
 
-        PowerMockito.verifyStatic(SecurityHelper.class);
-        SecurityHelper.getPasswordHash(TEST_DUMMY_PASSWORD);
+            securityHelperMockedStatic.when(() -> SecurityHelper.getPasswordHash(TEST_DUMMY_PASSWORD)).thenReturn(null);
+            credentialsHelper.generateLocalAuthCredentials(TEST_DUMMY_PASSWORD);
+
+            Mockito.verify(SecurityHelper.class, Mockito.atMostOnce());
+            SecurityHelper.getPasswordHash(TEST_DUMMY_PASSWORD);
+        }
     }
 
     @Test
     public void testGenerateDBCredentialsReturnsCorrectBytesForSyncByProvider() {
 
-        Mockito.doReturn(SyncFilter.PROVIDER).when(syncConfiguration).getEncryptionParam();
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class)) {
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        byte[] bytes = credentialsHelper.generateDBCredentials(TEST_DUMMY_PASSWORD, userInfo);
-        Assert.assertTrue(Arrays.equals(SecurityHelper.toBytes(TEST_DUMMY_PASSWORD), bytes));
+            Mockito.doReturn(SyncFilter.PROVIDER).when(syncConfiguration).getEncryptionParam();
+
+            byte[] bytes = credentialsHelper.generateDBCredentials(TEST_DUMMY_PASSWORD, userInfo);
+
+            Assert.assertTrue(Arrays.equals(SecurityHelper.toBytes(TEST_DUMMY_PASSWORD), bytes));
+        }
     }
 
     @Test
     public void testGenerateDBCredentialsReturnsCorrectBytesForSyncByTeam() {
 
-        Mockito.doReturn(SyncFilter.TEAM_ID).when(syncConfiguration).getEncryptionParam();
-        Mockito.doReturn(TEST_TEAM_ID).when(userService).getUserDefaultTeamId(userInfo);
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class)) {
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        byte[] bytes = credentialsHelper.generateDBCredentials(TEST_DUMMY_PASSWORD, userInfo);
-        Assert.assertTrue(Arrays.equals(SecurityHelper.toBytes(TEST_TEAM_ID.toCharArray()), bytes));
+            Mockito.doReturn(SyncFilter.TEAM_ID).when(syncConfiguration).getEncryptionParam();
+            Mockito.doReturn(TEST_TEAM_ID).when(userService).getUserDefaultTeamId(userInfo);
+
+            byte[] bytes = credentialsHelper.generateDBCredentials(TEST_DUMMY_PASSWORD, userInfo);
+            Assert.assertTrue(Arrays.equals(SecurityHelper.toBytes(TEST_TEAM_ID.toCharArray()), bytes));
+        }
     }
 
     @Test
     public void testGenerateDBCredentialsReturnsCorrectBytesForSyncByLocation() {
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class)) {
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
 
-        Mockito.doReturn(SyncFilter.LOCATION_ID).when(syncConfiguration).getEncryptionParam();
-        Mockito.doReturn(TEST_LOCATION_ID).when(userService).getUserLocationId(userInfo);
+            Mockito.doReturn(SyncFilter.LOCATION_ID).when(syncConfiguration).getEncryptionParam();
+            Mockito.doReturn(TEST_LOCATION_ID).when(userService).getUserLocationId(userInfo);
 
-        byte[] bytes = credentialsHelper.generateDBCredentials(TEST_DUMMY_PASSWORD, userInfo);
-        Assert.assertTrue(Arrays.equals(SecurityHelper.toBytes(TEST_LOCATION_ID.toCharArray()), bytes));
+            byte[] bytes = credentialsHelper.generateDBCredentials(TEST_DUMMY_PASSWORD, userInfo);
+            Assert.assertTrue(Arrays.equals(SecurityHelper.toBytes(TEST_LOCATION_ID.toCharArray()), bytes));
+        }
     }
 }

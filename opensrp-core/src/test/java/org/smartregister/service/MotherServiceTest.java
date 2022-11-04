@@ -16,7 +16,7 @@ import org.smartregister.repository.EligibleCoupleRepository;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.smartregister.domain.TimelineEvent.forDeliveryPlan;
@@ -117,7 +117,7 @@ public class MotherServiceTest extends BaseUnitTest {
         service.close(submission);
 
         verify(allBeneficiaries, times(0)).closeMother("entity id 1");
-        verifyZeroInteractions(allEligibleCouples);
+        verifyNoInteractions(allEligibleCouples);
     }
 
     @Test
@@ -177,7 +177,7 @@ public class MotherServiceTest extends BaseUnitTest {
 
         service.close(submission);
 
-        verifyZeroInteractions(allEligibleCouples);
+        verifyNoInteractions(allEligibleCouples);
     }
 
     @Test
@@ -225,8 +225,8 @@ public class MotherServiceTest extends BaseUnitTest {
 
         service.ifaTabletsGiven(submission);
 
-        verifyZeroInteractions(allTimelineEvents);
-        verifyZeroInteractions(serviceProvidedService);
+        verifyNoInteractions(allTimelineEvents);
+        verifyNoInteractions(serviceProvidedService);
     }
 
     @Test

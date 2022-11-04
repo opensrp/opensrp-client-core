@@ -1,5 +1,7 @@
 package org.smartregister;
 
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
@@ -32,32 +34,33 @@ import java.util.Set;
 
 import timber.log.Timber;
 
-import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
-
 /**
  * Created by keyman on 31/07/17.
  */
 public class CoreLibrary implements OnAccountsUpdateListener {
 
-    private final Context context;
-
     private static CoreLibrary instance;
-
-    private final SyncConfiguration syncConfiguration;
     private static long buildTimeStamp;
-
-    private boolean isPeerToPeerProcessing = false;
-
-    private String ecClientFieldsFile = "ec_client_fields.json";
-
-    private P2POptions p2POptions;
-
-    private AccountManager accountManager;
-
-    private AccountAuthenticatorXml authenticatorXml;
-
     private static String ENCRYPTED_PREFS_KEY_KEYSET = "__androidx_security_crypto_encrypted_prefs_key_keyset__";
     private static String ENCRYPTED_PREFS_VALUE_KEYSET = "__androidx_security_crypto_encrypted_prefs_value_keyset__";
+    private final Context context;
+    private final SyncConfiguration syncConfiguration;
+    private boolean isPeerToPeerProcessing = false;
+    private String ecClientFieldsFile = "ec_client_fields.json";
+    private P2POptions p2POptions;
+    private AccountManager accountManager;
+    private AccountAuthenticatorXml authenticatorXml;
+
+    protected CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration, @Nullable P2POptions p2POptions) {
+        context = contextArg;
+        this.syncConfiguration = syncConfiguration;
+        this.p2POptions = p2POptions;
+
+        initP2pLibrary(null);
+        if (syncConfiguration != null && syncConfiguration.runPlanEvaluationOnClientProcessing()) {
+            PathEvaluatorLibrary.init(new LocationDaoImpl(), new ClientDaoImpl(), new TaskDaoImpl(new TaskNotesRepository()), new EventDaoImpl());
+        }
+    }
 
     public static void init(Context context) {
         init(context, null);
@@ -153,15 +156,30 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         return instance;
     }
 
-    protected CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration, @Nullable P2POptions p2POptions) {
-        context = contextArg;
-        this.syncConfiguration = syncConfiguration;
-        this.p2POptions = p2POptions;
-
-        initP2pLibrary(null);
-        if (syncConfiguration != null && syncConfiguration.runPlanEvaluationOnClientProcessing()) {
-            PathEvaluatorLibrary.init(new LocationDaoImpl(), new ClientDaoImpl(), new TaskDaoImpl(new TaskNotesRepository()), new EventDaoImpl());
+    /**
+     * Use this method when testing.
+     * It should replace org.smartregister.Context#setInstance(org.smartregister.Context) which has been removed
+     *
+     * @param context
+     */
+    public static void reset(Context context) {
+        if (context != null) {
+            instance = new CoreLibrary(context, null, null);
         }
+    }
+
+    public static void reset(Context context, SyncConfiguration syncConfiguration) {
+        if (context != null) {
+            instance = new CoreLibrary(context, syncConfiguration, null);
+        }
+    }
+
+    public static long getBuildTimeStamp() {
+        return buildTimeStamp;
+    }
+
+    public static boolean isTimecheckDisabled() {
+        return AllConstants.TIME_CHECK;
     }
 
     public void initP2pLibrary(@Nullable String username) {
@@ -207,24 +225,6 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         return context;
     }
 
-    /**
-     * Use this method when testing.
-     * It should replace org.smartregister.Context#setInstance(org.smartregister.Context) which has been removed
-     *
-     * @param context
-     */
-    public static void reset(Context context) {
-        if (context != null) {
-            instance = new CoreLibrary(context, null, null);
-        }
-    }
-
-    public static void reset(Context context, SyncConfiguration syncConfiguration) {
-        if (context != null) {
-            instance = new CoreLibrary(context, syncConfiguration, null);
-        }
-    }
-
     @Nullable
     public SyncConfiguration getSyncConfiguration() {
         return syncConfiguration;
@@ -244,10 +244,6 @@ public class CoreLibrary implements OnAccountsUpdateListener {
             authenticatorXml = Utils.parseAuthenticatorXMLConfigData(context.applicationContext());
 
         return authenticatorXml;
-    }
-
-    public static long getBuildTimeStamp() {
-        return buildTimeStamp;
     }
 
     public String getEcClientFieldsFile() {

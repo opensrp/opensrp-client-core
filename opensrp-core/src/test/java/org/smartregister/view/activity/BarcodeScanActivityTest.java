@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
@@ -49,8 +49,7 @@ public class BarcodeScanActivityTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        org.mockito.MockitoAnnotations.initMocks(this);
-        Intent intent = new Intent(RuntimeEnvironment.application, BarcodeScanActivityMock.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), BarcodeScanActivityMock.class);
         controller = Robolectric.buildActivity(BarcodeScanActivityMock.class, intent);
         controller.create()
                 .start()

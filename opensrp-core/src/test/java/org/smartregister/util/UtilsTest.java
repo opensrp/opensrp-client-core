@@ -1,5 +1,25 @@
 package org.smartregister.util;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.smartregister.TestUtils.getContext;
+import static org.smartregister.util.Utils.getDefaultLocale;
+import static org.smartregister.util.Utils.getUserDefaultTeamId;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -22,13 +42,15 @@ import com.google.gson.JsonPrimitive;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
@@ -47,36 +69,16 @@ import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import edu.emory.mathcs.backport.java.util.Collections;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.smartregister.TestUtils.getContext;
-import static org.smartregister.util.Utils.getDefaultLocale;
-import static org.smartregister.util.Utils.getUserDefaultTeamId;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
@@ -130,7 +132,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertFillValueFromHashMapReturnsValue() {
-        android.widget.TextView view = new android.widget.TextView(RuntimeEnvironment.application);
+        android.widget.TextView view = new android.widget.TextView(ApplicationProvider.getApplicationContext());
         HashMap<String, String> map = new HashMap<String, String>();
         String field = "field";
         map.put(field, "2017-10-20");
@@ -143,7 +145,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertFillValueFromCommonPersonObjectClientReturnsValue() {
-        android.widget.TextView view = new android.widget.TextView(RuntimeEnvironment.application);
+        android.widget.TextView view = new android.widget.TextView(ApplicationProvider.getApplicationContext());
 
         String field = "field";
         HashMap<String, String> map = new HashMap<String, String>();
@@ -159,7 +161,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertFillValueTextFieldReturnsValue() throws Exception {
-        android.widget.TextView view = new android.widget.TextView(RuntimeEnvironment.application);
+        android.widget.TextView view = new android.widget.TextView(ApplicationProvider.getApplicationContext());
         String value = "value";
         view.setText(value);
         Utils.fillValue(view, value);
@@ -229,8 +231,8 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertAddToRowReturnsTableRow() {
-        TableRow mockRow = new TableRow(RuntimeEnvironment.application);
-        TableRow row = Utils.addToRow(RuntimeEnvironment.application, "hello world", mockRow);
+        TableRow mockRow = new TableRow(ApplicationProvider.getApplicationContext());
+        TableRow row = Utils.addToRow(ApplicationProvider.getApplicationContext(), "hello world", mockRow);
         assertEquals(mockRow, row);
         android.widget.TextView view = (android.widget.TextView) row.getChildAt(0);
         assertEquals(view.getText().toString(), "hello world");
@@ -238,8 +240,8 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertAddToRowWeihtReturnsTableRow() {
-        TableRow mockRow = new TableRow(RuntimeEnvironment.application);
-        TableRow row = Utils.addToRow(RuntimeEnvironment.application, "hello world", mockRow, 25);
+        TableRow mockRow = new TableRow(ApplicationProvider.getApplicationContext());
+        TableRow row = Utils.addToRow(ApplicationProvider.getApplicationContext(), "hello world", mockRow, 25);
         assertEquals(mockRow, row);
         android.widget.TextView view = (android.widget.TextView) row.getChildAt(0);
         assertEquals(view.getText().toString(), "hello world");
@@ -247,8 +249,8 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertAddToRowcompatReturnsTableRow() {
-        TableRow mockRow = new TableRow(RuntimeEnvironment.application);
-        TableRow row = Utils.addToRow(RuntimeEnvironment.application, "hello world", mockRow, true);
+        TableRow mockRow = new TableRow(ApplicationProvider.getApplicationContext());
+        TableRow row = Utils.addToRow(ApplicationProvider.getApplicationContext(), "hello world", mockRow, true);
         assertEquals(mockRow, row);
         android.widget.TextView view = (android.widget.TextView) row.getChildAt(0);
         assertEquals(view.getText().toString(), "hello world");
@@ -256,8 +258,8 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertAddToRowWeightCompatReturnsTableRow() {
-        TableRow mockRow = new TableRow(RuntimeEnvironment.application);
-        TableRow row = Utils.addToRow(RuntimeEnvironment.application, "<b>hello world</b>", mockRow, true, 25);
+        TableRow mockRow = new TableRow(ApplicationProvider.getApplicationContext());
+        TableRow row = Utils.addToRow(ApplicationProvider.getApplicationContext(), "<b>hello world</b>", mockRow, true, 25);
         assertEquals(mockRow, row);
         android.widget.TextView view = (android.widget.TextView) row.getChildAt(0);
         assertEquals(view.getText().toString(), "hello world");
@@ -361,13 +363,11 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    @Ignore
     public void testGetPropertiesShouldGetPropertyFile() {
-        AppProperties appProperties = Utils.getProperties(RuntimeEnvironment.application);
-        assertTrue(appProperties.getPropertyBoolean("property_4"));
-        assertEquals("property_1", appProperties.getProperty("property_1"));
-        assertEquals("property_2", appProperties.getProperty("property_2"));
-        assertEquals("property_3", appProperties.getProperty("property_3"));
+        AppProperties appProperties = Utils.getProperties(ApplicationProvider.getApplicationContext());
+        assertTrue(appProperties.getPropertyBoolean("system.toaster.centered"));
+        assertEquals("10", appProperties.getProperty("SYNC_DOWNLOAD_BATCH_SIZE"));
+        assertEquals("-1", appProperties.getProperty("PORT"));
     }
 
     @Test
@@ -471,18 +471,18 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testGetAppIdShouldReturnAppId() {
-        assertEquals("org.smartregister.test", Utils.getAppId(RuntimeEnvironment.application));
+        assertEquals("org.smartregister.test", Utils.getAppId(ApplicationProvider.getApplicationContext()));
     }
 
     @Test
     public void testGetAppVersionShouldReturnAppVersion() {
-        assertNull(Utils.getAppVersion(RuntimeEnvironment.application));
+        assertNull(Utils.getAppVersion(ApplicationProvider.getApplicationContext()));
     }
 
     @Test
     public void testLogoutUserShouldInvokeRequiredMethods() {
         org.smartregister.Context opensrpContext = Mockito.mock(org.smartregister.Context.class);
-        Context context = spy(RuntimeEnvironment.application);
+        Context context = spy(ApplicationProvider.getApplicationContext());
         AllSharedPreferences allSharedPreferences = Mockito.mock(AllSharedPreferences.class);
         Mockito.doReturn("string").when(allSharedPreferences).fetchRegisteredANM();
         Mockito.doReturn(allSharedPreferences).when(opensrpContext).allSharedPreferences();
@@ -541,7 +541,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void isConnectedToNetworkShouldReturnFalseWhenActiveNetworkInfoIsNotAvailable() {
-        Context context = spy(RuntimeEnvironment.application);
+        Context context = spy(ApplicationProvider.getApplicationContext());
 
         NetworkInfo networkInfo = mock(NetworkInfo.class);
         doReturn(false).when(networkInfo).isConnected();
@@ -556,7 +556,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void isConnectedToNetworkShouldReturnTrueWhenActiveNetworkInfoIsNotAvailable() {
-        Context context = spy(RuntimeEnvironment.application);
+        Context context = spy(ApplicationProvider.getApplicationContext());
 
         NetworkInfo networkInfo = mock(NetworkInfo.class);
         doReturn(true).when(networkInfo).isConnected();
@@ -582,7 +582,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void readAssetContents() {
-        String contents = Utils.readAssetContents(RuntimeEnvironment.application, "test_file.txt");
+        String contents = Utils.readAssetContents(ApplicationProvider.getApplicationContext(), "test_file.txt");
 
         assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
                 , contents);
@@ -645,27 +645,44 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         LoginResponseData loginData = new LoginResponseData();
         assertNull(getUserDefaultTeamId(loginData));
 
-        loginData.team =  new TeamMember();
+        loginData.team = new TeamMember();
         assertNull(getUserDefaultTeamId(loginData));
     }
 
-    @Ignore
     @Test
-    public void getDurationShouldReturnValidDurationString() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+    public void getDurationShouldReturnValidDurationString() throws ParseException {
+        try (MockedStatic<DateUtil> dateUtilMockedStatic = Mockito.mockStatic(DateUtil.class, Mockito.CALLS_REAL_METHODS)) {
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(1, Calendar.DAY_OF_MONTH);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
-        assertEquals("1d", Utils.getDuration(dateFormat.format(calendar.getTime())));
+            Calendar baseCalendar = Calendar.getInstance();
+            baseCalendar.set(Calendar.HOUR_OF_DAY, 0);
+            baseCalendar.set(Calendar.MINUTE, 0);
+            baseCalendar.set(Calendar.SECOND, 0);
+            baseCalendar.set(Calendar.MILLISECOND, 0);
 
-        calendar.add(5, Calendar.WEEK_OF_YEAR);
-        assertEquals("5w 1d", Utils.getDuration(calendar.getTime().toString()));
+            String timestampSuffix = getTimestampSuffix(dateFormat.format(baseCalendar.getTime()));
+            baseCalendar.setTime(dateFormat.parse("2022-02-06" + timestampSuffix));
 
-        calendar.add(-1, Calendar.DAY_OF_MONTH);
-        assertEquals("5w", Utils.getDuration(calendar.getTime().toString()));
+            dateUtilMockedStatic.when(DateUtil::getDateToday).thenReturn(baseCalendar);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(DateUtil.getDateToday().getTime());
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+
+            assertEquals("1d", Utils.getDuration(dateFormat.format(calendar.getTime())));
+
+            calendar.add(Calendar.WEEK_OF_YEAR, 5);
+            assertEquals("5w 1d", Utils.getDuration(dateFormat.format(calendar.getTime())));
+
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            assertEquals("5w", Utils.getDuration(dateFormat.format(calendar.getTime())));
+        }
     }
 
+    private String getTimestampSuffix(String systemDate) {
+        return systemDate.substring(systemDate.indexOf('T'));
+    }
 
     @Test
     public void getDurationShouldReturnEmptyString() {
@@ -687,12 +704,12 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void getPropertiesShouldLoadPropertiesInPropertiesFile() {
-        AppProperties appProperties = Utils.getProperties(RuntimeEnvironment.application);
+        AppProperties appProperties = Utils.getProperties(ApplicationProvider.getApplicationContext());
 
-        assertEquals(6, appProperties.size());
+        assertEquals(5, appProperties.size());
         assertEquals("", appProperties.getProperty("DRISHTI_BASE_URL"));
         assertEquals("false", appProperties.getProperty("SHOULD_VERIFY_CERTIFICATE"));
-        assertEquals("false", appProperties.getProperty("system.toaster.centered"));
+        assertEquals("true", appProperties.getProperty("system.toaster.centered"));
         assertEquals("10", appProperties.getProperty("SYNC_DOWNLOAD_BATCH_SIZE"));
     }
 
@@ -708,16 +725,33 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testComposeApiCallParamsStringWithSingleParamValue() {
-        List <Pair<String,String>> apiParams = Collections.singletonList(Pair.create("identifier", "global_configs"));
+        List<Pair<String, String>> apiParams = Collections.singletonList(Pair.create("identifier", "global_configs"));
         assertEquals("&identifier=global_configs", Utils.composeApiCallParamsString(apiParams));
     }
 
     @Test
     public void testComposeApiCallParamsStringWithMultipleParamValues() {
-        List <Pair<String,String>> apiParams = new ArrayList<>();
+        List<Pair<String, String>> apiParams = new ArrayList<>();
         apiParams.add(Pair.create("identifier", "global_configs"));
         apiParams.add(Pair.create("serverVersion", "21"));
         assertEquals("&identifier=global_configs&serverVersion=21", Utils.composeApiCallParamsString(apiParams));
+    }
+
+    @Test
+    public  void testExtractTrabslatableValue() throws JSONException
+    {
+        JSONObject object = new JSONObject();
+        String value = "testValue";
+        object.put(AllConstants.VALUE,value);
+        object.put (AllConstants.TEXT , AllConstants.TEXT);
+
+        // testing with Json Object
+        String result = Utils.extractTranslatableValue(object.toString());
+        assertEquals(result,value);
+        // testing backward compatibility.
+        String  result2 = Utils.extractTranslatableValue(value);
+        assertEquals(result2,value);
+
     }
 }
 

@@ -1,15 +1,14 @@
 package org.smartregister.service.formsubmissionhandler;
 
+import static org.mockito.Mockito.verify;
+import static org.smartregister.util.FormSubmissionBuilder.create;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.service.MotherService;
-
-import static org.mockito.Mockito.verify;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.util.FormSubmissionBuilder.create;
 
 public class PNCCloseHandlerTest extends BaseUnitTest {
     @Mock
@@ -19,7 +18,6 @@ public class PNCCloseHandlerTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
         handler = new PNCCloseHandler(motherService);
     }
 

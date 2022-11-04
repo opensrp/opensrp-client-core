@@ -7,17 +7,18 @@ import android.accounts.NetworkErrorException;
 import android.content.Intent;
 import android.os.Bundle;
 
-import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.view.activity.BaseLoginActivity;
+
+import java.net.HttpURLConnection;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 20-04-2021.
@@ -28,7 +29,7 @@ public class AccountAuthenticatorTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        accountAuthenticator = new AccountAuthenticator(RuntimeEnvironment.application);
+        accountAuthenticator = new AccountAuthenticator(ApplicationProvider.getApplicationContext());
     }
 
     @Test
@@ -137,7 +138,7 @@ public class AccountAuthenticatorTest extends BaseRobolectricUnitTest {
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "httpAgent", httpAgent);
 
         AccountResponse accountResponse = Mockito.mock(AccountResponse.class);
-        Mockito.doReturn(HttpStatus.SC_OK).when(accountResponse).getStatus();
+        Mockito.doReturn(HttpURLConnection.HTTP_OK).when(accountResponse).getStatus();
         Mockito.doReturn(accessToken).when(accountResponse).getAccessToken();
         Mockito.doReturn(accountManagerPassword).when(accountResponse).getRefreshToken();
 
@@ -184,7 +185,7 @@ public class AccountAuthenticatorTest extends BaseRobolectricUnitTest {
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "httpAgent", httpAgent);
 
         AccountResponse accountResponse = Mockito.mock(AccountResponse.class);
-        Mockito.doReturn(HttpStatus.SC_UNAUTHORIZED).when(accountResponse).getStatus();
+        Mockito.doReturn(HttpURLConnection.HTTP_UNAUTHORIZED).when(accountResponse).getStatus();
         Mockito.doReturn(accountResponse).when(httpAgent).oauth2authenticateRefreshToken(accountManagerPassword);
 
 

@@ -10,6 +10,7 @@ import java.io.Serializable;
 public class AccountError implements Serializable {
 
     public static final String ACCOUNT_NOT_FULLY_SETUP = "Account is not fully set up";
+    public static final String INVALID_CLIENT = "invalid_client";
 
     @SerializedName("status_code")
     private int statusCode;

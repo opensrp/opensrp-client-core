@@ -1,6 +1,6 @@
 package org.smartregister.clientandeventmodel;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class UserTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         user = new UserMock("");
         list.add("admin");
         list.add("member");

@@ -41,7 +41,7 @@ public class ActionServiceTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         service = new ActionService(drishtiService, allSettings, allSharedPreferences, allReports, actionRouter);
     }
 

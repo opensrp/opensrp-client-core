@@ -52,7 +52,7 @@ public class ContextTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         context = Context.getInstance();
     }
 

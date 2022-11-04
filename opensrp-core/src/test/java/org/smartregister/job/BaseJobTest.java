@@ -1,6 +1,9 @@
 package org.smartregister.job;
 
 import android.content.Context;
+import android.content.Intent;
+
+import androidx.test.core.app.ApplicationProvider;
 
 import com.evernote.android.job.JobRequest;
 import com.evernote.android.job.ShadowJobManager;
@@ -8,8 +11,8 @@ import com.evernote.android.job.ShadowJobManager;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -37,8 +40,20 @@ public class BaseJobTest extends BaseRobolectricUnitTest {
 
     @Test
     public void getApplicationContextShouldReturnSameContextInstance() {
-        BaseJob baseJob =Mockito.mock(BaseJob.class, Mockito.CALLS_REAL_METHODS);
-        ReflectionHelpers.setField(baseJob, "mContextReference", new WeakReference<Context>(RuntimeEnvironment.application));
-        Assert.assertEquals(RuntimeEnvironment.application, baseJob.getApplicationContext());
+        BaseJob baseJob = Mockito.mock(BaseJob.class, Mockito.CALLS_REAL_METHODS);
+        ReflectionHelpers.setField(baseJob, "mContextReference", new WeakReference<Context>(ApplicationProvider.getApplicationContext()));
+        Assert.assertEquals(ApplicationProvider.getApplicationContext(), baseJob.getApplicationContext());
+    }
+
+    @Test
+    public void startIntentServiceInvokesStartServiceWithCorrectParam() {
+        BaseJob baseJob = Mockito.mock(BaseJob.class, Mockito.CALLS_REAL_METHODS);
+        Context context = Mockito.mock(Context.class);
+
+        Mockito.doReturn(context).when(baseJob).getApplicationContext();
+
+        baseJob.startIntentService(Mockito.mock(Intent.class));
+
+        Mockito.verify(context).startService(ArgumentMatchers.any(Intent.class));
     }
 }

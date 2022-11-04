@@ -27,7 +27,7 @@ public class OpenSRPImageListenerTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         openSRPImageListener = new OpenSRPImageListener(imageView, entityId, defaultImageResId, errorImageResId);
     }
 

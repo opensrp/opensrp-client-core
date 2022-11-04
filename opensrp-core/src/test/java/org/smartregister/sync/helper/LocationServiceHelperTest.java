@@ -97,7 +97,7 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         AllSharedPreferences allSharedPreferences = Mockito.spy(CoreLibrary.getInstance().context().allSharedPreferences());
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
         Whitebox.setInternalState(locationServiceHelper, "locationTagRepository", locationTagRepository);

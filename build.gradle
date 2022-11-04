@@ -3,16 +3,16 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
-        maven{  url "https://plugins.gradle.org/m2/" }
+        maven { url "https://plugins.gradle.org/m2/" }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
     dependencies {
-        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.11.0"
-        classpath 'com.android.tools.build:gradle:4.0.0'
-        classpath 'gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.10.2'
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
+        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath 'gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.12.0'
         classpath 'org.smartregister:gradle-jarjar-plugin:1.0.0-SNAPSHOT'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21'
     }
 }
 
@@ -38,11 +38,11 @@ subprojects {
 
     group = 'org.smartregister'
 
-    ext.androidToolsBuildGradle     = '4.0.0'
-    ext.androidBuildToolsVersion    = '29.0.3'
-    ext.androidMinSdkVersion        = 18
-    ext.androidCompileSdkVersion    = 29
-    ext.androidTargetSdkVersion     = 29
+    ext.androidToolsBuildGradle = '4.2.2'
+    ext.androidBuildToolsVersion = '30.0.2'
+    ext.androidMinSdkVersion = 18
+    ext.androidCompileSdkVersion = 31
+    ext.androidTargetSdkVersion = 31
 
     ext.androidAnnotationsVersion = '3.0.1'
     ext.androidAnnotationsAPIVersion = '3.0.1'
@@ -52,7 +52,7 @@ subprojects {
         jcenter()
         mavenCentral()
         maven { url 'https://jitpack.io' }
-        maven { url "http://acra.googlecode.com/svn/repository/releases" }
+        maven { url "https://acra.googlecode.com/svn/repository/releases" }
         maven { url "https://repo.maven.apache.org/maven2" }
         maven {
             url "https://s3.amazonaws.com/repo.commonsware.com"

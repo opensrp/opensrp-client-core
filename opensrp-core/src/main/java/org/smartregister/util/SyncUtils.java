@@ -1,5 +1,14 @@
 package org.smartregister.util;
 
+import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION_SETTING;
+import static org.smartregister.AllConstants.JSON.KEY;
+import static org.smartregister.AllConstants.JSON.VALUE;
+import static org.smartregister.AllConstants.SETTINGS;
+import static org.smartregister.util.Utils.getVersionCode;
+import static org.smartregister.util.Utils.isEmptyCollection;
+
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
@@ -15,7 +24,6 @@ import androidx.annotation.StringRes;
 import androidx.annotation.VisibleForTesting;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,18 +36,10 @@ import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.BaseRepository;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.List;
 
 import timber.log.Timber;
-
-import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
-import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION;
-import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION_SETTING;
-import static org.smartregister.AllConstants.JSON.KEY;
-import static org.smartregister.AllConstants.JSON.VALUE;
-import static org.smartregister.AllConstants.SETTINGS;
-import static org.smartregister.util.Utils.getVersionCode;
-import static org.smartregister.util.Utils.isEmptyCollection;
 
 /**
  * Created by samuelgithengi on 1/28/19.
@@ -65,7 +65,7 @@ public class SyncUtils {
     public void logoutUser(@StringRes int logoutMessage) throws AuthenticatorException, OperationCanceledException, IOException {
         //force remote login
         if (!opensrpContext.getAppProperties().getPropertyBoolean(AllConstants.PROPERTY.ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN)
-                || (HttpStatus.SC_UNAUTHORIZED != opensrpContext.allSharedPreferences().getLastAuthenticationHttpStatus())) {
+                || (HttpURLConnection.HTTP_UNAUTHORIZED != opensrpContext.allSharedPreferences().getLastAuthenticationHttpStatus())) {
             opensrpContext.userService().forceRemoteLogin(opensrpContext.allSharedPreferences().fetchRegisteredANM());
         }
 

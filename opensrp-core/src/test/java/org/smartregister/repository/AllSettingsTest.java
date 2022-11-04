@@ -29,7 +29,7 @@ public class AllSettingsTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         allSettings = new AllSettings(allSharedPreferences, settingsRepository);
     }
 

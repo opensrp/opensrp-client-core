@@ -38,7 +38,7 @@ public class PlanDefinitionSearchRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         planDefinitionSearchRepository = spy(new PlanDefinitionSearchRepository());
     }
 

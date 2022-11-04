@@ -1,15 +1,19 @@
 package org.smartregister.view.controller;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.smartregister.AllConstants.CHILD_TYPE;
+import static org.smartregister.AllConstants.ENTITY_ID;
+
 import android.content.Context;
 import android.content.Intent;
 import android.webkit.JavascriptInterface;
 
 import com.google.gson.Gson;
-import com.ocpsoft.pretty.time.PrettyTime;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.ocpsoft.prettytime.PrettyTime;
 import org.smartregister.AllConstants;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.EligibleCouple;
@@ -29,10 +33,6 @@ import org.smartregister.view.contract.TimelineEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.smartregister.AllConstants.CHILD_TYPE;
-import static org.smartregister.AllConstants.ENTITY_ID;
 
 public class ChildDetailController {
     private final Context context;

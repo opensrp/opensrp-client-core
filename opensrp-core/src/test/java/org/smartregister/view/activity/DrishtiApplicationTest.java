@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.Context;
@@ -41,9 +41,9 @@ public class DrishtiApplicationTest {
     @Before
     public void setUp() throws Exception {
         drishtiApplication = Mockito.spy(new Application());
-        Mockito.doReturn(RuntimeEnvironment.application.getFilesDir()).when(drishtiApplication).getFilesDir();
-        Mockito.doReturn(RuntimeEnvironment.application).when(drishtiApplication).getApplicationContext();
-        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(drishtiApplication).getResources();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext().getFilesDir()).when(drishtiApplication).getFilesDir();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext()).when(drishtiApplication).getApplicationContext();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(drishtiApplication).getResources();
     }
 
     @Test

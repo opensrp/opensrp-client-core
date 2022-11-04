@@ -9,12 +9,13 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.R;
 
 /**
  * Created by ndegwamartin on 2020-04-07.
  */
-public class LibraryFragmentTest {
+public class LibraryFragmentTest extends BaseUnitTest {
 
     private LibraryFragment libraryFragment;
 
@@ -27,7 +28,6 @@ public class LibraryFragmentTest {
     @Before
     public void setUp() {
 
-        MockitoAnnotations.initMocks(this);
         libraryFragment = Mockito.mock(LibraryFragment.class, Mockito.CALLS_REAL_METHODS);
     }
 

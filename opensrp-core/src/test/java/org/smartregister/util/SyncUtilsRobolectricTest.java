@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -46,7 +46,7 @@ public class SyncUtilsRobolectricTest extends BaseRobolectricUnitTest {
         userService = Mockito.spy(opensrpContext.userService());
         Mockito.doReturn(userService).when(opensrpContext).userService();
 
-        context = Mockito.spy(RuntimeEnvironment.application);
+        context = Mockito.spy(ApplicationProvider.getApplicationContext());
 
         syncUtils = new SyncUtils(context);
         ReflectionHelpers.setField(syncUtils, "opensrpContext", opensrpContext);

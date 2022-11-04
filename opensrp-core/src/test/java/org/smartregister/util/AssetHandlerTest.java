@@ -4,7 +4,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.SyncFilter;
 import org.smartregister.domain.Location;
@@ -28,7 +28,7 @@ public class AssetHandlerTest extends BaseRobolectricUnitTest {
         jsonMap.put("filename2.json", new Object());
         jsonMap.put("filename3.json", new Object());
 
-        Assert.assertNull(AssetHandler.assetJsonToJava(jsonMap, RuntimeEnvironment.application, "some-file.json", null, new TypeToken<Field>(){}.getType()));
+        Assert.assertNull(AssetHandler.assetJsonToJava(jsonMap, ApplicationProvider.getApplicationContext(), "some-file.json", null, new TypeToken<Field>(){}.getType()));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class AssetHandlerTest extends BaseRobolectricUnitTest {
         jsonMap.put("filename2.json", setting);
         jsonMap.put("filename3.json", new Object());
 
-        Setting actualSetting = AssetHandler.assetJsonToJava(jsonMap, RuntimeEnvironment.application, "filename2.json", Setting.class, null);
+        Setting actualSetting = AssetHandler.assetJsonToJava(jsonMap, ApplicationProvider.getApplicationContext(), "filename2.json", Setting.class, null);
 
         Assert.assertEquals(setting, actualSetting);
     }
@@ -70,7 +70,7 @@ public class AssetHandlerTest extends BaseRobolectricUnitTest {
         jsonMap.put("filename2.json", setting);
         jsonMap.put("filename3.json", new Object());
 
-        Assert.assertNull(AssetHandler.assetJsonToJava(jsonMap, RuntimeEnvironment.application, "filename2.json", Location.class, null));
+        Assert.assertNull(AssetHandler.assetJsonToJava(jsonMap, ApplicationProvider.getApplicationContext(), "filename2.json", Location.class, null));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class AssetHandlerTest extends BaseRobolectricUnitTest {
         jsonMap.put("filename2.json", setting);
         jsonMap.put("filename3.json", new Object());
 
-        Table table = AssetHandler.assetJsonToJava(jsonMap, RuntimeEnvironment.application, "ec_client_fields.json", Table.class, new TypeToken<Table>(){}.getType());
+        Table table = AssetHandler.assetJsonToJava(jsonMap, ApplicationProvider.getApplicationContext(), "ec_client_fields.json", Table.class, new TypeToken<Table>(){}.getType());
 
         Assert.assertEquals("ec_family_member", table.name);
         Assert.assertEquals(13, table.columns.size());
@@ -99,7 +99,7 @@ public class AssetHandlerTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assetJsonToJavaShouldReturnNullWhenJsonMapIsNull() {
-        Assert.assertNull(AssetHandler.assetJsonToJava(null, RuntimeEnvironment.application, "some-file.json", Field.class, new TypeToken<Field>(){}.getType()));
+        Assert.assertNull(AssetHandler.assetJsonToJava(null, ApplicationProvider.getApplicationContext(), "some-file.json", Field.class, new TypeToken<Field>(){}.getType()));
     }
 
     @Test

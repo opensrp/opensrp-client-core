@@ -1,17 +1,21 @@
 package org.smartregister.util;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION_SETTING;
+
 import android.content.Context;
-import android.content.pm.PackageManager;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
@@ -19,21 +23,10 @@ import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.Setting;
 import org.smartregister.repository.AllSettings;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION;
-import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION_SETTING;
-
 /**
  * Created by Vincent Karuri on 10/03/2020
  */
 
-@PrepareForTest(Utils.class)
 public class SyncUtilsTest extends BaseUnitTest {
 
     @Mock
@@ -47,15 +40,11 @@ public class SyncUtilsTest extends BaseUnitTest {
 
     private SyncUtils syncUtils;
 
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
-
     @Mock
     private CoreLibrary coreLibrary;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
         doReturn(opensrpContext).when(coreLibrary).context();
         syncUtils = new SyncUtils(context);
@@ -63,8 +52,7 @@ public class SyncUtilsTest extends BaseUnitTest {
     }
 
     @Test
-    public void testIsAppVersionAllowedShouldReturnCorrectStatus() throws PackageManager.NameNotFoundException {
-        mockStatic(Utils.class);
+    public void testIsAppVersionAllowedShouldReturnCorrectStatus() {
 
         // setting doesn't exist
         assertTrue(syncUtils.isAppVersionAllowed());
@@ -74,31 +62,51 @@ public class SyncUtilsTest extends BaseUnitTest {
         setting.setIdentifier(MIN_ALLOWED_APP_VERSION_SETTING);
         setting.setValue(getMinAppVersionSetting(2));
         doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
-        when(Utils.getVersionCode(any(Context.class))).thenReturn(1l);
-        assertFalse(syncUtils.isAppVersionAllowed());
+
+        try (MockedStatic<Utils> utilsMockedStatic = Mockito.mockStatic(Utils.class)) {
+            utilsMockedStatic.when(() -> Utils.getVersionCode(any(Context.class))).thenReturn(1l);
+            assertFalse(syncUtils.isAppVersionAllowed());
+        }
 
         // same version app
-        when(Utils.getVersionCode(any())).thenReturn(2l);
-        doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
-        assertTrue(syncUtils.isAppVersionAllowed());
+        try (MockedStatic<Utils> utilsMockedStatic = Mockito.mockStatic(Utils.class)) {
+            utilsMockedStatic.when(() -> Utils.getVersionCode(any(Context.class))).thenReturn(2l);
+            doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
+            assertTrue(syncUtils.isAppVersionAllowed());
+        }
+
 
         // newer version app
-        when(Utils.getVersionCode(any())).thenReturn(3l);
-        doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
-        assertTrue(syncUtils.isAppVersionAllowed());
+        try (MockedStatic<Utils> utilsMockedStatic = Mockito.mockStatic(Utils.class)) {
+            utilsMockedStatic.when(() -> Utils.getVersionCode(any(Context.class))).thenReturn(3l);
+            doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
+            assertTrue(syncUtils.isAppVersionAllowed());
+        }
 
         // 1. outdated app
-        doReturn("2").when(settingsRepository).get(eq(MIN_ALLOWED_APP_VERSION));
-        when(Utils.getVersionCode(any())).thenReturn(1l);
-        assertFalse(syncUtils.isAppVersionAllowed());
+        try (MockedStatic<Utils> utilsMockedStatic = Mockito.mockStatic(Utils.class)) {
+            utilsMockedStatic.when(() -> Utils.getVersionCode(any(Context.class))).thenReturn(3l);
+            doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
+            assertTrue(syncUtils.isAppVersionAllowed());
+        }
+
+        try (MockedStatic<Utils> utilsMockedStatic = Mockito.mockStatic(Utils.class)) {
+            utilsMockedStatic.when(() -> Utils.getVersionCode(any(Context.class))).thenReturn(1l);
+            doReturn("2").when(settingsRepository).get(eq(MIN_ALLOWED_APP_VERSION));
+            assertFalse(syncUtils.isAppVersionAllowed());
+        }
 
         // 2. same version app
-        when(Utils.getVersionCode(any())).thenReturn(2l);
-        assertTrue(syncUtils.isAppVersionAllowed());
+        try (MockedStatic<Utils> utilsMockedStatic = Mockito.mockStatic(Utils.class)) {
+            utilsMockedStatic.when(() -> Utils.getVersionCode(any())).thenReturn(2l);
+            assertTrue(syncUtils.isAppVersionAllowed());
+        }
 
         // 3. newer version app
-        when(Utils.getVersionCode(any())).thenReturn(3l);
-        assertTrue(syncUtils.isAppVersionAllowed());
+        try (MockedStatic<Utils> utilsMockedStatic = Mockito.mockStatic(Utils.class)) {
+            utilsMockedStatic.when(() -> Utils.getVersionCode(any())).thenReturn(3l);
+            assertTrue(syncUtils.isAppVersionAllowed());
+        }
     }
 
     @Test

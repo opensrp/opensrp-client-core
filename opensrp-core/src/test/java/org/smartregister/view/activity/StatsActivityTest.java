@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.shadows.ShadowDialog;
 import org.smartregister.BaseUnitTest;
@@ -26,7 +26,7 @@ public class StatsActivityTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        Intent intent = new Intent(RuntimeEnvironment.application, SettingsActivity.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), SettingsActivity.class);
         ActivityController<StatsActivity> controller = Robolectric.buildActivity(StatsActivity.class, intent);
         statsActivity = Mockito.spy(controller.get());
     }

@@ -2,7 +2,7 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -32,7 +32,7 @@ public class TimelineEventRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         timelineEventRepository = new TimelineEventRepository();
         timelineEventRepository.updateMasterRepository(repository);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
@@ -55,7 +55,7 @@ public class TimelineEventRepositoryTest extends BaseUnitTest {
     public void assertAddCallsDatabaseInsert() {
         TimelineEvent timelineEvent = new TimelineEvent("", "", new LocalDate(), "", "", "");
         timelineEventRepository.add(timelineEvent);
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(), Mockito.any(ContentValues.class));
     }
 
     @Test
@@ -64,9 +64,9 @@ public class TimelineEventRepositoryTest extends BaseUnitTest {
         MatrixCursor cursor = new MatrixCursor(columns);
         cursor.addRow(new Object[]{"", "", "2017-10-10", "", "", ""});
         cursor.addRow(new Object[]{"", "", "2017-10-10", "", "", ""});
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(cursor);
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(), Mockito.isNull(), Mockito.isNull())).thenReturn(cursor);
         timelineEventRepository.allFor("0");
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
     }
 
     @Test

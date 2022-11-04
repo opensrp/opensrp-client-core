@@ -2,10 +2,7 @@ package org.smartregister.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.Mother;
 import org.smartregister.domain.ServiceProvided;
@@ -23,27 +20,35 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-public class ChildServiceTest extends BaseUnitTest {
+public class ChildServiceTest {
 
-    @Mock
     private AllTimelineEvents allTimelineEvents;
-    @Mock
+
     private ChildRepository childRepository;
-    @Mock
+
     private MotherRepository motherRepository;
-    @Mock
+
     private ServiceProvidedService serviceProvidedService;
-    @Mock
+
     private AllAlerts allAlerts;
-    @Mock
+
     private AllBeneficiaries allBeneficiaries;
-    @Mock
+
     private Child child;
+
     private ChildService service;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+
+        serviceProvidedService = Mockito.mock(ServiceProvidedService.class);
+        allAlerts = Mockito.mock(AllAlerts.class);
+        child = Mockito.mock(Child.class);
+
+        childRepository = Mockito.mock(ChildRepository.class);
+        motherRepository = Mockito.mock(MotherRepository.class);
+        allTimelineEvents = Mockito.mock(AllTimelineEvents.class);
+        allBeneficiaries = Mockito.mock(AllBeneficiaries.class);
         service = new ChildService(allBeneficiaries, motherRepository, childRepository, allTimelineEvents, serviceProvidedService, allAlerts);
     }
 

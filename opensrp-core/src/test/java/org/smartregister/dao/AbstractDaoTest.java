@@ -38,7 +38,7 @@ public class AbstractDaoTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         Mockito.doReturn(sqLiteDatabase).when(repository).getReadableDatabase();
         Mockito.doReturn(sqLiteDatabase).when(repository).getWritableDatabase();
     }

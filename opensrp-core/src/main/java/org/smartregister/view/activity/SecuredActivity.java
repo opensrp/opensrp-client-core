@@ -62,11 +62,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        logoutListener = new Listener<Boolean>() {
-            public void onEvent(Boolean data) {
-                finish();
-            }
-        };
+        logoutListener = data -> finish();
         ON_LOGOUT.addListener(logoutListener);
 
         if (context().IsUserLoggedOut()) {

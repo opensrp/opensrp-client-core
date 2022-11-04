@@ -1,13 +1,10 @@
 buildscript {
     repositories {
         google()
-        jcenter()
-        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
-        classpath 'org.apache.commons:commons-lang3:3.9'
-        classpath 'io.fabric.tools:gradle:1.31.2'
+        classpath 'org.apache.commons:commons-lang3:3.12.0'
     }
 }
 
@@ -17,7 +14,6 @@ repositories {
     mavenCentral()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     mavenLocal()
-    maven { url 'https://maven.fabric.io/public' }
 }
 
 apply plugin: 'com.android.application'
@@ -49,12 +45,13 @@ android {
 
     buildTypes {
         release {
+
             minifyEnabled false
+
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         debug {
-
             minifyEnabled false
 
             buildConfigField "String", "OAUTH_CLIENT_ID", '"opensrp-trusted-client"'
@@ -84,40 +81,14 @@ dependencies {
     }
     implementation 'androidx.work:work-runtime:2.7.1'
 
-    jarJar 'com.ibm.fhir:fhir-model:4.7.0'
+    jarJar 'com.ibm.fhir:fhir-model:4.7.1'
 
     // Repackaged jars will be placed here, adding them to classpath
     implementation fileTree(dir: "./build/libs", include: ['*.jar'])
 
-    implementation('com.google.android.material:material:1.1.0') {
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
-
-    }
-    implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'net.zetetic:android-database-sqlcipher:4.2.0'
-    implementation 'com.jakewharton.timber:timber:4.7.1'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
-        transitive = true
-    }
-
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
-
-    testImplementation 'junit:junit:4.13'
-    testImplementation('org.robolectric:robolectric:4.3.1') {
-
-        exclude group: 'com.google.guava', module: 'guava'
-        exclude group: 'org.apache.maven', module: 'maven-model'
-        exclude group: 'org.apache.maven', module: 'maven-ant-tasks'
-        exclude group: 'com.android.support'
-        exclude group: 'com.thoughtworks.xstream', module: 'xstream'
-    }
-    testImplementation("org.robolectric:shadows-multidex:4.3.1") {
-        exclude group: 'com.google.guava', module: 'guava'
-    }
-    testImplementation('org.robolectric:shadows-support-v4:3.3.2') {
-        exclude group: 'com.google.guava', module: 'guava'
-    }
-    testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
+    implementation group: 'com.google.android.material', name: 'material', version: '1.6.1'
+    implementation 'net.zetetic:android-database-sqlcipher:4.5.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.jakewharton.timber:timber:5.0.1'
 }

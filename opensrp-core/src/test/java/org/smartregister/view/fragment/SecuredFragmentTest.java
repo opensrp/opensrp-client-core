@@ -12,7 +12,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
@@ -59,7 +59,7 @@ public class SecuredFragmentTest extends BaseUnitTest {
     @Before
     public void setUp() {
 
-        MockitoAnnotations.initMocks(this);
+        
         securedFragment = Mockito.mock(SecuredFragment.class, Mockito.CALLS_REAL_METHODS);
 
         Mockito.doReturn(context).when(securedFragment).context();
@@ -67,7 +67,7 @@ public class SecuredFragmentTest extends BaseUnitTest {
         Mockito.doReturn(anmController).when(context).anmController();
         Mockito.doReturn(activity).when(securedFragment).getActivity();
 
-        application = (DrishtiApplication) Mockito.spy(RuntimeEnvironment.application);
+        application = (DrishtiApplication) Mockito.spy(ApplicationProvider.getApplicationContext());
         Mockito.doReturn(application).when(activity).getApplication();
     }
 

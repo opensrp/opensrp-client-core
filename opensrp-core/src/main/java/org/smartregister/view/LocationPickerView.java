@@ -92,7 +92,6 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
             }
             locationPickerDialog.dismiss();
         });
-
         this.setText(Utils.getTranslatedLocation(LocationHelper.getInstance().getOpenMrsReadableName(getSelectedItem())));
 
         setClickable(true);

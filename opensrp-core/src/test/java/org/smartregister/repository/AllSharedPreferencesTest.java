@@ -1,44 +1,37 @@
 package org.smartregister.repository;
 
-import android.content.SharedPreferences;
-
-import junit.framework.TestCase;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-import org.smartregister.AllConstants;
-import org.smartregister.sync.mock.MockEditor;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.smartregister.AllConstants.CAMPAIGNS;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = 27)
-public class AllSharedPreferencesTest extends TestCase {
-    @Mock
-    private SharedPreferences preferences;
+import android.content.SharedPreferences;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.smartregister.AllConstants;
+import org.smartregister.BaseUnitTest;
+import org.smartregister.sync.mock.MockEditor;
+
+public class AllSharedPreferencesTest extends BaseUnitTest {
     private static final String HOST = "HOST";
     private static final String PORT = "PORT";
     private static final String USERNAME = "USERNAME";
-    AllSharedPreferences allSharedPreferences;
     private final String str = "default";
+    AllSharedPreferences allSharedPreferences;
+    @Mock
+    private SharedPreferences preferences;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+
         allSharedPreferences = new AllSharedPreferences(preferences);
-        Mockito.when(preferences.getString(Mockito.anyString(), Mockito.isNull(String.class))).thenReturn(str);
+        Mockito.when(preferences.getString(Mockito.anyString(), Mockito.isNull())).thenReturn(str);
         Mockito.when(preferences.getString(Mockito.anyString(), Mockito.anyString())).thenReturn(str);
         Mockito.when(preferences.getLong(Mockito.anyString(), Mockito.anyLong())).thenReturn(0l);
         Mockito.when(preferences.getString(HOST, "")).thenReturn("");
@@ -191,7 +184,7 @@ public class AllSharedPreferencesTest extends TestCase {
         String actual = allSharedPreferences.fetchRegisteredANM();
 
         Mockito.verify(preferences).getString("anmIdentifier", "");
-        assertEquals("1234", actual);
+        Assert.assertEquals("1234", actual);
     }
 
     @Test
@@ -201,21 +194,21 @@ public class AllSharedPreferencesTest extends TestCase {
         String actual = allSharedPreferences.fetchRegisteredANM();
 
         Mockito.verify(preferences).getString("anmIdentifier", "");
-        assertEquals("1234", actual);
+        Assert.assertEquals("1234", actual);
     }
 
     @Test
     public void shouldFetchLanguagePreference() throws Exception {
         Mockito.when(preferences.getString(AllConstants.LANGUAGE_PREFERENCE_KEY, AllConstants.DEFAULT_LOCALE)).thenReturn(AllConstants.ENGLISH_LANGUAGE);
 
-        assertEquals("English", allSharedPreferences.fetchLanguagePreference());
+        Assert.assertEquals("English", allSharedPreferences.fetchLanguagePreference());
     }
 
     @Test
     public void shouldFetchIsSyncInProgress() throws Exception {
         Mockito.when(preferences.getBoolean(AllConstants.IS_SYNC_IN_PROGRESS_PREFERENCE_KEY, false)).thenReturn(true);
 
-        assertTrue(allSharedPreferences.fetchIsSyncInProgress());
+        Assert.assertTrue(allSharedPreferences.fetchIsSyncInProgress());
     }
 
     @Test
@@ -262,8 +255,8 @@ public class AllSharedPreferencesTest extends TestCase {
     public void testFetchUserLocalityId() {
         Mockito.when(preferences.getString(any(), any())).thenReturn("local-id");
 
-        assertEquals("local-id", allSharedPreferences.fetchUserLocalityId("uname"));
-        assertNull(allSharedPreferences.fetchUserLocalityId(null));
+        Assert.assertEquals("local-id", allSharedPreferences.fetchUserLocalityId("uname"));
+        Assert.assertNull(allSharedPreferences.fetchUserLocalityId(null));
     }
 
     @Test
@@ -282,23 +275,23 @@ public class AllSharedPreferencesTest extends TestCase {
     public void testFetchDefaultTeam() {
         Mockito.when(preferences.getString(any(), any())).thenReturn("team");
 
-        assertEquals("team", allSharedPreferences.fetchDefaultTeam("uname"));
-        assertNull(allSharedPreferences.fetchDefaultTeam(null));
+        Assert.assertEquals("team", allSharedPreferences.fetchDefaultTeam("uname"));
+        Assert.assertNull(allSharedPreferences.fetchDefaultTeam(null));
     }
 
     @Test
     public void testFetchDefaultTeamId() {
         Mockito.when(preferences.getString(any(), any())).thenReturn("team-id");
 
-        assertEquals("team-id", allSharedPreferences.fetchDefaultTeamId("uname"));
-        assertNull(allSharedPreferences.fetchDefaultTeamId(null));
+        Assert.assertEquals("team-id", allSharedPreferences.fetchDefaultTeamId("uname"));
+        Assert.assertNull(allSharedPreferences.fetchDefaultTeamId(null));
     }
 
     @Test
     public void testFetchLastSyncDate() {
         Mockito.when(preferences.getLong(any(), anyLong())).thenReturn(2000L);
 
-        assertEquals((Long) 2000L, allSharedPreferences.fetchLastSyncDate(1000L));
+        Assert.assertEquals((Long) 2000L, allSharedPreferences.fetchLastSyncDate(1000L));
     }
 
     @Test
@@ -329,7 +322,7 @@ public class AllSharedPreferencesTest extends TestCase {
     public void testFetchLastCheckTimeStamp() {
         Mockito.when(preferences.getLong(any(), anyLong())).thenReturn(2000L);
 
-        assertEquals(2000L, allSharedPreferences.fetchLastCheckTimeStamp());
+        Assert.assertEquals(2000L, allSharedPreferences.fetchLastCheckTimeStamp());
     }
 
     @Test
@@ -360,14 +353,14 @@ public class AllSharedPreferencesTest extends TestCase {
     public void testFetchLastSettingsSyncTimeStamp() {
         Mockito.when(preferences.getLong(any(), anyLong())).thenReturn(2000L);
 
-        assertEquals(2000L, allSharedPreferences.fetchLastSettingsSyncTimeStamp());
+        Assert.assertEquals(2000L, allSharedPreferences.fetchLastSettingsSyncTimeStamp());
     }
 
     @Test
     public void testIsMigratedToSqlite4() {
         Mockito.when(preferences.getBoolean(any(), anyBoolean())).thenReturn(true);
 
-        assertTrue(allSharedPreferences.isMigratedToSqlite4());
+        Assert.assertTrue(allSharedPreferences.isMigratedToSqlite4());
     }
 
     @Test
@@ -386,7 +379,7 @@ public class AllSharedPreferencesTest extends TestCase {
     public void testGetLastPeerToPeerSyncProcessedEvent() {
         Mockito.when(preferences.getInt(any(), anyInt())).thenReturn(10);
 
-        assertEquals(10, allSharedPreferences.getLastPeerToPeerSyncProcessedEvent());
+        Assert.assertEquals(10, allSharedPreferences.getLastPeerToPeerSyncProcessedEvent());
     }
 
     @Test
@@ -405,7 +398,7 @@ public class AllSharedPreferencesTest extends TestCase {
     public void isPeerToPeerUnprocessedEvents() {
         Mockito.when(preferences.getBoolean(any(), anyBoolean())).thenReturn(true);
 
-        assertTrue(allSharedPreferences.isPeerToPeerUnprocessedEvents());
+        Assert.assertTrue(allSharedPreferences.isPeerToPeerUnprocessedEvents());
     }
 
     @Test
@@ -436,7 +429,7 @@ public class AllSharedPreferencesTest extends TestCase {
     public void testFetchLastClientProcessedTimeStamp() {
         Mockito.when(preferences.getLong(any(), anyLong())).thenReturn(2000L);
 
-        assertEquals(2000L, allSharedPreferences.fetchLastClientProcessedTimeStamp());
+        Assert.assertEquals(2000L, allSharedPreferences.fetchLastClientProcessedTimeStamp());
     }
 
     @Test
@@ -455,6 +448,6 @@ public class AllSharedPreferencesTest extends TestCase {
     public void testFetchTransactionsKilledFlag() {
         Mockito.when(preferences.getBoolean(any(), anyBoolean())).thenReturn(true);
 
-        assertTrue(allSharedPreferences.fetchTransactionsKilledFlag());
+        Assert.assertTrue(allSharedPreferences.fetchTransactionsKilledFlag());
     }
 }

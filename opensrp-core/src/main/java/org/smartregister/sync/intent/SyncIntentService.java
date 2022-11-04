@@ -64,16 +64,14 @@ public class SyncIntentService extends BaseSyncIntentService {
     private static final String ADD_URL = "rest/event/add";
     private static final String FAILED_CLIENTS = "failed_clients";
     private static final String FAILED_EVENTS = "failed_events";
+    protected ValidateAssignmentHelper validateAssignmentHelper;
     private Context context;
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
     private Trace eventSyncTrace;
     private Trace processClientTrace;
     private String team;
-
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
-
-    protected ValidateAssignmentHelper validateAssignmentHelper;
     private long totalRecords;
     private int fetchedRecords = 0;
     private int totalRecordsCount = 0;

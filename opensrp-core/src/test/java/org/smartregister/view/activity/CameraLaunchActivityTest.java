@@ -3,7 +3,7 @@ package org.smartregister.view.activity;
 import android.content.Context;
 import android.content.Intent;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.android.controller.ActivityController;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
@@ -50,14 +50,13 @@ public class CameraLaunchActivityTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        org.mockito.MockitoAnnotations.initMocks(this);
         CoreLibrary.init(context_);
         when(context_.applicationContext()).thenReturn(applicationContext);
         when(context_.anmLocationController()).thenReturn(anmLocationController);
         when(anmLocationController.get()).thenReturn(locationJson);
         CameraActivityMock.setContext(context_);
         when(context_.ziggyService()).thenReturn(ziggyService);
-        Intent intent = new Intent(RuntimeEnvironment.application, CameraActivityMock.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CameraActivityMock.class);
         controller = Robolectric.buildActivity(CameraActivityMock.class, intent);
         activity = controller.get();
         controller.create()

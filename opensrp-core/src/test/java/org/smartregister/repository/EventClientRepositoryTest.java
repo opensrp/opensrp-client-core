@@ -75,7 +75,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
@@ -273,7 +273,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
         eventClientRepository.addorUpdateClient(baseEntityId, getClientList().get(0));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.any(ContentValues.class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull(), org.mockito.ArgumentMatchers.any(ContentValues.class));
 
     }
 
@@ -301,9 +301,9 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     public void addorUpdateEventCallsInsert1timeForNewEvents() throws Exception {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{baseEntityId, syncStatus});
 
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull(String[].class))).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull())).thenReturn(matrixCursor);
         eventClientRepository.addEvent(baseEntityId, getEventList().get(0));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.any(ContentValues.class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull(), org.mockito.ArgumentMatchers.any(ContentValues.class));
 
     }
 

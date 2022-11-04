@@ -1,12 +1,25 @@
 package org.smartregister.view.activity;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
+import static org.smartregister.AllConstants.FORM_NAME_PARAM;
+import static org.smartregister.AllConstants.INSTANCE_ID_PARAM;
+import static org.smartregister.AllConstants.SHORT_DATE_FORMAT;
+import static org.smartregister.AllConstants.SYNC_STATUS;
+import static org.smartregister.AllConstants.VERSION_PARAM;
+import static org.smartregister.domain.SyncStatus.PENDING;
+import static org.smartregister.util.EasyMap.create;
+import static java.text.MessageFormat.format;
+import static java.util.Arrays.asList;
+
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -25,13 +38,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONML;
 import org.json.JSONObject;
 import org.smartregister.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.domain.ReportMonth;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.util.AppExecutorService;
 import org.smartregister.util.PaginationHolder;
 import org.smartregister.util.ViewHelper;
 import org.smartregister.view.contract.SmartRegisterClient;
@@ -54,21 +67,6 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
-import static java.text.MessageFormat.format;
-import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
-import static org.smartregister.AllConstants.FORM_NAME_PARAM;
-import static org.smartregister.AllConstants.INSTANCE_ID_PARAM;
-import static org.smartregister.AllConstants.SHORT_DATE_FORMAT;
-import static org.smartregister.AllConstants.SYNC_STATUS;
-import static org.smartregister.AllConstants.VERSION_PARAM;
-import static org.smartregister.domain.SyncStatus.PENDING;
-import static org.smartregister.util.EasyMap.create;
-
 public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity {
 
     public static final String DIALOG_TAG = "dialog";
@@ -77,6 +75,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     private final PaginationViewHandler paginationViewHandler = new PaginationViewHandler();
     private final NavBarActionsHandler navBarActionsHandler = new NavBarActionsHandler();
     private final SearchCancelHandler searchCancelHandler = new SearchCancelHandler();
+    private final AppExecutorService appExecutorService = new AppExecutorService();
     private ListView clientsView;
     private ProgressBar clientsProgressView;
     private TextView serviceModeView;
@@ -146,30 +145,19 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
 
     @Override
     protected void onResumption() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                publishProgress();
-                setupAdapter();
-                return null;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                clientsProgressView.setVisibility(VISIBLE);
-                clientsView.setVisibility(INVISIBLE);
-            }
-
-            @Override
-            protected void onPostExecute(Void result) {
+        // On Pre-Execute
+        clientsProgressView.setVisibility(VISIBLE);
+        clientsView.setVisibility(INVISIBLE);
+        appExecutorService.executorService().execute(() -> {
+            // publishProgress();
+            setupAdapter();
+            appExecutorService.mainThread().execute(() -> {
                 clientsView.setAdapter(clientsAdapter);
                 paginationViewHandler.refresh();
                 clientsProgressView.setVisibility(View.GONE);
                 clientsView.setVisibility(VISIBLE);
-
-            }
-        }.executeOnExecutor(THREAD_POOL_EXECUTOR);
+            });
+        });
     }
 
     protected void setupViews() {
@@ -463,7 +451,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ENGLISH);
 
-            JSONObject parentJson = JSONML.toJSONObject(savedDataStr);
+            JSONObject parentJson = new JSONObject(savedDataStr);
             JSONArray jsonArray = parentJson.getJSONArray("childNodes");
 
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -480,13 +468,17 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
                 }
             }
 
-            return JSONML.toString(parentJson);
+            return parentJson.toString();
 
         } catch (JSONException e) {
             Timber.e(e);
 
         }
         return savedDataStr;
+    }
+
+    protected String getFormattedPaginationInfoText(int currentPage, int pageCount) {
+        return format(getResources().getString(R.string.str_page_info), currentPage, pageCount);
     }
 
     public interface ClientsHeaderProvider {
@@ -640,9 +632,5 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         private void clearSearchText() {
             searchView.setText("");
         }
-    }
-
-    protected String getFormattedPaginationInfoText(int currentPage, int pageCount) {
-        return format(getResources().getString(R.string.str_page_info), currentPage, pageCount);
     }
 }

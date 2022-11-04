@@ -3,11 +3,9 @@ package org.smartregister.view.viewholder;
 import android.view.View;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.view.activity.SecuredActivity;
 
@@ -24,11 +22,6 @@ public class OnClickFormLauncherTest extends BaseUnitTest {
 
     @Mock
     private View view;
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void testOnClickInvokesStartFormActivityWithCorrectParams() {

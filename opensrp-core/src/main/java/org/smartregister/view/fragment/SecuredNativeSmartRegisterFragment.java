@@ -1,9 +1,15 @@
 package org.smartregister.view.fragment;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.smartregister.AllConstants.SHORT_DATE_FORMAT;
+import static java.text.MessageFormat.format;
+import static java.util.Arrays.asList;
+
 import android.content.pm.ActivityInfo;
 import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,6 +32,7 @@ import org.smartregister.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.domain.ReportMonth;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.util.AppExecutorService;
 import org.smartregister.util.PaginationHolder;
 import org.smartregister.util.ViewHelper;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
@@ -43,14 +50,6 @@ import org.smartregister.view.dialog.SortOption;
 
 import java.util.List;
 
-import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
-import static java.text.MessageFormat.format;
-import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.smartregister.AllConstants.SHORT_DATE_FORMAT;
-
 /**
  * Created by koros on 10/12/15.
  */
@@ -62,6 +61,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
     private final PaginationViewHandler paginationViewHandler = new PaginationViewHandler();
     private final NavBarActionsHandler navBarActionsHandler = new NavBarActionsHandler();
     private final SearchCancelHandler searchCancelHandler = new SearchCancelHandler();
+    private final AppExecutorService appExecutorService = new AppExecutorService();
     public ListView clientsView;
     public ProgressBar clientsProgressView;
     public TextView serviceModeView;
@@ -152,32 +152,21 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
 
     @Override
     protected void onResumption() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                publishProgress();
-                setupAdapter();
-                return null;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                clientsProgressView.setVisibility(VISIBLE);
-                clientsView.setVisibility(INVISIBLE);
-            }
-
-            @Override
-            protected void onPostExecute(Void result) {
+        // On Pre-Execute
+        clientsProgressView.setVisibility(VISIBLE);
+        clientsView.setVisibility(INVISIBLE);
+        appExecutorService.executorService().execute(() -> {
+            // publishProgress();
+            setupAdapter();
+            appExecutorService.mainThread().execute(() -> {
                 clientsView.setAdapter(clientsAdapter);
                 if (isAdded()) {
                     paginationViewHandler.refresh();
                     clientsProgressView.setVisibility(View.GONE);
                     clientsView.setVisibility(VISIBLE);
                 }
-
-            }
-        }.executeOnExecutor(THREAD_POOL_EXECUTOR);
+            });
+        });
     }
 
     private void setupStatusBarViews(View view) {

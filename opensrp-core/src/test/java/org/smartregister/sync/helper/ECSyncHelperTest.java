@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Event;
@@ -92,8 +92,8 @@ public class ECSyncHelperTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws JSONException {
-        MockitoAnnotations.initMocks(this);
-        syncHelper = new ECSyncHelper(RuntimeEnvironment.application, eventClientRepository);
+        
+        syncHelper = new ECSyncHelper(ApplicationProvider.getApplicationContext(), eventClientRepository);
         Whitebox.setInternalState(syncHelper, EVENT_CLIENT_REPOSITORY, eventClientRepository);
         Whitebox.setInternalState(syncHelper, allSharedPreferences, allSharedPreferences);
         clientJson = new JSONObject(clientString);

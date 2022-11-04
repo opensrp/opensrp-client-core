@@ -6,19 +6,17 @@ import android.util.Xml;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
@@ -40,7 +38,6 @@ import java.util.HashMap;
 /**
  * Created by kaderchowdhury on 14/11/17.
  */
-@PrepareForTest({CoreLibrary.class, Xml.class})
 public class FormUtilsTest extends BaseUnitTest {
 
     private FormUtils formUtils;
@@ -53,10 +50,6 @@ public class FormUtilsTest extends BaseUnitTest {
     private String formSubmissionXML = "www/form/form_submission/form_submission_xml.xml";
     private String formSubmissionJSON = "www/form/form_submission/form_submission_json.json";
     private String entityRelationShip = "www/form/entity_relationship.json";
-
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
-
     @Mock
     private CoreLibrary coreLibrary;
     @Mock
@@ -70,16 +63,32 @@ public class FormUtilsTest extends BaseUnitTest {
     @Mock
     private ANM anm;
 
+    private AutoCloseable autoCloseable;
+
+    private static File getFileFromPath(Object obj, String fileName) {
+        ClassLoader classLoader = obj.getClass().getClassLoader();
+        URL resource = classLoader.getResource(fileName);
+        return new File(resource.getPath());
+    }
+
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        PowerMockito.mockStatic(CoreLibrary.class);
-        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
-        PowerMockito.when(coreLibrary.context()).thenReturn(context);
-        PowerMockito.when(context.anmService()).thenReturn(anmService);
-        PowerMockito.when(anmService.fetchDetails()).thenReturn(anm);
-        PowerMockito.when(anm.name()).thenReturn("anmId");
+        autoCloseable = MockitoAnnotations.openMocks(this);
+        try (MockedStatic<CoreLibrary> coreLibraryMockedStatic = Mockito.mockStatic(CoreLibrary.class)) {
+            coreLibraryMockedStatic.when(CoreLibrary::getInstance).thenReturn(coreLibrary);
+        }
+
+        Mockito.when(coreLibrary.context()).thenReturn(context);
+        Mockito.when(context.anmService()).thenReturn(anmService);
+        Mockito.when(anmService.fetchDetails()).thenReturn(anm);
+        Mockito.when(anm.name()).thenReturn("anmId");
+
         formUtils = FormUtils.getInstance(context_);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        autoCloseable.close();
     }
 
     @Test
@@ -125,13 +134,16 @@ public class FormUtilsTest extends BaseUnitTest {
 
         FormDataRepository formDataRepository = Mockito.mock(FormDataRepository.class);
         Mockito.when(context.formDataRepository()).thenReturn(formDataRepository);
-        Mockito.when(formDataRepository.getMapFromSQLQuery(Mockito.anyString(),Mockito.any(String[].class))).thenReturn(new HashMap<String, String>());
+        Mockito.when(formDataRepository.getMapFromSQLQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(new HashMap<>());
         DetailsRepository detailsRepository = Mockito.mock(DetailsRepository.class);
         Mockito.when(context.detailsRepository()).thenReturn(detailsRepository);
-        Mockito.when(detailsRepository.getAllDetailsForClient(Mockito.anyString())).thenReturn(new HashMap<String, String>());
-        PowerMockito.mockStatic(Xml.class);
+        Mockito.when(detailsRepository.getAllDetailsForClient(Mockito.anyString())).thenReturn(new HashMap<>());
+
         XmlSerializerMock xmlSerializer = new XmlSerializerMock();
-        PowerMockito.when(Xml.newSerializer()).thenReturn(xmlSerializer);
+        try (MockedStatic<Xml> xmlMockedStatic = Mockito.mockStatic(Xml.class)) {
+            xmlMockedStatic.when(Xml::newSerializer).thenReturn(xmlSerializer);
+        }
+
         Assert.assertNotNull(formUtils.generateXMLInputForFormWithEntityId("baseEntityId", FORMNAME, null));
     }
 
@@ -153,12 +165,6 @@ public class FormUtilsTest extends BaseUnitTest {
         Assert.assertNotNull(new FormUtils(context_));
     }
 
-    private static File getFileFromPath(Object obj, String fileName) {
-        ClassLoader classLoader = obj.getClass().getClassLoader();
-        URL resource = classLoader.getResource(fileName);
-        return new File(resource.getPath());
-    }
-
     public String getStringFromStream(InputStream is) throws Exception {
         String fileContents = "";
         int size = is.available();
@@ -171,14 +177,14 @@ public class FormUtilsTest extends BaseUnitTest {
 
     @Test
     public void getFormJsonShouldReturnCorrectFormWithSameLength() throws IOException {
-        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(context_).getResources();
-        Mockito.doReturn(RuntimeEnvironment.application.getApplicationContext()).when(context_).getApplicationContext();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(context_).getResources();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext().getApplicationContext()).when(context_).getApplicationContext();
         Assert.assertEquals(10011, formUtils.getFormJson("test_basic_form").toString().length());
     }
 
     @Test
     public void getIndexForFormNameShouldReturnCorrectIndex() {
-        String[] formNames = new String[] {"Birth Reg", "Immunisation Reg", "Death Form"};
+        String[] formNames = new String[]{"Birth Reg", "Immunisation Reg", "Death Form"};
         Assert.assertEquals(1, formUtils.getIndexForFormName("Immunisation Reg", formNames));
     }
 

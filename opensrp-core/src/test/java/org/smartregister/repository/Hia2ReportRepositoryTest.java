@@ -41,7 +41,7 @@ public class Hia2ReportRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        
         Whitebox.setInternalState(DrishtiApplication.getInstance(),"repository",repository);
         when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
@@ -68,7 +68,7 @@ public class Hia2ReportRepositoryTest extends BaseUnitTest {
         verify(sqliteDatabase, Mockito.times(1)).update(anyString(), any(ContentValues.class), anyString(), any(String[].class));
         when(sqliteDatabase.rawQuery(anyString(), any(String[].class))).thenReturn(null);
         hia2ReportRepository.addReport(new JSONObject(jsonReport));
-        verify(sqliteDatabase, Mockito.times(1)).insert(anyString(), isNull(String.class), any(ContentValues.class));
+        verify(sqliteDatabase, Mockito.times(1)).insert(anyString(), isNull(), any(ContentValues.class));
     }
 
     @Test

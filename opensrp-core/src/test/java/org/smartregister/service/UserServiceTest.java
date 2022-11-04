@@ -1,14 +1,23 @@
 package org.smartregister.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import static org.smartregister.AllConstants.ENGLISH_LOCALE;
+import static org.smartregister.AllConstants.KANNADA_LOCALE;
+
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
@@ -38,25 +47,7 @@ import java.util.LinkedHashMap;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.AllConstants.ENGLISH_LOCALE;
-import static org.smartregister.AllConstants.KANNADA_LOCALE;
-
 public class UserServiceTest extends BaseUnitTest {
-
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
     private Repository repository;
@@ -87,7 +78,7 @@ public class UserServiceTest extends BaseUnitTest {
 
     private LoginResponseData loginResponseData;
 
-        private byte[] password = "Password Z".getBytes();
+    private byte[] password = "Password Z".getBytes();
 
     private String userName = "johndoe";
 
@@ -96,7 +87,6 @@ public class UserServiceTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        initMocks(this);
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
         when(configuration.getDrishtiApplication()).thenReturn(drishtiApplication);
         doReturn(repository).when(drishtiApplication).getRepository();
@@ -155,7 +145,7 @@ public class UserServiceTest extends BaseUnitTest {
         assertFalse(userService.isValidLocalLogin("SOME OTHER ANM", "password".getBytes()));
 
         verify(allSharedPreferences).fetchRegisteredANM();
-        verifyZeroInteractions(repository);
+        verifyNoInteractions(repository);
     }
 
     @Test
@@ -197,7 +187,7 @@ public class UserServiceTest extends BaseUnitTest {
     @Test
     public void shouldDeleteDataAndSettingsWhenLogoutHappens() throws Exception {
         SyncConfiguration syncConfiguration = mock(SyncConfiguration.class);
-        Mockito.doReturn(false).when(syncConfiguration).clearDataOnNewTeamLogin();
+        doReturn(false).when(syncConfiguration).clearDataOnNewTeamLogin();
         ReflectionHelpers.setField(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
         Whitebox.setInternalState(drishtiApplication, "password", password);
 
@@ -332,7 +322,7 @@ public class UserServiceTest extends BaseUnitTest {
         Whitebox.setInternalState(keyStore, "initialized", true);
         Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
         when(keyStore.containsAlias(userName)).thenReturn(true);
-        KeyStore.PrivateKeyEntry privateKeyEntry = PowerMockito.mock(KeyStore.PrivateKeyEntry.class);
+        KeyStore.PrivateKeyEntry privateKeyEntry = mock(KeyStore.PrivateKeyEntry.class);
         when(keyStore.getEntry(userName, null)).thenReturn(privateKeyEntry);
         userService = spy(userService);
         doReturn(password).when(userService).decryptString(privateKeyEntry, "RandomSECURE_TEXT");
@@ -354,12 +344,12 @@ public class UserServiceTest extends BaseUnitTest {
         Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
         String user = "johndoe";
         when(keyStore.containsAlias(user)).thenReturn(true);
-        KeyStore.PrivateKeyEntry privateKeyEntry = PowerMockito.mock(KeyStore.PrivateKeyEntry.class);
+        KeyStore.PrivateKeyEntry privateKeyEntry = mock(KeyStore.PrivateKeyEntry.class);
         when(keyStore.getEntry(user, null)).thenReturn(privateKeyEntry);
         String password = UUID.randomUUID().toString();
         assertFalse(userService.isUserInValidGroup(user, password.toCharArray()));
         verify(allSharedPreferences, never()).fetchEncryptedGroupId(user);
-        verifyZeroInteractions(repository);
+        verifyNoInteractions(repository);
     }
 
     @Test
@@ -370,7 +360,7 @@ public class UserServiceTest extends BaseUnitTest {
         Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
         String user = "johndoe";
         when(keyStore.containsAlias(user)).thenReturn(true);
-        KeyStore.PrivateKeyEntry privateKeyEntry = PowerMockito.mock(KeyStore.PrivateKeyEntry.class);
+        KeyStore.PrivateKeyEntry privateKeyEntry = mock(KeyStore.PrivateKeyEntry.class);
         when(keyStore.getEntry(user, null)).thenReturn(privateKeyEntry);
         when(allSharedPreferences.fetchPioneerUser()).thenReturn(user);
         assertTrue(userService.isUserInPioneerGroup(user));
@@ -382,5 +372,11 @@ public class UserServiceTest extends BaseUnitTest {
         assertFalse(userService.isUserInPioneerGroup("john"));
     }
 
-
+    @Test
+    public void saveProviderBaseEntityIdOnSharedPref() {
+        String providerBaseEntityId = "00ab-88dc-ea11-8471-ad90";
+        String providerName = "provider";
+        userService.saveUserId(providerName, providerBaseEntityId);
+        verify(userService).saveUserId(providerName, providerBaseEntityId);
+    }
 }

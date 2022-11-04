@@ -6,7 +6,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountsException;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -32,23 +31,27 @@ import org.smartregister.util.EasyMap;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
+import java.net.HttpURLConnection;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import timber.log.Timber;
 
 /**
  * Created by ndegwamartin on 22/06/2018.
  */
-public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
+public class RemoteLoginTask {
 
-    private BaseLoginContract.View mLoginView;
     private final String mUsername;
     private final char[] mPassword;
     private final AccountAuthenticatorXml mAccountAuthenticatorXml;
-
     private final Listener<LoginResponse> afterLoginCheck;
+    private boolean cancelled;
+    private BaseLoginContract.View mLoginView;
 
     public RemoteLoginTask(BaseLoginContract.View loginView, String username, char[] password, AccountAuthenticatorXml accountAuthenticatorXml, Listener<LoginResponse> afterLoginCheck) {
         mLoginView = loginView;
@@ -58,14 +61,41 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         this.afterLoginCheck = afterLoginCheck;
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        mLoginView.showProgress(true);
+    public static Context getOpenSRPContext() {
+        return CoreLibrary.getInstance().context();
     }
 
-    @Override
-    protected LoginResponse doInBackground(Void... params) {
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void cancel(boolean cancelled) {
+        this.cancelled = cancelled;
+        mLoginView.showProgress(!cancelled);
+    }
+
+    public void execute() {
+
+        mLoginView.showProgress(true);
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        executorService.execute(() -> {
+
+            LoginResponse loginResponse = doInBackground();
+
+            mLoginView.getAppCompatActivity().runOnUiThread(() -> {
+
+                mLoginView.showProgress(false);
+                afterLoginCheck.onEvent(loginResponse);
+
+            });
+
+        });
+
+    }
+
+    protected LoginResponse doInBackground() {
 
         LoginResponse loginResponse;
         try {
@@ -102,8 +132,13 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
                 AccountResponse response = getOpenSRPContext().getHttpAgent().oauth2authenticate(mUsername, mPassword, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD, accountConfiguration.getTokenEndpoint());
 
-                if (response.getStatus() == 400 && response.getAccountError() != null && AccountError.ACCOUNT_NOT_FULLY_SETUP.equals(response.getAccountError().getErrorDescription())) {
-                    return LoginResponse.INVALID_GRANT.withRawData(new JSONObject(EasyMap.mapOf(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL, accountConfiguration.getIssuerEndpoint())));
+                if (response.getStatus() == HttpURLConnection.HTTP_BAD_REQUEST && response.getAccountError() != null) {
+
+                    if (AccountError.ACCOUNT_NOT_FULLY_SETUP.equals(response.getAccountError().getErrorDescription())) {
+                        return LoginResponse.INVALID_GRANT.withRawData(new JSONObject(EasyMap.mapOf(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL, accountConfiguration.getIssuerEndpoint())));
+                    } else if (AccountError.INVALID_CLIENT.equals(response.getAccountError().getError())) {
+                        return LoginResponse.UNAUTHORIZED_CLIENT;
+                    }
                 }
 
                 AccountManager mAccountManager = CoreLibrary.getInstance().getAccountManager();
@@ -126,6 +161,9 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT));
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_NAME, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_NAME));
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_REFRESH_TOKEN, response.getRefreshToken());
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_ACCESS_TOKEN_EXPIRES_IN, Utils.toStringNullable(response.getExpiresIn()));
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_REFRESH_TOKEN_CREATED_AT, Utils.toStringNullable(Calendar.getInstance().getTimeInMillis()));
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_REFRESH_TOKEN_EXPIRES_IN, Utils.toStringNullable(response.getRefreshExpiresIn()));
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_ROLES, user.getRoles() != null ? user.getRoles().toString() : Collections.EMPTY_LIST.toString());
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         mAccountManager.notifyAccountAuthenticated(account);
@@ -133,7 +171,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
                     if (getOpenSRPContext().userService().getDecryptedPassphraseValue(username) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
 
-                        publishProgress(R.string.loading_client_settings);
+                        mLoginView.getAppCompatActivity().runOnUiThread(() -> mLoginView.updateProgressMessage(getOpenSRPContext().applicationContext().getString(R.string.loading_client_settings)));
 
                         SyncSettingsServiceHelper syncSettingsServiceHelper = new SyncSettingsServiceHelper(getOpenSRPContext().configuration().dristhiBaseURL(), getOpenSRPContext().getHttpAgent());
 
@@ -172,28 +210,6 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         }
 
         return loginResponse;
-    }
-
-    @Override
-    protected void onProgressUpdate(Integer... messageIdentifier) {
-        mLoginView.updateProgressMessage(getOpenSRPContext().applicationContext().getString(messageIdentifier[0]));
-    }
-
-    @Override
-    protected void onPostExecute(final LoginResponse loginResponse) {
-        super.onPostExecute(loginResponse);
-
-        mLoginView.showProgress(false);
-        afterLoginCheck.onEvent(loginResponse);
-    }
-
-    @Override
-    protected void onCancelled() {
-        mLoginView.showProgress(false);
-    }
-
-    public static Context getOpenSRPContext() {
-        return CoreLibrary.getInstance().context();
     }
 
     protected JSONArray pullSetting(SyncSettingsServiceHelper syncSettingsServiceHelper, LoginResponse loginResponse, String accessToken) {

@@ -1,7 +1,6 @@
 package org.smartregister.util;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -17,13 +16,13 @@ public class FloatUtilTest {
 
     @Test
     public void assertTryParseWithInvalidValue() {
-        Assert.assertEquals(FloatUtil.tryParse("invalid", 1.0f), 1.0f);
+        Assert.assertEquals(FloatUtil.tryParse("invalid", 1.0f), new Float(1.0));
         Assert.assertEquals(FloatUtil.tryParse("invalid", "1"), "1");
     }
 
     @Test
     public void assertTryParseWithValidValue() {
-        Assert.assertEquals(FloatUtil.tryParse("1", 1.0f), 1.0f);
+        Assert.assertEquals(FloatUtil.tryParse("1", 1.0f), new Float(1.0f));
         Assert.assertEquals(FloatUtil.tryParse("1", "1"), "1.0");
     }
 }

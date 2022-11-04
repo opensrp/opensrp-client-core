@@ -5,11 +5,9 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
 
 /**
@@ -22,11 +20,6 @@ public class ViewStubInflaterTest extends BaseUnitTest {
 
     @Mock
     private ViewGroup viewGroup;
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void testGetInflatesLayoutCorrectly() {

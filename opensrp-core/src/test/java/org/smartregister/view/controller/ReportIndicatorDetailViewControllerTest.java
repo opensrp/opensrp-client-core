@@ -6,10 +6,8 @@ import com.google.gson.Gson;
 
 import org.ei.drishti.dto.MonthSummaryDatum;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.smartregister.domain.Report;
 import org.smartregister.view.contract.IndicatorReportDetail;
 
@@ -19,11 +17,6 @@ import java.util.List;
 public class ReportIndicatorDetailViewControllerTest {
     @Mock
     private Context context;
-
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void shouldGetIndicatorReportsForGivenCategory() throws Exception {

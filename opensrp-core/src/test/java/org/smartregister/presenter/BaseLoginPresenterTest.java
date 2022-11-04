@@ -1,57 +1,79 @@
 package org.smartregister.presenter;
 
-import android.app.Activity;
-import android.content.res.Resources;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.reflect.Whitebox;
-import org.smartregister.login.presenter.BaseLoginPresenter;
+import org.robolectric.Robolectric;
+import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.R;
+import org.smartregister.view.activity.BaseLoginActivity;
 import org.smartregister.view.contract.BaseLoginContract;
-
-import java.lang.ref.WeakReference;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 /**
  * Created by Vincent Karuri on 10/03/2020
  */
-public class BaseLoginPresenterTest {
+public class BaseLoginPresenterTest extends BaseRobolectricUnitTest {
 
-    BaseLoginPresenter presenter;
+    BaseLoginContract.Presenter presenter;
 
-    @Mock
-    private WeakReference<BaseLoginContract.View> mLoginView;
-
-    @Mock
-    private BaseLoginContract.View view;
+    private BaseLoginActivityImpl activity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        presenter = new TestLoginPresenter();
-        Mockito.doReturn(view).when(mLoginView).get();
-        Whitebox.setInternalState(presenter, "mLoginView", mLoginView);
+
+        activity = Robolectric.buildActivity(BaseLoginActivityImpl.class).create().get();
+        presenter = Mockito.spy(activity.getBaseLoginPresenter());
+    }
+
+    @Before
+    public void tearDown() {
+        activity.finish();
     }
 
     @Test
     public void testAttemptLoginShouldFailForUnauthorizedApp() {
-        Mockito.doReturn(false).when(view).isAppVersionAllowed();
-
-        Activity context = mock(Activity.class);
-        Resources resources = mock(Resources.class);
-        doReturn(context).when(view).getActivityContext();
-        doReturn(resources).when(context).getResources();
-        doReturn("string").when(resources).getString(anyInt());
+        BaseLoginActivityImpl activitySpy = Mockito.spy(activity);
+        Mockito.doReturn(false).when(activitySpy).isAppVersionAllowed();
+        Mockito.doReturn(activitySpy).when(presenter).getLoginView();
 
         presenter.attemptLogin("", "".toCharArray());
-        verify(view).showErrorDialog(any());
+
+        verify(activitySpy).showErrorDialog(any());
+    }
+
+    public static class BaseLoginActivityImpl extends BaseLoginActivity {
+
+        @Override
+        protected int getContentView() {
+            return R.layout.activity_login;
+        }
+
+        @Override
+        protected void initializePresenter() {
+            mLoginPresenter = new TestLoginPresenter();
+
+        }
+
+        @Override
+        public void goToHome(boolean isRemote) {
+            //Do nothing
+        }
+
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            setTheme(R.style.Theme_AppCompat_Light_DarkActionBar); //we need this here
+            super.onCreate(savedInstanceState);
+        }
+
+        public BaseLoginContract.Presenter getBaseLoginPresenter() {
+            return mLoginPresenter;
+        }
     }
 }

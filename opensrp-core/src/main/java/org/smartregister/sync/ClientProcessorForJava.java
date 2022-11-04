@@ -1,5 +1,7 @@
 package org.smartregister.sync;
 
+import static org.smartregister.event.Event.FORM_SUBMITTED;
+
 import android.content.ContentValues;
 import android.content.Context;
 
@@ -10,6 +12,7 @@ import com.ibm.fhir.model.resource.QuestionnaireResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonRepository;
@@ -47,8 +50,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import timber.log.Timber;
-
-import static org.smartregister.event.Event.FORM_SUBMITTED;
 
 public class ClientProcessorForJava {
 
@@ -154,7 +155,7 @@ public class ClientProcessorForJava {
                 .getEventClientRepository().markEventAsProcessed(event.getFormSubmissionId());
     }
 
-    public Boolean processEvent(Event event, Client client, ClientClassification clientClassification){
+    public Boolean processEvent(Event event, Client client, ClientClassification clientClassification) {
         try {
             // mark event as processed regardless of any errors
             completeProcessing(event);
@@ -321,10 +322,11 @@ public class ClientProcessorForJava {
             }
 
             String baseEntityId = client.getBaseEntityId();
+            String clientType = client.getClientType() != null ? client.getClientType() : (client.getRelationships() != null ? AllConstants.ECClientType.CHILD : null);
 
             for (String tableName : closesCase) {
                 closeCase(tableName, baseEntityId);
-                updateFTSsearch(tableName, client.getClientType(), baseEntityId, null);
+                updateFTSsearch(tableName, clientType, baseEntityId, null);
             }
 
             return true;
@@ -361,7 +363,8 @@ public class ClientProcessorForJava {
                 executeInsertStatement(contentValues, tableName);
 
                 String entityId = contentValues.getAsString(CommonRepository.BASE_ENTITY_ID_COLUMN);
-                updateFTSsearch(tableName, client.getClientType(), entityId, contentValues);
+                String clientType = client.getClientType() != null ? client.getClientType() : (client.getRelationships() != null ? AllConstants.ECClientType.CHILD : null);
+                updateFTSsearch(tableName, clientType, entityId, contentValues);
                 Long timestamp = getEventDate(event.getEventDate());
                 addContentValuesToDetailsTable(contentValues, timestamp);
                 updateClientDetailsTable(event, client);

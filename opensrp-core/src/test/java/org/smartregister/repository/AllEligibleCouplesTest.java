@@ -1,6 +1,6 @@
 package org.smartregister.repository;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class AllEligibleCouplesTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         allEligibleCouples = new AllEligibleCouples(eligibleCoupleRepository, alertRepository, timelineEventRepository);
     }
 

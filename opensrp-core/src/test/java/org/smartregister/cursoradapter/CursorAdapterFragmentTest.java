@@ -30,7 +30,6 @@ import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.shadows.ShadowContext;
 import org.smartregister.shadows.ShadowDrawableResourcesImpl;
-import org.smartregister.shadows.ShadowViewPager;
 import org.smartregister.view.contract.ECClient;
 import org.smartregister.view.contract.ECClients;
 import org.smartregister.view.contract.Village;
@@ -45,7 +44,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@Config(shadows = {ShadowContext.class, FontTextViewShadow.class, AndroidTreeViewShadow.class, ShadowDrawableResourcesImpl.class, ShadowViewPager.class}, sdk = Build.VERSION_CODES.O_MR1)
+@Config(shadows = {ShadowContext.class, FontTextViewShadow.class, AndroidTreeViewShadow.class, ShadowDrawableResourcesImpl.class}, sdk = Build.VERSION_CODES.O_MR1)
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 @PrepareForTest({CoreLibrary.class})
 public class CursorAdapterFragmentTest extends BaseUnitTest {
@@ -71,7 +70,6 @@ public class CursorAdapterFragmentTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        org.mockito.MockitoAnnotations.initMocks(this);
         CoreLibrary.init(context_);
         HouseHoldSmartRegisterActivity.setContext(context_);
         String[] columns = new String[]{"_id", "relationalid", "FWHOHFNAME", "FWGOBHHID", "FWJIVHHID", "existing_Mauzapara", "ELCO"};

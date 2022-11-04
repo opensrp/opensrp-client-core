@@ -8,61 +8,48 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
-import static org.mockito.Mockito.when;
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Environment.class})
 public class FileUtilitiesTest {
-
-    private String FILE_NAME = "newFile.txt";
-
-    @Mock
-    private BufferedWriter mockWriter;
 
     @Rule
     public TemporaryFolder storageDirectory = new TemporaryFolder();
+    private String FILE_NAME = "newFile.txt";
     private File existentDirectory;
-
-    public FileUtilitiesTest() throws IOException {
-    }
 
     @Before
     public void setUp() {
         existentDirectory = storageDirectory.getRoot();
-        PowerMockito.mockStatic(Environment.class);
     }
 
     @Test
-    public void assertWriteWritesSuccessfully() throws Exception {
+    public void assertWriteWritesSuccessfully() {
         String testData = "string to write";
-        when(Environment.getExternalStorageDirectory()).thenReturn(existentDirectory);
-        PowerMockito.whenNew(BufferedWriter.class).withAnyArguments().thenReturn(mockWriter);
-        FileUtilities fileUtils = new FileUtilities();
-        try
-        {
-            //Write
-            fileUtils.write(FILE_NAME, testData);
-            // Read it from temp file
-            String path = existentDirectory.getPath() + File.separator + "EZ_time_tracker" + File.separator + FILE_NAME;
-            File file = new File(path);
-            final String writenText = FileUtils.readFileToString(file);
-            Assert.assertEquals(testData, writenText);
-        }
-        catch (Exception e)
-        {
-            Assert.fail();
+
+        try (MockedStatic<Environment> environmentMockedStatic = Mockito.mockStatic(Environment.class)) {
+
+            environmentMockedStatic.when(() -> Environment.getExternalStorageDirectory()).thenReturn(existentDirectory);
+
+            FileUtilities fileUtils = new FileUtilities();
+            try {
+                //Write
+                fileUtils.write(FILE_NAME, testData);
+                // Read it from temp file
+                String path = existentDirectory.getPath() + File.separator + "EZ_time_tracker" + File.separator + FILE_NAME;
+                File file = new File(path);
+                final String writtenText = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+                Assert.assertEquals(testData, writtenText);
+            } catch (Exception e) {
+                Assert.fail();
+            }
         }
 
     }
+
     @Test
     public void assertReturnsCorrectFileExtension() {
         Assert.assertEquals(FileUtilities.getFileExtension(FILE_NAME), "txt");

@@ -1,5 +1,7 @@
 package org.smartregister;
 
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
@@ -123,12 +125,11 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
-
 public class Context {
 
     ///////////////////common bindtypes///////////////
 
+    private static final String SHARED_PREFERENCES_FILENAME = "%s_preferences";
     public static ArrayList<CommonRepositoryInformationHolder> bindtypes;
     private static Context context = new Context();
     protected DristhiConfiguration configuration;
@@ -231,8 +232,6 @@ public class Context {
     private ClientFormRepository clientFormRepository;
     private ClientRelationshipRepository clientRelationshipRepository;
     private ZeirIdCleanupRepository zeirIdCleanupRepository;
-
-    private static final String SHARED_PREFERENCES_FILENAME = "%s_preferences";
 
     /////////////////////////////////////////////////
 
@@ -851,7 +850,7 @@ public class Context {
 
     public Cache<HomeContext> homeContextCache() {
         if (homeContextCache == null) {
-            homeContextCache = new Cache<HomeContext>();
+            homeContextCache = new Cache<>();
         }
         return homeContextCache;
     }

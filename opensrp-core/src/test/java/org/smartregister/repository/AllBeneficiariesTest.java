@@ -1,7 +1,6 @@
 package org.smartregister.repository;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -35,7 +34,6 @@ public class AllBeneficiariesTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
         allBeneficiaries = new AllBeneficiaries(motherRepository, childRepository, alertRepository, timelineEventRepository);
     }
 
@@ -192,8 +190,8 @@ public class AllBeneficiariesTest extends BaseUnitTest {
 
         allBeneficiaries.closeAllMothersForEC("ec id 1");
 
-        Mockito.verifyZeroInteractions(alertRepository);
-        Mockito.verifyZeroInteractions(timelineEventRepository);
+        Mockito.verifyNoInteractions(alertRepository);
+        Mockito.verifyNoInteractions(timelineEventRepository);
         Mockito.verify(motherRepository, Mockito.times(0)).close(Mockito.any(String.class));
     }
 

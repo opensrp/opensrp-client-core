@@ -1,5 +1,9 @@
 package org.smartregister.service;
 
+import static org.smartregister.domain.FetchStatus.fetched;
+import static org.smartregister.domain.FetchStatus.nothingFetched;
+import static org.smartregister.domain.ResponseStatus.success;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,16 +29,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.smartregister.domain.FetchStatus.fetched;
-import static org.smartregister.domain.FetchStatus.nothingFetched;
-import static org.smartregister.domain.ResponseStatus.success;
-
 /**
  * Created by Dimas Ciputra on 3/31/15.
  */
 @Config(manifest = Config.NONE)
 public class AllFormVersionSyncServiceTest extends BaseUnitTest {
 
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
     @Mock
     private HTTPAgent httpAgent;
     @Mock
@@ -45,15 +47,12 @@ public class AllFormVersionSyncServiceTest extends BaseUnitTest {
     private FormPathService formPathService;
     @Mock
     private File file;
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
     private AllFormVersionSyncService service;
     private List<FormDefinitionVersion> expectedFormDefinitionVersion;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         service = Mockito.spy(new AllFormVersionSyncService(httpAgent,
                 configuration,
                 formsVersionRepository));
@@ -71,7 +70,7 @@ public class AllFormVersionSyncServiceTest extends BaseUnitTest {
         Assert.assertEquals(status, DownloadStatus.nothingDownloaded);
         Mockito.verify(formsVersionRepository).getAllFormWithSyncStatus(SyncStatus.PENDING);
         Mockito.verifyNoMoreInteractions(formsVersionRepository);
-        Mockito.verifyZeroInteractions(httpAgent);
+        Mockito.verifyNoInteractions(httpAgent);
     }
 
     @Test

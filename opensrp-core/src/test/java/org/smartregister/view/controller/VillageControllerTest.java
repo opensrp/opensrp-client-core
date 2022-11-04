@@ -8,28 +8,26 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.repository.AllEligibleCouples;
 import org.smartregister.util.Cache;
 import org.smartregister.view.contract.Village;
-import org.smartregister.view.contract.Villages;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class VillageControllerTest {
+public class VillageControllerTest extends BaseUnitTest {
     @Mock
     private AllEligibleCouples allEligibleCouples;
     private VillageController controller;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        controller = new VillageController(allEligibleCouples, new Cache<String>(), new Cache<Villages>());
+        controller = new VillageController(allEligibleCouples, new Cache<>(), new Cache<>());
     }
 
     @Test
-    public void shouldLoadVillages() throws Exception {
+    public void shouldLoadVillages() {
         List<Village> expectedVillages = Arrays.asList(new Village("village1"), new Village("village2"));
         Mockito.when(allEligibleCouples.villages()).thenReturn(Arrays.asList("village1", "village2"));
 

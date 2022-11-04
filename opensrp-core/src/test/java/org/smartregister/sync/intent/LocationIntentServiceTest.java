@@ -25,7 +25,7 @@ public class LocationIntentServiceTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         locationIntentService = new LocationIntentService();
     }
 

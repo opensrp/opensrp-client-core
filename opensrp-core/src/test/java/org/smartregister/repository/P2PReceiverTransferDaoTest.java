@@ -16,7 +16,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
@@ -68,7 +68,7 @@ public class P2PReceiverTransferDaoTest extends BaseRobolectricUnitTest {
 
         ReflectionHelpers.setField(CoreLibrary.getInstance(), "context", context);
 
-        Mockito.doReturn(RuntimeEnvironment.application).when(context).applicationContext();
+        Mockito.doReturn(ApplicationProvider.getApplicationContext()).when(context).applicationContext();
         Mockito.doReturn(eventClientRepository).when(context).getEventClientRepository();
         Mockito.doReturn(structureRepository).when(context).getStructureRepository();
         Mockito.doReturn(taskRepository).when(context).getTaskRepository();

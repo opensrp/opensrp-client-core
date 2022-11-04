@@ -58,11 +58,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.apache.http.HttpStatus;
+import org.apache.commons.text.WordUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
+import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -87,6 +87,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -699,7 +700,7 @@ public class Utils {
     }
 
     public static boolean is2xxSuccessful(int httpStatus) {
-        return httpStatus >= HttpStatus.SC_OK && httpStatus <= HttpStatus.SC_MULTI_STATUS;
+        return httpStatus >= HttpURLConnection.HTTP_OK && httpStatus <= 207;
     }
 
     public static String getFilterValue(LoginResponse loginResponse, SyncFilter syncFilterParam) {
@@ -1016,7 +1017,25 @@ public class Utils {
         }
     }
 
+    public static String toStringNullable(@Nullable Object value) {
+        return value != null ? value.toString() : null;
+    }
+
     public String getName() {
         return getPrefferedName();
+    }
+
+    public static String extractTranslatableValue(String value) {
+        if (value.startsWith("{") && value.endsWith("}")) {
+            try {
+                JSONObject valueObject = new JSONObject(value);
+                return valueObject.getString(AllConstants.VALUE);
+        }
+        catch(Exception e)
+        {
+            Timber.e(e);
+        }
+    }
+        return  value;
     }
 }

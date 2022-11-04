@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
+import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
@@ -56,10 +56,10 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        
         mockMethods();
         validateIntentService = Robolectric.buildIntentService(ValidateIntentService.class).get();
-        ReflectionHelpers.setField(validateIntentService, "context", RuntimeEnvironment.application);
+        ReflectionHelpers.setField(validateIntentService, "context", ApplicationProvider.getApplicationContext());
         ReflectionHelpers.setField(validateIntentService, "httpAgent", httpAgent);
         ReflectionHelpers.setField(validateIntentService, "openSRPContext", openSRPContext);
     }

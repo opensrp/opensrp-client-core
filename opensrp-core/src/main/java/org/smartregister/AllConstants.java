@@ -46,6 +46,7 @@ public class AllConstants {
     public static final String DEFAULT_TEAM_PREFIX = "dfltTeam-";
     public static final String DEFAULT_TEAM_ID_PREFIX = "dfltTeamId-";
     public static final String USER_LOCALITY_ID_PREFIX = "userLoc-";
+    public static final String USER_ID_PREFIX = "userId-";
     public static final String PIONEER_USER = "pioneerUser";
     public static final String LANGUAGE_PREFERENCE_KEY = "locale";
     public static final String CURRENT_LOCALITY = "current_locality";
@@ -106,6 +107,7 @@ public class AllConstants {
     public static final String IN_AREA = "in_area";
     public static final String DATASTORE_MANAGER_DIR = "data";
     public static final int ANIMATION_FADE_IN_TIME = 250;
+    public static final int IMAGE_ANIMATION_FADE_IN_TIME = 96;
 
     public static final String CURRENT_LOCATION_ID = "CURRENT_LOCATION_ID";
 
@@ -134,6 +136,7 @@ public class AllConstants {
     public static final String OPENMRS_ATTRIBUTES = "openmrs_attributes";
     public static final String VALUE_OPENMRS_ATTRIBUTES = "value_openmrs_attributes";
     public static final String SECONDARY_VALUE = "secondary_value";
+    public static final String VALUE = "value";
     public static final String EXPANSION_PANEL = "expansion_panel";
     public static final String SPINNER = "spinner";
     public static final String ROWID = "rowid";
@@ -150,6 +153,107 @@ public class AllConstants {
 
     public static final String IDENTIFIERS = "identifiers";
 
+    public interface FORCED_LOGOUT {
+        String MIN_ALLOWED_APP_VERSION_SETTING = "min_allowed_app_version_setting";
+        String MIN_ALLOWED_APP_VERSION = "min_allowed_app_version";
+    }
+
+    // Sync Filters moved to org.smartregister.SyncFilter class
+
+    public interface JSON {
+        String KEY = "key";
+        String VALUE = "value";
+
+        interface Property {
+            String IS_NEW = "is_new";
+            String FORM_VERSION = "form_version";
+            String CLIENT_FORM_ID = "client_form_id";
+            String APP_VERSION_NAME = "appVersionName";
+        }
+    }
+
+    public interface SyncProgressConstants {
+        String ACTION_SYNC_PROGRESS = "action_sync_progress";
+        String TOTAL_RECORDS = "total_records";
+        String SYNC_PROGRESS_DATA = "sync_progress_data";
+    }
+
+    public interface LocationConstants {
+        String SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS = "SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS";
+        String LOCATIONS = "locations";
+        String LOCATION = "location";
+        String TEAM = "team";
+        String DISPLAY = "display";
+        String UUID = "uuid";
+        String PARENT_ID = "parent_id";
+        String LOCATION_NAME = "location_name";
+    }
+
+    public interface P2PDataTypes {
+        String CLIENT = "Client";
+        String EVENT = "Event";
+        String TASK = "Task";
+        String STRUCTURE = "Structure";
+        String PROFILE_PIC = "Profile Pic";
+        String FOREIGN_CLIENT = "ForeignClient";
+        String FOREIGN_EVENT = "ForeignEvent";
+    }
+
+    public interface DownloadFileConstants {
+        String FILE_NAME = "FILE_NAME";
+        String FILE_PATH = "FILE_PATH";
+    }
+
+    public interface GpsConstants {
+        String ALTITUDE = "altitude";
+        String ACCURACY = "accuracy";
+        String LATITUDE = "latitude";
+        String LONGITUDE = "longitude";
+    }
+
+    public interface PerformanceMonitoring {
+        String TEAM = "team";
+        String PUSH = "push";
+        String FETCH = "fetch";
+        String ACTION = "action";
+        String STRUCTURE = "structure";
+        String LOCATION = "location";
+        String TASK_SYNC = "task_sync";
+        String PLAN_SYNC = "plan_sync";
+        String EVENT_SYNC = "event_sync";
+        String LOCATION_SYNC = "location_sync";
+        String CLIENT_PROCESSING = "client_processing";
+    }
+
+    public interface ClientProcessing {
+        String VARCHAR = "VARCHAR";
+        String NAME = "name";
+        String DATA_TYPES = "data_type";
+        String COLUMNS = "columns";
+
+    }
+
+    public interface DatabaseKeys {
+        String SYNC_STATUS = "syncStatus";
+        String VALIDATION_STATUS = "validationStatus";
+    }
+
+    public interface SyncInfo {
+        String SYNCED_EVENTS = "syncedEvents";
+        String SYNCED_CLIENTS = "syncedClients";
+        String UNSYNCED_EVENTS = "unsyncedEvents";
+        String UNSYNCED_CLIENTS = "unsyncedClients";
+        String VALID_EVENTS = "validEvents";
+        String INVALID_EVENTS = "invalidEvents";
+        String VALID_CLIENTS = "validClients";
+        String INVALID_CLIENTS = "INValidClients";
+        String TASK_UNPROCESSED_EVENTS = "taskUnprocessedEvents";
+        String NULL_EVENT_SYNC_STATUS = "nullEventSyncStatus";
+    }
+
+    public interface ECClientType {
+        String CHILD = "child"; //The default OpenSRP Client Type
+    }
 
     public static class Immunizations {
         public static final String BCG = "bcg";
@@ -179,7 +283,78 @@ public class AllConstants {
                 PENTAVALENT_2, PENTAVALENT_3, HEPATITIS_BIRTH_DOSE, JE, MMR};
     }
 
-    // Sync Filters moved to org.smartregister.SyncFilter class
+    public static final class INTENT_KEY {
+        public static final String TO_RESCHEDULE = "to_reschedule";
+        public static final String SYNC_TOTAL_RECORDS = "sync_total_records";
+        public static final String VALIDATED_RECORDS = "validated_records";
+        public static final String SETTING_CONFIGURATIONS = "settingConfigurations";
+        public static final String IS_REMOTE_LOGIN = "is_remote_login";
+        public static final String TASK_GENERATED_EVENT = "task_generated_event";
+        public static final String TASK_GENERATED = "task_generated";
+        public static final String DIALOG_TITLE = "dialog_title";
+        public static final String DIALOG_MESSAGE = "dialog_message";
+        public static final String PLAN_ID = "plan-id";
+        public static final String ACTION_CODE = "action-code";
+        public static final String ACTION_IDENTIFIER = "action-identifier";
+        public static final String ACTION = "action";
+
+    }
+
+    public static final class REGISTER_FRAGMENT {
+        public static final String BASE_REGISTER = "base_register";
+        public static final String ADVANCED_SEARCH = "advanced_search";
+        public static final String SORT_FILTER = "sort_filter";
+        public static final String ME = "me";
+        public static final String LIBRARY = "library";
+    }
+
+    public static class BARCODE {
+        public static final String BARCODE_KEY = "barcode";
+        public static final int BARCODE_REQUEST_CODE = 0x0000c0de;
+        // intent request code to handle updating play services if needed.
+        public static final int RC_HANDLE_GMS = 9001;
+    }
+
+    public static class PREF_KEY {
+        public static final String SETTINGS = "settings";
+    }
+
+    public static class PeerToPeer {
+        public static final String KEY_TEAM_ID = "team-id";
+        public static final int P2P_LIBRARY_DEFAULT_BATCH_SIZE = 250;
+
+        public static final String PROCESSING_ACTION = "peer-to-peer-processing-action";
+        public static final String KEY_IS_PROCESSING = "is-processing";
+    }
+
+    public static class PROPERTY {
+        public static final String SYSTEM_TOASTER_CENTERED = "system.toaster.centered";
+        public static final String DISABLE_LOCATION_PICKER_VIEW = "disable.location.picker.view";
+        public static final String LOCATION_PICKER_TAG_SHOWN = "location.picker.tag.shown";
+        public static final String ENCRYPT_SHARED_PREFERENCES = "encrypt.shared.preferences";
+        public static final String ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN = "allow.offline.login.with.invalid.token";
+        public static final String IGNORE_LOCATION_DELETION = "ignore.location.deletion";
+        public static final String ENABLE_SEARCH_BUTTON = "enable.search.button";
+        public static final String DISABLE_PROFILE_IMAGES_FEATURE = "feature.profile.images.disabled";
+    }
+
+    public static class HTTP_REQUEST_HEADERS {
+        public static String AUTHORIZATION = "Authorization";
+    }
+
+    public static class HTTP_REQUEST_AUTH_TOKEN_TYPE {
+        public static String BEARER = "Bearer";
+        public static String BASIC = "Basic";
+    }
+
+    public static class DATA_CAPTURE_STRATEGY {
+        public static String ADVANCED = "Advanced";
+        public static String NORMAL = "Normal";
+    }
+
+    public static class DataTypes {
+        public static final String INTEGER = "INTEGER";
+    }
 
     public class FormNames {
         public static final String EC_REGISTRATION = "ec_registration";
@@ -415,178 +590,9 @@ public class AllConstants {
 
     }
 
-    public static final class INTENT_KEY {
-        public static final String TO_RESCHEDULE = "to_reschedule";
-        public static final String SYNC_TOTAL_RECORDS = "sync_total_records";
-        public static final String VALIDATED_RECORDS = "validated_records";
-        public static final String SETTING_CONFIGURATIONS = "settingConfigurations";
-        public static final String IS_REMOTE_LOGIN = "is_remote_login";
-        public static final String TASK_GENERATED_EVENT = "task_generated_event";
-        public static final String TASK_GENERATED = "task_generated";
-        public static final String DIALOG_TITLE = "dialog_title";
-        public static final String DIALOG_MESSAGE = "dialog_message";
-        public static final String PLAN_ID = "plan-id";
-        public static final String ACTION_CODE = "action-code";
-        public static final String ACTION_IDENTIFIER = "action-identifier";
-        public static final String ACTION = "action";
-
-    }
-
-    public static final class REGISTER_FRAGMENT {
-        public static final String BASE_REGISTER = "base_register";
-        public static final String ADVANCED_SEARCH = "advanced_search";
-        public static final String SORT_FILTER = "sort_filter";
-        public static final String ME = "me";
-        public static final String LIBRARY = "library";
-    }
-
-    public static class BARCODE {
-        public static final String BARCODE_KEY = "barcode";
-        public static final int BARCODE_REQUEST_CODE = 0x0000c0de;
-        // intent request code to handle updating play services if needed.
-        public static final int RC_HANDLE_GMS = 9001;
-    }
-
-    public static class PREF_KEY {
-        public static final String SETTINGS = "settings";
-    }
-
-    public static class PeerToPeer {
-        public static final String KEY_TEAM_ID = "team-id";
-        public static final int P2P_LIBRARY_DEFAULT_BATCH_SIZE = 250;
-
-        public static final String PROCESSING_ACTION = "peer-to-peer-processing-action";
-        public static final String KEY_IS_PROCESSING = "is-processing";
-    }
-
     public class KEY {
         public static final String EVENTS = "events";
         public static final String CLIENTS = "clients";
-    }
-
-    public static class PROPERTY {
-        public static final String SYSTEM_TOASTER_CENTERED = "system.toaster.centered";
-        public static final String DISABLE_LOCATION_PICKER_VIEW = "disable.location.picker.view";
-        public static final String LOCATION_PICKER_TAG_SHOWN = "location.picker.tag.shown";
-        public static final String ENCRYPT_SHARED_PREFERENCES = "encrypt.shared.preferences";
-        public static final String ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN = "allow.offline.login.with.invalid.token";
-        public static final String IGNORE_LOCATION_DELETION = "ignore.location.deletion";
-        public static final String ENABLE_SEARCH_BUTTON ="enable.search.button";
-    }
-
-    public interface FORCED_LOGOUT {
-        String MIN_ALLOWED_APP_VERSION_SETTING = "min_allowed_app_version_setting";
-        String MIN_ALLOWED_APP_VERSION = "min_allowed_app_version";
-    }
-
-    public interface JSON {
-        String KEY = "key";
-        String VALUE = "value";
-
-        interface Property {
-            String IS_NEW = "is_new";
-            String FORM_VERSION = "form_version";
-            String CLIENT_FORM_ID = "client_form_id";
-            String APP_VERSION_NAME = "appVersionName";
-        }
-    }
-
-    public interface SyncProgressConstants {
-        String ACTION_SYNC_PROGRESS = "action_sync_progress";
-        String TOTAL_RECORDS = "total_records";
-        String SYNC_PROGRESS_DATA = "sync_progress_data";
-    }
-
-    public interface LocationConstants {
-        String SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS = "SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS";
-        String LOCATIONS = "locations";
-        String LOCATION = "location";
-        String TEAM = "team";
-        String DISPLAY = "display";
-        String UUID = "uuid";
-        String PARENT_ID = "parent_id";
-        String LOCATION_NAME = "location_name";
-    }
-
-    public interface P2PDataTypes {
-        String CLIENT = "Client";
-        String EVENT = "Event";
-        String TASK = "Task";
-        String STRUCTURE = "Structure";
-        String PROFILE_PIC = "Profile Pic";
-        String FOREIGN_CLIENT = "ForeignClient";
-        String FOREIGN_EVENT = "ForeignEvent";
-    }
-
-    public static class HTTP_REQUEST_HEADERS {
-        public static String AUTHORIZATION = "Authorization";
-    }
-
-    public static class HTTP_REQUEST_AUTH_TOKEN_TYPE {
-        public static String BEARER = "Bearer";
-        public static String BASIC = "Basic";
-    }
-
-    public static class DATA_CAPTURE_STRATEGY {
-        public static String ADVANCED = "Advanced";
-        public static String NORMAL = "Normal";
-    }
-
-    public static class DataTypes {
-        public static final String INTEGER = "INTEGER";
-    }
-
-    public interface DownloadFileConstants {
-        String FILE_NAME = "FILE_NAME";
-        String FILE_PATH = "FILE_PATH";
-    }
-
-    public interface GpsConstants {
-        String ALTITUDE = "altitude";
-        String ACCURACY = "accuracy";
-        String LATITUDE = "latitude";
-        String LONGITUDE = "longitude";
-    }
-
-    public interface PerformanceMonitoring {
-        String TEAM = "team";
-        String PUSH = "push";
-        String FETCH = "fetch";
-        String ACTION = "action";
-        String STRUCTURE = "structure";
-        String LOCATION = "location";
-        String TASK_SYNC = "task_sync";
-        String PLAN_SYNC = "plan_sync";
-        String EVENT_SYNC = "event_sync";
-        String LOCATION_SYNC = "location_sync";
-        String CLIENT_PROCESSING = "client_processing";
-    }
-
-
-    public interface ClientProcessing {
-        String VARCHAR = "VARCHAR";
-        String NAME = "name";
-        String DATA_TYPES = "data_type";
-        String COLUMNS = "columns";
-
-    }
-
-    public interface DatabaseKeys {
-        String SYNC_STATUS = "syncStatus";
-        String VALIDATION_STATUS = "validationStatus";
-    }
-
-    public interface SyncInfo {
-        String SYNCED_EVENTS = "syncedEvents";
-        String SYNCED_CLIENTS = "syncedClients";
-        String UNSYNCED_EVENTS = "unsyncedEvents";
-        String UNSYNCED_CLIENTS = "unsyncedClients";
-        String VALID_EVENTS = "validEvents";
-        String INVALID_EVENTS = "invalidEvents";
-        String VALID_CLIENTS = "validClients";
-        String INVALID_CLIENTS = "INValidClients";
-        String TASK_UNPROCESSED_EVENTS = "taskUnprocessedEvents";
-        String NULL_EVENT_SYNC_STATUS = "nullEventSyncStatus";
     }
 
     public static class EventType {
