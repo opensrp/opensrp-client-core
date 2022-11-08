@@ -31,7 +31,7 @@ public class StatsFragmentPresenterTest extends BaseUnitTest {
 
     @Test
     public void onECSyncInfoFetchedRefreshesECSyncInfo() {
-        Map<String, Integer> syncInfoMap = new HashMap<>();
+        Map<String, String> syncInfoMap = new HashMap<>();
         presenter.onECSyncInfoFetched(syncInfoMap);
         Mockito.verify(view).refreshECSyncInfo(ArgumentMatchers.eq(syncInfoMap));
     }

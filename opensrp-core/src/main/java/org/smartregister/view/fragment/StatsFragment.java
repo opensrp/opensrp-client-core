@@ -16,13 +16,25 @@ import org.smartregister.R;
 import org.smartregister.view.contract.StatsFragmentContract;
 import org.smartregister.view.presenter.StatsFragmentPresenter;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Map;
 
+import static org.smartregister.AllConstants.DatabaseKeys.DB_VERSION;
+import static org.smartregister.AllConstants.DeviceInfo.MANUFACTURER;
+import static org.smartregister.AllConstants.DeviceInfo.MODEL;
+import static org.smartregister.AllConstants.DeviceInfo.OS_VERSION;
+import static org.smartregister.AllConstants.SyncInfo.APP_BUILD_DATE;
+import static org.smartregister.AllConstants.SyncInfo.APP_VERSION_CODE;
+import static org.smartregister.AllConstants.SyncInfo.APP_VERSION_NAME;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.TASK_UNPROCESSED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_EVENTS;
+import static org.smartregister.AllConstants.SyncInfo.USER_LOCALITY;
+import static org.smartregister.AllConstants.SyncInfo.USER_NAME;
+import static org.smartregister.AllConstants.SyncInfo.USER_TEAM;
 import static org.smartregister.AllConstants.SyncInfo.VALID_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.VALID_EVENTS;
 
@@ -37,6 +49,17 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
     private TextView tvValidatedEvents;
     private TextView tvValidatedClients;
     private TextView tvTaskUnprocessedEvents;
+    private TextView tvUserName;
+    private TextView tvAppVersionName;
+    private TextView tvAppVersionCode;
+    private TextView tvDBVersion;
+    private TextView tvTeam;
+    private TextView tvLocality;
+    private TextView tvManufacturer;
+    private TextView tvDevice;
+    private TextView tvOS;
+    private TextView tvBuildDate;
+    private TextView tvCurrentDate;
 
     public static StatsFragment newInstance(Bundle bundle) {
         StatsFragment fragment = new StatsFragment();
@@ -70,6 +93,17 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvValidatedEvents = view.findViewById(R.id.validated_events);
         tvValidatedClients = view.findViewById(R.id.validated_clients);
         tvTaskUnprocessedEvents = view.findViewById(R.id.task_unprocessed_events);
+        tvUserName = view.findViewById(R.id.user_value);
+        tvAppVersionName = view.findViewById(R.id.app_version_name_value);
+        tvAppVersionCode = view.findViewById(R.id.app_version_code_value);
+        tvDBVersion = view.findViewById(R.id.db_version_value);
+        tvTeam = view.findViewById(R.id.team_value);
+        tvLocality = view.findViewById(R.id.locality_value);
+        tvManufacturer = view.findViewById(R.id.manufacturer_value);
+        tvDevice = view.findViewById(R.id.device_value);
+        tvOS = view.findViewById(R.id.os_value);
+        tvBuildDate = view.findViewById(R.id.build_date_value);
+        tvCurrentDate = view.findViewById(R.id.date_value);
 
         Button btnRefreshStats = view.findViewById(R.id.refresh_button);
         btnRefreshStats.setOnClickListener(v -> presenter.fetchSyncInfo());
@@ -79,7 +113,7 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void refreshECSyncInfo(Map<String, Integer> syncInfoMap) {
+    public void refreshECSyncInfo(Map<String, String> syncInfoMap) {
 
         tvSyncedEvents.setText(syncInfoMap.get(SYNCED_EVENTS) + "");
         tvUnSyncedEvents.setText(syncInfoMap.get(UNSYNCED_EVENTS) + "");
@@ -88,8 +122,22 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvSyncedClient.setText(syncInfoMap.get(SYNCED_CLIENTS) + "");
         tvUnSyncedClients.setText(syncInfoMap.get(UNSYNCED_CLIENTS) + "");
 
-        tvValidatedEvents.setText(syncInfoMap.get(VALID_EVENTS) + "");
+        tvValidatedEvents.setText(syncInfoMap.get(VALID_EVENTS));
         tvValidatedClients.setText(syncInfoMap.get(VALID_CLIENTS) + "");
+
+        tvUserName.setText(syncInfoMap.get(USER_NAME));
+        tvAppVersionName.setText(syncInfoMap.get(APP_VERSION_NAME));
+        tvAppVersionCode.setText(syncInfoMap.get(APP_VERSION_CODE));
+        tvDBVersion.setText(syncInfoMap.get(DB_VERSION));
+        tvBuildDate.setText(syncInfoMap.get(APP_BUILD_DATE));
+
+        tvTeam.setText(syncInfoMap.get(USER_TEAM));
+        tvLocality.setText(syncInfoMap.get(USER_LOCALITY));
+
+        tvManufacturer.setText(syncInfoMap.get(MANUFACTURER));
+        tvDevice.setText(syncInfoMap.get(MODEL));
+        tvOS.setText(syncInfoMap.get(OS_VERSION));
+        tvCurrentDate.setText(DateFormat.getDateTimeInstance().format(new Date()));
     }
 
 }

@@ -236,6 +236,7 @@ public class AllConstants {
     public interface DatabaseKeys {
         String SYNC_STATUS = "syncStatus";
         String VALIDATION_STATUS = "validationStatus";
+        String DB_VERSION = "db_version";
     }
 
     public interface SyncInfo {
@@ -249,6 +250,18 @@ public class AllConstants {
         String INVALID_CLIENTS = "INValidClients";
         String TASK_UNPROCESSED_EVENTS = "taskUnprocessedEvents";
         String NULL_EVENT_SYNC_STATUS = "nullEventSyncStatus";
+        String USER_NAME = "user";
+        String USER_TEAM = "user_team";
+        String USER_LOCALITY = "user_locality";
+        String APP_VERSION_NAME = "app_ver_name";
+        String APP_VERSION_CODE = "app_ver_code";
+        String APP_BUILD_DATE = "app_build_date";
+    }
+
+    public interface DeviceInfo {
+        String MANUFACTURER = "manufacturer";
+        String MODEL = "model";
+        String OS_VERSION = "os_version";
     }
 
     public interface ECClientType {
