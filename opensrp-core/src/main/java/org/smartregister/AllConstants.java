@@ -473,6 +473,7 @@ public class AllConstants {
         public static final String ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN = "allow.offline.login.with.invalid.token";
         public static final String IGNORE_LOCATION_DELETION = "ignore.location.deletion";
         public static final String ENABLE_SEARCH_BUTTON ="enable.search.button";
+        public static final String MONITOR_HEIGHT = "monitor.height";
     }
 
     public interface FORCED_LOGOUT {
@@ -575,6 +576,7 @@ public class AllConstants {
     public interface DatabaseKeys {
         String SYNC_STATUS = "syncStatus";
         String VALIDATION_STATUS = "validationStatus";
+        String DB_VERSION = "db_version";
     }
 
     public interface SyncInfo {
@@ -588,6 +590,21 @@ public class AllConstants {
         String INVALID_CLIENTS = "INValidClients";
         String TASK_UNPROCESSED_EVENTS = "taskUnprocessedEvents";
         String NULL_EVENT_SYNC_STATUS = "nullEventSyncStatus";
+        String USER_NAME = "user";
+        String USER_TEAM = "user_team";
+        String USER_LOCALITY = "user_locality";
+        String APP_VERSION_NAME = "app_ver_name";
+        String APP_VERSION_CODE = "app_ver_code";
+        String APP_BUILD_DATE = "app_build_date";
+        String UNSYNCED_VACCINE_EVENTS = "unsuncyed_vaccine_events";
+        String UNSYNCED_WEIGHT_EVENTS = "unsuncyed_weight_events";
+        String UNSYNCED_HEIGHT_EVENTS = "unsuncyed_height_events";
+    }
+
+    public interface DeviceInfo {
+        String MANUFACTURER = "manufacturer";
+        String MODEL = "model";
+        String OS_VERSION = "os_version";
     }
 
     public static class EventType {

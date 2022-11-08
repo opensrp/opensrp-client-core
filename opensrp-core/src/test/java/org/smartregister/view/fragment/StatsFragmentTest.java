@@ -6,6 +6,9 @@ import static org.smartregister.AllConstants.SyncInfo.SYNCED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.TASK_UNPROCESSED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_EVENTS;
+import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_HEIGHT_EVENTS;
+import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_VACCINE_EVENTS;
+import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_WEIGHT_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.VALID_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.VALID_EVENTS;
 
@@ -92,19 +95,23 @@ public class StatsFragmentTest extends BaseUnitTest {
 
     @Test
     public void refreshECSyncInfoUpdatesViews() {
-        Map<String, Integer> syncInfoMap = new HashMap<>();
-        syncInfoMap.put(SYNCED_EVENTS, 2);
-        syncInfoMap.put(UNSYNCED_EVENTS, 3);
-        syncInfoMap.put(TASK_UNPROCESSED_EVENTS, 4);
-        syncInfoMap.put(SYNCED_CLIENTS, 5);
-        syncInfoMap.put(UNSYNCED_CLIENTS, 6);
-        syncInfoMap.put(VALID_EVENTS, 7);
-        syncInfoMap.put(VALID_CLIENTS, 8);
+        Map<String, String> syncInfoMap = new HashMap<>();
+        syncInfoMap.put(SYNCED_EVENTS, "2");
+        syncInfoMap.put(UNSYNCED_EVENTS, "3");
+        syncInfoMap.put(TASK_UNPROCESSED_EVENTS, "4");
+        syncInfoMap.put(SYNCED_CLIENTS, "5");
+        syncInfoMap.put(UNSYNCED_CLIENTS, "6");
+        syncInfoMap.put(VALID_EVENTS, "7");
+        syncInfoMap.put(VALID_CLIENTS, "8");
+        syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, "1");
+        syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, "1");
+        syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, "1");
 
         View rootView = LayoutInflater.from(RuntimeEnvironment.application).inflate(R.layout.fragment_stats, null);
 
         TextView tvSyncedEvents = rootView.findViewById(R.id.synced_events);
         TextView tvUnSyncedEvents = rootView.findViewById(R.id.unsynced_events);
+        TextView tvUnsyncedHeightEvents = rootView.findViewById(R.id.synced_height_events);
 
         ReflectionHelpers.setField(statsFragment, "tvSyncedEvents", tvSyncedEvents);
         ReflectionHelpers.setField(statsFragment, "tvUnSyncedEvents", tvUnSyncedEvents);
@@ -113,10 +120,25 @@ public class StatsFragmentTest extends BaseUnitTest {
         ReflectionHelpers.setField(statsFragment, "tvUnSyncedClients", rootView.findViewById(R.id.unsynced_clients));
         ReflectionHelpers.setField(statsFragment, "tvValidatedEvents", rootView.findViewById(R.id.validated_events));
         ReflectionHelpers.setField(statsFragment, "tvValidatedClients", rootView.findViewById(R.id.validated_clients));
+        ReflectionHelpers.setField(statsFragment, "tvUserName", rootView.findViewById(R.id.user_value));
+        ReflectionHelpers.setField(statsFragment, "tvAppVersionName", rootView.findViewById(R.id.app_version_name_value));
+        ReflectionHelpers.setField(statsFragment, "tvAppVersionCode", rootView.findViewById(R.id.app_version_code_value));
+        ReflectionHelpers.setField(statsFragment, "tvDBVersion", rootView.findViewById(R.id.db_version_value));
+        ReflectionHelpers.setField(statsFragment, "tvTeam", rootView.findViewById(R.id.team_value));
+        ReflectionHelpers.setField(statsFragment, "tvLocality", rootView.findViewById(R.id.locality_value));
+        ReflectionHelpers.setField(statsFragment, "tvManufacturer", rootView.findViewById(R.id.manufacturer_value));
+        ReflectionHelpers.setField(statsFragment, "tvDevice", rootView.findViewById(R.id.device_value));
+        ReflectionHelpers.setField(statsFragment, "tvOS", rootView.findViewById(R.id.os_value));
+        ReflectionHelpers.setField(statsFragment, "tvBuildDate", rootView.findViewById(R.id.build_date_value));
+        ReflectionHelpers.setField(statsFragment, "tvCurrentDate", rootView.findViewById(R.id.date_value));
+        ReflectionHelpers.setField(statsFragment, "tvUnsyncedVaccineEvents", rootView.findViewById(R.id.synced_vaccine_events));
+        ReflectionHelpers.setField(statsFragment, "tvUnsyncedWeightEvents", rootView.findViewById(R.id.synced_weight_events));
+        ReflectionHelpers.setField(statsFragment, "tvUnsyncedHeightEvents", tvUnsyncedHeightEvents);
 
         statsFragment.refreshECSyncInfo(syncInfoMap);
         Assert.assertEquals("2", tvSyncedEvents.getText());
         Assert.assertEquals("3", tvUnSyncedEvents.getText());
+        Assert.assertEquals("1", tvUnsyncedHeightEvents.getText());
     }
 
     @Test

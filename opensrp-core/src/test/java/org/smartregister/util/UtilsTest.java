@@ -694,6 +694,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         assertEquals("false", appProperties.getProperty("SHOULD_VERIFY_CERTIFICATE"));
         assertEquals("false", appProperties.getProperty("system.toaster.centered"));
         assertEquals("10", appProperties.getProperty("SYNC_DOWNLOAD_BATCH_SIZE"));
+        assertEquals("true", appProperties.getProperty("monitor.height"));
     }
 
     @Test
