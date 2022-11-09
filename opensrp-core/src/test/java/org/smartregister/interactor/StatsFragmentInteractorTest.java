@@ -42,13 +42,12 @@ public class StatsFragmentInteractorTest extends BaseUnitTest {
 
     @Spy
     StatsFragmentContract.View view;
-    private StatsFragmentInteractor interactor;
     private StatsFragmentPresenter presenter;
 
     @Before
     public void setUp() {
         presenter = Mockito.mock(StatsFragmentPresenter.class, Mockito.CALLS_REAL_METHODS);
-        interactor = Mockito.mock(StatsFragmentInteractor.class, Mockito.CALLS_REAL_METHODS);
+        StatsFragmentInteractor interactor = Mockito.mock(StatsFragmentInteractor.class, Mockito.CALLS_REAL_METHODS);
         ReflectionHelpers.setField(presenter, "interactor", interactor);
         ReflectionHelpers.setField(presenter, "view", view);
     }

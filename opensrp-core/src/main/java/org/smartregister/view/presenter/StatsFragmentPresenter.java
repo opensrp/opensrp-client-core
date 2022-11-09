@@ -1,11 +1,6 @@
 package org.smartregister.view.presenter;
 
-import android.os.Build;
 
-import androidx.core.os.BuildCompat;
-
-import org.smartregister.CoreLibrary;
-import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.view.contract.StatsFragmentContract;
 import org.smartregister.view.interactor.StatsFragmentInteractor;
 
