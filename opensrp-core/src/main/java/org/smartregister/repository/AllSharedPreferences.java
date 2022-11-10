@@ -233,6 +233,10 @@ public class AllSharedPreferences {
         return preferences.getBoolean(key, false);
     }
 
+    public boolean saveBooleanPreference(String key, boolean value) {
+        return preferences.edit().putBoolean(key, value).commit();
+    }
+
     public void updateUrl(String baseUrl) {
         try {
 

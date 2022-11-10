@@ -748,7 +748,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     public void testCleanDuplicateMotherIdsShouldFixAndMarkDuplicateClientsUnSynced() throws Exception {
         String DUPLICATES_SQL = "WITH duplicates AS ( " +
                                     "  WITH clients AS ( " +
-                                    "    SELECT baseEntityId, COALESCE(json_extract(json, '$.identifiers.ZEIR_ID'), json_extract(json, '$.identifiers.M_ZEIR_ID')) zeir_id " +
+                                    "    SELECT baseEntityId, COALESCE(json_extract(json, '$.identifiers.ZEIR_ID'), json_extract(json, '$.identifiers.M_ZEIR_ID'), json_extract(json, '$.identifiers.zeir_id'), json_extract(json, '$.identifiers.ANC_ID')) zeir_id " +
                                     "    FROM client " +
                                     "  ) " +
                                     "  SELECT b.* FROM (SELECT baseEntityId, zeir_id FROM clients GROUP BY zeir_id HAVING count(zeir_id) > 1) a " +
@@ -766,6 +766,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         DuplicateZeirIdStatus duplicateZeirIdStatus =  eventClientRepository.cleanDuplicateMotherIds();
         Assert.assertEquals(DuplicateZeirIdStatus.CLEANED, duplicateZeirIdStatus);
         verify(sqliteDatabase, times(1)).rawQuery(eq(DUPLICATES_SQL), any());
+        verify(sqliteDatabase, times(2)).rawQuery(eq("SELECT COUNT (*) FROM unique_ids WHERE status=?"), any());
         verify(sqliteDatabase, times(1)).insert(eq("client"), eq(null), any());
     }
 

@@ -449,6 +449,7 @@ public class AllConstants {
 
     public static class PREF_KEY {
         public static final String SETTINGS = "settings";
+        public static final String DUPLICATE_IDS_FIXED = "duplicate-ids-fixed";
     }
 
     public static class PeerToPeer {

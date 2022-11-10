@@ -23,6 +23,11 @@ repositories {
 apply plugin: 'com.android.application'
 apply plugin: 'org.smartregister.gradle.jarjar'
 
+
+configurations.all {
+    all*.exclude group: 'com.google.guava', module: 'listenablefuture'
+}
+
 android {
 
     compileSdkVersion androidCompileSdkVersion
