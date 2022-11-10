@@ -24,7 +24,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
@@ -32,7 +31,6 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.service.UserService;
-import org.smartregister.view.contract.StatsFragmentContract;
 import org.smartregister.view.interactor.StatsFragmentInteractor;
 import org.smartregister.view.presenter.StatsFragmentPresenter;
 
@@ -40,29 +38,23 @@ import java.util.Map;
 
 public class StatsFragmentInteractorTest extends BaseUnitTest {
 
-    @Spy
-    StatsFragmentContract.View view;
-    private StatsFragmentPresenter presenter;
+    private StatsFragmentInteractor statsFragmentInteractor;
 
     @Before
     public void setUp() {
-        presenter = Mockito.mock(StatsFragmentPresenter.class, Mockito.CALLS_REAL_METHODS);
-        StatsFragmentInteractor interactor = Mockito.mock(StatsFragmentInteractor.class, Mockito.CALLS_REAL_METHODS);
-        ReflectionHelpers.setField(presenter, "interactor", interactor);
-        ReflectionHelpers.setField(presenter, "view", view);
+        StatsFragmentPresenter presenter = Mockito.mock(StatsFragmentPresenter.class, Mockito.CALLS_REAL_METHODS);
+        statsFragmentInteractor = new StatsFragmentInteractor(presenter);
     }
 
     @Test
     public void testPopulateUserInfoPopulatesCorrectValues() {
-        StatsFragmentInteractor statsFragmentInteractor = new StatsFragmentInteractor(presenter);
-
         CoreLibrary coreLibrary = Mockito.mock(CoreLibrary.class);
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
-//
+
         Context context = Mockito.mock(Context.class);
         UserService userService = Mockito.mock(UserService.class);
         AllSharedPreferences sharedPreferences = Mockito.mock(AllSharedPreferences.class);
-//
+
         Mockito.doReturn(context).when(coreLibrary).context();
         Mockito.doReturn(userService).when(context).userService();
         Mockito.doReturn(sharedPreferences).when(userService).getAllSharedPreferences();
@@ -81,11 +73,9 @@ public class StatsFragmentInteractorTest extends BaseUnitTest {
 
     @Test
     public void testPopulateBuildInfoPopulatesCorrectValues() {
-        StatsFragmentInteractor statsFragmentInteractor = new StatsFragmentInteractor(presenter);
-
         CoreLibrary coreLibrary = Mockito.mock(CoreLibrary.class);
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
-//
+
         Context context = Mockito.mock(Context.class);
         android.content.Context appContext = Mockito.spy(ApplicationProvider.getApplicationContext());
 
@@ -97,9 +87,17 @@ public class StatsFragmentInteractorTest extends BaseUnitTest {
 
         Map<String, String> syncInfoMap = ReflectionHelpers.getField(statsFragmentInteractor, "syncInfoMap");
 
-        Assert.assertEquals("6.0.1-SNAPSHOT", syncInfoMap.get(APP_VERSION_NAME));
+        Assert.assertEquals("6.1.0-SNAPSHOT", syncInfoMap.get(APP_VERSION_NAME));
         Assert.assertEquals("1", syncInfoMap.get(APP_VERSION_CODE));
-        Assert.assertEquals("1", syncInfoMap.get(DB_VERSION));
+        Assert.assertEquals("0", syncInfoMap.get(DB_VERSION));
+    }
+
+    @Test
+    public void testPopulateDeviceInfoPopulatesCorrectValues() {
+        ReflectionHelpers.callInstanceMethod(statsFragmentInteractor, "populateDeviceInfo");
+
+        Map<String, String> syncInfoMap = ReflectionHelpers.getField(statsFragmentInteractor, "syncInfoMap");
+
         Assert.assertEquals("robolectric", syncInfoMap.get(MANUFACTURER));
         Assert.assertEquals("robolectric", syncInfoMap.get(MODEL));
         Assert.assertEquals("28 Apr 2020", syncInfoMap.get(APP_BUILD_DATE));
@@ -108,8 +106,6 @@ public class StatsFragmentInteractorTest extends BaseUnitTest {
 
     @Test
     public void testPopulateValidatedEventsInfoAddValidEventsCountWhenStatusIsValid() {
-        StatsFragmentInteractor statsFragmentInteractor = new StatsFragmentInteractor(presenter);
-
         Cursor cursor = Mockito.mock(Cursor.class);
 
         Mockito.doReturn(1).when(cursor).getColumnIndex(eq(VALIDATION_STATUS));
@@ -126,8 +122,6 @@ public class StatsFragmentInteractorTest extends BaseUnitTest {
 
     @Test
     public void testPopulateValidatedEventsInfoAddInvalidEventsCountWhenStatusIsInvalid() {
-        StatsFragmentInteractor statsFragmentInteractor = new StatsFragmentInteractor(presenter);
-
         Cursor cursor = Mockito.mock(Cursor.class);
 
         Mockito.doReturn(1).when(cursor).getColumnIndex(eq(VALIDATION_STATUS));

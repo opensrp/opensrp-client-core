@@ -109,6 +109,7 @@ public class StatsFragmentInteractor implements StatsFragmentContract.Interactor
 
             populateUserInfo();
             populateBuildInfo();
+            populateDeviceInfo();
 
             appExecutors.mainThread().execute(new Runnable() {
                 @Override
@@ -174,10 +175,13 @@ public class StatsFragmentInteractor implements StatsFragmentContract.Interactor
 
 
     private void populateBuildInfo() {
+        syncInfoMap.put(APP_VERSION_NAME, getBuildConfigValue("VERSION_NAME"));
+        syncInfoMap.put(APP_VERSION_CODE, getBuildConfigValue("VERSION_CODE"));
+        syncInfoMap.put(DB_VERSION, getBuildConfigValue("DATABASE_VERSION"));
+    }
+
+    private void populateDeviceInfo() {
         try {
-            syncInfoMap.put(APP_VERSION_NAME, getBuildConfigValue("VERSION_NAME"));
-            syncInfoMap.put(APP_VERSION_CODE, getBuildConfigValue("VERSION_CODE"));
-            syncInfoMap.put(DB_VERSION, getBuildConfigValue("DATABASE_VERSION"));
             syncInfoMap.put(MANUFACTURER, Build.MANUFACTURER);
             syncInfoMap.put(MODEL, Build.MODEL);
             syncInfoMap.put(APP_BUILD_DATE, Utils.getBuildDate(true));
@@ -187,12 +191,18 @@ public class StatsFragmentInteractor implements StatsFragmentContract.Interactor
         } catch (Exception e) {
             Timber.e(e);
         }
+
     }
 
-    private String getBuildConfigValue(String fieldName) throws Exception {
-        Context context = CoreLibrary.getInstance().context().applicationContext();
-        Class<?> clazz = Class.forName(context.getPackageName() + ".BuildConfig");
-        Field field = clazz.getField(fieldName);
-        return String.valueOf(field.get(null));
+    private String getBuildConfigValue(String fieldName) {
+        try {
+            Context context = CoreLibrary.getInstance().context().applicationContext();
+            Class<?> clazz = Class.forName(context.getPackageName() + ".BuildConfig");
+            Field field = clazz.getField(fieldName);
+            return String.valueOf(field.get(null));
+        } catch (Exception e) {
+            Timber.e(e);
+            return "0";
+        }
     }
 }
