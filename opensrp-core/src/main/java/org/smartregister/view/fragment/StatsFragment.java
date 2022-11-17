@@ -1,25 +1,5 @@
 package org.smartregister.view.fragment;
 
-import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import org.smartregister.R;
-import org.smartregister.view.contract.StatsFragmentContract;
-import org.smartregister.view.presenter.StatsFragmentPresenter;
-
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Map;
-
 import static org.smartregister.AllConstants.DatabaseKeys.DB_VERSION;
 import static org.smartregister.AllConstants.DeviceInfo.MANUFACTURER;
 import static org.smartregister.AllConstants.DeviceInfo.MODEL;
@@ -32,11 +12,36 @@ import static org.smartregister.AllConstants.SyncInfo.SYNCED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.TASK_UNPROCESSED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_EVENTS;
+import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_HEIGHT_EVENTS;
+import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_VACCINE_EVENTS;
+import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_WEIGHT_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.USER_LOCALITY;
 import static org.smartregister.AllConstants.SyncInfo.USER_NAME;
 import static org.smartregister.AllConstants.SyncInfo.USER_TEAM;
 import static org.smartregister.AllConstants.SyncInfo.VALID_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.VALID_EVENTS;
+
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
+import org.smartregister.R;
+import org.smartregister.view.contract.StatsFragmentContract;
+import org.smartregister.view.presenter.StatsFragmentPresenter;
+
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Map;
 
 public class StatsFragment extends Fragment implements StatsFragmentContract.View {
 
@@ -60,6 +65,9 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
     private TextView tvOS;
     private TextView tvBuildDate;
     private TextView tvCurrentDate;
+    private TextView tvUnsyncedVaccineEvents;
+    private TextView tvUnsyncedWeightEvents;
+    private TextView tvUnsyncedHeightEvents;
 
     public static StatsFragment newInstance(Bundle bundle) {
         StatsFragment fragment = new StatsFragment();
@@ -104,6 +112,9 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvOS = view.findViewById(R.id.os_value);
         tvBuildDate = view.findViewById(R.id.build_date_value);
         tvCurrentDate = view.findViewById(R.id.date_value);
+        tvUnsyncedVaccineEvents = view.findViewById(R.id.synced_vaccine_events);
+        tvUnsyncedHeightEvents = view.findViewById(R.id.synced_height_events);
+        tvUnsyncedWeightEvents = view.findViewById(R.id.synced_weight_events);
 
         Button btnRefreshStats = view.findViewById(R.id.refresh_button);
         btnRefreshStats.setOnClickListener(v -> presenter.fetchSyncInfo());
@@ -125,6 +136,16 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvValidatedEvents.setText(syncInfoMap.get(VALID_EVENTS));
         tvValidatedClients.setText(syncInfoMap.get(VALID_CLIENTS) + "");
 
+        tvUnsyncedVaccineEvents.setText(syncInfoMap.get(UNSYNCED_VACCINE_EVENTS) + "");
+        tvUnsyncedWeightEvents.setText(syncInfoMap.get(UNSYNCED_WEIGHT_EVENTS) + "");
+        // Only show height stats if they are record height is enabled
+        if (CoreLibrary.getInstance().context().getAppProperties().isTrue(AllConstants.PROPERTY.MONITOR_HEIGHT))
+            tvUnsyncedHeightEvents.setText(syncInfoMap.get(UNSYNCED_HEIGHT_EVENTS) + "");
+        else {
+            if (getView() != null) {
+                getView().findViewById(R.id.height_stats).setVisibility(View.GONE);
+            }
+        }
         tvUserName.setText(syncInfoMap.get(USER_NAME));
         tvAppVersionName.setText(syncInfoMap.get(APP_VERSION_NAME));
         tvAppVersionCode.setText(syncInfoMap.get(APP_VERSION_CODE));

@@ -17,6 +17,9 @@ import static org.smartregister.AllConstants.SyncInfo.SYNCED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.TASK_UNPROCESSED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_EVENTS;
+import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_HEIGHT_EVENTS;
+import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_VACCINE_EVENTS;
+import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_WEIGHT_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.USER_LOCALITY;
 import static org.smartregister.AllConstants.SyncInfo.USER_NAME;
 import static org.smartregister.AllConstants.SyncInfo.USER_TEAM;
@@ -29,6 +32,7 @@ import android.os.Build;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
@@ -72,12 +76,19 @@ public class StatsFragmentInteractor implements StatsFragmentContract.Interactor
         syncInfoMap.put(INVALID_CLIENTS, "0");
         syncInfoMap.put(TASK_UNPROCESSED_EVENTS, "0");
         syncInfoMap.put(NULL_EVENT_SYNC_STATUS, "0");
+        syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, "0");
+        syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, "0");
+        syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, "0");
 
         String eventSyncSql = "select count(*), syncStatus from event group by syncStatus";
         String clientSyncSql = "select count(*), syncStatus from client group by syncStatus";
 
         String validatedEventsSql = "select count(*), validationStatus from event group by validationStatus";
         String validatedClientsSql = "select count(*), validationStatus from client group by validationStatus";
+
+        String unsyncedVaccineEventsSQL = "SELECT COUNT(*) FROM vaccines WHERE sync_status = 'Unsynced'";
+        String unsyncedWeightEventsSQL = "SELECT COUNT(*) FROM weights WHERE sync_status = 'Unsynced'";
+        String unsyncedHeightEventsSQL = "SELECT COUNT(*) FROM heights WHERE sync_status = 'Unsynced'";
 
         Cursor cursor = null;
 
@@ -103,6 +114,22 @@ public class StatsFragmentInteractor implements StatsFragmentContract.Interactor
             cursor = database.rawQuery(validatedClientsSql, new String[]{});
             while (cursor.moveToNext()) {
                 populateValidatedClientsInfo(cursor);
+            }
+
+            cursor = database.rawQuery(unsyncedVaccineEventsSQL, new String[]{});
+            while (cursor.moveToNext()) {
+                syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, String.valueOf(cursor.getInt(0)));
+            }
+
+            cursor = database.rawQuery(unsyncedWeightEventsSQL, new String[]{});
+            while (cursor.moveToNext()) {
+                syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, String.valueOf(cursor.getInt(0)));
+            }
+            if (CoreLibrary.getInstance().context().getAppProperties().isTrue(AllConstants.PROPERTY.MONITOR_HEIGHT)) {
+                cursor = database.rawQuery(unsyncedHeightEventsSQL, new String[]{});
+                while (cursor.moveToNext()) {
+                    syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, String.valueOf(cursor.getInt(0)));
+                }
             }
 
             cursor.close();

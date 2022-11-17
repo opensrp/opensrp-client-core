@@ -307,11 +307,12 @@ By placing a file named `app.properties` in your implementation assets folder (S
 ### Configurable Settings
 
 | Configuration                            | Type    | Default | Description                                                                                                                                         |
-| ---------------------------------------- | ------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ---------------------------------------- | ------- | ------- |-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | `system.toaster.centered`                | Boolean | false   | Position toaster(s) at the center of the view(s)                                                                                                    |
 | `disable.location.picker.view`           | Boolean | false   | Disables LocationPicker View                                                                                                                        |
 | `location.picker.tag.shown`              | Boolean | false   | Hides/Shows the location tag in the location picker tree view                                                                                       |
 | `encrypt.shared.preferences`             | Boolean | false   | Enable/disables encrypting SharedPreferences                                                                                                        |
 | `allow.offline.login.with.invalid.token` | Boolean | false   | Allow offline login when token is no longer valid after a successful login when online and user is forcefully logged out                            |
 | `enable.search.button`                   | Boolean | false   | Enable/Disable search to be triggered only after clicking the search icon in `org.smartregister.view.fragment.BaseRegisterFragment` or its subclass |
-| `feature.profile.images.disabled`            | Boolean | false    | Disable profile image capturing and rendering     |
+| `feature.profile.images.disabled`            | Boolean | false    | Disable profile image capturing and rendering                                                                                                       |
+| `monitor.height`            | Boolean | false    | Show height unsynced events count in stats view                                                                                                     |

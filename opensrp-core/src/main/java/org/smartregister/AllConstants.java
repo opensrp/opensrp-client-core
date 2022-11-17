@@ -256,6 +256,9 @@ public class AllConstants {
         String APP_VERSION_NAME = "app_ver_name";
         String APP_VERSION_CODE = "app_ver_code";
         String APP_BUILD_DATE = "app_build_date";
+        String UNSYNCED_VACCINE_EVENTS = "unsuncyed_vaccine_events";
+        String UNSYNCED_WEIGHT_EVENTS = "unsuncyed_weight_events";
+        String UNSYNCED_HEIGHT_EVENTS = "unsuncyed_height_events";
     }
 
     public interface DeviceInfo {
@@ -349,6 +352,7 @@ public class AllConstants {
         public static final String IGNORE_LOCATION_DELETION = "ignore.location.deletion";
         public static final String ENABLE_SEARCH_BUTTON = "enable.search.button";
         public static final String DISABLE_PROFILE_IMAGES_FEATURE = "feature.profile.images.disabled";
+        public static final String MONITOR_HEIGHT = "monitor.height";
     }
 
     public static class HTTP_REQUEST_HEADERS {
