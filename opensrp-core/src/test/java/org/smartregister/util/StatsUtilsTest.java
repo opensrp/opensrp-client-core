@@ -1,4 +1,4 @@
-package org.smartregister.interactor;
+package org.smartregister.util;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.smartregister.AllConstants.DatabaseKeys.DB_VERSION;
@@ -26,24 +26,22 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.BuildConfig;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.service.UserService;
-import org.smartregister.view.interactor.StatsFragmentInteractor;
-import org.smartregister.view.presenter.StatsFragmentPresenter;
 
 import java.util.Map;
 
-public class StatsFragmentInteractorTest extends BaseUnitTest {
+public class StatsUtilsTest extends BaseUnitTest {
 
-    private StatsFragmentInteractor statsFragmentInteractor;
+    private StatsUtils statsUtils;
 
     @Before
     public void setUp() {
-        StatsFragmentPresenter presenter = Mockito.mock(StatsFragmentPresenter.class, Mockito.CALLS_REAL_METHODS);
-        statsFragmentInteractor = new StatsFragmentInteractor(presenter);
+        statsUtils = new StatsUtils();
     }
 
     @Test
@@ -62,9 +60,9 @@ public class StatsFragmentInteractorTest extends BaseUnitTest {
         Mockito.doReturn("team").when(sharedPreferences).fetchDefaultTeam(Mockito.anyString());
         Mockito.doReturn("locality").when(sharedPreferences).fetchCurrentLocality();
 
-        ReflectionHelpers.callInstanceMethod(statsFragmentInteractor, "populateUserInfo");
+        ReflectionHelpers.callInstanceMethod(statsUtils, "populateUserInfo");
 
-        Map<String, String> syncInfoMap = ReflectionHelpers.getField(statsFragmentInteractor, "syncInfoMap");
+        Map<String, String> syncInfoMap = ReflectionHelpers.getField(statsUtils, "syncInfoMap");
 
         Assert.assertEquals("user", syncInfoMap.get(USER_NAME));
         Assert.assertEquals("team", syncInfoMap.get(USER_TEAM));
@@ -83,20 +81,20 @@ public class StatsFragmentInteractorTest extends BaseUnitTest {
         Mockito.doReturn(appContext).when(context).applicationContext();
         Mockito.doReturn("org.smartregister").when(appContext).getPackageName();
 
-        ReflectionHelpers.callInstanceMethod(statsFragmentInteractor, "populateBuildInfo");
+        ReflectionHelpers.callInstanceMethod(statsUtils, "populateBuildInfo");
 
-        Map<String, String> syncInfoMap = ReflectionHelpers.getField(statsFragmentInteractor, "syncInfoMap");
+        Map<String, String> syncInfoMap = ReflectionHelpers.getField(statsUtils, "syncInfoMap");
 
-        Assert.assertEquals("6.1.0-SNAPSHOT", syncInfoMap.get(APP_VERSION_NAME));
+        Assert.assertEquals(BuildConfig.VERSION_NAME, syncInfoMap.get(APP_VERSION_NAME));
         Assert.assertEquals("1", syncInfoMap.get(APP_VERSION_CODE));
         Assert.assertEquals("0", syncInfoMap.get(DB_VERSION));
     }
 
     @Test
     public void testPopulateDeviceInfoPopulatesCorrectValues() {
-        ReflectionHelpers.callInstanceMethod(statsFragmentInteractor, "populateDeviceInfo");
+        ReflectionHelpers.callInstanceMethod(statsUtils, "populateDeviceInfo");
 
-        Map<String, String> syncInfoMap = ReflectionHelpers.getField(statsFragmentInteractor, "syncInfoMap");
+        Map<String, String> syncInfoMap = ReflectionHelpers.getField(statsUtils, "syncInfoMap");
 
         Assert.assertEquals("robolectric", syncInfoMap.get(MANUFACTURER));
         Assert.assertEquals("robolectric", syncInfoMap.get(MODEL));
@@ -112,10 +110,10 @@ public class StatsFragmentInteractorTest extends BaseUnitTest {
         Mockito.doReturn(BaseRepository.TYPE_Valid).when(cursor).getString(eq(1));
         Mockito.doReturn(10).when(cursor).getInt(eq(0));
 
-        ReflectionHelpers.callInstanceMethod(statsFragmentInteractor, "populateValidatedEventsInfo",
+        ReflectionHelpers.callInstanceMethod(statsUtils, "populateValidatedEventsInfo",
                 ReflectionHelpers.ClassParameter.from(Cursor.class, cursor));
 
-        Map<String, String> syncInfoMap = ReflectionHelpers.getField(statsFragmentInteractor, "syncInfoMap");
+        Map<String, String> syncInfoMap = ReflectionHelpers.getField(statsUtils, "syncInfoMap");
         Assert.assertEquals("10", syncInfoMap.get(VALID_EVENTS));
 
     }
@@ -128,10 +126,10 @@ public class StatsFragmentInteractorTest extends BaseUnitTest {
         Mockito.doReturn(BaseRepository.TYPE_InValid).when(cursor).getString(eq(1));
         Mockito.doReturn(10).when(cursor).getInt(eq(0));
 
-        ReflectionHelpers.callInstanceMethod(statsFragmentInteractor, "populateValidatedEventsInfo",
+        ReflectionHelpers.callInstanceMethod(statsUtils, "populateValidatedEventsInfo",
                 ReflectionHelpers.ClassParameter.from(Cursor.class, cursor));
 
-        Map<String, String> syncInfoMap = ReflectionHelpers.getField(statsFragmentInteractor, "syncInfoMap");
+        Map<String, String> syncInfoMap = ReflectionHelpers.getField(statsUtils, "syncInfoMap");
         Assert.assertEquals("10", syncInfoMap.get(INVALID_EVENTS));
 
     }
