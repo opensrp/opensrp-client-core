@@ -706,11 +706,12 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     public void getPropertiesShouldLoadPropertiesInPropertiesFile() {
         AppProperties appProperties = Utils.getProperties(ApplicationProvider.getApplicationContext());
 
-        assertEquals(5, appProperties.size());
+        assertEquals(6, appProperties.size());
         assertEquals("", appProperties.getProperty("DRISHTI_BASE_URL"));
         assertEquals("false", appProperties.getProperty("SHOULD_VERIFY_CERTIFICATE"));
         assertEquals("true", appProperties.getProperty("system.toaster.centered"));
         assertEquals("10", appProperties.getProperty("SYNC_DOWNLOAD_BATCH_SIZE"));
+        assertEquals("true", appProperties.getProperty("monitor.height"));
     }
 
     @Test
