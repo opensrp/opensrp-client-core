@@ -134,6 +134,6 @@ public class SyncUtilsRobolectricTest extends BaseRobolectricUnitTest {
         int flags = Intent.FLAG_ACTIVITY_NEW_TASK;
         flags |= Intent.FLAG_ACTIVITY_CLEAR_TOP;
         Assert.assertEquals(flags, intent.getFlags());
-        Assert.assertEquals(context.getString(R.string.logout_text), intent.getStringExtra(AllConstants.ACCOUNT_DISABLED));
+        Assert.assertEquals(context.getString(R.string.logout_text), intent.getStringExtra(AllConstants.INTENT_KEY.DIALOG_MESSAGE));
     }
 }

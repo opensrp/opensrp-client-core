@@ -457,4 +457,5 @@
     <string name="return_to_register">Return</string>
     <string name="summary_forms">Other Forms</string>
     <string name="permission_write_external_storage_rationale">Write access to the device internal storage is required for database download.</string>
+    <string name="session_expired_title">Session Expired</string>
 </resources>
