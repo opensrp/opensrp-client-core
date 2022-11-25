@@ -120,10 +120,10 @@ public class AppHealthUtils {
     }
 
     @Nullable
-    public static DuplicateZeirIdStatus cleanUniqueZeirIds(){
+    public static DuplicateZeirIdStatus cleanUniqueZeirIds(String[] eventTypes){
         try {
             return CoreLibrary.getInstance().context().getEventClientRepository()
-                    .cleanDuplicateMotherIds();
+                    .cleanDuplicateMotherIds(eventTypes);
         } catch (Exception e) {
             Timber.e(e);
         }

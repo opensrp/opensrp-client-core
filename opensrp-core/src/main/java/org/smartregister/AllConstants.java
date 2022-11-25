@@ -599,4 +599,8 @@ public class AllConstants {
         public static final String MOTHER = "mother";
     }
 
+    public static class WorkData {
+        public static final String EVENT_TYPES = "event-types";
+    }
+
 }

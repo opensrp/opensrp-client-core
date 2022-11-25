@@ -763,7 +763,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         when(sqliteDatabase.rawQuery("SELECT json FROM client WHERE baseEntityId = ? ", new String[]{"1b6fca83-26d0-46d2-bfba-254de5c4424a"}) ).thenReturn(getClientJsonObjectCursor());
         when(sqliteDatabase.query("unique_ids", new String[]{"_id", "openmrs_id", "status", "used_by", "synced_by", "created_at", "updated_at"},  "status = ?", new String[]{"not_used"}, null, null, "created_at ASC", "1")).thenReturn(getUniqueIdCursor());
 
-        DuplicateZeirIdStatus duplicateZeirIdStatus =  eventClientRepository.cleanDuplicateMotherIds();
+        DuplicateZeirIdStatus duplicateZeirIdStatus =  eventClientRepository.cleanDuplicateMotherIds(null);
         Assert.assertEquals(DuplicateZeirIdStatus.CLEANED, duplicateZeirIdStatus);
         verify(sqliteDatabase, times(1)).rawQuery(eq(DUPLICATES_SQL), any());
         verify(sqliteDatabase, times(2)).rawQuery(eq("SELECT COUNT (*) FROM unique_ids WHERE status=?"), any());

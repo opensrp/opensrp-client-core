@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.work.Configuration;
+import androidx.work.Data;
 import androidx.work.ListenableWorker;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
@@ -16,9 +17,11 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.DuplicateZeirIdStatus;
@@ -32,11 +35,10 @@ import java.util.concurrent.ExecutionException;
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 02-11-2022.
  */
 
-public class DuplicateCleanerWorkerTest extends BaseRobolectricUnitTest {
+public class DuplicateZeirIdsCleanerWorkerTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        //super.setUp();
         initCoreLibrary();
         initializeWorkManager();
     }
@@ -48,7 +50,7 @@ public class DuplicateCleanerWorkerTest extends BaseRobolectricUnitTest {
 
         Mockito.doReturn(true).when(allSharedPreferences).getBooleanPreference("duplicate-ids-fixed");
 
-        Assert.assertFalse(DuplicateCleanerWorker.shouldSchedule());
+        Assert.assertFalse(DuplicateZeirIdsCleanerWorker.shouldSchedule());
 
         Mockito.verify(allSharedPreferences).getBooleanPreference("duplicate-ids-fixed");
     }
@@ -56,37 +58,43 @@ public class DuplicateCleanerWorkerTest extends BaseRobolectricUnitTest {
     @Test
     public void schedulePeriodicallyShouldScheduleJobInWorkManager() throws ExecutionException, InterruptedException {
         Context context = RuntimeEnvironment.application;
-        DuplicateCleanerWorker.schedulePeriodically(context, 15);
+        DuplicateZeirIdsCleanerWorker.schedulePeriodically(context, 15, null);
 
         ListenableFuture<List<WorkInfo>> listenableFuture = WorkManager.getInstance(context)
-                .getWorkInfosForUniqueWork(DuplicateCleanerWorker.TAG);
+                .getWorkInfosForUniqueWork(DuplicateZeirIdsCleanerWorker.TAG);
 
         Assert.assertEquals(1, listenableFuture.get().size());
     }
 
     @Test
     public void doWorkShouldReturnSuccess() {
-        DuplicateCleanerWorker duplicateCleanerWorker = TestWorkerBuilder.from(RuntimeEnvironment.application, DuplicateCleanerWorker.class)
+        DuplicateZeirIdsCleanerWorker DuplicateZeirIdsCleanerWorker = TestWorkerBuilder.from(RuntimeEnvironment.application, DuplicateZeirIdsCleanerWorker.class)
                 .build();
-        Assert.assertEquals(ListenableWorker.Result.success(), duplicateCleanerWorker.doWork());
+        Assert.assertEquals(ListenableWorker.Result.success(), DuplicateZeirIdsCleanerWorker.doWork());
     }
 
     @Test
     public void doWorkShouldCallCleanDuplicateUniqueZeirIdsWhenDuplicateIdsFixedPreferenceIsFalse() throws Exception {
+        String[] eventList = new String[]{"OPD Registration", "PNC Registration"};
+        ArgumentCaptor<String[]> eventListCaptor = ArgumentCaptor.forClass(String[].class);
+
         AllSharedPreferences allSharedPreferences = Mockito.spy(CoreLibrary.getInstance().context().userService().getAllSharedPreferences());
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", allSharedPreferences);
         Mockito.doReturn(false).when(allSharedPreferences).getBooleanPreference("duplicate-ids-fixed");
 
         EventClientRepository eventClientRepository = Mockito.spy(CoreLibrary.getInstance().context().getEventClientRepository());
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "eventClientRepository", eventClientRepository);
-        Mockito.doReturn(DuplicateZeirIdStatus.PENDING).when(eventClientRepository).cleanDuplicateMotherIds();
+        Mockito.doReturn(DuplicateZeirIdStatus.PENDING).when(eventClientRepository).cleanDuplicateMotherIds(eventList);
 
-        DuplicateCleanerWorker duplicateCleanerWorker = TestWorkerBuilder.from(RuntimeEnvironment.application, DuplicateCleanerWorker.class)
+        DuplicateZeirIdsCleanerWorker DuplicateZeirIdsCleanerWorker = TestWorkerBuilder.from(RuntimeEnvironment.application, DuplicateZeirIdsCleanerWorker.class)
+                .setInputData(new Data.Builder().putStringArray(AllConstants.WorkData.EVENT_TYPES, eventList).build())
                 .build();
-        Assert.assertEquals(ListenableWorker.Result.success(), duplicateCleanerWorker.doWork());
+        Assert.assertEquals(ListenableWorker.Result.success(), DuplicateZeirIdsCleanerWorker.doWork());
 
-        Mockito.verify(eventClientRepository).cleanDuplicateMotherIds();
+        Mockito.verify(eventClientRepository).cleanDuplicateMotherIds(eventListCaptor.capture());
         Mockito.verify(allSharedPreferences, Mockito.times(0)).saveBooleanPreference("duplicate-ids-fixed", true);
+
+        Assert.assertArrayEquals(eventList, eventListCaptor.getValue());
     }
 
     private void initializeWorkManager() {
@@ -102,21 +110,26 @@ public class DuplicateCleanerWorkerTest extends BaseRobolectricUnitTest {
 
     @Test
     public void doWorkShouldSetDuplicateIdsFixedPreferenceTrueWhenCleanUniqueZeirIdsReturnsCleaned() throws Exception {
+        String[] eventList = new String[]{"OPD Registration", "PNC Registration"};
+        ArgumentCaptor<String[]> eventListCaptor = ArgumentCaptor.forClass(String[].class);
         AllSharedPreferences allSharedPreferences = Mockito.spy(CoreLibrary.getInstance().context().userService().getAllSharedPreferences());
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", allSharedPreferences);
         Mockito.doReturn(false).when(allSharedPreferences).getBooleanPreference("duplicate-ids-fixed");
 
         EventClientRepository eventClientRepository = Mockito.spy(CoreLibrary.getInstance().context().getEventClientRepository());
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "eventClientRepository", eventClientRepository);
-        Mockito.doReturn(DuplicateZeirIdStatus.CLEANED).when(eventClientRepository).cleanDuplicateMotherIds();
+        Mockito.doReturn(DuplicateZeirIdStatus.CLEANED).when(eventClientRepository).cleanDuplicateMotherIds(eventList);
 
         //WorkManagerInitializer
-        DuplicateCleanerWorker duplicateCleanerWorker = TestWorkerBuilder.from(RuntimeEnvironment.application, DuplicateCleanerWorker.class)
+        DuplicateZeirIdsCleanerWorker DuplicateZeirIdsCleanerWorker = TestWorkerBuilder.from(RuntimeEnvironment.application, DuplicateZeirIdsCleanerWorker.class)
+                .setInputData(new Data.Builder().putStringArray(AllConstants.WorkData.EVENT_TYPES, eventList).build())
                 .build();
-        Assert.assertEquals(ListenableWorker.Result.success(), duplicateCleanerWorker.doWork());
+        Assert.assertEquals(ListenableWorker.Result.success(), DuplicateZeirIdsCleanerWorker.doWork());
 
-        Mockito.verify(eventClientRepository).cleanDuplicateMotherIds();
+        Mockito.verify(eventClientRepository).cleanDuplicateMotherIds(eventListCaptor.capture());
         Mockito.verify(allSharedPreferences).saveBooleanPreference("duplicate-ids-fixed", true);
+
+        Assert.assertArrayEquals(eventList, eventListCaptor.getValue());
     }
 
 }

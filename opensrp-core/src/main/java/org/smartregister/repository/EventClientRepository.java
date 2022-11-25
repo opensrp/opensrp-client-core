@@ -2358,7 +2358,7 @@ public class EventClientRepository extends BaseRepository {
                 + " IN (" + StringUtils.repeat("?", ",", taskIds.size()) + ")", taskIds.toArray(new String[0]));
     }
 
-    public DuplicateZeirIdStatus cleanDuplicateMotherIds() throws Exception {
+    public DuplicateZeirIdStatus cleanDuplicateMotherIds(String[] eventTypes) throws Exception {
         String username = Context.getInstance().userService().getAllSharedPreferences().fetchRegisteredANM();
 
         UniqueIdRepository uniqueIdRepository = Context.getInstance().getUniqueIdRepository();
@@ -2402,7 +2402,9 @@ public class EventClientRepository extends BaseRepository {
             }
 
             String eventType = AllConstants.EventType.BITRH_REGISTRATION;
-            String clientType = clientJson.getString(AllConstants.CLIENT_TYPE);
+            String clientType = clientJson.optString(AllConstants.CLIENT_TYPE);
+
+            List<String> eventTypesList = new ArrayList<>();
 
             if (AllConstants.CHILD_TYPE.equals(clientType)) {
                 String identifierLabel = ZEIR_ID;
@@ -2414,7 +2416,24 @@ public class EventClientRepository extends BaseRepository {
             } else if (AllConstants.Entity.MOTHER.equals(clientType)) {
                 identifiers.put(M_ZEIR_ID, newZeirId);
                 eventType = AllConstants.EventType.NEW_WOMAN_REGISTRATION;
+            } else {
+                String identifierLabel = ZEIR_ID.toLowerCase(Locale.ROOT);
+                if (identifiers.has(ZEIR_ID)) {
+                    identifierLabel = ZEIR_ID;
+                } else if (identifiers.has("M_ZEIR_ID")) {
+                    identifierLabel = "M_ZEIR_ID";
+                } else if (identifiers.has("ANC_ID")) {
+                    identifierLabel = "ANC_ID";
+                }
+
+                identifiers.put(identifierLabel, newZeirId.replaceAll("-", ""));
             }
+
+            eventTypesList.add(eventType);
+            if (eventTypes != null) {
+                Collections.addAll(eventTypesList, eventTypes);
+            }
+
             clientJson.put(AllConstants.IDENTIFIERS, identifiers);
 
             // Add events to process this
@@ -2424,7 +2443,7 @@ public class EventClientRepository extends BaseRepository {
             List<EventClient> registrationEvent = getEvents(
                     Collections.singletonList(baseEntityId),
                     Collections.singletonList(BaseRepository.TYPE_Synced),
-                    Collections.singletonList(eventType)
+                    eventTypesList
             );
             Event event = null;
             if (!registrationEvent.isEmpty())
