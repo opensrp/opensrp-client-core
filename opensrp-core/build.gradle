@@ -296,6 +296,7 @@ dependencies {
 
     def fragmentVersion = "1.2.5"
     testImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
+    //testImplementation project(":opensrp-core")
 }
 
 task clearJar(type: Delete) {
