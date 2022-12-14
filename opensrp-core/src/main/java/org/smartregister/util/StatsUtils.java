@@ -26,7 +26,7 @@ import static org.smartregister.AllConstants.SyncInfo.USER_TEAM;
 import static org.smartregister.AllConstants.SyncInfo.VALID_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.VALID_EVENTS;
 
-import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
 
 import net.sqlcipher.Cursor;
@@ -176,9 +176,24 @@ public class StatsUtils {
 
 
     private void populateBuildInfo() {
-        syncInfoMap.put(APP_VERSION_NAME, getBuildConfigValue("VERSION_NAME"));
-        syncInfoMap.put(APP_VERSION_CODE, getBuildConfigValue("VERSION_CODE"));
-        syncInfoMap.put(DB_VERSION, getBuildConfigValue("DATABASE_VERSION"));
+        try {
+            syncInfoMap.put(APP_VERSION_NAME, Utils.getVersion(CoreLibrary.getInstance().context().applicationContext()));
+        } catch (PackageManager.NameNotFoundException e) {
+            syncInfoMap.put(APP_VERSION_NAME, "0");
+            Timber.e(e);
+        }
+        try {
+            syncInfoMap.put(APP_VERSION_CODE, String.valueOf(Utils.getVersionCode(CoreLibrary.getInstance().context().applicationContext())));
+        } catch (PackageManager.NameNotFoundException e) {
+            syncInfoMap.put(APP_VERSION_CODE, "0");
+            Timber.e(e);
+        }
+        try {
+            syncInfoMap.put(DB_VERSION, String.valueOf(Utils.getDatabaseVersion()));
+        } catch (Exception e) {
+            syncInfoMap.put(DB_VERSION, "0");
+            Timber.e(e);
+        }
     }
 
     private void populateDeviceInfo() {
@@ -194,17 +209,4 @@ public class StatsUtils {
         }
 
     }
-
-    public String getBuildConfigValue(String fieldName) {
-        try {
-            Context context = CoreLibrary.getInstance().context().applicationContext();
-            Class<?> clazz = Class.forName(context.getPackageName() + ".BuildConfig");
-            Field field = clazz.getField(fieldName);
-            return String.valueOf(field.get(null));
-        } catch (Exception e) {
-            Timber.e(e);
-            return "0";
-        }
-    }
-
 }

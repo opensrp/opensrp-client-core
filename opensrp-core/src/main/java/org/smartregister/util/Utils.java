@@ -77,6 +77,7 @@ import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -573,6 +574,10 @@ public class Utils {
     public static long getVersionCode(Context context) throws PackageManager.NameNotFoundException {
         PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
         return packageInfo.versionCode;
+    }
+
+    public static int getDatabaseVersion() {
+        return DrishtiApplication.getInstance().getRepository().getReadableDatabase().getVersion();
     }
 
     public static String getBuildDate(Boolean isShortMonth) {
