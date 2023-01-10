@@ -95,6 +95,7 @@ android {
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
         buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
     }
+/*
 
     sourceSets {
         main {
@@ -105,8 +106,12 @@ android {
             jniLibs.srcDirs 'src/main/native'
             resources.srcDir 'resources'
         }
+        test {
+            java.srcDir 'tests'
+        }
         androidTest.setRoot('src/androidTest')
     }
+*/
 
     aaptOptions {
         noCompress 'apk'
@@ -123,6 +128,7 @@ android {
             includeAndroidResources = true
         }
     }
+
 }
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -140,6 +146,16 @@ tasks.withType(Test) {
         showStackTraces true
     }
     maxHeapSize = "4g"
+
+    test {
+        beforeTest { testDescriptor ->
+            println "${testDescriptor.className} > ${testDescriptor.name} STARTED"
+        }
+        afterTest { testDescriptor ->
+            println "${testDescriptor.className} > ${testDescriptor.name} ENDED"
+
+        }
+    }
 }
 
 def filesToCopy = copySpec {
@@ -337,6 +353,7 @@ coveralls {
     jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"
     sourceDirs = ["$project.projectDir/src/main/java"]
 }
+
 
 apply from: '../maven.gradle'
 apply plugin: 'kotlin-android'
