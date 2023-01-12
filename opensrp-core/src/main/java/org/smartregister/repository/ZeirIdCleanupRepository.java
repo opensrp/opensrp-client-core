@@ -16,7 +16,7 @@ public class ZeirIdCleanupRepository extends BaseRepository {
     private static final String DUPLICATES_SQL =
             "WITH duplicates AS ( " +
                     "  WITH clients AS ( " +
-                    "    SELECT baseEntityId, COALESCE(json_extract(json, '$.identifiers.ZEIR_ID'), json_extract(json, '$.identifiers.M_ZEIR_ID'), json_extract(json, '$.identifiers.zeir_id'), json_extract(json, '$.identifiers.ANC_ID')) zeir_id " +
+                    "    SELECT baseEntityId, COALESCE(json_extract(json, '$.identifiers.ZEIR_ID'), REPLACE(json_extract(json, '$.identifiers.M_ZEIR_ID'), '-', ''), json_extract(json, '$.identifiers.zeir_id'), json_extract(json, '$.identifiers.ANC_ID'), REPLACE(json_extract(json, '$.identifiers.F_ZEIR_ID'), '-', '')) zeir_id " +
                     "    FROM client " +
                     "  ) " +
                     "  SELECT b.* FROM (SELECT baseEntityId, zeir_id FROM clients GROUP BY zeir_id HAVING count(zeir_id) > 1) a " +
