@@ -38,7 +38,6 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.view.activity.DrishtiApplication;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
