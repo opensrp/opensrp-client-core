@@ -232,6 +232,7 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         LocationHelper spyLocationHelper = Mockito.spy(locationHelper);
         AllSharedPreferences spiedAllSharedPreferences = Mockito.spy((AllSharedPreferences) ReflectionHelpers.getField(spyLocationHelper, "allSharedPreferences"));
         ReflectionHelpers.setField(spyLocationHelper, "allSharedPreferences", spiedAllSharedPreferences);
+        Mockito.doReturn("demo").when(spiedAllSharedPreferences).fetchRegisteredANM();
 
         ANMLocationController anmLocationController = Mockito.spy(CoreLibrary.getInstance().context().anmLocationController());
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "anmLocationController", anmLocationController);
@@ -242,7 +243,7 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         List<String> allowedLevels = Arrays.asList("District", "Village");
         List<String> result = spyLocationHelper.generateDefaultLocationHierarchy(allowedLevels);
 
-        Mockito.verify(spiedAllSharedPreferences).fetchDefaultLocalityId(Mockito.eq(""));
+        Mockito.verify(spiedAllSharedPreferences).fetchDefaultLocalityId(Mockito.eq("demo"));
         Mockito.verify(spyLocationHelper).getDefaultLocationHierarchy(Mockito.isNull(), Mockito.any(), Mockito.anyList(), Mockito.eq(allowedLevels), Mockito.eq(false));
         assertNull(result);
     }

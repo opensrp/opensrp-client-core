@@ -91,7 +91,7 @@ android {
         targetSdkVersion androidTargetSdkVersion
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
-        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
         buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
     }
