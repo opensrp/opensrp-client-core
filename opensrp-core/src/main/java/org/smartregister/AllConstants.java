@@ -596,9 +596,9 @@ public class AllConstants {
         String APP_VERSION_NAME = "app_ver_name";
         String APP_VERSION_CODE = "app_ver_code";
         String APP_BUILD_DATE = "app_build_date";
-        String UNSYNCED_VACCINE_EVENTS = "unsuncyed_vaccine_events";
-        String UNSYNCED_WEIGHT_EVENTS = "unsuncyed_weight_events";
-        String UNSYNCED_HEIGHT_EVENTS = "unsuncyed_height_events";
+        String UNSYNCED_VACCINE_EVENTS = "unsynced_vaccine_events";
+        String UNSYNCED_WEIGHT_EVENTS = "unsynced_weight_events";
+        String UNSYNCED_HEIGHT_EVENTS = "unsynced_height_events";
     }
 
     public interface DeviceInfo {
