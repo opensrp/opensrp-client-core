@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentManager;
@@ -108,10 +109,12 @@ public class StatsFragmentTest extends BaseUnitTest {
         syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, "1");
 
         View rootView = LayoutInflater.from(RuntimeEnvironment.application).inflate(R.layout.fragment_stats, null);
+        Mockito.doReturn(rootView).when(statsFragment).getView();
 
         TextView tvSyncedEvents = rootView.findViewById(R.id.synced_events);
         TextView tvUnSyncedEvents = rootView.findViewById(R.id.unsynced_events);
         TextView tvUnsyncedHeightEvents = rootView.findViewById(R.id.synced_height_events);
+        LinearLayout layoutUnsyncedHeightEvents = rootView.findViewById(R.id.height_stats);
 
         ReflectionHelpers.setField(statsFragment, "tvSyncedEvents", tvSyncedEvents);
         ReflectionHelpers.setField(statsFragment, "tvUnSyncedEvents", tvUnSyncedEvents);
@@ -138,6 +141,7 @@ public class StatsFragmentTest extends BaseUnitTest {
         statsFragment.refreshECSyncInfo(syncInfoMap);
         Assert.assertEquals("2", tvSyncedEvents.getText());
         Assert.assertEquals("3", tvUnSyncedEvents.getText());
+        Assert.assertEquals(View.GONE, layoutUnsyncedHeightEvents.getVisibility());
     }
 
     @Test
