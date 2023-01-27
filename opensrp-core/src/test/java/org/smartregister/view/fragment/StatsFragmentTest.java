@@ -1,6 +1,5 @@
 package org.smartregister.view.fragment;
 
-import static org.mockito.Mockito.doReturn;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.TASK_UNPROCESSED_EVENTS;
@@ -190,7 +189,7 @@ public class StatsFragmentTest extends BaseUnitTest {
     @Test
     public void testUpdatedLabels() {
         View parentLayout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_stats, null, false);
-        doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
+        Mockito.doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
 
         TextView tvSyncedEventsLabel = parentLayout.findViewById(R.id.synced_events_label);
         TextView tvUnsyncedEventsLabel = parentLayout.findViewById(R.id.unsynced_events_label);
