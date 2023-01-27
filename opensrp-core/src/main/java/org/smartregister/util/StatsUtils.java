@@ -32,7 +32,6 @@ import android.os.Build;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
@@ -53,19 +52,19 @@ public class StatsUtils {
     }
 
     public Map<String, String> fetchStatsInfo() {
-        syncInfoMap.put(SYNCED_EVENTS, "0");
-        syncInfoMap.put(SYNCED_CLIENTS, "0");
-        syncInfoMap.put(UNSYNCED_EVENTS, "0");
-        syncInfoMap.put(UNSYNCED_CLIENTS, "0");
-        syncInfoMap.put(VALID_EVENTS, "0");
-        syncInfoMap.put(INVALID_EVENTS, "0");
-        syncInfoMap.put(VALID_CLIENTS, "0");
-        syncInfoMap.put(INVALID_CLIENTS, "0");
-        syncInfoMap.put(TASK_UNPROCESSED_EVENTS, "0");
-        syncInfoMap.put(NULL_EVENT_SYNC_STATUS, "0");
-        syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, "0");
-        syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, "0");
-        syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, "0");
+        syncInfoMap.put(SYNCED_EVENTS, "-");
+        syncInfoMap.put(SYNCED_CLIENTS, "-");
+        syncInfoMap.put(UNSYNCED_EVENTS, "-");
+        syncInfoMap.put(UNSYNCED_CLIENTS, "-");
+        syncInfoMap.put(VALID_EVENTS, "-");
+        syncInfoMap.put(INVALID_EVENTS, "-");
+        syncInfoMap.put(VALID_CLIENTS, "-");
+        syncInfoMap.put(INVALID_CLIENTS, "-");
+        syncInfoMap.put(TASK_UNPROCESSED_EVENTS, "-");
+        syncInfoMap.put(NULL_EVENT_SYNC_STATUS, "-");
+        syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, "-");
+        syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, "-");
+        syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, "-");
 
         String eventSyncSql = "select count(*), syncStatus from event group by syncStatus";
         String clientSyncSql = "select count(*), syncStatus from client group by syncStatus";
@@ -111,7 +110,7 @@ public class StatsUtils {
         while (cursor.moveToNext()) {
             syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, String.valueOf(cursor.getInt(0)));
         }
-        if (CoreLibrary.getInstance().context().getAppProperties().isTrue(AllConstants.PROPERTY.MONITOR_HEIGHT)) {
+        if (CoreLibrary.getInstance().context().getAppProperties().isTrue("monitor.height")) { // Constant is defined in growth-monitoring module
             cursor = database.rawQuery(unsyncedHeightEventsSQL, new String[]{});
             while (cursor.moveToNext()) {
                 syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, String.valueOf(cursor.getInt(0)));
@@ -178,19 +177,19 @@ public class StatsUtils {
         try {
             syncInfoMap.put(APP_VERSION_NAME, Utils.getVersion(CoreLibrary.getInstance().context().applicationContext()));
         } catch (PackageManager.NameNotFoundException e) {
-            syncInfoMap.put(APP_VERSION_NAME, "0");
+            syncInfoMap.put(APP_VERSION_NAME, "-");
             Timber.e(e);
         }
         try {
             syncInfoMap.put(APP_VERSION_CODE, String.valueOf(Utils.getVersionCode(CoreLibrary.getInstance().context().applicationContext())));
         } catch (PackageManager.NameNotFoundException e) {
-            syncInfoMap.put(APP_VERSION_CODE, "0");
+            syncInfoMap.put(APP_VERSION_CODE, "-");
             Timber.e(e);
         }
         try {
             syncInfoMap.put(DB_VERSION, String.valueOf(Utils.getDatabaseVersion()));
         } catch (Exception e) {
-            syncInfoMap.put(DB_VERSION, "0");
+            syncInfoMap.put(DB_VERSION, "-");
             Timber.e(e);
         }
     }

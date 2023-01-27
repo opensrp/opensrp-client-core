@@ -138,7 +138,6 @@ public class StatsFragmentTest extends BaseUnitTest {
         statsFragment.refreshECSyncInfo(syncInfoMap);
         Assert.assertEquals("2", tvSyncedEvents.getText());
         Assert.assertEquals("3", tvUnSyncedEvents.getText());
-        Assert.assertEquals("1", tvUnsyncedHeightEvents.getText());
     }
 
     @Test

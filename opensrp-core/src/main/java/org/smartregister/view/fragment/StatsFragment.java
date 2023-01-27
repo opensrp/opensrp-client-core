@@ -33,7 +33,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.view.contract.StatsFragmentContract;
@@ -139,7 +138,7 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvUnsyncedVaccineEvents.setText(syncInfoMap.get(UNSYNCED_VACCINE_EVENTS));
         tvUnsyncedWeightEvents.setText(syncInfoMap.get(UNSYNCED_WEIGHT_EVENTS));
         // Only show height stats if they are record height is enabled
-        if (CoreLibrary.getInstance().context().getAppProperties().isTrue(AllConstants.PROPERTY.MONITOR_HEIGHT))
+        if (CoreLibrary.getInstance().context().getAppProperties().isTrue("monitor.height")) // Constant is defined in growth-monitoring module
             tvUnsyncedHeightEvents.setText(syncInfoMap.get(UNSYNCED_HEIGHT_EVENTS));
         else {
             if (getView() != null) {
