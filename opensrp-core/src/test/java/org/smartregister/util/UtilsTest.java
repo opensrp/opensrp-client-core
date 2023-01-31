@@ -753,5 +753,15 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         assertEquals(result2,value);
 
     }
+
+    @Test
+    public void testTryParseLongShouldParseCorrectly() {
+        assertEquals(123L, (Long) Utils.tryParseLong("123", 0), 0);
+    }
+
+    @Test
+    public void testTryParseLongShouldParseShoouldReturnDefaultValueOnException() {
+        assertEquals(0L, (Long) Utils.tryParseLong("xyz", 0), 0);
+    }
 }
 
