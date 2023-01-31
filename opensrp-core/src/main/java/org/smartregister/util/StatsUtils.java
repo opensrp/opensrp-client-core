@@ -26,19 +26,17 @@ import static org.smartregister.AllConstants.SyncInfo.USER_TEAM;
 import static org.smartregister.AllConstants.SyncInfo.VALID_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.VALID_EVENTS;
 
-import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.view.activity.DrishtiApplication;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,19 +52,19 @@ public class StatsUtils {
     }
 
     public Map<String, String> fetchStatsInfo() {
-        syncInfoMap.put(SYNCED_EVENTS, "0");
-        syncInfoMap.put(SYNCED_CLIENTS, "0");
-        syncInfoMap.put(UNSYNCED_EVENTS, "0");
-        syncInfoMap.put(UNSYNCED_CLIENTS, "0");
-        syncInfoMap.put(VALID_EVENTS, "0");
-        syncInfoMap.put(INVALID_EVENTS, "0");
-        syncInfoMap.put(VALID_CLIENTS, "0");
-        syncInfoMap.put(INVALID_CLIENTS, "0");
-        syncInfoMap.put(TASK_UNPROCESSED_EVENTS, "0");
-        syncInfoMap.put(NULL_EVENT_SYNC_STATUS, "0");
-        syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, "0");
-        syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, "0");
-        syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, "0");
+        syncInfoMap.put(SYNCED_EVENTS, "-");
+        syncInfoMap.put(SYNCED_CLIENTS, "-");
+        syncInfoMap.put(UNSYNCED_EVENTS, "-");
+        syncInfoMap.put(UNSYNCED_CLIENTS, "-");
+        syncInfoMap.put(VALID_EVENTS, "-");
+        syncInfoMap.put(INVALID_EVENTS, "-");
+        syncInfoMap.put(VALID_CLIENTS, "-");
+        syncInfoMap.put(INVALID_CLIENTS, "-");
+        syncInfoMap.put(TASK_UNPROCESSED_EVENTS, "-");
+        syncInfoMap.put(NULL_EVENT_SYNC_STATUS, "-");
+        syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, "-");
+        syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, "-");
+        syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, "-");
 
         String eventSyncSql = "select count(*), syncStatus from event group by syncStatus";
         String clientSyncSql = "select count(*), syncStatus from client group by syncStatus";
@@ -112,7 +110,7 @@ public class StatsUtils {
         while (cursor.moveToNext()) {
             syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, String.valueOf(cursor.getInt(0)));
         }
-        if (CoreLibrary.getInstance().context().getAppProperties().isTrue(AllConstants.PROPERTY.MONITOR_HEIGHT)) {
+        if (CoreLibrary.getInstance().context().getAppProperties().isTrue("monitor.height")) { // Constant is defined in growth-monitoring module
             cursor = database.rawQuery(unsyncedHeightEventsSQL, new String[]{});
             while (cursor.moveToNext()) {
                 syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, String.valueOf(cursor.getInt(0)));
@@ -176,9 +174,24 @@ public class StatsUtils {
 
 
     private void populateBuildInfo() {
-        syncInfoMap.put(APP_VERSION_NAME, getBuildConfigValue("VERSION_NAME"));
-        syncInfoMap.put(APP_VERSION_CODE, getBuildConfigValue("VERSION_CODE"));
-        syncInfoMap.put(DB_VERSION, getBuildConfigValue("DATABASE_VERSION"));
+        try {
+            syncInfoMap.put(APP_VERSION_NAME, Utils.getVersion(CoreLibrary.getInstance().context().applicationContext()));
+        } catch (PackageManager.NameNotFoundException e) {
+            syncInfoMap.put(APP_VERSION_NAME, "-");
+            Timber.e(e);
+        }
+        try {
+            syncInfoMap.put(APP_VERSION_CODE, String.valueOf(Utils.getVersionCode(CoreLibrary.getInstance().context().applicationContext())));
+        } catch (PackageManager.NameNotFoundException e) {
+            syncInfoMap.put(APP_VERSION_CODE, "-");
+            Timber.e(e);
+        }
+        try {
+            syncInfoMap.put(DB_VERSION, String.valueOf(Utils.getDatabaseVersion()));
+        } catch (Exception e) {
+            syncInfoMap.put(DB_VERSION, "-");
+            Timber.e(e);
+        }
     }
 
     private void populateDeviceInfo() {
@@ -194,17 +207,4 @@ public class StatsUtils {
         }
 
     }
-
-    public String getBuildConfigValue(String fieldName) {
-        try {
-            Context context = CoreLibrary.getInstance().context().applicationContext();
-            Class<?> clazz = Class.forName(context.getPackageName() + ".BuildConfig");
-            Field field = clazz.getField(fieldName);
-            return String.valueOf(field.get(null));
-        } catch (Exception e) {
-            Timber.e(e);
-            return "0";
-        }
-    }
-
 }

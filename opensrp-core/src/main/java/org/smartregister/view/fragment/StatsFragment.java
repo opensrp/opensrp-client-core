@@ -33,7 +33,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.view.contract.StatsFragmentContract;
@@ -126,21 +125,21 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
     @Override
     public void refreshECSyncInfo(Map<String, String> syncInfoMap) {
 
-        tvSyncedEvents.setText(syncInfoMap.get(SYNCED_EVENTS) + "");
-        tvUnSyncedEvents.setText(syncInfoMap.get(UNSYNCED_EVENTS) + "");
-        tvTaskUnprocessedEvents.setText(syncInfoMap.get(TASK_UNPROCESSED_EVENTS) + "");
+        tvSyncedEvents.setText(syncInfoMap.get(SYNCED_EVENTS));
+        tvUnSyncedEvents.setText(syncInfoMap.get(UNSYNCED_EVENTS));
+        tvTaskUnprocessedEvents.setText(syncInfoMap.get(TASK_UNPROCESSED_EVENTS));
 
-        tvSyncedClient.setText(syncInfoMap.get(SYNCED_CLIENTS) + "");
-        tvUnSyncedClients.setText(syncInfoMap.get(UNSYNCED_CLIENTS) + "");
+        tvSyncedClient.setText(syncInfoMap.get(SYNCED_CLIENTS));
+        tvUnSyncedClients.setText(syncInfoMap.get(UNSYNCED_CLIENTS));
 
         tvValidatedEvents.setText(syncInfoMap.get(VALID_EVENTS));
-        tvValidatedClients.setText(syncInfoMap.get(VALID_CLIENTS) + "");
+        tvValidatedClients.setText(syncInfoMap.get(VALID_CLIENTS));
 
-        tvUnsyncedVaccineEvents.setText(syncInfoMap.get(UNSYNCED_VACCINE_EVENTS) + "");
-        tvUnsyncedWeightEvents.setText(syncInfoMap.get(UNSYNCED_WEIGHT_EVENTS) + "");
+        tvUnsyncedVaccineEvents.setText(syncInfoMap.get(UNSYNCED_VACCINE_EVENTS));
+        tvUnsyncedWeightEvents.setText(syncInfoMap.get(UNSYNCED_WEIGHT_EVENTS));
         // Only show height stats if they are record height is enabled
-        if (CoreLibrary.getInstance().context().getAppProperties().isTrue(AllConstants.PROPERTY.MONITOR_HEIGHT))
-            tvUnsyncedHeightEvents.setText(syncInfoMap.get(UNSYNCED_HEIGHT_EVENTS) + "");
+        if (CoreLibrary.getInstance().context().getAppProperties().isTrue("monitor.height")) // Constant is defined in growth-monitoring module
+            tvUnsyncedHeightEvents.setText(syncInfoMap.get(UNSYNCED_HEIGHT_EVENTS));
         else {
             if (getView() != null) {
                 getView().findViewById(R.id.height_stats).setVisibility(View.GONE);

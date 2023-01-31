@@ -474,7 +474,7 @@
     <string name="build_date">Build Date:</string>
     <string name="date">Date:</string>
     <string name="user">User:</string>
-    <string name="synced_vaccine_events">Unynced vaccine events:</string>
+    <string name="synced_vaccine_events">Unsynced vaccine events:</string>
     <string name="unsynced_weight_events">Unsynced weight events:</string>
     <string name="unsynced_height_events">Unsynced height events:</string>
 </resources>
