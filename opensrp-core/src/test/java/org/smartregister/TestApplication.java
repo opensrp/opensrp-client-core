@@ -14,7 +14,10 @@ import org.smartregister.view.activity.DrishtiApplication;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+
+import net.sqlcipher.database.SQLiteDatabase;
 
 /**
  * Created by samuelgithengi on 12/30/19.
@@ -45,8 +48,13 @@ public class TestApplication extends DrishtiApplication {
 
     @Override
     public Repository getRepository() {
-        if (repository == null)
-            repository = mock(Repository.class);
+        if (repository == null) {
+            Repository mockRepository = mock(Repository.class);
+            SQLiteDatabase mockSqLiteDatabase = mock(SQLiteDatabase.class);
+            doReturn(mockSqLiteDatabase).when(mockRepository).getReadableDatabase();
+            doReturn(1).when(mockSqLiteDatabase).getVersion();
+            repository = mockRepository;
+        }
         return repository;
     }
 

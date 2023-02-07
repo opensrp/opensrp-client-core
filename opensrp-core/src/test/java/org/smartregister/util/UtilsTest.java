@@ -719,5 +719,15 @@ public class UtilsTest extends BaseRobolectricUnitTest {
         apiParams.add(Pair.create("serverVersion", "21"));
         assertEquals("&identifier=global_configs&serverVersion=21", Utils.composeApiCallParamsString(apiParams));
     }
+
+    @Test
+    public void testTryParseLongShouldParseCorrectly() {
+        assertEquals(123L, (Long) Utils.tryParseLong("123", 0), 0);
+    }
+
+    @Test
+    public void testTryParseLongShouldParseShoouldReturnDefaultValueOnException() {
+        assertEquals(0L, (Long) Utils.tryParseLong("xyz", 0), 0);
+    }
 }
 
