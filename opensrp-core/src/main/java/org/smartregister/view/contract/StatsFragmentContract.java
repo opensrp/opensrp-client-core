@@ -7,7 +7,7 @@ import java.util.Map;
 public interface StatsFragmentContract {
     interface Presenter {
 
-        void onECSyncInfoFetched(Map<String, Integer> syncInfoMap);
+        void onECSyncInfoFetched(Map<String, String> syncInfoMap);
 
         void fetchSyncInfo();
 
@@ -16,7 +16,7 @@ public interface StatsFragmentContract {
     interface View {
         Context getContext();
 
-        void refreshECSyncInfo(Map<String, Integer> syncInfoMap);
+        void refreshECSyncInfo(Map<String, String> syncInfoMap);
     }
 
     interface Interactor {

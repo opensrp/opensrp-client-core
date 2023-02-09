@@ -92,7 +92,7 @@ android {
         buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
         buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
         buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
-    } 
+    }
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'

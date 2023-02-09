@@ -1,8 +1,12 @@
 package org.smartregister.view.activity;
 
+import static org.mockito.Mockito.verify;
+
 import android.content.Intent;
 import android.util.Log;
 import android.util.SparseArray;
+
+import androidx.test.core.app.ApplicationProvider;
 
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -15,14 +19,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.android.controller.ActivityController;
-import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.view.activity.mock.BarcodeScanActivityMock;
-
-import static org.mockito.Mockito.verify;
 
 public class BarcodeScanActivityTest extends BaseUnitTest {
 
@@ -44,7 +44,7 @@ public class BarcodeScanActivityTest extends BaseUnitTest {
 
     @BeforeClass
     public static void resetCoreLibrary() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        CoreLibrary.destroyInstance();
     }
 
     @Before

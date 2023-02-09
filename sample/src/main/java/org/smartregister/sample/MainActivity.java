@@ -1,5 +1,6 @@
 package org.smartregister.sample;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +30,11 @@ import org.smartregister.sample.fragment.ReportFragment;
 import org.smartregister.util.AppHealthUtils;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.LangUtils;
+import org.smartregister.util.PermissionUtils;
+import org.smartregister.util.Utils;
+import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.activity.MultiLanguageActivity;
+import org.smartregister.view.activity.StatsActivity;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -41,13 +46,14 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-public class MainActivity extends MultiLanguageActivity {
+public class MainActivity extends MultiLanguageActivity implements AppHealthUtils.HealthStatsView {
 
     DatePicker picker;
     Button btnGet;
     TextView tvw;
     CryptographicHelper cryptographicHelper = null;
     TextView encDecTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -173,10 +179,9 @@ public class MainActivity extends MultiLanguageActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String keyAlias = "sample";
                 // Get or create a key with the Alias name sample or create one if id does not exist
-                if(cryptographicHelper.getKey(keyAlias)==null)
-                {
+                if (cryptographicHelper.getKey(keyAlias) == null) {
                     cryptographicHelper.generateKey(keyAlias);
-                    Timber.i("key with alias %s generated",keyAlias);
+                    Timber.i("key with alias %s generated", keyAlias);
                 }
 
                 if (isChecked) {
@@ -188,7 +193,7 @@ public class MainActivity extends MultiLanguageActivity {
                         inputStream.read(inputBytes);
                         byte[] encryptedContents = CryptographicHelper.encrypt(inputBytes, keyAlias);
                         FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                        Timber.i("encrypted stuff to write %S ",new String(encryptedContents));
+                        Timber.i("encrypted stuff to write %S ", new String(encryptedContents));
                         encDecTextView.setText(new String(encryptedContents));
                         fileOutputStream.write((encryptedContents));
                         fileOutputStream.flush();
@@ -199,26 +204,26 @@ public class MainActivity extends MultiLanguageActivity {
                     }
 
                 } else {
-                        try {
-                            //
-                            FileInputStream inputStream = openFileInput(filename);
-                            byte[] inputBytes = new byte[inputStream.available()];
-                            inputStream.read(inputBytes);
-                            Timber.i("before decryption %s", new String(inputBytes));
+                    try {
+                        //
+                        FileInputStream inputStream = openFileInput(filename);
+                        byte[] inputBytes = new byte[inputStream.available()];
+                        inputStream.read(inputBytes);
+                        Timber.i("before decryption %s", new String(inputBytes));
 
-                            byte[] decryptedStuff =  CryptographicHelper.decrypt(inputBytes, keyAlias);
-                            encDecTextView.setText(new String(decryptedStuff));
-                            Timber.i("decrypted content %s", new String(decryptedStuff));
+                        byte[] decryptedStuff = CryptographicHelper.decrypt(inputBytes, keyAlias);
+                        encDecTextView.setText(new String(decryptedStuff));
+                        Timber.i("decrypted content %s", new String(decryptedStuff));
 
-                            FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                            fileOutputStream.write((decryptedStuff));
-                            fileOutputStream.flush();
+                        FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        fileOutputStream.write((decryptedStuff));
+                        fileOutputStream.flush();
 
 
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            // Error occurred when opening raw file for reading.
-                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        // Error occurred when opening raw file for reading.
+                    }
 
 
                 }
@@ -257,5 +262,23 @@ public class MainActivity extends MultiLanguageActivity {
     protected void onDestroy() {
         super.onDestroy();
         cryptographicHelper = null;
+    }
+
+    @Override
+    public void performDatabaseDownload() {
+        if (PermissionUtils.isPermissionGranted(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionUtils.WRITE_EXTERNAL_STORAGE_REQUEST_CODE)) {
+            try {
+                AppHealthUtils.triggerDBCopying(this);
+            } catch (SecurityException e) {
+                Utils.showToast(this, this.getString(org.smartregister.R.string.permission_write_external_storage_rationale));
+            }
+        }
+    }
+
+    @Override
+    public void showSyncStats() {
+        DrishtiApplication.getInstance().setPassword("123".getBytes());
+        Intent statsActivityIntent = new Intent(this, StatsActivity.class);
+        this.startActivity(statsActivityIntent);
     }
 }

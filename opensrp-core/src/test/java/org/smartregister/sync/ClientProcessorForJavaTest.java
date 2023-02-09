@@ -651,7 +651,7 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
 
     @After
     public void tearDown() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        CoreLibrary.destroyInstance();
         clientProcessor = null;
     }
 }
