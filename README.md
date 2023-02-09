@@ -314,4 +314,4 @@ By placing a file named `app.properties` in your implementation assets folder (S
 | `encrypt.shared.preferences`             | Boolean | false   | Enable/disables encrypting SharedPreferences                                                                                                        |
 | `allow.offline.login.with.invalid.token` | Boolean | false   | Allow offline login when token is no longer valid after a successful login when online and user is forcefully logged out                            |
 | `enable.search.button`                   | Boolean | false   | Enable/Disable search to be triggered only after clicking the search icon in `org.smartregister.view.fragment.BaseRegisterFragment` or its subclass |
-| `feature.profile.images.disabled`            | Boolean | false    | Disable profile image capturing and rendering                                                                                                       |
+| `feature.profile.images.disabled`            | Boolean | false    | Disable profile image capturing and rendering     |

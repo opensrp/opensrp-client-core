@@ -6,12 +6,13 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import androidx.test.core.app.ApplicationProvider;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowAlarmManager;
 import org.robolectric.util.ReflectionHelpers;
@@ -44,8 +45,7 @@ public class ConnectivityChangeReceiverTest extends BaseRobolectricUnitTest {
         Session session = ReflectionHelpers.getField(CoreLibrary.getInstance().context().userService(), "session");
         session.setPassword(null);
         session.start(0);
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
-
+        CoreLibrary.destroyInstance();
     }
 
     @Test
