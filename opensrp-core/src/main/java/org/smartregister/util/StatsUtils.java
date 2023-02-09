@@ -32,6 +32,7 @@ import android.os.Build;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
@@ -52,77 +53,84 @@ public class StatsUtils {
     }
 
     public Map<String, String> fetchStatsInfo() {
-        syncInfoMap.put(SYNCED_EVENTS, "-");
-        syncInfoMap.put(SYNCED_CLIENTS, "-");
-        syncInfoMap.put(UNSYNCED_EVENTS, "-");
-        syncInfoMap.put(UNSYNCED_CLIENTS, "-");
-        syncInfoMap.put(VALID_EVENTS, "-");
-        syncInfoMap.put(INVALID_EVENTS, "-");
-        syncInfoMap.put(VALID_CLIENTS, "-");
-        syncInfoMap.put(INVALID_CLIENTS, "-");
-        syncInfoMap.put(TASK_UNPROCESSED_EVENTS, "-");
-        syncInfoMap.put(NULL_EVENT_SYNC_STATUS, "-");
-        syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, "-");
-        syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, "-");
-        syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, "-");
-
-        String eventSyncSql = "select count(*), syncStatus from event group by syncStatus";
-        String clientSyncSql = "select count(*), syncStatus from client group by syncStatus";
-
-        String validatedEventsSql = "select count(*), validationStatus from event group by validationStatus";
-        String validatedClientsSql = "select count(*), validationStatus from client group by validationStatus";
-
-        String unsyncedVaccineEventsSQL = "SELECT COUNT(*) FROM vaccines WHERE sync_status = 'Unsynced'";
-        String unsyncedWeightEventsSQL = "SELECT COUNT(*) FROM weights WHERE sync_status = 'Unsynced'";
-        String unsyncedHeightEventsSQL = "SELECT COUNT(*) FROM heights WHERE sync_status = 'Unsynced'";
-
-        Cursor cursor;
-
-        cursor = database.rawQuery(eventSyncSql, new String[]{});
-        while (cursor.moveToNext()) {
-            populateEventSyncInfo(cursor);
-        }
-        cursor.close();
-
-        cursor = database.rawQuery(clientSyncSql, new String[]{});
-        while (cursor.moveToNext()) {
-            populateClientSyncInfo(cursor);
-        }
-        cursor.close();
-
-        cursor = database.rawQuery(validatedEventsSql, new String[]{});
-        while (cursor.moveToNext()) {
-            populateValidatedEventsInfo(cursor);
-        }
-        cursor.close();
-
-        cursor = database.rawQuery(validatedClientsSql, new String[]{});
-        while (cursor.moveToNext()) {
-            populateValidatedClientsInfo(cursor);
-        }
-
-        cursor = database.rawQuery(unsyncedVaccineEventsSQL, new String[]{});
-        while (cursor.moveToNext()) {
-            syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, String.valueOf(cursor.getInt(0)));
-        }
-
-        cursor = database.rawQuery(unsyncedWeightEventsSQL, new String[]{});
-        while (cursor.moveToNext()) {
-            syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, String.valueOf(cursor.getInt(0)));
-        }
-        if (CoreLibrary.getInstance().context().getAppProperties().isTrue("monitor.height")) { // Constant is defined in growth-monitoring module
-            cursor = database.rawQuery(unsyncedHeightEventsSQL, new String[]{});
-            while (cursor.moveToNext()) {
-                syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, String.valueOf(cursor.getInt(0)));
-            }
-        }
-
-        cursor.close();
-
+        populateSyncStatistics();
         populateUserInfo();
         populateBuildInfo();
         populateDeviceInfo();
         return syncInfoMap;
+    }
+
+    private void populateSyncStatistics() {
+        try {
+            syncInfoMap.put(SYNCED_EVENTS, "-");
+            syncInfoMap.put(SYNCED_CLIENTS, "-");
+            syncInfoMap.put(UNSYNCED_EVENTS, "-");
+            syncInfoMap.put(UNSYNCED_CLIENTS, "-");
+            syncInfoMap.put(VALID_EVENTS, "-");
+            syncInfoMap.put(INVALID_EVENTS, "-");
+            syncInfoMap.put(VALID_CLIENTS, "-");
+            syncInfoMap.put(INVALID_CLIENTS, "-");
+            syncInfoMap.put(TASK_UNPROCESSED_EVENTS, "-");
+            syncInfoMap.put(NULL_EVENT_SYNC_STATUS, "-");
+            syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, "-");
+            syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, "-");
+            syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, "-");
+
+            String eventSyncSql = "select count(*), syncStatus from event group by syncStatus";
+            String clientSyncSql = "select count(*), syncStatus from client group by syncStatus";
+
+            String validatedEventsSql = "select count(*), validationStatus from event group by validationStatus";
+            String validatedClientsSql = "select count(*), validationStatus from client group by validationStatus";
+
+            String unsyncedVaccineEventsSQL = "SELECT COUNT(*) FROM vaccines WHERE sync_status = 'Unsynced'";
+            String unsyncedWeightEventsSQL = "SELECT COUNT(*) FROM weights WHERE sync_status = 'Unsynced'";
+            String unsyncedHeightEventsSQL = "SELECT COUNT(*) FROM heights WHERE sync_status = 'Unsynced'";
+
+            Cursor cursor;
+
+            cursor = database.rawQuery(eventSyncSql, new String[]{});
+            while (cursor.moveToNext()) {
+                populateEventSyncInfo(cursor);
+            }
+            cursor.close();
+
+            cursor = database.rawQuery(clientSyncSql, new String[]{});
+            while (cursor.moveToNext()) {
+                populateClientSyncInfo(cursor);
+            }
+            cursor.close();
+
+            cursor = database.rawQuery(validatedEventsSql, new String[]{});
+            while (cursor.moveToNext()) {
+                populateValidatedEventsInfo(cursor);
+            }
+            cursor.close();
+
+            cursor = database.rawQuery(validatedClientsSql, new String[]{});
+            while (cursor.moveToNext()) {
+                populateValidatedClientsInfo(cursor);
+            }
+
+            cursor = database.rawQuery(unsyncedVaccineEventsSQL, new String[]{});
+            while (cursor.moveToNext()) {
+                syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, String.valueOf(cursor.getInt(0)));
+            }
+
+            cursor = database.rawQuery(unsyncedWeightEventsSQL, new String[]{});
+            while (cursor.moveToNext()) {
+                syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, String.valueOf(cursor.getInt(0)));
+            }
+            if (CoreLibrary.getInstance().context().getAppProperties().isTrue("monitor.height")) { // Constant is defined in growth-monitoring module
+                cursor = database.rawQuery(unsyncedHeightEventsSQL, new String[]{});
+                while (cursor.moveToNext()) {
+                    syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, String.valueOf(cursor.getInt(0)));
+                }
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            Timber.e(e);
+        }
     }
 
     private void populateEventSyncInfo(Cursor cursor) {
@@ -167,9 +175,12 @@ public class StatsUtils {
 
     public void populateUserInfo() {
         AllSharedPreferences sharedPreferences = CoreLibrary.getInstance().context().userService().getAllSharedPreferences();
-        syncInfoMap.put(USER_NAME, sharedPreferences.fetchRegisteredANM());
-        syncInfoMap.put(USER_TEAM, sharedPreferences.fetchDefaultTeam(sharedPreferences.fetchRegisteredANM()));
-        syncInfoMap.put(USER_LOCALITY, sharedPreferences.fetchCurrentLocality());
+        String userName = sharedPreferences.fetchRegisteredANM();
+        String userTeam = sharedPreferences.fetchDefaultTeam(sharedPreferences.fetchRegisteredANM());
+        String userLocality = sharedPreferences.fetchCurrentLocality();
+        syncInfoMap.put(USER_NAME, StringUtils.isNotBlank(userName) ? userName : "-");
+        syncInfoMap.put(USER_TEAM, StringUtils.isNotBlank(userTeam) ? userTeam : "-");
+        syncInfoMap.put(USER_LOCALITY, StringUtils.isNotBlank(userLocality) ? userLocality : "-");
     }
 
 
