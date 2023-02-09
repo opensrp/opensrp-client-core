@@ -143,6 +143,6 @@ public class StatsUtilsTest extends BaseUnitTest {
 
     @After
     public void destroy() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        CoreLibrary.destroyInstance();
     }
 }
