@@ -61,6 +61,9 @@ import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
 import static org.smartregister.util.Log.logError;
 
+/**
+ * This class communicate with server with device get or post request.
+ */
 public class HTTPAgent {
     public static final int CONNECTION_TIMEOUT = 60000;
     private static final int READ_TIMEOUT = 60000;
@@ -73,10 +76,10 @@ public class HTTPAgent {
     private String boundary = "***" + System.currentTimeMillis() + "***";
     private String twoHyphens = "--";
     private String crlf = "\r\n";
-
+    //default connection timeout 6m
     private int connectTimeout = 60000;
+    //default i/o read timeout 6m
     private int readTimeout = 60000;
-
     public HTTPAgent(Context context, AllSettings settings, AllSharedPreferences
             allSharedPreferences, DristhiConfiguration configuration) {
         this.context = context;
@@ -152,6 +155,13 @@ public class HTTPAgent {
         return post(postURLPath, jsonPayload);
     }
 
+    /**
+     *
+     * @param requestURL url to request
+     * @param userName for basic auth header
+     * @param password for basic auth header
+     * @return LoginResponse with message
+     */
     public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName, String password) {
         LoginResponse loginResponse = null;
         HttpURLConnection urlConnection = null;
@@ -233,6 +243,12 @@ public class HTTPAgent {
                 Base64.NO_WRAP);
         urlConnection.setRequestProperty("Authorization", basicAuth);
     }
+
+    /**
+     * Handle different type of response code with different exception handle
+     * @param urlConnection object of HttpURlConnection
+     * @return
+     */
 
     private Response<String> handleResponse(HttpURLConnection urlConnection) {
         String responseString;

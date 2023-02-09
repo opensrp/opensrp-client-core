@@ -34,7 +34,9 @@ import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 
 /**
- * Created by ndegwamartin on 26/06/2018.
+ * Created by ndegwamartin on 26/06/2018.This class use to run background operation for login
+ * it'll pass the presentation class after finished the background operation it'll send the callback
+ * to presenter class. So it'll seperated the view class from logical operation
  */
 public abstract class BaseLoginInteractor implements BaseLoginContract.Interactor {
 

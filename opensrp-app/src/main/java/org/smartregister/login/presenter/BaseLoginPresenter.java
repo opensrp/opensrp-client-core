@@ -19,10 +19,11 @@ import java.util.Locale;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
- * Created by ndegwamartin on 22/06/2018.
+ * Created by ndegwamartin on 22/06/2018.Presenter class is the wrapper class with view class and
+ * interactor/logical class
  */
 public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter {
-
+    // View class should be weak reference
     protected WeakReference<BaseLoginContract.View> mLoginView;
     protected BaseLoginContract.Interactor mLoginInteractor;
     protected BaseLoginContract.Model mLoginModel;
@@ -40,6 +41,14 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
         }
 
     }
+
+    /**
+     * After passing username and password from view class first it'll reset the fields. from Model class
+     * it'll check the business logic,if fail it'll pass the message to view class with callback method,
+     * Otherwise process to background operation with server
+     * @param username
+     * @param password
+     */
 
     @Override
     public void attemptLogin(String username, String password) {
@@ -118,6 +127,9 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
     @Override
     public abstract void processViewCustomizations();
 
+    /**
+     * Set language help to support multiple language from device language
+     */
     @Override
     public void setLanguage() {
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(mLoginModel.getOpenSRPContext()

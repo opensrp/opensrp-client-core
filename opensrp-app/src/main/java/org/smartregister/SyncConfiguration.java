@@ -8,6 +8,7 @@ public abstract class SyncConfiguration {
     private int connectTimeout = 5*60000;
     private int readTimeout = 5*60000;
 
+    //set maximum sync retries if sync request fail
     public abstract int getSyncMaxRetries();
 
     public abstract SyncFilter getSyncFilterParam();

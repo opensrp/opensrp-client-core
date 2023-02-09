@@ -17,7 +17,7 @@ import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
 /**
- * Created by ndegwamartin on 22/06/2018.
+ * Created by ndegwamartin on 22/06/2018.Background operation handle class for server client operation
  */
 public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
@@ -36,11 +36,22 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         this.afterLoginCheck = afterLoginCheck;
     }
 
+    /**
+     * When the operation start it'll show the progress send the callback to view class
+     */
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
         mLoginView.showProgress(true);
     }
+
+    /**
+     * Main background operation will be handle from here. It'll send username and password to server and process
+     * the callback
+     * @param params
+     * @return
+     */
 
     @Override
     protected LoginResponse doInBackground(Void... params) {
@@ -76,6 +87,11 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         mLoginView.updateProgressMessage(getOpenSRPContext().applicationContext().getString(messageIdentifier[0]));
 
     }
+
+    /**
+     * after process complete send the result to view
+     * @param loginResponse
+     */
 
     @Override
     protected void onPostExecute(final LoginResponse loginResponse) {

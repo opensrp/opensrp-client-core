@@ -4,13 +4,13 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
+        classpath "com.android.tools.build:gradle:7.2.2"
         classpath 'org.apache.commons:commons-lang3:3.3.2'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
-        classpath 'io.fabric.tools:gradle:1.30.0'
+        classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.3.0'
     }
 }
 
@@ -53,7 +53,6 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-            debuggable true
             testCoverageEnabled = true
             signingConfig signingConfigs.config
             zipAlignEnabled true
@@ -85,8 +84,6 @@ android {
         //applicationId "org.smartregister"
         minSdkVersion androidMinSdkVersion
         targetSdkVersion androidTargetSdkVersion
-        versionCode Integer.parseInt(project.VERSION_CODE)
-        versionName project.VERSION_NAME
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
     }
@@ -169,9 +166,6 @@ dependencies {
     api 'joda-time:joda-time:2.10.3'
     implementation 'com.github.bmelnychuk:atv:1.2.9'
     implementation 'com.github.johnkil.print:print:1.2.3'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
-        transitive = true
-    }
     implementation('ch.acra:acra:4.5.0') {
         exclude group: 'org.json', module: 'json'
     }
@@ -206,6 +200,9 @@ dependencies {
 
 dependencies {
 
+
+    implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:4.3'

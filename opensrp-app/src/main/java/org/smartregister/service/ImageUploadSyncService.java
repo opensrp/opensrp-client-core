@@ -30,6 +30,12 @@ public class ImageUploadSyncService extends IntentService {
         imageRepo = CoreLibrary.getInstance().context().imageRepository();
     }
 
+    /**
+     * process long running operation. After getting all unsync images from image repo it'll upload
+     * at server.
+     * @param intent
+     */
+
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
