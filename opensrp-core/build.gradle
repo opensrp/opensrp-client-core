@@ -28,6 +28,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'maven-publish'
+apply plugin: 'kotlin-android'
 jacoco {
     toolVersion = "0.8.5"
 }
@@ -139,7 +140,7 @@ tasks.withType(Test) {
     jacoco.excludes = ['jdk.internal.*']
     testLogging {
         // Enables easier debugging of tests in Github Actions CI
-        events TestLogEvent.FAILED
+        events TestLogEvent.FAILED, TestLogEvent.SKIPPED, TestLogEvent.PASSED
         exceptionFormat TestExceptionFormat.FULL
         showExceptions true
         showCauses true
@@ -302,6 +303,8 @@ dependencies {
         exclude group: 'com.google.guava', module: 'guava'
     }
 
+    testImplementation(project(":opensrp-core"))
+
     // PowerMock
     def powerMockVersion = '2.0.4'
     testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
@@ -356,4 +359,3 @@ coveralls {
 
 
 apply from: '../maven.gradle'
-apply plugin: 'kotlin-android'
