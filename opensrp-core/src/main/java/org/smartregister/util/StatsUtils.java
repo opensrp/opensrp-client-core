@@ -61,6 +61,8 @@ public class StatsUtils {
     }
 
     private void populateSyncStatistics() {
+        Cursor cursor = null;
+
         try {
             syncInfoMap.put(SYNCED_EVENTS, "-");
             syncInfoMap.put(SYNCED_CLIENTS, "-");
@@ -86,8 +88,6 @@ public class StatsUtils {
             String unsyncedWeightEventsSQL = "SELECT COUNT(*) FROM weights WHERE sync_status = 'Unsynced'";
             String unsyncedHeightEventsSQL = "SELECT COUNT(*) FROM heights WHERE sync_status = 'Unsynced'";
 
-            Cursor cursor;
-
             cursor = database.rawQuery(eventSyncSql, new String[]{});
             while (cursor.moveToNext()) {
                 populateEventSyncInfo(cursor);
@@ -110,26 +110,33 @@ public class StatsUtils {
             while (cursor.moveToNext()) {
                 populateValidatedClientsInfo(cursor);
             }
+            cursor.close();
 
             cursor = database.rawQuery(unsyncedVaccineEventsSQL, new String[]{});
             while (cursor.moveToNext()) {
                 syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, String.valueOf(cursor.getInt(0)));
             }
+            cursor.close();
 
             cursor = database.rawQuery(unsyncedWeightEventsSQL, new String[]{});
             while (cursor.moveToNext()) {
                 syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, String.valueOf(cursor.getInt(0)));
             }
+            cursor.close();
+
             if (CoreLibrary.getInstance().context().getAppProperties().isTrue("monitor.height")) { // Constant is defined in growth-monitoring module
                 cursor = database.rawQuery(unsyncedHeightEventsSQL, new String[]{});
                 while (cursor.moveToNext()) {
                     syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, String.valueOf(cursor.getInt(0)));
                 }
+                cursor.close();
             }
-
-            cursor.close();
         } catch (Exception e) {
             Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
     }
 
@@ -183,7 +190,6 @@ public class StatsUtils {
         syncInfoMap.put(USER_LOCALITY, StringUtils.isNotBlank(userLocality) ? userLocality : "-");
     }
 
-
     private void populateBuildInfo() {
         try {
             syncInfoMap.put(APP_VERSION_NAME, Utils.getVersion(CoreLibrary.getInstance().context().applicationContext()));
@@ -216,6 +222,5 @@ public class StatsUtils {
         } catch (Exception e) {
             Timber.e(e);
         }
-
     }
 }
