@@ -1,5 +1,6 @@
 package org.smartregister.sample;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +30,11 @@ import org.smartregister.sample.fragment.ReportFragment;
 import org.smartregister.util.AppHealthUtils;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.LangUtils;
+import org.smartregister.util.PermissionUtils;
+import org.smartregister.util.Utils;
+import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.activity.MultiLanguageActivity;
+import org.smartregister.view.activity.StatsActivity;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -41,13 +46,14 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-public class MainActivity extends MultiLanguageActivity {
+public class MainActivity extends MultiLanguageActivity implements AppHealthUtils.HealthStatsView {
 
     DatePicker picker;
     Button btnGet;
     TextView tvw;
     CryptographicHelper cryptographicHelper = null;
     TextView encDecTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,16 +69,14 @@ public class MainActivity extends MultiLanguageActivity {
         encDecTextView = (TextView) findViewById(R.id.encrypt_decrypt_tv);
 
         picker.setMinDate(new LocalDate().minusYears(2).toDate().getTime());
-
         picker.setMaxDate(new LocalDate().plusYears(3).toDate().getTime());
-
         picker.updateDate(2019, 5, 22);
 
         btnGet = (Button) findViewById(R.id.button1);
         btnGet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tvw.setText("Selected Date: " + picker.getDayOfMonth() + "/" + (picker.getMonth() + 1) + "/" + picker.getYear());
+                tvw.setText(getString(R.string.selected_date_format, picker.getDayOfMonth(), (picker.getMonth() + 1), picker.getYear()));
             }
         });
 
@@ -81,7 +85,8 @@ public class MainActivity extends MultiLanguageActivity {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                        .setAction("Action", null)
+                        .show();
             }
         });
         SmartRegisterQueryBuilder srqb = new SmartRegisterQueryBuilder();
@@ -102,7 +107,6 @@ public class MainActivity extends MultiLanguageActivity {
         // set language from preferences
         String langPref = LangUtils.getLanguage(activity.getApplicationContext());
         for (int i = 0; i < langArray.size(); i++) {
-
             if (langPref != null && langArray.get(i).toLowerCase().startsWith(langPref)) {
                 languageSpinner.setSelection(i);
                 break;
@@ -163,69 +167,95 @@ public class MainActivity extends MultiLanguageActivity {
             fos.write(contents.getBytes());
             fos.flush();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Timber.e(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
-
 
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String keyAlias = "sample";
                 // Get or create a key with the Alias name sample or create one if id does not exist
-                if(cryptographicHelper.getKey(keyAlias)==null)
-                {
+                if (cryptographicHelper.getKey(keyAlias) == null) {
                     cryptographicHelper.generateKey(keyAlias);
-                    Timber.i("key with alias %s generated",keyAlias);
+                    Timber.i("key with alias %s generated", keyAlias);
                 }
 
-                if (isChecked) {
+                FileInputStream inputStream = null;
+                FileOutputStream fileOutputStream = null;
 
+                if (isChecked) {
                     try {
                         // read the text.txt while it is in plain text and write to file
-                        FileInputStream inputStream = openFileInput(filename);
+                        inputStream = openFileInput(filename);
                         byte[] inputBytes = new byte[inputStream.available()];
                         inputStream.read(inputBytes);
                         byte[] encryptedContents = CryptographicHelper.encrypt(inputBytes, keyAlias);
-                        FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                        Timber.i("encrypted stuff to write %S ",new String(encryptedContents));
+
+                        Timber.i("encrypted stuff to write %S ", new String(encryptedContents));
+
                         encDecTextView.setText(new String(encryptedContents));
+
+                        fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                         fileOutputStream.write((encryptedContents));
                         fileOutputStream.flush();
-
-
                     } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-                        try {
-                            //
-                            FileInputStream inputStream = openFileInput(filename);
-                            byte[] inputBytes = new byte[inputStream.available()];
-                            inputStream.read(inputBytes);
-                            Timber.i("before decryption %s", new String(inputBytes));
-
-                            byte[] decryptedStuff =  CryptographicHelper.decrypt(inputBytes, keyAlias);
-                            encDecTextView.setText(new String(decryptedStuff));
-                            Timber.i("decrypted content %s", new String(decryptedStuff));
-
-                            FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                            fileOutputStream.write((decryptedStuff));
-                            fileOutputStream.flush();
-
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            // Error occurred when opening raw file for reading.
+                        Timber.e(e);
+                    } finally {
+                        if (inputStream != null) {
+                            try {
+                                inputStream.close();
+                            } catch (IOException e) {
+                                Timber.e(e);
+                            }
                         }
 
+                        if (fileOutputStream != null) {
+                            try {
+                                fileOutputStream.close();
+                            } catch (IOException e) {
+                                Timber.e(e);
+                            }
+                        }
+                    }
+                } else {
+                    try {
+                        inputStream = openFileInput(filename);
+                        byte[] inputBytes = new byte[inputStream.available()];
+                        inputStream.read(inputBytes);
 
+                        Timber.i("before decryption %s", new String(inputBytes));
+
+                        byte[] decryptedStuff = CryptographicHelper.decrypt(inputBytes, keyAlias);
+                        encDecTextView.setText(new String(decryptedStuff));
+
+                        Timber.i("decrypted content %s", new String(decryptedStuff));
+
+                        fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        fileOutputStream.write((decryptedStuff));
+                        fileOutputStream.flush();
+                    } catch (IOException e) {
+                        Timber.e(e);
+                    } finally {
+                        if (inputStream != null) {
+                            try {
+                                inputStream.close();
+                            } catch (IOException e) {
+                                Timber.e(e);
+                            }
+                        }
+
+                        if (fileOutputStream != null) {
+                            try {
+                                fileOutputStream.close();
+                            } catch (IOException e) {
+                                Timber.e(e);
+                            }
+                        }
+                    }
                 }
             }
         });
-
-
     }
 
     @Override
@@ -257,5 +287,23 @@ public class MainActivity extends MultiLanguageActivity {
     protected void onDestroy() {
         super.onDestroy();
         cryptographicHelper = null;
+    }
+
+    @Override
+    public void performDatabaseDownload() {
+        if (PermissionUtils.isPermissionGranted(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionUtils.WRITE_EXTERNAL_STORAGE_REQUEST_CODE)) {
+            try {
+                AppHealthUtils.triggerDBCopying(this);
+            } catch (SecurityException e) {
+                Utils.showToast(this, this.getString(org.smartregister.R.string.permission_write_external_storage_rationale));
+            }
+        }
+    }
+
+    @Override
+    public void showSyncStats() {
+        DrishtiApplication.getInstance().setPassword("123".getBytes());
+        Intent statsActivityIntent = new Intent(this, StatsActivity.class);
+        this.startActivity(statsActivityIntent);
     }
 }
