@@ -5,6 +5,7 @@
     <string name="sample">Night gathers, and now my watch begins</string>
     <string name="language_label">Select Language</string>
     <string name="action_report_sample">Sample Reports</string>
+    <string name="selected_date_format">Selected Date: %1$d/%2$d/%3$d</string>
     <string name="action_sync_stats">Sync Statistics</string>
     <string name="sync_stats_label">Show Sync Stats (Long Press for Dialog)</string>
     <string name="encrypt_decrypt_string">Please encrypt or decrypt me by hitting clicking on the switch below</string>
