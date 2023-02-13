@@ -85,12 +85,16 @@
             android:screenOrientation="portrait" />
 
         <receiver android:name=".view.receiver.SyncBroadcastReceiver" />
-        <receiver android:name=".view.receiver.ConnectivityChangeReceiver">
+        <receiver android:name=".view.receiver.ConnectivityChangeReceiver"
+            android:exported="true"
+            >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".view.receiver.TimeChangedBroadcastReceiver">
+        <receiver android:name=".view.receiver.TimeChangedBroadcastReceiver"
+            android:exported="true"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />

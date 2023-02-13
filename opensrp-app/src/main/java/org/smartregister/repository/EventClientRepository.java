@@ -815,27 +815,22 @@ public class EventClientRepository extends BaseRepository {
             cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced});
 
             while (cursor.moveToNext()) {
-                try{
-                    String jsonEventStr = (cursor.getString(0));
-                    if (StringUtils.isBlank(jsonEventStr)
-                            || jsonEventStr.equals("{}")) { // Skip blank/empty json string
-                        continue;
-                    }
-                    jsonEventStr = jsonEventStr.replaceAll("'", "");
-                    JSONObject jsonObectEvent = new JSONObject(jsonEventStr);
-                    events.add(jsonObectEvent);
-                    if (jsonObectEvent.has(event_column.baseEntityId.name())) {
-                        String baseEntityId = jsonObectEvent.getString(event_column.baseEntityId.name
-                                ());
-                        JSONObject cl = getUnSyncedClientByBaseEntityId(baseEntityId);
-                        if (cl != null) {
-                            clients.add(cl);
-                        }
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
+                String jsonEventStr = (cursor.getString(0));
+                if (StringUtils.isBlank(jsonEventStr)
+                        || jsonEventStr.equals("{}")) { // Skip blank/empty json string
+                    continue;
                 }
-
+                jsonEventStr = jsonEventStr.replaceAll("'", "");
+                JSONObject jsonObectEvent = new JSONObject(jsonEventStr);
+                events.add(jsonObectEvent);
+                if (jsonObectEvent.has(event_column.baseEntityId.name())) {
+                    String baseEntityId = jsonObectEvent.getString(event_column.baseEntityId.name
+                            ());
+                    JSONObject cl = getUnSyncedClientByBaseEntityId(baseEntityId);
+                    if (cl != null) {
+                        clients.add(cl);
+                    }
+                }
 
             }
             if (!clients.isEmpty()) {
@@ -855,6 +850,104 @@ public class EventClientRepository extends BaseRepository {
         return result;
     }
 
+    public Map<String, Object> getUnSyncedEventsClients(int limit) {
+        Map<String, Object> result = new HashMap<>();
+        List<JSONObject> clients = new ArrayList<>();
+        String clientQuery = "select "
+                + client_column.json
+                + ","
+                + client_column.syncStatus
+                + " from "
+                + Table.client.name()
+                + " where "
+                + client_column.syncStatus
+                + " != ?  and length("
+                + client_column.json
+                + ")>2 and "+client_column.baseEntityId+" not null order by "
+                + client_column.updatedAt
+                + " asc limit "
+                + limit;
+        Cursor clientCursor = null;
+        try {
+            clientCursor = getWritableDatabase().rawQuery(clientQuery, new String[]{BaseRepository.TYPE_Synced});
+
+            while (clientCursor.moveToNext()) {
+                try{
+                    String jsonClientStr = (clientCursor.getString(0));
+                    if (StringUtils.isBlank(jsonClientStr)
+                            || jsonClientStr.equals("{}")) { // Skip blank/empty json string
+                        continue;
+                    }
+                    jsonClientStr = jsonClientStr.replaceAll("'", "");
+                    JSONObject jsonObjectClient = new JSONObject(jsonClientStr);
+                    clients.add(jsonObjectClient);
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }
+            if (!clients.isEmpty()) {
+                result.put(AllConstants.KEY.CLIENTS, clients);
+            }
+        } catch (Exception e) {
+        } finally {
+            if (clientCursor != null) {
+                clientCursor.close();
+            }
+        }
+
+        List<JSONObject> events = new ArrayList<>();
+
+        String query = "select "
+                + event_column.json
+                + ","
+                + event_column.syncStatus
+                + " from "
+                + Table.event.name()
+                + " where "
+                + event_column.syncStatus
+                + " != ?  and length("
+                + event_column.json
+                + ")>2 and "+event_column.baseEntityId+" not null order by "
+                + event_column.updatedAt
+                + " asc limit "
+                + limit;
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced});
+
+            while (cursor.moveToNext()) {
+                try{
+                    String jsonEventStr = (cursor.getString(0));
+                    if (StringUtils.isBlank(jsonEventStr)
+                            || jsonEventStr.equals("{}")) { // Skip blank/empty json string
+                        continue;
+                    }
+                    jsonEventStr = jsonEventStr.replaceAll("'", "");
+                    JSONObject jsonObectEvent = new JSONObject(jsonEventStr);
+                    events.add(jsonObectEvent);
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+            if (!events.isEmpty()) {
+                result.put(AllConstants.KEY.EVENTS, events);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return result;
+    }
 
     public List<String> getUnValidatedEventFormSubmissionIds(int limit) {
         List<String> ids = new ArrayList<>();
@@ -1320,18 +1413,18 @@ public class EventClientRepository extends BaseRepository {
 
         return clients;
     }
-    public List<Client> getInvalidClientList() {
-        List<Client> clients = new ArrayList<>();
+    public Map<Integer,Client> getInvalidClientList() {
+        Map<Integer,Client> clientMap = new HashMap<>();
 
-        final String validateFilter = " where "+ client_column.validationStatus + " == ? ";
+        final String validateFilter = " where "+ client_column.validationStatus + " == ? or (syncStatus='Synced' and validationStatus is null)";
 
            String query = "select "
                     + client_column.json
-                    + " from "
+                    + " ,rowid from "
                     + Table.client.name()
                     + validateFilter
                     + ORDER_BY
-                    + client_column.updatedAt;
+                    + client_column.updatedAt+" ASC";
 
         Log.v("INVALID_REQ","getInvalidClientList>>"+query);
         Cursor cursor = null;
@@ -1347,7 +1440,8 @@ public class EventClientRepository extends BaseRepository {
                         }
                         jsonClientStr = jsonClientStr.replaceAll("'", "");
                         Client client = gson.fromJson(jsonClientStr, Client.class);
-                        clients.add(client);
+                        int rowId = cursor.getInt(1);
+                        clientMap.put(rowId,client);
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -1362,23 +1456,23 @@ public class EventClientRepository extends BaseRepository {
             }
         }
 
-        return clients;
+        return clientMap;
     }
 
 
-    public List<Event> getInvalidEventList() {
-        List<Event> events = new ArrayList<>();
+    public Map<Integer,Event> getInvalidEventList() {
+        Map<Integer,Event> eventMap = new HashMap<>();
 
         String validateFilter;
-        validateFilter = " where ( (" + event_column.validationStatus + " == ?) or (" + event_column.validationStatus + " == ? and "+event_column.serverVersion+" is null)) ";
+        validateFilter = " where ( (" + event_column.validationStatus + " == ?) or (" + event_column.validationStatus + " == ? and "+event_column.serverVersion+" is null) or (syncStatus='Synced' and validationStatus is null)) ";
 
            String query = "select "
                     + event_column.json
-                    + " from "
+                    + " ,rowid from "
                     + Table.event.name()
                     + validateFilter
                     + ORDER_BY
-                    + event_column.updatedAt;
+                    + event_column.updatedAt+" DESC";
 
 
         Cursor cursor = null;
@@ -1395,7 +1489,8 @@ public class EventClientRepository extends BaseRepository {
                         }
                         jsonEventsStr = jsonEventsStr.replaceAll("'", "");
                         Event event = gson.fromJson(jsonEventsStr,Event.class);
-                        events.add(event);
+                        int rowId = cursor.getInt(1);
+                        eventMap.put(rowId,event);
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -1410,7 +1505,7 @@ public class EventClientRepository extends BaseRepository {
             }
         }
 
-        return events;
+        return eventMap;
     }
     public List<JSONObject> getUnValidatedEvents(int limit) {
         List<JSONObject> events = new ArrayList<>();

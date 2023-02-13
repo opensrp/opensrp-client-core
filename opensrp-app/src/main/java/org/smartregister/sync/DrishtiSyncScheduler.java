@@ -36,7 +36,7 @@ public class DrishtiSyncScheduler {
         }
 
         PendingIntent syncBroadcastReceiverIntent = PendingIntent
-                .getBroadcast(context, 0, new Intent(context, (Class) ReceiverClass), 0);
+                .getBroadcast(context, 0, new Intent(context, (Class) ReceiverClass), PendingIntent.FLAG_IMMUTABLE);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + SYNC_START_DELAY,
@@ -75,7 +75,7 @@ public class DrishtiSyncScheduler {
         }
 
         PendingIntent syncBroadcastReceiverIntent = PendingIntent
-                .getBroadcast(context, 0, new Intent(context, (Class) ReceiverClass), 0);
+                .getBroadcast(context, 0, new Intent(context, (Class) ReceiverClass), PendingIntent.FLAG_IMMUTABLE);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(syncBroadcastReceiverIntent);
