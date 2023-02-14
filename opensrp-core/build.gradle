@@ -162,6 +162,7 @@ afterEvaluate {
 }
 configurations.all {
     resolutionStrategy.force 'commons-codec:commons-codec:1.10'
+    exclude group: 'com.evernote', module: 'android-job'
 }
 
 dependencies {
@@ -172,7 +173,9 @@ dependencies {
     implementation 'org.codehaus.jackson:jackson-core-asl:1.9.13'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation "org.apache.httpcomponents:httpmime:4.5.6"
+    implementation ("org.apache.httpcomponents:httpmime:4.5.11"){
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.10'
     implementation group: 'com.google.guava', name: 'guava', version: '24.1-jre'
     implementation group: 'commons-io', name: 'commons-io', version: '2.4'
@@ -210,7 +213,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 
-    implementation('com.evernote:android-job:1.2.6') {
+    implementation('com.github.devv911:android-job:1.4.5') {
         exclude group: 'com.google.android', module: 'android'
     }
 
