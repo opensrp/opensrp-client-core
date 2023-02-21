@@ -1,14 +1,5 @@
 package org.smartregister.login.model;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.robolectric.util.ReflectionHelpers;
-import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.Context;
-import org.smartregister.CoreLibrary;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -16,6 +7,14 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 
 /**
  * Created by samuelgithengi on 8/18/20.
@@ -34,7 +33,7 @@ public class BaseLoginModelTest extends BaseRobolectricUnitTest {
 
     @After
     public void tearDown() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        CoreLibrary.destroyInstance();
     }
 
     @Test

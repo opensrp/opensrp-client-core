@@ -64,7 +64,7 @@ public class SecuredActivityTest extends BaseRobolectricUnitTest {
 
     @BeforeClass
     public static void resetCoreLibrary() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        CoreLibrary.destroyInstance();
     }
 
     @Before

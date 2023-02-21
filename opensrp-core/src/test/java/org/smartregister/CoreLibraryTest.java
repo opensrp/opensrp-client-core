@@ -74,8 +74,7 @@ public class CoreLibraryTest extends BaseUnitTest {
 
     @Test(expected = IllegalStateException.class)
     public void getInstanceShouldThrowException() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
-
+        CoreLibrary.destroyInstance();
         CoreLibrary.getInstance();
     }
 

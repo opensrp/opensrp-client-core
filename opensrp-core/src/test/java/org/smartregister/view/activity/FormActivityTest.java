@@ -1,7 +1,15 @@
 package org.smartregister.view.activity;
 
+import static org.mockito.Mockito.when;
+import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
+import static org.smartregister.AllConstants.FIELD_OVERRIDES_PARAM;
+import static org.smartregister.AllConstants.FORM_NAME_PARAM;
+import static org.smartregister.view.activity.NativeECSmartRegisterActivityTest.locationJson;
+
 import android.content.Context;
 import android.content.Intent;
+
+import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -10,20 +18,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import androidx.test.core.app.ApplicationProvider;
 import org.robolectric.android.controller.ActivityController;
-import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.view.activity.mock.FormActivityMock;
 import org.smartregister.view.controller.ANMLocationController;
-
-import static org.mockito.Mockito.when;
-import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
-import static org.smartregister.AllConstants.FIELD_OVERRIDES_PARAM;
-import static org.smartregister.AllConstants.FORM_NAME_PARAM;
-import static org.smartregister.view.activity.NativeECSmartRegisterActivityTest.locationJson;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
@@ -47,7 +47,7 @@ public class FormActivityTest extends BaseUnitTest {
 
     @BeforeClass
     public static void resetCoreLibrarySingleton() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        CoreLibrary.destroyInstance();
     }
 
     @Before

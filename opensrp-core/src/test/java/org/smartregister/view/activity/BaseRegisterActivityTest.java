@@ -1,5 +1,22 @@
 package org.smartregister.view.activity;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
+import static org.smartregister.view.activity.BaseRegisterActivity.BASE_REG_POSITION;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -23,7 +40,6 @@ import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowToast;
-import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.AllConstants.BARCODE;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -43,23 +59,6 @@ import org.smartregister.view.viewpager.OpenSRPViewPager;
 
 import java.util.UUID;
 import java.util.concurrent.Executors;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static org.robolectric.Shadows.shadowOf;
-import static org.smartregister.view.activity.BaseRegisterActivity.BASE_REG_POSITION;
 
 /**
  * Created by samuelgithengi on 6/30/20.
@@ -93,7 +92,7 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
 
     @After
     public void tearDown() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        CoreLibrary.destroyInstance();
     }
 
     @Test

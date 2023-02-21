@@ -1,5 +1,16 @@
 package org.smartregister.login.presenter;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import android.content.res.Configuration;
 import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
@@ -15,7 +26,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
-import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -24,17 +34,6 @@ import org.smartregister.view.activity.BaseLoginActivityTest.BaseLoginActivityIm
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by samuelgithengi on 8/18/20.
@@ -66,7 +65,7 @@ public class BaseLoginPresenterTest extends BaseRobolectricUnitTest {
 
     @After
     public void tearDown() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        CoreLibrary.destroyInstance();
     }
 
     @Test

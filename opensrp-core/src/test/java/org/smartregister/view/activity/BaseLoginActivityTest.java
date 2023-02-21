@@ -54,7 +54,7 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
 
     @BeforeClass
     public static void resetCoreLibrary() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        CoreLibrary.destroyInstance();
     }
 
     @Before

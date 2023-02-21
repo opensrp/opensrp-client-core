@@ -77,6 +77,7 @@ import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -1037,5 +1038,9 @@ public class Utils {
         }
     }
         return  value;
+    }
+
+    public static int getDatabaseVersion() {
+        return DrishtiApplication.getInstance().getRepository().getReadableDatabase().getVersion();
     }
 }
