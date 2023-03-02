@@ -47,7 +47,7 @@ public class ImageRenderHelper {
 
         }
         profileImageView.setTag(org.smartregister.R.id.entity_id, clientBaseEntityId);
-        DrishtiApplication.getCachedImageLoaderInstance().getImageByClientId(clientBaseEntityId, OpenSRPImageLoader.getStaticImageListener(profileImageView, 0, 0));
+        DrishtiApplication.getCachedImageLoaderInstance().getImageByClientId(clientBaseEntityId, OpenSRPImageLoader.getStaticImageListener(profileImageView, defaultProfileImage, defaultProfileImage));
 
     }
 }
