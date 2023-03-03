@@ -1,5 +1,7 @@
 package org.smartregister.util;
 
+import static org.mockito.ArgumentMatchers.eq;
+
 import android.content.res.AssetManager;
 import android.util.Xml;
 
@@ -16,7 +18,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+
 import androidx.test.core.app.ApplicationProvider;
+
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
@@ -27,6 +31,8 @@ import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.service.ANMService;
 import org.smartregister.util.mock.XmlSerializerMock;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by kaderchowdhury on 14/11/17.
@@ -198,4 +205,40 @@ public class FormUtilsTest extends BaseUnitTest {
         Assert.assertEquals("Doe", resultJson.getString("value"));
     }
 
+    @Test
+    public void testGetSubForShouldReturnCOrrectValuem() throws JSONException {
+        String form = "{\"form_data_definition_version\":\"2\",\"form\":{\"default_bind_path\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp\",\"bind_type\":\"mcaremother\",\"ec_bind_type\":\"ec_mcaremother\",\"fields\":[{\"name\":\"id\",\"shouldLoadValue\":true},{\"name\":\"bnf_current_formStatus\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/bnf_current_formStatus\"},{\"name\":\"relationalid\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/relationalid\",\"shouldLoadValue\":true},{\"name\":\"changes\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/changes\"},{\"name\":\"GOBHHID\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_gobhhid\",\"shouldLoadValue\":true},{\"name\":\"JiVitAHHID\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_jivhhid\",\"shouldLoadValue\":true},{\"name\":\"FWWOMBID\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_wom_bid\",\"shouldLoadValue\":true},{\"name\":\"FWWOMNID\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_wom_nid\",\"shouldLoadValue\":true},{\"name\":\"FWWOMFNAME\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_first_name\",\"shouldLoadValue\":true},{\"name\":\"FWHUSNAME\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_husname\",\"shouldLoadValue\":true},{\"name\":\"FWPSRLMP\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_psrlmp\",\"shouldLoadValue\":true},{\"name\":\"existing_location\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_location\"},{\"name\":\"today\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/today\"},{\"name\":\"start\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/start\"},{\"name\":\"end\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/end\"},{\"name\":\"FWBNFDATE\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/FWBNFDATE\"},{\"name\":\"FWCONFIRMATION\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/FWCONFIRMATION\"},{\"name\":\"FWGESTATIONALAGE\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/FWGESTATIONALAGE\"},{\"name\":\"FWEDD\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/FWEDD\"},{\"name\":\"FWBNFSTS\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS\"},{\"name\":\"FWDISPLAYTEXT1\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/FWDISPLAYTEXT1\"},{\"name\":\"Is_PNC\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/Is_PNC\"},{\"name\":\"user_type\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/user_type\"},{\"name\":\"external_user_ID\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/external_user_ID\"},{\"name\":\"FWBNFWOMVITSTS\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS\"},{\"name\":\"FWBNFDTOO\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFDTOO\"},{\"name\":\"FWBNFLB\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFLB\"},{\"name\":\"FWBNFSMSRSN\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFSMSRSN\"}],\"sub_forms\":[{\"name\":\"child_registration\",\"bind_type\":\"mcarechild\",\"ec_bind_type\":\"ec_mcarechild\",\"default_bind_path\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS\",\"fields\":[{\"name\":\"id\",\"shouldLoadValue\":true},{\"name\":\"relationalid\",\"shouldLoadValue\":true},{\"name\":\"FWBNFGEN\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN\"},{\"name\":\"FWBNFCHLDVITSTS\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS\"},{\"name\":\"FWBNFNAMECHECK\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK\"},{\"name\":\"FWBNFNAME\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAME\"},{\"name\":\"FWBNFCHILDNAME\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHILDNAME\"},{\"name\":\"FWBNFDOB\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFDOB\"},{\"name\":\"mother_entity_id\",\"source\":\"mcaremother.id\",\"shouldLoadValue\":true}]}]}}";
+        String entity = "{\n" +
+                "        \"name\": \"relationalid\",\n" +
+                "        \"relationalid\": \"123-123\",\n" +
+                "        \"bind\": \"/model/instance/BirthNotificationPregnancyStatusFollowUp/relationalid\",\n" +
+                "        \"shouldLoadValue\": true\n" +
+                "      }";
+        String NodeNameValue = ReflectionHelpers.callInstanceMethod(formUtils, "retrieveValueForNodeName"
+                , ReflectionHelpers.ClassParameter.from(String.class, "relationalid")
+                , ReflectionHelpers.ClassParameter.from(JSONObject.class, new JSONObject(entity))
+                , ReflectionHelpers.ClassParameter.from(JSONObject.class, new JSONObject(form)));
+        Assert.assertEquals("123-123", NodeNameValue);
+    }
+
+    @Test
+    public void testHasChildElementsShouldReturnTrueWhenNodeHasElement() {
+        Node node = Mockito.mock(Node.class);
+        Node childNode = Mockito.mock(Node.class);
+        NodeList nodeList = Mockito.mock(NodeList.class);
+        Mockito.doReturn(nodeList).when(node).getChildNodes();
+        Mockito.doReturn(1).when(nodeList).getLength();
+        Mockito.doReturn(childNode).when(nodeList).item(eq(0));
+        Mockito.doReturn(Node.ELEMENT_NODE).when(childNode).getNodeType();
+        Assert.assertTrue(FormUtils.hasChildElements(node));
+    }
+
+    @Test
+    public void testGetSubFormNamesShouldReturnCorrectSubFormNamesList() throws JSONException {
+        String form = "{\"form_data_definition_version\":\"2\",\"form\":{\"default_bind_path\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp\",\"bind_type\":\"mcaremother\",\"ec_bind_type\":\"ec_mcaremother\",\"fields\":[{\"name\":\"id\",\"shouldLoadValue\":true},{\"name\":\"bnf_current_formStatus\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/bnf_current_formStatus\"},{\"name\":\"relationalid\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/relationalid\",\"shouldLoadValue\":true},{\"name\":\"changes\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/changes\"},{\"name\":\"GOBHHID\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_gobhhid\",\"shouldLoadValue\":true},{\"name\":\"JiVitAHHID\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_jivhhid\",\"shouldLoadValue\":true},{\"name\":\"FWWOMBID\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_wom_bid\",\"shouldLoadValue\":true},{\"name\":\"FWWOMNID\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_wom_nid\",\"shouldLoadValue\":true},{\"name\":\"FWWOMFNAME\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_first_name\",\"shouldLoadValue\":true},{\"name\":\"FWHUSNAME\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_husname\",\"shouldLoadValue\":true},{\"name\":\"FWPSRLMP\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_psrlmp\",\"shouldLoadValue\":true},{\"name\":\"existing_location\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/existing_location\"},{\"name\":\"today\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/today\"},{\"name\":\"start\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/start\"},{\"name\":\"end\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/end\"},{\"name\":\"FWBNFDATE\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/FWBNFDATE\"},{\"name\":\"FWCONFIRMATION\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/FWCONFIRMATION\"},{\"name\":\"FWGESTATIONALAGE\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/FWGESTATIONALAGE\"},{\"name\":\"FWEDD\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/FWEDD\"},{\"name\":\"FWBNFSTS\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS\"},{\"name\":\"FWDISPLAYTEXT1\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/FWDISPLAYTEXT1\"},{\"name\":\"Is_PNC\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/Is_PNC\"},{\"name\":\"user_type\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/user_type\"},{\"name\":\"external_user_ID\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/external_user_ID\"},{\"name\":\"FWBNFWOMVITSTS\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS\"},{\"name\":\"FWBNFDTOO\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFDTOO\"},{\"name\":\"FWBNFLB\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFLB\"},{\"name\":\"FWBNFSMSRSN\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFSMSRSN\"}],\"sub_forms\":[{\"name\":\"child_registration\",\"bind_type\":\"mcarechild\",\"ec_bind_type\":\"ec_mcarechild\",\"default_bind_path\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS\",\"fields\":[{\"name\":\"id\",\"shouldLoadValue\":true},{\"name\":\"relationalid\",\"shouldLoadValue\":true},{\"name\":\"FWBNFGEN\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN\"},{\"name\":\"FWBNFCHLDVITSTS\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS\"},{\"name\":\"FWBNFNAMECHECK\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK\"},{\"name\":\"FWBNFNAME\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAME\"},{\"name\":\"FWBNFCHILDNAME\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHILDNAME\"},{\"name\":\"FWBNFDOB\",\"bind\":\"/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFDOB\"},{\"name\":\"mother_entity_id\",\"source\":\"mcaremother.id\",\"shouldLoadValue\":true}]}]}}";
+
+        List<String> subFormNames = ReflectionHelpers.callInstanceMethod(formUtils, "getSubFormNames"
+                , ReflectionHelpers.ClassParameter.from(JSONObject.class, new JSONObject(form)));
+        Assert.assertEquals(1, subFormNames.size());
+    }
 }
