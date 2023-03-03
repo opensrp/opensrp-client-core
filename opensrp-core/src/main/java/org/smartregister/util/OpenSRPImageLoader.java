@@ -5,18 +5,21 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
@@ -68,8 +71,7 @@ public class OpenSRPImageLoader {
         mResources = service.getResources();
 
         mPlaceHolderDrawables = new ArrayList<>(1);
-        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null
-                : mResources.getDrawable(defaultPlaceHolderResId));
+        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null : mResources.getDrawable(defaultPlaceHolderResId));
     }
 
     public OpenSRPImageLoader(Context context, int defaultPlaceHolderResId) {
@@ -77,8 +79,7 @@ public class OpenSRPImageLoader {
         mResources = DrishtiApplication.getInstance().getResources();
 
         mPlaceHolderDrawables = new ArrayList<>(1);
-        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null
-                : mResources.getDrawable(defaultPlaceHolderResId));
+        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null : mResources.getDrawable(defaultPlaceHolderResId));
     }
 
     /**
@@ -89,8 +90,7 @@ public class OpenSRPImageLoader {
         this(activity);
 
         mPlaceHolderDrawables = new ArrayList<>(1);
-        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null
-                : mResources.getDrawable(defaultPlaceHolderResId));
+        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null : mResources.getDrawable(defaultPlaceHolderResId));
     }
 
     /**
@@ -140,20 +140,15 @@ public class OpenSRPImageLoader {
             try {
 
                 if (entityId != null && !entityId.isEmpty()) {
-                    final String absoluteFileName =
-                            DrishtiApplication.getAppDir() + File.separator + entityId + ".JPEG";
+                    final String absoluteFileName = DrishtiApplication.getAppDir() + File.separator + entityId + ".JPEG";
 
                     File outputFile = new File(absoluteFileName);
                     os = new FileOutputStream(outputFile);
-                    CompressFormat compressFormat = OpenSRPImageLoader
-                            .getCompressFormat(absoluteFileName);
+                    CompressFormat compressFormat = OpenSRPImageLoader.getCompressFormat(absoluteFileName);
                     if (compressFormat != null) {
                         image.compress(compressFormat, 100, os);
                     } else {
-                        throw new IllegalArgumentException(
-                                "Failed to save static image, could " + "not"
-                                        + " retrieve image compression format from name "
-                                        + absoluteFileName);
+                        throw new IllegalArgumentException("Failed to save static image, could " + "not" + " retrieve image compression format from name " + absoluteFileName);
                     }
                     // insert into the db
                     ProfileImage profileImage = new ProfileImage();
@@ -173,8 +168,7 @@ public class OpenSRPImageLoader {
                     try {
                         os.close();
                     } catch (IOException e) {
-                        Timber.e("Failed to close static images output stream after attempting"
-                                + " to write image");
+                        Timber.e("Failed to close static images output stream after attempting" + " to write image");
                     }
                 }
             }
@@ -194,8 +188,7 @@ public class OpenSRPImageLoader {
         boolean successful = false;
 
         if (!entityId.isEmpty()) {
-            final String absoluteFileName =
-                    DrishtiApplication.getAppDir() + File.separator + entityId + ".JPEG";
+            final String absoluteFileName = DrishtiApplication.getAppDir() + File.separator + entityId + ".JPEG";
             if (copyFile(imageFile, new File(absoluteFileName))) {
 
                 // insert into the db
@@ -205,8 +198,7 @@ public class OpenSRPImageLoader {
                 profileImage.setFilepath(absoluteFileName);
                 profileImage.setFilecategory("profilepic");
                 profileImage.setSyncStatus(syncStatus);
-                ImageRepository imageRepo = CoreLibrary.getInstance().context().
-                        imageRepository();
+                ImageRepository imageRepo = CoreLibrary.getInstance().context().imageRepository();
                 imageRepo.add(profileImage);
 
                 successful = true;
@@ -276,8 +268,7 @@ public class OpenSRPImageLoader {
         try {
             final Context context = contextWeakReference.get();
             if (context != null) {
-                if (CoreLibrary.getInstance().context().getAppProperties().isTrue(AllConstants.PROPERTY.DISABLE_PROFILE_IMAGES_FEATURE)
-                        || (entityId == null || entityId.isEmpty())) {
+                if (CoreLibrary.getInstance().context().getAppProperties().isTrue(AllConstants.PROPERTY.DISABLE_PROFILE_IMAGES_FEATURE) || (entityId == null || entityId.isEmpty())) {
 
                     Glide.with(context).load(opensrpImageListener.getDefaultImageResId()).into(opensrpImageListener.getImageView());
 
@@ -292,39 +283,41 @@ public class OpenSRPImageLoader {
 
                     if (imageRecord != null) {
 
-                        Glide.with(context).load(imageRecord.getFilepath())
-                                .apply(new RequestOptions()
-                                        .skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)) //Images already on device so skip caching
-                                .transition(DrawableTransitionOptions.withCrossFade(mFadeInImage ? AllConstants.IMAGE_ANIMATION_FADE_IN_TIME : 0))
-                                .placeholder(opensrpImageListener.getDefaultImageResId())
-                                .error(opensrpImageListener.getErrorImageResId())
+                        Glide.with(context).load(imageRecord.getFilepath()).apply(new RequestOptions()
+                                        .skipMemoryCache(true)
+                                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                        .placeholder(opensrpImageListener.getDefaultImageResId())
+                                        .error(opensrpImageListener.getErrorImageResId())) //Images already on device so skip caching
                                 .into(opensrpImageListener.getImageView());
-
 
                     } else {
 
                         String url = FileUtilities.getImageUrl(entityId);
 
                         AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
-                        String accessToken = AccountHelper.getCachedOAuthToken(CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM(),
-                                authenticatorXml.getAccountType(),
-                                AccountHelper.TOKEN_TYPE.PROVIDER);
+                        String accessToken = AccountHelper.getCachedOAuthToken(CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM(), authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
 
-                        GlideUrl glideUrl = new GlideUrl(url,
-                                new LazyHeaders.Builder()
-                                        .addHeader(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ")
-                                                .append(accessToken).toString()).build());
+                        GlideUrl glideUrl = new GlideUrl(url, new LazyHeaders.Builder()
+                                .addHeader(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ")
+                                        .append(accessToken).toString()).build());
+                        Glide.with(context).load(glideUrl).diskCacheStrategy(DiskCacheStrategy.NONE).placeholder(opensrpImageListener.getDefaultImageResId()).error(opensrpImageListener.getErrorImageResId()).into(new CustomTarget<Drawable>() { // Use CustomViewTarget to load  original size image
+                            @Override
+                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                opensrpImageListener.getImageView().setImageDrawable(resource);
+                                if (resource instanceof BitmapDrawable)
+                                    saveStaticImageToDisk(entityId, ((BitmapDrawable) resource).getBitmap());
+                            }
 
-                        Glide.with(context).load(glideUrl)
-                                .transition(DrawableTransitionOptions.withCrossFade(mFadeInImage ? AllConstants.IMAGE_ANIMATION_FADE_IN_TIME : 0))
-                                .placeholder(opensrpImageListener.getDefaultImageResId())
-                                .error(opensrpImageListener.getErrorImageResId())
-                                .into(opensrpImageListener.getImageView());
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                                opensrpImageListener.getImageView().setImageDrawable(placeholder);
+                            }
+                        });
                     }
                 }
             }
         } catch (Exception e) {
-            Timber.e(e.getMessage(), e);
+            Timber.e(e);
         }
     }
 
