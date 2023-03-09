@@ -4,12 +4,11 @@ import android.content.Context
 import androidx.work.WorkerParameters
 import org.smartregister.CoreLibrary
 import org.smartregister.service.DocumentConfigurationService
-import org.smartregister.util.WorkerNotificationDelegate
 import timber.log.Timber
 
 class DocumentConfigurationWorker(context: Context, workerParams: WorkerParameters): BaseWorker(context, workerParams) {
 
-    private val notificationDelegate = WorkerNotificationDelegate(context, TAG)
+    override fun getTitle(): String = "Fetching Document Configuration"
 
     override fun doWork(): Result {
         beforeWork()

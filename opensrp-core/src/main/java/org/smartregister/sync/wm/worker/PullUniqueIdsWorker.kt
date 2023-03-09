@@ -13,7 +13,7 @@ import timber.log.Timber
 
 class PullUniqueIdsWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
-    private val notificationDelegate = WorkerNotificationDelegate(context, TAG)
+    override fun getTitle(): String  = "Pulling Unique Ids"
 
     override fun doWork(): Result {
         beforeWork()

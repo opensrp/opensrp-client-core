@@ -8,7 +8,7 @@ import timber.log.Timber
 
 class SyncTaskWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
-    private val notificationDelegate = WorkerNotificationDelegate(context, TAG)
+    override fun getTitle(): String  = "Syncing Tasks"
 
     override fun doWork(): Result {
         beforeWork()

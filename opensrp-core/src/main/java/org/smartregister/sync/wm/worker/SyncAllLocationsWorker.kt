@@ -1,7 +1,6 @@
 package org.smartregister.sync.wm.worker
 
 import android.content.Context
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import org.smartregister.sync.helper.LocationServiceHelper
 import org.smartregister.util.WorkerNotificationDelegate
@@ -9,7 +8,7 @@ import timber.log.Timber
 
 class SyncAllLocationsWorker(context: Context, workerParams: WorkerParameters): BaseWorker(context, workerParams) {
 
-    private val notificationDelegate = WorkerNotificationDelegate(context, TAG)
+    override fun getTitle(): String  = "Syncing All Locations"
 
     override fun doWork(): Result {
         beforeWork()

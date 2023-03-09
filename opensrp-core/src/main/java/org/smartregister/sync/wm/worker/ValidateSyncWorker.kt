@@ -22,7 +22,7 @@ import java.util.stream.Collectors
 
 class ValidateSyncWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
-    private val notificationDelegate = WorkerNotificationDelegate(context, TAG)
+    override fun getTitle(): String  = "Doing Sync Validations"
 
     override fun doWork(): Result {
         beforeWork()

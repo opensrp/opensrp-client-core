@@ -7,6 +7,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.work.Data;
+
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -28,9 +30,10 @@ import org.smartregister.R;
 import org.smartregister.cursoradapter.RecyclerViewFragment;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.ResponseErrorStatus;
-import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.sync.wm.worker.SettingsSyncWorker;
+import org.smartregister.sync.wm.workerrequest.WorkRequest;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.activity.BaseRegisterActivity;
@@ -235,7 +238,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         //Sync
         syncButton = view.findViewById(R.id.sync_refresh);
         if (syncButton != null) {
-            syncButton.setOnClickListener(view1 -> SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG));
+            syncButton.setOnClickListener(view1 -> WorkRequest.runImmediately(view.getContext(), SettingsSyncWorker.class, SettingsSyncWorker.TAG, Data.EMPTY));
         }
     }
 

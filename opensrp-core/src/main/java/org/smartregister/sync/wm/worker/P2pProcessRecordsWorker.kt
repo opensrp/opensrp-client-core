@@ -12,7 +12,7 @@ import timber.log.Timber
 
 class P2pProcessRecordsWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
-    private val notificationDelegate = WorkerNotificationDelegate(context, TAG)
+    override fun getTitle(): String  = "Processing P2P Records"
 
     override fun doWork(): Result {
         beforeWork()

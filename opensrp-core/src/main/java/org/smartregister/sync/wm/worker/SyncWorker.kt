@@ -31,7 +31,6 @@ import org.smartregister.util.NetworkUtils
 import org.smartregister.util.PerformanceMonitoringUtils
 import org.smartregister.util.SyncUtils
 import org.smartregister.util.Utils
-import org.smartregister.util.WorkerNotificationDelegate
 import org.smartregister.view.activity.DrishtiApplication
 import timber.log.Timber
 import java.text.MessageFormat
@@ -39,8 +38,7 @@ import java.util.Date
 
 class SyncWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
-    private val notificationDelegate = WorkerNotificationDelegate(context, TAG)
-
+    override fun getTitle(): String = "Syncing Data"
     override fun doWork(): Result {
         beforeWork()
 
@@ -48,13 +46,21 @@ class SyncWorker(context: Context, workerParams: WorkerParameters) :
         return try {
             val syncUtils = SyncUtils(applicationContext)
             val httpAgent = CoreLibrary.getInstance().context().httpAgent
-            val eventSyncTrace: Trace =
+            val eventSyncTrace: Trace? =
                 PerformanceMonitoringUtils.initTrace(PerformanceMonitoring.EVENT_SYNC)
-            val processClientTrace: Trace =
+            val processClientTrace: Trace? =
                 PerformanceMonitoringUtils.initTrace(PerformanceMonitoring.CLIENT_PROCESSING)
-            val allSharedPreferences: AllSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences()
+            val allSharedPreferences: AllSharedPreferences =
+                CoreLibrary.getInstance().context().allSharedPreferences()
 
-            Syncer(applicationContext, httpAgent, syncUtils, eventSyncTrace, processClientTrace, allSharedPreferences)
+            Syncer(
+                applicationContext,
+                httpAgent,
+                syncUtils,
+                eventSyncTrace,
+                processClientTrace,
+                allSharedPreferences
+            )
                 .apply {
                     doSync()
                 }
@@ -65,7 +71,7 @@ class SyncWorker(context: Context, workerParams: WorkerParameters) :
         } catch (e: Exception) {
             Timber.e(e)
             Result.failure().apply {
-                notificationDelegate.notify("Error: ${e.message}")
+                notificationDelegate.notify("Failed")
             }
         }
 
@@ -80,8 +86,8 @@ class Syncer(
     private val context: Context,
     private val httpAgent: HTTPAgent,
     private val syncUtils: SyncUtils,
-    private val eventSyncTrace: Trace,
-    private val processClientTrace: Trace,
+    private val eventSyncTrace: Trace?,
+    private val processClientTrace: Trace?,
     allSharedPreferences: AllSharedPreferences
 ) {
     private val validateAssignmentHelper: ValidateAssignmentHelper
@@ -327,7 +333,7 @@ class Syncer(
         }
         for (i in 0 until syncUtils.getNumOfSyncAttempts()) {
             val pendingEventsClients = db.getUnSyncedEvents(
-                getEventBatchSize()!!
+                getEventBatchSize()
             )
             if (pendingEventsClients.isEmpty()) {
                 break

@@ -12,13 +12,13 @@ import org.smartregister.job.PlanPeriodicEvaluationJob
 import org.smartregister.pathevaluator.TriggerType
 import org.smartregister.pathevaluator.plan.PlanEvaluator
 import org.smartregister.sync.helper.PeriodicTriggerEvaluationHelper
-import org.smartregister.sync.wm.workerrequest.SyncWorkRequest
+import org.smartregister.sync.wm.workerrequest.WorkRequest
 import org.smartregister.util.WorkerNotificationDelegate
 import timber.log.Timber
 
 class PlanPeriodicPlanEvaluationWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
-    private val notificationDelegate = WorkerNotificationDelegate(context, TAG)
+    override fun getTitle(): String  = "Doing PlanPeriodicPlanEvaluation"
 
     override fun doWork(): Result {
         beforeWork()
@@ -63,7 +63,7 @@ class PlanPeriodicPlanEvaluationWorker(context: Context, workerParams: WorkerPar
                 if (planDefinition.effectivePeriod != null && planDefinition.effectivePeriod.end.isBefore(timeNow)
                     || action.timingPeriod != null && action.timingPeriod.end.isBefore(timeNow)
                 ) {
-                    SyncWorkRequest.cancelWork(applicationContext, this::class.java, workName = generateWorkName(actionIdentifier!!, actionCode!!))
+                    WorkRequest.cancelWork(applicationContext, this::class.java, workName = generateWorkName(actionIdentifier!!, actionCode!!))
 
                     PeriodicTriggerEvaluationHelper().cancelJobsForAction( // TODO: Test cancel all previous/queued work requests
                         actionIdentifier,

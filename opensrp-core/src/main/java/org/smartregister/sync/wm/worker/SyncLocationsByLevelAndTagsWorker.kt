@@ -8,7 +8,7 @@ import timber.log.Timber
 
 class SyncLocationsByLevelAndTagsWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
-    private val notificationDelegate = WorkerNotificationDelegate(context, TAG)
+    override fun getTitle(): String  = "Syncing  Locations By Leve lAnd Tags"
 
     override fun doWork(): Result {
         beforeWork()

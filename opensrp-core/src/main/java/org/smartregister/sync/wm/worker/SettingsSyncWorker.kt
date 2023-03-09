@@ -4,15 +4,14 @@ import android.content.Context
 import androidx.work.WorkerParameters
 import org.json.JSONException
 import org.smartregister.CoreLibrary
-import org.smartregister.job.SyncServiceJob
 import org.smartregister.sync.helper.SyncSettingsServiceHelper
-import org.smartregister.sync.wm.workerrequest.SyncWorkRequest
+import org.smartregister.sync.wm.workerrequest.WorkRequest
 import org.smartregister.util.WorkerNotificationDelegate
 import timber.log.Timber
 
 class SettingsSyncWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
-    private val notificationDelegate = WorkerNotificationDelegate(context, TAG)
+    override fun getTitle(): String  = "Syncing Settings"
 
     override fun doWork(): Result {
         beforeWork()
@@ -23,7 +22,7 @@ class SettingsSyncWorker(context: Context, workerParams: WorkerParameters) :
             val syncSettingsServiceHelper = SyncSettingsServiceHelper(openSrpContext.configuration().dristhiBaseURL(), openSrpContext.httpAgent)
             val isSuccessfulSync = processSettings(syncSettingsServiceHelper)
             if (isSuccessfulSync) {
-                SyncWorkRequest.runWorker(applicationContext, SyncWorker::class.java)
+                WorkRequest.runImmediately(applicationContext, SyncWorker::class.java)
             }
 
             Result.success().apply {

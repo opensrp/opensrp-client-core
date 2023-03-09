@@ -1,7 +1,6 @@
 package org.smartregister.sync.wm.worker
 
 import android.content.Context
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -17,13 +16,12 @@ import org.smartregister.service.HTTPAgent
 import org.smartregister.util.DateTimeTypeConverter
 import org.smartregister.util.DateTypeConverter
 import org.smartregister.util.Utils
-import org.smartregister.util.WorkerNotificationDelegate
 import timber.log.Timber
 
 class CampaignWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
 
-    private val notificationDelegate = WorkerNotificationDelegate(context, TAG)
+    override fun getTitle(): String = "Fetching Campaigns"
 
     override fun doWork(): Result {
         beforeWork()

@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 import androidx.annotation.VisibleForTesting;
+import androidx.work.Data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -34,6 +35,10 @@ import org.smartregister.multitenant.ResetAppHelper;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.ServerSettingsHelper;
+import org.smartregister.sync.wm.worker.P2pProcessRecordsWorker;
+import org.smartregister.sync.wm.worker.PullUniqueIdsWorker;
+import org.smartregister.sync.wm.worker.SettingsSyncWorker;
+import org.smartregister.sync.wm.workerrequest.WorkRequest;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.view.activity.ChangePasswordActivity;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -291,15 +296,16 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
      * Call super if you override this method.
      */
     protected void scheduleJobsImmediately() {
+        Context applicationContext = getLoginView().getActivityContext().getApplicationContext();
         P2POptions p2POptions = CoreLibrary.getInstance().getP2POptions();
         if (p2POptions != null && p2POptions.isEnableP2PLibrary()) {
             // Finish processing any unprocessed sync records here
-            P2pServiceJob.scheduleJobImmediately(P2pServiceJob.TAG);
+            WorkRequest.runImmediately(applicationContext, P2pProcessRecordsWorker.class, P2pProcessRecordsWorker.TAG, Data.EMPTY);
         }
 
         if (NetworkUtils.isNetworkAvailable()) {
-            PullUniqueIdsServiceJob.scheduleJobImmediately(PullUniqueIdsServiceJob.TAG);
-            SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
+            WorkRequest.runImmediately(applicationContext, PullUniqueIdsWorker.class, PullUniqueIdsWorker.TAG, Data.EMPTY);
+            WorkRequest.runImmediately(applicationContext, SettingsSyncWorker.class, SettingsSyncWorker.TAG, Data.EMPTY);
         }
     }
 

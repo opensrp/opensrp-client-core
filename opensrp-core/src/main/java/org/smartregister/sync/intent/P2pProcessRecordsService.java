@@ -26,7 +26,7 @@ import timber.log.Timber;
 public class P2pProcessRecordsService extends BaseSyncIntentService {
 
     /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
+     * Creates an IntentService.  Invoked by your subclass's construcztor.
      *
      * @param name Used to name the worker thread, important only for debugging.
      */

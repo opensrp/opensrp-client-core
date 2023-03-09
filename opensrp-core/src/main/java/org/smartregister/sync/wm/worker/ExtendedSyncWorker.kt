@@ -3,13 +3,13 @@ package org.smartregister.sync.wm.worker
 import android.content.Context
 import androidx.work.WorkerParameters
 import org.smartregister.CoreLibrary
-import org.smartregister.sync.wm.workerrequest.SyncWorkRequest
-import org.smartregister.util.WorkerNotificationDelegate
+import org.smartregister.sync.wm.workerrequest.WorkRequest
 import timber.log.Timber
 
 class ExtendedSyncWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
-    private val notificationDelegate = WorkerNotificationDelegate(context, TAG)
+
+    override fun getTitle(): String  = "Doing ExtendedSync"
 
     override fun doWork(): Result {
         beforeWork()
@@ -35,7 +35,7 @@ class ExtendedSyncWorker(context: Context, workerParams: WorkerParameters) :
     }
 
     private fun startSyncValidation(){
-        SyncWorkRequest.runWorker(applicationContext, ValidateSyncWorker::class.java)
+        WorkRequest.runImmediately(applicationContext, ValidateSyncWorker::class.java)
     }
 
     companion object {

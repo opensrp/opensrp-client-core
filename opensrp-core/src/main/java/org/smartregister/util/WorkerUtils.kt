@@ -46,7 +46,7 @@ object WorkerUtils {
 
 class WorkerNotificationDelegate(private val context: Context,
                                  private val title: String?){
-    private val notificationId: Int = Random.nextInt()
+    private val notificationId: Int = 100
     fun notify(message: String){
         WorkerUtils.makeStatusNotification(context, notificationId, title, message)
     }

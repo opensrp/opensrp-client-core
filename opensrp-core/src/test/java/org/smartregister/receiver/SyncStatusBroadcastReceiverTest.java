@@ -50,7 +50,7 @@ public class SyncStatusBroadcastReceiverTest extends BaseRobolectricUnitTest {
         syncStatusBroadcastReceiver.addSyncStatusListener(listener);
 
         // Disable calling start extended sync
-        Mockito.doNothing().when(syncStatusBroadcastReceiver).startExtendedSync();
+        Mockito.doNothing().when(syncStatusBroadcastReceiver).startExtendedSync(null);
 
         FetchStatus fetchStatus = FetchStatus.nothingFetched;
         Intent intent = new Intent();
@@ -65,7 +65,7 @@ public class SyncStatusBroadcastReceiverTest extends BaseRobolectricUnitTest {
         Mockito.verify(listener).onSyncComplete(fetchStatus);
         Assert.assertFalse(syncStatusBroadcastReceiver.isSyncing());
         Assert.assertEquals(0, (long) ReflectionHelpers.getField(syncStatusBroadcastReceiver, "lastFetchedTimestamp"));
-        Mockito.verify(syncStatusBroadcastReceiver).startExtendedSync();
+        Mockito.verify(syncStatusBroadcastReceiver).startExtendedSync(context);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class SyncStatusBroadcastReceiverTest extends BaseRobolectricUnitTest {
         syncStatusBroadcastReceiver.addSyncStatusListener(listener);
 
         // Disable calling start extended sync
-        Mockito.doNothing().when(syncStatusBroadcastReceiver).startExtendedSync();
+        Mockito.doNothing().when(syncStatusBroadcastReceiver).startExtendedSync(context);
 
         FetchStatus fetchStatus = FetchStatus.fetchProgress;
         Intent intent = new Intent();
@@ -101,7 +101,7 @@ public class SyncStatusBroadcastReceiverTest extends BaseRobolectricUnitTest {
         syncStatusBroadcastReceiver.addSyncStatusListener(listener);
 
         // Disable calling start extended sync
-        Mockito.doNothing().when(syncStatusBroadcastReceiver).startExtendedSync();
+        Mockito.doNothing().when(syncStatusBroadcastReceiver).startExtendedSync(context);
 
         // Set last timestamp to less than 2 minutes ago
         long lastFetchedTimestamp = System.currentTimeMillis();
