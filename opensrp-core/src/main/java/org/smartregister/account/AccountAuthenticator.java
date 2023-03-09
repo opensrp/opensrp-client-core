@@ -31,7 +31,6 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
-
         final Intent intent = new Intent(mContext, CoreLibrary.getInstance().getSyncConfiguration().getAuthenticationActivity());
         intent.putExtra(AccountHelper.INTENT_KEY.ACCOUNT_TYPE, accountType);
         intent.putExtra(AccountHelper.INTENT_KEY.AUTH_TYPE, authTokenType);
@@ -122,7 +121,6 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) throws NetworkErrorException {
-
         final Intent intent = new Intent(mContext, CoreLibrary.getInstance().getSyncConfiguration().getAuthenticationActivity());
         intent.putExtra(AccountHelper.INTENT_KEY.AUTH_TYPE, authTokenType);
         intent.putExtra(AccountHelper.INTENT_KEY.IS_NEW_ACCOUNT, false);

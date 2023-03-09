@@ -2424,6 +2424,10 @@ public class EventClientRepository extends BaseRepository {
                     identifierLabel = "M_ZEIR_ID";
                 } else if (identifiers.has("ANC_ID")) {
                     identifierLabel = "ANC_ID";
+                } else if (identifiers.has("ANC_ID")) {
+                    identifierLabel = "ANC_ID";
+                } else if (identifiers.has("F_ZEIR_ID")) {
+                    identifierLabel = "F_ZEIR_ID";
                 }
 
                 identifiers.put(identifierLabel, newZeirId.replaceAll("-", ""));
