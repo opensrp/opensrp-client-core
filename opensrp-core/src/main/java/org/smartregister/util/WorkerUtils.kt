@@ -44,10 +44,15 @@ object WorkerUtils {
     }
 }
 
-class WorkerNotificationDelegate(private val context: Context,
-                                 private val title: String?){
+class WorkerNotificationDelegate(private val context: Context, private val title: String?) {
+
     private val notificationId: Int = 100
-    fun notify(message: String){
+
+    fun notify(message: String) {
         WorkerUtils.makeStatusNotification(context, notificationId, title, message)
+    }
+
+    fun dismiss() {
+        WorkerUtils.dismissNotification(context, notificationId)
     }
 }

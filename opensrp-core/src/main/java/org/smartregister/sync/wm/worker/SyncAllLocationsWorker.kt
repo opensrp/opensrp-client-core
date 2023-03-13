@@ -4,16 +4,17 @@ import android.content.Context
 import androidx.work.WorkerParameters
 import org.smartregister.sync.helper.LocationServiceHelper
 import org.smartregister.util.WorkerNotificationDelegate
+import org.smartregister.util.WorkerUtils
 import timber.log.Timber
 
 class SyncAllLocationsWorker(context: Context, workerParams: WorkerParameters): BaseWorker(context, workerParams) {
 
-    override fun getTitle(): String  = "Syncing All Locations"
+    override fun getTitle(): String  = "Syncing Locations"
 
     override fun doWork(): Result {
         beforeWork()
 
-        notificationDelegate.notify("Running \u8086")
+        notificationDelegate.notify("Running...")
         val locationServiceHelper = LocationServiceHelper.getInstance()
 
         return try {
@@ -22,12 +23,14 @@ class SyncAllLocationsWorker(context: Context, workerParams: WorkerParameters): 
 
                 }
             Result.success().apply {
-                notificationDelegate.notify("Success!!")
+                notificationDelegate.notify("Complete")
+                notificationDelegate.dismiss()
             }
         } catch (e: Exception) {
             Timber.e(e)
             Result.failure().apply {
-                notificationDelegate.notify("Error: ${e.message}")
+                notificationDelegate.notify("Failed")
+                notificationDelegate.dismiss()
             }
         }
     }

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.work.Data;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -27,8 +28,8 @@ import org.joda.time.LocalDate;
 import org.smartregister.cryptography.CryptographicHelper;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.sample.fragment.ReportFragment;
-import org.smartregister.sync.wm.worker.SyncAllLocationsWorker;
-import org.smartregister.sync.wm.workerrequest.SyncWorkRequest;
+import org.smartregister.sync.wm.worker.SyncWorker;
+import org.smartregister.sync.wm.workerrequest.WorkRequest;
 import org.smartregister.util.AppHealthUtils;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.LangUtils;
@@ -45,6 +46,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
@@ -158,10 +160,19 @@ public class MainActivity extends MultiLanguageActivity implements AppHealthUtil
         ((TextView) findViewById(R.id.time)).setText(DateUtil.getDuration(new DateTime().minusYears(4).minusMonths(3).minusWeeks(2).minusDays(1)));
 
         new AppHealthUtils(findViewById(R.id.show_sync_stats));
+
         findViewById(R.id.wmSync).setOnClickListener(v -> {
             v.setVisibility(View.INVISIBLE);
-            SyncWorkRequest.INSTANCE
-                    .runWorker(getApplicationContext(), SyncAllLocationsWorker.class, SyncAllLocationsWorker.class.getName(), androidx.work.Data.EMPTY);
+
+            WorkRequest.runPeriodically(
+                    getApplicationContext(),
+                    SyncWorker.class,
+                    SyncWorker.TAG,
+                    15,
+                    15,
+                    TimeUnit.MINUTES,
+                    Data.EMPTY
+            );
         });
 
         // File encryption example section

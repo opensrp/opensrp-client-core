@@ -8,12 +8,13 @@ import timber.log.Timber
 
 class SyncTaskWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
+
     override fun getTitle(): String  = "Syncing Tasks"
 
     override fun doWork(): Result {
         beforeWork()
 
-        notificationDelegate.notify("Running \u8086")
+        notificationDelegate.notify("Running...")
         return try {
             TaskServiceHelper.getInstance()
                 .apply {
@@ -21,15 +22,16 @@ class SyncTaskWorker(context: Context, workerParams: WorkerParameters) :
                 }
 
             Result.success().apply {
-                notificationDelegate.notify("Success!!")
+                notificationDelegate.notify("Complete")
             }
         } catch (e: Exception) {
             Timber.e(e)
             Result.failure().apply {
-                notificationDelegate.notify("Error: ${e.message}")
+                notificationDelegate.notify("Failed")
             }
+        } finally {
+            notificationDelegate.dismiss()
         }
-
     }
 
     companion object {

@@ -18,12 +18,12 @@ import timber.log.Timber
 
 class PlanPeriodicPlanEvaluationWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
-    override fun getTitle(): String  = "Doing PlanPeriodicPlanEvaluation"
+    override fun getTitle(): String  = "Periodic Plan Evaluation"
 
     override fun doWork(): Result {
         beforeWork()
 
-        notificationDelegate.notify("Running \u8086")
+        notificationDelegate.notify("Running...")
         return try {
             if (inputData.keyValueMap.isNotEmpty()){
                 val planId = inputData.getString(AllConstants.INTENT_KEY.PLAN_ID)
@@ -89,12 +89,14 @@ class PlanPeriodicPlanEvaluationWorker(context: Context, workerParams: WorkerPar
             }
 
             Result.success().apply {
-                notificationDelegate.notify("Success!!")
+                notificationDelegate.notify("Complete")
+                notificationDelegate.dismiss()
             }
         } catch (e: Exception) {
             Timber.e(e)
             Result.failure().apply {
-                notificationDelegate.notify("Error: ${e.message}")
+                notificationDelegate.notify("Failed")
+                notificationDelegate.dismiss()
             }
         }
 

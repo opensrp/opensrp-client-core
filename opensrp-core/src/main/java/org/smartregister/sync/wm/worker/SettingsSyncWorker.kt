@@ -16,7 +16,7 @@ class SettingsSyncWorker(context: Context, workerParams: WorkerParameters) :
     override fun doWork(): Result {
         beforeWork()
 
-        notificationDelegate.notify("Running \u8086")
+        notificationDelegate.notify("Running...")
         return try {
             val openSrpContext = CoreLibrary.getInstance().context()
             val syncSettingsServiceHelper = SyncSettingsServiceHelper(openSrpContext.configuration().dristhiBaseURL(), openSrpContext.httpAgent)
@@ -26,25 +26,25 @@ class SettingsSyncWorker(context: Context, workerParams: WorkerParameters) :
             }
 
             Result.success().apply {
-                notificationDelegate.notify("Success!!")
+                notificationDelegate.notify("Complete")
+                notificationDelegate.dismiss()
             }
         } catch (e: Exception) {
             Timber.e(e)
             Result.failure().apply {
-                notificationDelegate.notify("Error: ${e.message}")
+                notificationDelegate.notify("Failed")
+                notificationDelegate.dismiss()
             }
         }
-
     }
 
-    fun processSettings(syncSettingsServiceHelper: SyncSettingsServiceHelper): Boolean {
-        Timber.d("In Settings Sync Intent Service...")
+    private fun processSettings(syncSettingsServiceHelper: SyncSettingsServiceHelper): Boolean {
         var isSuccessfulSync = true
         try {
             val count: Int = syncSettingsServiceHelper.processIntent()
         } catch (e: JSONException) {
             isSuccessfulSync = false
-            Timber.e(" Error fetching client settings")
+            Timber.e(e, "Error fetching client settings")
         }
         return isSuccessfulSync
     }

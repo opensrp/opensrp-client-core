@@ -26,13 +26,14 @@ class CampaignWorker(context: Context, workerParams: WorkerParameters) :
     override fun doWork(): Result {
         beforeWork()
 
-        notificationDelegate.notify("Running \u8086")
+        notificationDelegate.notify("Running...")
 
         val opensrpContext = CoreLibrary.getInstance().context()
         val baseUrl = opensrpContext.configuration().dristhiBaseURL()
         val allSharedPreferences = opensrpContext.allSharedPreferences()
         val campaignRepository = opensrpContext.campaignRepository
         val httpAgent = opensrpContext.httpAgent
+
         return try {
             val campaignsResponse = fetchCampaigns(httpAgent, baseUrl)
             val allowedCampaigns = allSharedPreferences.getPreference(AllConstants.CAMPAIGNS).split(",")
@@ -41,24 +42,28 @@ class CampaignWorker(context: Context, workerParams: WorkerParameters) :
                 object : TypeToken<List<Campaign?>?>() {}.type
             )
             val errors = mutableListOf<Throwable>()
+
             campaigns.filter { it.identifier != null && it.identifier in allowedCampaigns }
                 .forEach {
                     runCatching {  campaignRepository.addOrUpdate(it)}.onFailure { e -> errors.add(e) }
                 }
+
             if (errors.isNotEmpty()) throw Exception(errors.random())
 
             Result.success().apply {
-                notificationDelegate.notify("Success!!")
+                notificationDelegate.notify("Complete")
+                notificationDelegate.dismiss()
             }
         } catch (e: Exception) {
             Timber.e(e)
             Result.failure().apply {
-                notificationDelegate.notify("Error: ${e.message}")
+                notificationDelegate.notify("Failed")
+                notificationDelegate.dismiss()
             }
         }
     }
 
-    fun getUrl(baseUrl: String): String {
+    private fun getUrl(baseUrl: String): String {
         val endString = "/"
         return "${if (baseUrl.endsWith(endString)) baseUrl.substring(0, baseUrl.lastIndexOf(endString)) else baseUrl}$CAMPAIGN_URL"
     }
@@ -69,11 +74,14 @@ class CampaignWorker(context: Context, workerParams: WorkerParameters) :
             applicationContext.sendBroadcast(Utils.completeSync(FetchStatus.noConnection))
             throw IllegalArgumentException("$CAMPAIGN_URL http agent is null")
         }
+
         val resp= httpAgent.fetch(getUrl(baseUrl))
+
         if (resp.isFailure) {
             applicationContext.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched))
             throw NoHttpResponseException("$CAMPAIGN_URL not returned data")
         }
+
         return resp.payload().toString()
     }
 
@@ -83,7 +91,6 @@ class CampaignWorker(context: Context, workerParams: WorkerParameters) :
         val gson: Gson = GsonBuilder().registerTypeAdapter(
             DateTime::class.java,
             DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")
-        )
-            .registerTypeAdapter(LocalDate::class.java, DateTypeConverter()).create()
+        ).registerTypeAdapter(LocalDate::class.java, DateTypeConverter()).create()
     }
 }

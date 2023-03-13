@@ -8,24 +8,26 @@ import timber.log.Timber
 
 class PlanWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
-    override fun getTitle(): String  = "Doing Plan Worker"
+
+    override fun getTitle(): String  = "Syncing Plans"
 
     override fun doWork(): Result {
         beforeWork()
 
-        notificationDelegate.notify("Running \u8086")
+        notificationDelegate.notify("Running...")
         return try {
             PlanIntentServiceHelper.getInstance().syncPlans()
             Result.success().apply {
-                notificationDelegate.notify("Success!!")
+                notificationDelegate.notify("Complete")
+                notificationDelegate.dismiss()
             }
         } catch (e: Exception) {
             Timber.e(e)
             Result.failure().apply {
-                notificationDelegate.notify("Error: ${e.message}")
+                notificationDelegate.notify("Failed")
+                notificationDelegate.dismiss()
             }
         }
-
     }
 
     companion object {

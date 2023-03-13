@@ -12,16 +12,18 @@ import timber.log.Timber
 
 class P2pProcessRecordsWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
+
     override fun getTitle(): String  = "Processing P2P Records"
 
     override fun doWork(): Result {
         beforeWork()
 
-        notificationDelegate.notify("Running \u8086")
+        notificationDelegate.notify("Running...")
         return try {
             val coreLibrary = CoreLibrary.getInstance()
             val openSrpContext = coreLibrary.context()
             val allSharedPreferences = openSrpContext.allSharedPreferences()
+
             if (allSharedPreferences.isPeerToPeerUnprocessedEvents){
                 coreLibrary.isPeerToPeerProcessing = true
 
@@ -32,12 +34,14 @@ class P2pProcessRecordsWorker(context: Context, workerParams: WorkerParameters) 
                     val eventClientQueryResult =
                         eventClientRepository.fetchEventClientsByRowId(eventsMaxRowId)
                     val eventClientList = eventClientQueryResult.eventClientList
+
                     if (eventClientList.size > 0) {
                         DrishtiApplication.getInstance<DrishtiApplication>().clientProcessor.processClient(
                             eventClientList
                         )
                         val tableMaxRowId =
                             eventClientRepository.getMaxRowId(EventClientRepository.Table.event)
+
                         if (tableMaxRowId == eventClientQueryResult.maxRowId) {
                             eventsMaxRowId = -1
                             allSharedPreferences.resetLastPeerToPeerSyncProcessedEvent()
@@ -63,15 +67,16 @@ class P2pProcessRecordsWorker(context: Context, workerParams: WorkerParameters) 
             }
 
             Result.success().apply {
-                notificationDelegate.notify("Success!!")
+                notificationDelegate.notify("Complete")
+                notificationDelegate.dismiss()
             }
         } catch (e: Exception) {
             Timber.e(e)
             Result.failure().apply {
-                notificationDelegate.notify("Error: ${e.message}")
+                notificationDelegate.notify("Failed")
+                notificationDelegate.dismiss()
             }
         }
-
     }
 
     fun sendSyncStatusBroadcastMessage(fetchStatus: FetchStatus) = applicationContext.sendBroadcast(Utils.completeSync(fetchStatus))

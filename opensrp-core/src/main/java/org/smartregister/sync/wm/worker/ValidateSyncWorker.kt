@@ -22,12 +22,13 @@ import java.util.stream.Collectors
 
 class ValidateSyncWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
-    override fun getTitle(): String  = "Doing Sync Validations"
+
+    override fun getTitle(): String  = "Sync Validation"
 
     override fun doWork(): Result {
         beforeWork()
 
-        notificationDelegate.notify("Running \u8086")
+        notificationDelegate.notify("Running...")
         return try {
             val openSrpContext = CoreLibrary.getInstance().context()
             val baseUrl = openSrpContext.configuration().dristhiBaseURL().let {
@@ -37,21 +38,23 @@ class ValidateSyncWorker(context: Context, workerParams: WorkerParameters) :
             validateSync(openSrpContext.httpAgent, openSrpContext.eventClientRepository, baseUrl)
 
             Result.success().apply {
-                notificationDelegate.notify("Success!!")
+                notificationDelegate.notify("Complete")
+                notificationDelegate.dismiss()
             }
         } catch (e: Exception) {
             Timber.e(e)
             Result.failure().apply {
-                notificationDelegate.notify("Error: ${e.message}")
+                notificationDelegate.notify("Failed")
+                notificationDelegate.dismiss()
             }
         }
-
     }
 
     private fun validateSync(httpAgent: HTTPAgent, eventClientRepository: EventClientRepository, baseUrl: String, initialFetchLimit: Int = FETCH_LIMIT){
         var fetchLimit = initialFetchLimit
         val clientIds: MutableList<String> =
             eventClientRepository.getUnValidatedClientBaseEntityIds(fetchLimit)
+
         if (clientIds.isNotEmpty()) {
             fetchLimit -= clientIds.size
         }

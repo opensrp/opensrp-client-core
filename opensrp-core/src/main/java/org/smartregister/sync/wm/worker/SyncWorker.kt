@@ -38,11 +38,13 @@ import java.util.Date
 
 class SyncWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
+
     override fun getTitle(): String = "Syncing Data"
+
     override fun doWork(): Result {
         beforeWork()
 
-        notificationDelegate.notify("Running \u8086")
+        notificationDelegate.notify("Running...")
         return try {
             val syncUtils = SyncUtils(applicationContext)
             val httpAgent = CoreLibrary.getInstance().context().httpAgent
@@ -60,21 +62,21 @@ class SyncWorker(context: Context, workerParams: WorkerParameters) :
                 eventSyncTrace,
                 processClientTrace,
                 allSharedPreferences
-            )
-                .apply {
-                    doSync()
-                }
+            ).apply {
+                doSync()
+            }
 
             Result.success().apply {
-                notificationDelegate.notify("Success!!")
+                notificationDelegate.notify("Complete")
+                notificationDelegate.dismiss()
             }
         } catch (e: Exception) {
             Timber.e(e)
             Result.failure().apply {
                 notificationDelegate.notify("Failed")
+                notificationDelegate.dismiss()
             }
         }
-
     }
 
     companion object {
@@ -120,12 +122,15 @@ class Syncer(
             complete(FetchStatus.noConnection)
             return
         }
+
         try {
             val hasValidAuthorization: Boolean = syncUtils.verifyAuthorization()
             var isSuccessfulPushSync = false
+
             if (hasValidAuthorization || !CoreLibrary.getInstance().syncConfiguration!!.disableSyncToServerIfUserIsDisabled()) {
                 isSuccessfulPushSync = pushToServer()
             }
+
             if (!hasValidAuthorization) {
                 syncUtils.logoutUser()
             } else if (!syncUtils.isAppVersionAllowed) {
@@ -143,7 +148,7 @@ class Syncer(
         }
     }
 
-    fun pullECFromServer() {
+    private fun pullECFromServer() {
         fetchRetry(0, true)
     }
 
@@ -151,52 +156,61 @@ class Syncer(
     private fun fetchRetry(count: Int, returnCount: Boolean) {
         try {
             val configs = CoreLibrary.getInstance().syncConfiguration
-            if (configs!!.syncFilterParam == null || StringUtils.isBlank(
-                    configs.syncFilterValue
-                )
+            if (configs!!.syncFilterParam == null
+                || StringUtils.isBlank(configs.syncFilterValue)
             ) {
                 complete(FetchStatus.fetchedFailed)
                 return
             }
+
             val ecSyncUpdater = ECSyncHelper.getInstance(context)
             val baseUrl = getFormattedBaseUrl()
             val lastSyncDatetime = ecSyncUpdater.lastSyncTimeStamp
+
             Timber.i("LAST SYNC DT %s", DateTime(lastSyncDatetime))
+
             complete(FetchStatus.fetchedFailed)
             startEventTrace(PerformanceMonitoring.FETCH, 0)
+
             val syncParamBuilder = RequestParamsBuilder().configureSyncFilter(
                 configs.syncFilterParam.value(), configs.syncFilterValue
             ).addServerVersion(lastSyncDatetime).addEventPullLimit(getEventPullLimit())
+
             val resp = getUrlResponse(
                 httpAgent,
                 baseUrl + SYNC_URL, syncParamBuilder,
                 configs, returnCount
             )
+
             if (resp == null) {
                 FetchStatus.fetchedFailed.setDisplayValue("Empty response")
                 complete(FetchStatus.fetchedFailed)
                 return
             }
+
             if (resp.isUrlError) {
                 FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue())
                 complete(FetchStatus.fetchedFailed)
                 return
             }
+
             if (resp.isTimeoutError) {
                 FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue())
                 complete(FetchStatus.fetchedFailed)
                 return
             }
+
             if (resp.isFailure && !resp.isUrlError && !resp.isTimeoutError) {
                 fetchFailed(count)
                 return
             }
+
             if (returnCount) {
                 totalRecords = resp.totalRecords
             }
             processFetchedEvents(httpAgent, resp, ecSyncUpdater, count)
         } catch (e: java.lang.Exception) {
-            Timber.e(e, "Fetch Retry Exception:  %s", e.message)
+            Timber.e(e, "Fetch Retry Exception: %s", e.message)
             fetchFailed(count)
         }
     }
@@ -218,6 +232,7 @@ class Syncer(
     ): Response<*> {
         val response: Response<*>
         var requestUrl = baseURL
+
         if (configs.isSyncUsingPost) {
             response = httpAgent.postWithJsonResponse(
                 requestUrl,
@@ -312,25 +327,27 @@ class Syncer(
 
     // PUSH TO SERVER
     private fun pushToServer(): Boolean {
-        return pushECToServer(
-            CoreLibrary.getInstance().context().eventClientRepository
-        ) &&
-                (!CoreLibrary.getInstance().context().hasForeignEvents() || pushECToServer(
-                    CoreLibrary.getInstance().context().foreignEventClientRepository
-                ))
+        return pushECToServer(CoreLibrary.getInstance().context().eventClientRepository)
+            && (
+                !CoreLibrary.getInstance().context().hasForeignEvents()
+                || pushECToServer(CoreLibrary.getInstance().context().foreignEventClientRepository)
+            )
     }
 
     private fun pushECToServer(db: EventClientRepository): Boolean {
         var isSuccessfulPushSync = true
         isEmptyToAdd = true
+
         // push foreign events to server
         val totalEventCount = db.unSyncedEventsCount
         var eventsUploadedCount = 0
         var baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL()
+
         if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
             baseUrl =
                 baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)))
         }
+
         for (i in 0 until syncUtils.getNumOfSyncAttempts()) {
             val pendingEventsClients = db.getUnSyncedEvents(
                 getEventBatchSize()
@@ -502,7 +519,7 @@ class Syncer(
         return Pair.create(0L, 0L)
     }
 
-    fun fetchNumberOfEvents(jsonObject: JSONObject?): Int {
+    private fun fetchNumberOfEvents(jsonObject: JSONObject?): Int {
         var count = -1
         val NO_OF_EVENTS = "no_of_events"
         try {
@@ -515,9 +532,9 @@ class Syncer(
         return count
     }
 
-    fun sendSyncProgressBroadcast(eventCount: Int) {
+    private fun sendSyncProgressBroadcast(eventCount: Int) {
         totalRecordsCount += totalRecords.toInt()
-        fetchedRecords = fetchedRecords + eventCount
+        fetchedRecords += eventCount
         val syncProgress = SyncProgress()
         syncProgress.syncEntity = SyncEntity.EVENTS
         syncProgress.totalRecords = totalRecords

@@ -8,27 +8,29 @@ import timber.log.Timber
 
 class SyncLocationsByTeamIdsWorker(context: Context, workerParams: WorkerParameters) :
     BaseWorker(context, workerParams) {
-    override fun getTitle(): String  = "Syncing  Locations By Team Ids"
+
+    override fun getTitle(): String  = "Syncing Locations by Team"
 
     override fun doWork(): Result {
         beforeWork()
 
-        notificationDelegate.notify("Running \u8086")
+        notificationDelegate.notify("Running...")
         return try {
             LocationServiceHelper.getInstance()
                 .apply {
                     fetchOpenMrsLocationsByTeamIds()
                 }
             Result.success().apply {
-                notificationDelegate.notify("Success!!")
+                notificationDelegate.notify("Complete")
+                notificationDelegate.dismiss()
             }
         } catch (e: Exception) {
             Timber.e(e)
             Result.failure().apply {
-                notificationDelegate.notify("Error: ${e.message}")
+                notificationDelegate.notify("Failed")
+                notificationDelegate.dismiss()
             }
         }
-
     }
 
     companion object {
