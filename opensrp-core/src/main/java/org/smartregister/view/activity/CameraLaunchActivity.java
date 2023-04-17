@@ -50,7 +50,7 @@ public class CameraLaunchActivity extends SecuredActivity {
         try {
             imageFile = createImageFile();
         } catch (IOException e) {
-            Timber.e(e, "Could not create temp file for storing image. Not taking photo. " + e);
+            Timber.e(e, "Could not create temp file for storing image. Not taking photo.");
             return;
         }
         takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));

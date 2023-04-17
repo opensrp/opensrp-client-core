@@ -1,7 +1,5 @@
 package org.smartregister.util;
 
-import android.util.Log;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -29,7 +27,7 @@ public class ZipUtil {
             ZipInputStream zin = new ZipInputStream(fin);
             ZipEntry ze = null;
             while ((ze = zin.getNextEntry()) != null) {
-                Timber.v("ZipService: ", "Unzipping " + ze.getName());
+                Timber.v("ZipService: Unzipping %s", ze.getName());
                 if (ze.isDirectory()) {
                     checkDir(ze.getName());
                 } else {

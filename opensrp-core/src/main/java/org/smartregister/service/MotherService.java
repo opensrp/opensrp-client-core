@@ -96,7 +96,7 @@ public class MotherService {
     public void close(String entityId, String reason) {
         Mother mother = allBeneficiaries.findMotherWithOpenStatus(entityId);
         if (mother == null) {
-            Timber.w("Tried to close non-existent mother. Entity ID: " + entityId);
+            Timber.w("Tried to close non-existent mother. Entity ID: %s", entityId);
             return;
         }
 

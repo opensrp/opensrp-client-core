@@ -3,7 +3,6 @@ package org.smartregister.sync;
 import static org.joda.time.DateTimeConstants.MILLIS_PER_MINUTE;
 import static org.joda.time.DateTimeConstants.MILLIS_PER_SECOND;
 import static org.smartregister.event.Event.ON_LOGOUT;
-import static java.text.MessageFormat.format;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -43,7 +42,7 @@ public class DrishtiSyncScheduler {
         alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + SYNC_START_DELAY,
                 SYNC_INTERVAL, syncBroadcastReceiverIntent);
 
-        Timber.i(format("Scheduled to sync from server every {0} seconds.", SYNC_INTERVAL / 1000));
+        Timber.i("Scheduled to sync from server every %s seconds.", SYNC_INTERVAL / 1000);
 
         attachListenerToStopSyncOnLogout(context);
     }
