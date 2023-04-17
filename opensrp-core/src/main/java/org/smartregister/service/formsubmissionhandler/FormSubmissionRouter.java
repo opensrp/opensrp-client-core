@@ -1,14 +1,5 @@
 package org.smartregister.service.formsubmissionhandler;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.smartregister.domain.form.FormSubmission;
-import org.smartregister.repository.FormDataRepository;
-import org.smartregister.util.Log;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.text.MessageFormat.format;
 import static org.smartregister.AllConstants.FormNames.ANC_CLOSE;
 import static org.smartregister.AllConstants.FormNames.ANC_INVESTIGATIONS;
 import static org.smartregister.AllConstants.FormNames.ANC_REGISTRATION;
@@ -38,7 +29,14 @@ import static org.smartregister.AllConstants.FormNames.TT_2;
 import static org.smartregister.AllConstants.FormNames.TT_BOOSTER;
 import static org.smartregister.AllConstants.FormNames.VITAMIN_A;
 import static org.smartregister.event.Event.FORM_SUBMITTED;
-import static org.smartregister.util.Log.logWarn;
+
+import org.smartregister.domain.form.FormSubmission;
+import org.smartregister.repository.FormDataRepository;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import timber.log.Timber;
 
 public class FormSubmissionRouter {
     private final Map<String, FormSubmissionHandler> handlerMap;
@@ -99,15 +97,16 @@ public class FormSubmissionRouter {
         FormSubmission submission = formDataRepository.fetchFromSubmission(instanceId);
         FormSubmissionHandler handler = handlerMap.get(submission.formName());
         if (handler == null) {
-            logWarn("Could not find a handler due to unknown form submission: " + submission);
+            Timber.w("Could not find a handler due to unknown form submission: %s", submission);
         } else {
             try {
                 handler.handle(submission);
             } catch (Exception e) {
-                Log.logError(format("Handling {0} form submission with instance Id: {1} for "
-                                + "entity: {2} failed with exception : {3}", submission.formName(),
-                        submission.instanceId(), submission.entityId(),
-                        ExceptionUtils.getStackTrace(e)));
+                Timber.e(e,
+                        "Handling %s form submission with instance Id: %s for entity: %s failed with exception",
+                        submission.formName(),
+                        submission.instanceId(), submission.entityId()
+                );
                 throw e;
             }
         }

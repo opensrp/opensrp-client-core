@@ -1,11 +1,12 @@
 package org.smartregister.view.controller;
 
+import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
+
 import android.os.AsyncTask;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
-import static org.smartregister.util.Log.logWarn;
+import timber.log.Timber;
 
 public class UpdateANMDetailsTask {
     private static final ReentrantLock lock = new ReentrantLock();
@@ -20,7 +21,7 @@ public class UpdateANMDetailsTask {
             @Override
             protected String doInBackground(Void... params) {
                 if (!lock.tryLock()) {
-                    logWarn("Update ANM details is in progress, so going away.");
+                    Timber.w("Update ANM details is in progress, so going away.");
                     cancel(true);
                     return null;
                 }

@@ -8,12 +8,13 @@ import androidx.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
-import org.smartregister.util.Log;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+
+import timber.log.Timber;
 
 public class AllSharedPreferences {
     public static final String ANM_IDENTIFIER_PREFERENCE_KEY = "anmIdentifier";
@@ -245,14 +246,13 @@ public class AllSharedPreferences {
             String base = url.getProtocol() + "://" + url.getHost();
             int port = url.getPort();
 
-            Log.logInfo("Base URL: " + base);
-            Log.logInfo("Port: " + port);
+            Timber.i("Base URL: %s", base);
+            Timber.i("Port: %s", port);
 
             saveHost(base);
             savePort(port);
-
         } catch (MalformedURLException e) {
-            Log.logError("Malformed Url: " + baseUrl);
+            Timber.e(e, "Malformed Url: %s", baseUrl);
         }
     }
 
@@ -393,6 +393,7 @@ public class AllSharedPreferences {
 
     /**
      * Used for logic with allowOfflineLoginWithInvalidToken
+     *
      * @param httpStatus
      */
     public void updateLastAuthenticationHttpStatus(int httpStatus) {

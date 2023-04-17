@@ -1,5 +1,8 @@
 package org.smartregister.service;
 
+import static org.smartregister.domain.FetchStatus.fetchedFailed;
+import static org.smartregister.domain.FetchStatus.nothingFetched;
+
 import com.google.gson.Gson;
 
 import org.ei.drishti.dto.Action;
@@ -9,13 +12,10 @@ import org.smartregister.repository.AllReports;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.router.ActionRouter;
-import org.smartregister.util.Log;
 
 import java.util.List;
 
-import static java.text.MessageFormat.format;
-import static org.smartregister.domain.FetchStatus.fetchedFailed;
-import static org.smartregister.domain.FetchStatus.nothingFetched;
+import timber.log.Timber;
 
 public class ActionService {
     private final ActionRouter actionRouter;
@@ -61,9 +61,7 @@ public class ActionService {
             try {
                 handleAction(actionToUse);
             } catch (Exception e) {
-                Log.logError(
-                        format("Failed while handling action with target: {0} and " + "exception:"
-                                + " {1}", actionToUse.target(), e));
+                Timber.e(e, "Failed while handling action with target: %s", actionToUse.target());
             }
         }
     }
@@ -94,7 +92,7 @@ public class ActionService {
             });
 
         } else {
-            Log.logWarn("Unknown action " + actionToUse.target());
+            Timber.w("Unknown action %s", actionToUse.target());
         }
 
         allSettings.savePreviousFetchIndex(actionToUse.index());

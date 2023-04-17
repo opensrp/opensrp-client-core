@@ -1,7 +1,6 @@
 package org.smartregister.ssl;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.apache.http.conn.scheme.SocketFactory;
 import org.apache.http.conn.ssl.AbstractVerifier;
@@ -18,6 +17,8 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.TrustManagerFactory;
+
+import timber.log.Timber;
 
 /**
  * Created by onaio on 01/09/2017.
@@ -62,7 +63,7 @@ public class OpensrpSSLHelper {
             });
             return socketFactory;
         } catch (Exception e) {
-            Log.d(TAG, e.getMessage() != null ? e.getMessage() : "");
+            Timber.e(e);
             throw new AssertionError(e);
         }
     }

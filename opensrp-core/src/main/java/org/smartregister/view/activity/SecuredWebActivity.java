@@ -1,5 +1,8 @@
 package org.smartregister.view.activity;
 
+import static android.webkit.ConsoleMessage.MessageLevel.ERROR;
+import static java.text.MessageFormat.format;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.view.MenuItem;
@@ -17,10 +20,7 @@ import org.smartregister.sync.UpdateActionsTask;
 import org.smartregister.view.InternationalizationContext;
 import org.smartregister.view.controller.UpdateController;
 
-import static android.webkit.ConsoleMessage.MessageLevel.ERROR;
-import static java.text.MessageFormat.format;
-import static org.smartregister.util.Log.logDebug;
-import static org.smartregister.util.Log.logError;
+import timber.log.Timber;
 
 public abstract class SecuredWebActivity extends SecuredActivity {
     protected WebView webView;
@@ -116,10 +116,10 @@ public abstract class SecuredWebActivity extends SecuredActivity {
                         consoleMessage.sourceId());
 
                 if (consoleMessage.messageLevel() == ERROR) {
-                    logError(message);
+                    Timber.e(message);
                     reportException(message);
                 } else {
-                    logDebug(message);
+                    Timber.d(message);
                 }
                 return true;
             }

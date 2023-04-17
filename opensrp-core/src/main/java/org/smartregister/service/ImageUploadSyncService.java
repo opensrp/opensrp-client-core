@@ -13,8 +13,6 @@ import java.util.List;
 
 import timber.log.Timber;
 
-import static org.smartregister.util.Log.logError;
-
 /**
  * Created by Raihan Ahmed on 10/14/15.
  */
@@ -42,12 +40,11 @@ public class ImageUploadSyncService extends IntentService {
                 if (response.contains(ResponseStatus.success.displayValue())) {
                     imageRepo.close(profileImages.get(i).getImageid());
                 } else {
-                    Timber.e("Image Upload: could NOT upload image ID: %s %s %s ", profileImages.get(i).getImageid(), " PATH: ", profileImages.get(i).getFilepath());
-
+                    Timber.e("Image Upload: could NOT upload image ID: %s PATH: %s ", profileImages.get(i).getImageid(), profileImages.get(i).getFilepath());
                 }
             }
         } catch (Exception e) {
-            logError(TAG, e.getMessage());
+            Timber.e(e);
         }
     }
 

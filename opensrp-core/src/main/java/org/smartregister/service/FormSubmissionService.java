@@ -1,8 +1,15 @@
 package org.smartregister.service;
 
+import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
+import static org.smartregister.AllConstants.FORM_NAME_PARAM;
+import static org.smartregister.AllConstants.INSTANCE_ID_PARAM;
+import static org.smartregister.AllConstants.SYNC_STATUS;
+import static org.smartregister.AllConstants.VERSION_PARAM;
+import static org.smartregister.domain.SyncStatus.SYNCED;
+import static org.smartregister.util.EasyMap.create;
+
 import com.google.gson.Gson;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.domain.form.FormData;
 import org.smartregister.domain.form.FormField;
@@ -14,15 +21,7 @@ import org.smartregister.repository.FormDataRepository;
 import java.util.List;
 import java.util.Map;
 
-import static java.text.MessageFormat.format;
-import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
-import static org.smartregister.AllConstants.FORM_NAME_PARAM;
-import static org.smartregister.AllConstants.INSTANCE_ID_PARAM;
-import static org.smartregister.AllConstants.SYNC_STATUS;
-import static org.smartregister.AllConstants.VERSION_PARAM;
-import static org.smartregister.domain.SyncStatus.SYNCED;
-import static org.smartregister.util.EasyMap.create;
-import static org.smartregister.util.Log.logError;
+import timber.log.Timber;
 
 public class FormSubmissionService {
     private ZiggyService ziggyService;
@@ -56,9 +55,7 @@ public class FormSubmissionService {
                     updateFTSsearch(submission);
 
                 } catch (Exception e) {
-                    logError(format("Form submission processing failed, with instanceId: {0}. "
-                                    + "Exception: {1}, StackTrace: {2}", submission.instanceId(),
-                            e.getMessage(), ExceptionUtils.getStackTrace(e)));
+                    Timber.e(e, "Form submission processing failed, with instanceId: %s", submission.instanceId());
                 }
             }
             formDataRepository

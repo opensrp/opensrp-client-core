@@ -1,10 +1,11 @@
 package org.smartregister.sync;
 
 import org.smartregister.repository.AllSettings;
-import org.smartregister.util.Log;
 import org.smartregister.view.BackgroundAction;
 import org.smartregister.view.LockingBackgroundTask;
 import org.smartregister.view.ProgressIndicator;
+
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 1/2/18.
@@ -23,7 +24,7 @@ public class SaveANMTeamTask {
 
             @Override
             public void setInvisible() {
-                Log.logInfo("Successfully saved ANM Team information");
+                Timber.i("Successfully saved ANM Team information");
             }
         });
     }

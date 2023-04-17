@@ -49,10 +49,10 @@ public class DetailsRepository extends DrishtiRepository {
             int updated = database.update(TABLE_NAME, values,
                     BASE_ENTITY_ID_COLUMN + " = ? AND " + KEY_COLUMN + " MATCH ? ",
                     new String[]{baseEntityId, key});
-            //Log.i(getClass().getName(), "Detail Row Updated: " + String.valueOf(updated));
+            //Timber.i("Detail Row Updated: %s", String.valueOf(updated));
         } else {
             long rowId = database.insert(TABLE_NAME, null, values);
-            //Log.i(getClass().getName(), "Details Row Inserted : " + String.valueOf(rowId));
+            //Timber.i("Details Row Inserted : %s", String.valueOf(rowId));
         }
     }
 

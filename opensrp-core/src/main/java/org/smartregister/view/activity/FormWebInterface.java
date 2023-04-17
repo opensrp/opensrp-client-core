@@ -1,11 +1,11 @@
 package org.smartregister.view.activity;
 
+import static org.smartregister.AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE;
+
 import android.app.Activity;
 import android.webkit.JavascriptInterface;
 
-import org.smartregister.util.Log;
-
-import static org.smartregister.AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE;
+import timber.log.Timber;
 
 public class FormWebInterface {
     private final String model;
@@ -36,7 +36,7 @@ public class FormWebInterface {
 
     @JavascriptInterface
     public void log(String message) {
-        Log.logInfo(message);
+        Timber.i(message);
     }
 
     @JavascriptInterface

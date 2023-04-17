@@ -30,8 +30,6 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-import static org.smartregister.util.Log.logError;
-
 public abstract class DrishtiApplication extends Application {
 
     protected static DrishtiApplication mInstance;
@@ -88,7 +86,7 @@ public abstract class DrishtiApplication extends Application {
             mInstance = this;
             SQLiteDatabase.loadLibs(this);
         } catch (UnsatisfiedLinkError e) {
-            logError("Error on onCreate: " + e);
+            Timber.e(e, "Error on onCreate");
         }
     }
 

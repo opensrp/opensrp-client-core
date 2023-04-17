@@ -8,20 +8,20 @@ import android.net.NetworkInfo;
 
 import org.smartregister.sync.DrishtiSyncScheduler;
 
-import static org.smartregister.util.Log.logInfo;
+import timber.log.Timber;
 
 public class ConnectivityChangeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
-        logInfo("Connectivity change receiver triggered.");
+        Timber.i("Connectivity change receiver triggered.");
         if (intent.getExtras() != null) {
             if (isDeviceDisconnectedFromNetwork(intent)) {
-                logInfo("Device got disconnected from network. Stopping Dristhi Sync scheduler.");
+                Timber.i("Device got disconnected from network. Stopping Dristhi Sync scheduler.");
                 DrishtiSyncScheduler.stop(context);
                 return;
             }
             if (isDeviceConnectedToNetwork(intent)) {
-                logInfo("Device got connected to network. Trying to start Dristhi Sync scheduler.");
+                Timber.i("Device got connected to network. Trying to start Dristhi Sync scheduler.");
                 DrishtiSyncScheduler.start(context);
             }
         }

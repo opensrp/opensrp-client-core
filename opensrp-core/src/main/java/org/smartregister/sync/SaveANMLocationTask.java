@@ -2,10 +2,11 @@ package org.smartregister.sync;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.repository.AllSettings;
-import org.smartregister.util.Log;
 import org.smartregister.view.BackgroundAction;
 import org.smartregister.view.LockingBackgroundTask;
 import org.smartregister.view.ProgressIndicator;
+
+import timber.log.Timber;
 
 public class SaveANMLocationTask {
     private final LockingBackgroundTask task;
@@ -20,7 +21,7 @@ public class SaveANMLocationTask {
 
             @Override
             public void setInvisible() {
-                Log.logInfo("Successfully saved ANM TeamLocation information");
+                Timber.i("Successfully saved ANM TeamLocation information");
             }
         });
     }

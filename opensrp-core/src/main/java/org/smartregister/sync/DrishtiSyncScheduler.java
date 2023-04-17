@@ -1,5 +1,9 @@
 package org.smartregister.sync;
 
+import static org.joda.time.DateTimeConstants.MILLIS_PER_MINUTE;
+import static org.joda.time.DateTimeConstants.MILLIS_PER_SECOND;
+import static org.smartregister.event.Event.ON_LOGOUT;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -10,11 +14,7 @@ import android.net.NetworkInfo;
 import org.smartregister.CoreLibrary;
 import org.smartregister.event.Listener;
 
-import static java.text.MessageFormat.format;
-import static org.joda.time.DateTimeConstants.MILLIS_PER_MINUTE;
-import static org.joda.time.DateTimeConstants.MILLIS_PER_SECOND;
-import static org.smartregister.event.Event.ON_LOGOUT;
-import static org.smartregister.util.Log.logInfo;
+import timber.log.Timber;
 
 public class DrishtiSyncScheduler {
     public static final int SYNC_INTERVAL = 2 * MILLIS_PER_MINUTE;
@@ -42,7 +42,7 @@ public class DrishtiSyncScheduler {
         alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + SYNC_START_DELAY,
                 SYNC_INTERVAL, syncBroadcastReceiverIntent);
 
-        logInfo(format("Scheduled to sync from server every {0} seconds.", SYNC_INTERVAL / 1000));
+        Timber.i("Scheduled to sync from server every %s seconds.", SYNC_INTERVAL / 1000);
 
         attachListenerToStopSyncOnLogout(context);
     }
@@ -51,7 +51,7 @@ public class DrishtiSyncScheduler {
         ON_LOGOUT.removeListener(logoutListener);
         logoutListener = new Listener<Boolean>() {
             public void onEvent(Boolean data) {
-                logInfo("User is logged out. Stopping Dristhi Sync scheduler.");
+                Timber.i("User is logged out. Stopping Dristhi Sync scheduler.");
                 stop(context);
             }
         };
@@ -65,7 +65,7 @@ public class DrishtiSyncScheduler {
         if (networkInfo != null && networkInfo.isConnected()) {
             start(context);
         } else {
-            logInfo("Device not connected to network so not starting sync scheduler.");
+            Timber.i("Device not connected to network so not starting sync scheduler.");
         }
     }
 
@@ -80,6 +80,6 @@ public class DrishtiSyncScheduler {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(syncBroadcastReceiverIntent);
 
-        logInfo("Unscheduled sync.");
+        Timber.i("Unscheduled sync.");
     }
 }

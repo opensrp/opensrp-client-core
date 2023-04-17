@@ -1,7 +1,8 @@
 package org.smartregister.view.activity;
 
+import static org.mockito.Mockito.verify;
+
 import android.content.Intent;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.google.android.gms.vision.Detector;
@@ -22,7 +23,7 @@ import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.view.activity.mock.BarcodeScanActivityMock;
 
-import static org.mockito.Mockito.verify;
+import timber.log.Timber;
 
 public class BarcodeScanActivityTest extends BaseUnitTest {
 
@@ -93,9 +94,8 @@ public class BarcodeScanActivityTest extends BaseUnitTest {
         try {
             barcodeScanActivity.finish();
             controller.pause().stop().destroy(); //destroy controller if we can
-
         } catch (Exception e) {
-            Log.e(getClass().getCanonicalName(), e.getMessage());
+            Timber.e(e);
         }
 
         System.gc();

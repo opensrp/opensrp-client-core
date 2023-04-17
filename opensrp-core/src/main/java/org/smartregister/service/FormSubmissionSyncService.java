@@ -4,8 +4,6 @@ import static org.smartregister.convertor.FormSubmissionConvertor.toDomain;
 import static org.smartregister.domain.FetchStatus.fetched;
 import static org.smartregister.domain.FetchStatus.fetchedFailed;
 import static org.smartregister.domain.FetchStatus.nothingFetched;
-import static org.smartregister.util.Log.logError;
-import static org.smartregister.util.Log.logInfo;
 import static java.text.MessageFormat.format;
 
 import android.content.Intent;
@@ -25,6 +23,8 @@ import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class FormSubmissionSyncService {
     public static final String FORM_SUBMISSIONS_PATH = "form-submissions";
@@ -69,13 +69,11 @@ public class FormSubmissionSyncService {
                 .post(format("{0}/{1}", configuration.dristhiBaseURL(), FORM_SUBMISSIONS_PATH),
                         jsonPayload);
         if (response.isFailure()) {
-            logError(format("Form submissions sync failed. Submissions:  {0}",
-                    pendingFormSubmissions));
+            Timber.e("Form submissions sync failed. Submissions:  %s", pendingFormSubmissions);
             return;
         }
         formDataRepository.markFormSubmissionsAsSynced(pendingFormSubmissions);
-        logInfo(format("Form submissions sync successfully. Submissions:  {0}",
-                pendingFormSubmissions));
+        Timber.i("Form submissions sync successfully. Submissions: %s", pendingFormSubmissions);
     }
 
     public FetchStatus pullFromServer() {
@@ -89,7 +87,7 @@ public class FormSubmissionSyncService {
                     downloadBatchSize);
             Response<String> response = httpAgent.fetch(uri);
             if (response.isFailure()) {
-                logError(format("Form submissions pull failed."));
+                Timber.e("Form submissions pull failed.");
                 return fetchedFailed;
             }
             List<FormSubmissionDTO> formSubmissions = new Gson()
