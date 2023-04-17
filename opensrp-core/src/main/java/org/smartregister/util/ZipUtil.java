@@ -8,7 +8,7 @@ import java.io.FileOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static org.smartregister.util.Log.logError;
+import timber.log.Timber;
 
 /**
  * Created by Dimas Ciputra on 3/21/15.
@@ -29,7 +29,7 @@ public class ZipUtil {
             ZipInputStream zin = new ZipInputStream(fin);
             ZipEntry ze = null;
             while ((ze = zin.getNextEntry()) != null) {
-                Log.v("ZipService: ", "Unzipping " + ze.getName());
+                Timber.v("ZipService: ", "Unzipping " + ze.getName());
                 if (ze.isDirectory()) {
                     checkDir(ze.getName());
                 } else {
@@ -45,7 +45,7 @@ public class ZipUtil {
             /* delete the file */
             deleteFile(this.zipFile);
         } catch (Exception e) {
-            logError("" + e);
+            Timber.e(e);
         }
     }
 
@@ -60,9 +60,9 @@ public class ZipUtil {
         File f = new File(fileToDelete);
         if (f.exists()) {
             if (f.delete()) {
-                Log.v("ZipService: ", "Deleting file " + f.getName());
+                Timber.v("ZipService: Deleting file %s", f.getName());
             } else {
-                Log.v("ZipService: ", "Unable to delete " + f.getName());
+                Timber.v("ZipService: Unable to delete %s", f.getName());
             }
         }
     }

@@ -1,5 +1,13 @@
 package org.smartregister.view.fragment;
 
+import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.smartregister.AllConstants.SHORT_DATE_FORMAT;
+import static java.text.MessageFormat.format;
+import static java.util.Arrays.asList;
+
 import android.content.pm.ActivityInfo;
 import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
@@ -7,7 +15,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,13 +50,7 @@ import org.smartregister.view.dialog.SortOption;
 
 import java.util.List;
 
-import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
-import static java.text.MessageFormat.format;
-import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.smartregister.AllConstants.SHORT_DATE_FORMAT;
+import timber.log.Timber;
 
 /**
  * Created by koros on 10/12/15.
@@ -321,7 +322,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
     }
 
     public void onSortSelection(SortOption sortBy) {
-        Log.v("he pressed this", sortBy.name());
+        Timber.v("he pressed this %s", sortBy.name());
         currentSortOption = sortBy;
         appliedSortView.setText(sortBy.name());
         clientsAdapter

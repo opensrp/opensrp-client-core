@@ -7,9 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 import org.smartregister.R;
-import org.smartregister.util.Log;
 
-import java.text.MessageFormat;
+import timber.log.Timber;
 
 public class VideosController {
     public static final String VIDEO_PLAYER_INTENT = "org.ei.dristhi_iec.VIDEO_PLAYER";
@@ -26,8 +25,7 @@ public class VideosController {
             videoPlayerIntent.putExtra(VIDEO_NAME_PARAMETER, videoName);
             context.startActivity(videoPlayerIntent);
         } catch (ActivityNotFoundException e) {
-            Log.logError(MessageFormat
-                    .format("Could not play video: {0}. Exception: {1}", videoName, e));
+            Timber.e("Could not play video: %s", videoName);
             new AlertDialog.Builder(context)
                     .setMessage(R.string.videos_IEC_not_installed_dialog_message)
                     .setTitle(R.string.videos_cannot_play_video_dialog_title).setCancelable(true)
@@ -37,8 +35,7 @@ public class VideosController {
                         }
                     }).show();
         } catch (Exception e) {
-            Log.logError(MessageFormat
-                    .format("Could not play video: {0}. Exception: {1}", videoName, e));
+            Timber.e(e, "Could not play video: %s", videoName);
             new AlertDialog.Builder(context)
                     .setMessage(R.string.videos_unknown_error_dialog_message)
                     .setTitle(R.string.videos_cannot_play_video_dialog_title).setCancelable(true)

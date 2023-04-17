@@ -1228,7 +1228,9 @@ public class EventClientRepository extends BaseRepository {
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     String id = cursor.getString(0);
-                    ids.add(id);
+
+                    if (StringUtils.isNotBlank(id))
+                        ids.add(id);
 
                     cursor.moveToNext();
                 }
@@ -1268,7 +1270,9 @@ public class EventClientRepository extends BaseRepository {
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     String id = cursor.getString(0);
-                    ids.add(id);
+
+                    if (StringUtils.isNotBlank(id))
+                        ids.add(id);
 
                     cursor.moveToNext();
                 }

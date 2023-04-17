@@ -596,7 +596,7 @@ public class Utils {
                 return userInfo.team.team.uuid;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Timber.e(e, "Error");
         }
 
         return null;
@@ -626,7 +626,7 @@ public class Utils {
             }
             return initials;
         } catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException e) {
-            Timber.e("Index out of Bounds " + e.getMessage());
+            Timber.e(e, "Index out of Bounds");
             return "";
         }
     }
@@ -662,10 +662,9 @@ public class Utils {
         cal.add(Calendar.YEAR, -age);
         cal.set(Calendar.DAY_OF_MONTH, 1);
 
-
         cal.set(Calendar.MONTH, 0);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern, getDefaultLocale());
         return dateFormat.format(cal.getTime());
     }
 

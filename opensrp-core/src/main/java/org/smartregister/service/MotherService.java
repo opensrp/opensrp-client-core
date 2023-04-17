@@ -1,13 +1,5 @@
 package org.smartregister.service;
 
-import org.smartregister.AllConstants;
-import org.smartregister.domain.Mother;
-import org.smartregister.domain.ServiceProvided;
-import org.smartregister.domain.form.FormSubmission;
-import org.smartregister.repository.AllBeneficiaries;
-import org.smartregister.repository.AllEligibleCouples;
-import org.smartregister.repository.AllTimelineEvents;
-
 import static org.smartregister.AllConstants.ANCCloseFields.CLOSE_REASON_FIELD_NAME;
 import static org.smartregister.AllConstants.ANCCloseFields.DEATH_OF_WOMAN_FIELD_VALUE;
 import static org.smartregister.AllConstants.ANCRegistrationFields.REGISTRATION_DATE;
@@ -47,7 +39,16 @@ import static org.smartregister.domain.TimelineEvent.forStartOfPregnancyForEC;
 import static org.smartregister.domain.TimelineEvent.forTTShotProvided;
 import static org.smartregister.util.EasyMap.create;
 import static org.smartregister.util.IntegerUtil.tryParse;
-import static org.smartregister.util.Log.logWarn;
+
+import org.smartregister.AllConstants;
+import org.smartregister.domain.Mother;
+import org.smartregister.domain.ServiceProvided;
+import org.smartregister.domain.form.FormSubmission;
+import org.smartregister.repository.AllBeneficiaries;
+import org.smartregister.repository.AllEligibleCouples;
+import org.smartregister.repository.AllTimelineEvents;
+
+import timber.log.Timber;
 
 public class MotherService {
     public static final String MOTHER_ID = "motherId";
@@ -95,7 +96,7 @@ public class MotherService {
     public void close(String entityId, String reason) {
         Mother mother = allBeneficiaries.findMotherWithOpenStatus(entityId);
         if (mother == null) {
-            logWarn("Tried to close non-existent mother. Entity ID: " + entityId);
+            Timber.w("Tried to close non-existent mother. Entity ID: " + entityId);
             return;
         }
 
@@ -148,8 +149,7 @@ public class MotherService {
     public void deliveryOutcome(FormSubmission submission) {
         Mother mother = allBeneficiaries.findMotherWithOpenStatus(submission.entityId());
         if (mother == null) {
-            logWarn("Failed to handle delivery outcome for mother. Entity ID: " + submission
-                    .entityId());
+            Timber.w("Failed to handle delivery outcome for mother. Entity ID: %s", submission.entityId());
             return;
         }
         if (BOOLEAN_FALSE.equals(submission.getFieldValue(DID_WOMAN_SURVIVE)) || BOOLEAN_FALSE

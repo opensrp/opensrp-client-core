@@ -28,8 +28,6 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static org.smartregister.util.Log.logError;
-
 /**
  * Created by Dimas Ciputra on 3/23/15.
  */
@@ -55,7 +53,7 @@ public class AllFormVersionSyncService {
 
         Response<String> response = httpAgent.fetch(uri);
         if (response.isFailure()) {
-            logError("Form definition pull error");
+            Timber.e("Form definition pull error");
             status = FetchStatus.fetchedFailed;
             return status;
         }

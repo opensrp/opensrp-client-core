@@ -7,7 +7,6 @@ import static org.smartregister.AllConstants.FIELD_OVERRIDES_PARAM;
 import static org.smartregister.AllConstants.FORM_NAME_PARAM;
 import static org.smartregister.AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE;
 import static org.smartregister.event.Event.ON_LOGOUT;
-import static org.smartregister.util.Log.logInfo;
 
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -196,7 +195,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (isSuccessfulFormSubmission(resultCode)) {
-            logInfo("Form successfully saved. MetaData: " + metaData);
+            Timber.i("Form successfully saved. MetaData: %s", metaData);
             if (hasMetadata()) {
                 Map<String, String> metaDataMap = new Gson()
                         .fromJson(metaData, new TypeToken<Map<String, String>>() {

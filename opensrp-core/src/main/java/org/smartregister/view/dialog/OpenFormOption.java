@@ -1,7 +1,5 @@
 package org.smartregister.view.dialog;
 
-import android.util.Log;
-
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.form.FieldOverrides;
@@ -10,6 +8,8 @@ import org.smartregister.view.controller.FormController;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import timber.log.Timber;
 
 public class OpenFormOption implements EditOption {
     private final String name;
@@ -74,7 +74,7 @@ public class OpenFormOption implements EditOption {
 
             }
             FieldOverrides fieldOverrides = new FieldOverrides(overridejsonobject.toString());
-            Log.v("in edit form optopn", overridejsonobject.toString());
+            Timber.v("in edit form option %s", overridejsonobject.toString());
             formController
                     .startFormActivity(formName, client.entityId(), fieldOverrides.getJSONString());
         }

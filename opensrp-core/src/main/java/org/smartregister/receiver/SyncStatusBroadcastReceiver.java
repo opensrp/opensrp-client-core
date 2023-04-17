@@ -1,5 +1,7 @@
 package org.smartregister.receiver;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,8 +17,7 @@ import org.smartregister.sync.DrishtiSyncScheduler;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static org.smartregister.util.Log.logError;
+import timber.log.Timber;
 
 /**
  * Created by keyman on 26/06/2018.
@@ -52,7 +53,7 @@ public class SyncStatusBroadcastReceiver extends BroadcastReceiver {
                 context.unregisterReceiver(singleton);
             }
         } catch (IllegalArgumentException e) {
-            logError("Error on destroy: " + e);
+            Timber.e(e, "Error on destroy");
         }
     }
 

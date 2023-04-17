@@ -1,7 +1,6 @@
 package org.smartregister.sync.intent;
 
 import android.content.Intent;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.smartregister.AllConstants;
@@ -11,8 +10,6 @@ import org.smartregister.job.SyncServiceJob;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
 
 import timber.log.Timber;
-
-import static org.smartregister.util.Log.logError;
 
 /**
  * Created by ndegwamartin on 14/09/2018.
@@ -50,7 +47,7 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
                 }
             } catch (JSONException e) {
                 isSuccessfulSync = false;
-                logError(TAG + " Error fetching client settings");
+                Timber.e(e, " Error fetching client settings");
             }
         }
         return isSuccessfulSync;

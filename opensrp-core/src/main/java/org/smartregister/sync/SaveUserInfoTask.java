@@ -1,10 +1,11 @@
 package org.smartregister.sync;
 
 import org.smartregister.repository.AllSettings;
-import org.smartregister.util.Log;
 import org.smartregister.view.BackgroundAction;
 import org.smartregister.view.LockingBackgroundTask;
 import org.smartregister.view.ProgressIndicator;
+
+import timber.log.Timber;
 
 /**
  * Created by Dimas Ciputra on 3/24/15.
@@ -23,7 +24,7 @@ public class SaveUserInfoTask {
 
             @Override
             public void setInvisible() {
-                Log.logInfo("Successfully saved User information");
+                Timber.i("Successfully saved User information");
             }
         });
     }

@@ -1,5 +1,8 @@
 package org.smartregister.sync;
 
+import static org.smartregister.domain.FetchStatus.fetched;
+import static org.smartregister.domain.FetchStatus.nothingFetched;
+
 import android.content.Context;
 
 import org.smartregister.CoreLibrary;
@@ -13,9 +16,7 @@ import org.smartregister.view.BackgroundAction;
 import org.smartregister.view.LockingBackgroundTask;
 import org.smartregister.view.ProgressIndicator;
 
-import static org.smartregister.domain.FetchStatus.fetched;
-import static org.smartregister.domain.FetchStatus.nothingFetched;
-import static org.smartregister.util.Log.logInfo;
+import timber.log.Timber;
 
 public class UpdateActionsTask {
     private final LockingBackgroundTask task;
@@ -43,7 +44,7 @@ public class UpdateActionsTask {
 
     public void updateFromServer(final AfterFetchListener afterFetchListener) {
         if (CoreLibrary.getInstance().context().IsUserLoggedOut()) {
-            logInfo("Not updating from server as user is not logged in.");
+            Timber.i("Not updating from server as user is not logged in.");
             return;
         }
 

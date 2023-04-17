@@ -16,8 +16,10 @@ import android.graphics.drawable.TransitionDrawable;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Build;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -395,8 +397,7 @@ public class OpenSRPImageLoader extends ImageLoader {
                     try {
                         os.close();
                     } catch (IOException e) {
-                        Timber.e("Failed to close static images output stream after attempting"
-                                + " to write image");
+                        Timber.e("Failed to close static images output stream after attempting to write image");
                     }
                 }
             }
@@ -641,7 +642,7 @@ public class OpenSRPImageLoader extends ImageLoader {
             try {
                 // Display image loaded from disk if reference is not NULL
                 if (result != null) {
-                    Log.i(TAG, "Found image on local storage, no download needed");
+                    Timber.i("Found image on local storage, no download needed");
                     ImageContainer imgContainer = new ImageContainer(result, null, null,
                             opensrpImageListener);
                     if (opensrpImageListener != null) {

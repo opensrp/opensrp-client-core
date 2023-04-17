@@ -6,9 +6,7 @@ import org.smartregister.R;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.ChildClient;
 
-import java.util.Locale;
-
-import static org.smartregister.util.Log.logWarn;
+import timber.log.Timber;
 
 public enum ChildServiceType {
     MEASLES {
@@ -282,7 +280,7 @@ public enum ChildServiceType {
                         : ChildServiceType.valueOf(type.toUpperCase(Utils.getDefaultLocale()));
             }
         } catch (IllegalArgumentException e) {
-            logWarn("Unknown current Service Type : " + type + " Exception : " + e);
+            Timber.e(e, "Unknown current Service Type : %s", type);
             return defaultType;
         }
     }

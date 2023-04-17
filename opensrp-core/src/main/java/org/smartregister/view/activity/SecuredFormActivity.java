@@ -27,7 +27,8 @@ import static org.smartregister.R.string.form_back_confirm_dialog_message;
 import static org.smartregister.R.string.form_back_confirm_dialog_title;
 import static org.smartregister.R.string.no_button_label;
 import static org.smartregister.R.string.yes_button_label;
-import static org.smartregister.util.Log.logError;
+
+import timber.log.Timber;
 
 public abstract class SecuredFormActivity extends SecuredWebActivity {
     public static final String ANDROID_CONTEXT_FIELD = "androidContext";
@@ -47,7 +48,7 @@ public abstract class SecuredFormActivity extends SecuredWebActivity {
         try {
             getIntentData();
         } catch (IOException e) {
-            logError(e.toString());
+            Timber.e(e);
             finish();
         }
         webViewInitialization();
@@ -81,8 +82,7 @@ public abstract class SecuredFormActivity extends SecuredWebActivity {
                 encodedFieldOverrides = URLEncoder.encode(this.fieldOverrides, "utf-8");
             }
         } catch (Exception e) {
-            logError(MessageFormat
-                    .format("Cannot encode field overrides: {0} due to : {1}", fieldOverrides, e));
+            Timber.e(e, "Cannot encode field overrides: %s", fieldOverrides);
         }
         webView.loadUrl(MessageFormat.format("file:///android_asset/www/enketo/template" + "" + ""
                         + ".html?{0}={1}&{2}={3}&{4}={5}&{6}={7}&touch=true", FORM_NAME_PARAM,
@@ -105,9 +105,9 @@ public abstract class SecuredFormActivity extends SecuredWebActivity {
                         goBack();
                     }
                 }).setNegativeButton(no_button_label, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-            }
-        }).show();
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                }).show();
     }
 
     private void goBack() {

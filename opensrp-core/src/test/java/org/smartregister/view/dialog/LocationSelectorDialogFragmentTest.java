@@ -1,7 +1,5 @@
 package org.smartregister.view.dialog;
 
-import android.util.Log;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +13,8 @@ import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.view.dialog.mock.LocationSelectorDialogFragmentTestActivity;
+
+import timber.log.Timber;
 
 /**
  * Created by kaderchowdhury on 20/11/17.
@@ -56,9 +56,8 @@ public class LocationSelectorDialogFragmentTest extends BaseUnitTest {
         try {
 //            activity.finish();
 //            controller.pause().stop().destroy(); //destroy controller if we can
-
         } catch (Exception e) {
-            Log.e(getClass().getCanonicalName(), e.getMessage());
+            Timber.e(e);
         }
 
         System.gc();

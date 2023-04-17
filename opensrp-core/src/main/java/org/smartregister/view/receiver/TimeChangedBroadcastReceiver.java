@@ -7,7 +7,7 @@ import android.content.IntentFilter;
 
 import java.util.ArrayList;
 
-import static org.smartregister.util.Log.logError;
+import timber.log.Timber;
 
 /**
  * Created by Jason Rogena - jrogena@ona.io on 18/05/2017.
@@ -42,7 +42,7 @@ public class TimeChangedBroadcastReceiver extends BroadcastReceiver {
             }
 
         } catch (IllegalArgumentException e) {
-            logError("Error on destroy: " + e);
+            Timber.e(e, "Error on destroy");
         }
     }
 

@@ -854,7 +854,7 @@ public class FormAttributeParser {
             Timber.e(  ex);
             return null;
         }
-        //Log.d("File", fileContents);
+        //Timber.d("File", fileContents);
         return fileContents;
     }
 }
