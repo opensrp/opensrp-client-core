@@ -314,14 +314,13 @@ public class FormAttributeParser {
         JsonArray subforms = jsonObject.get("form").getAsJsonObject().get("sub_forms").
                 getAsJsonArray();
         for (JsonElement jsonElement : subforms) {
-            if (jsonElement.getAsJsonObject().get("name").getAsString().
-                    equalsIgnoreCase(subform)) {
+            if (jsonElement.getAsJsonObject().get("name").getAsString().equalsIgnoreCase(subform)) {
                 JsonArray flarr = jsonElement.getAsJsonObject().get("fields").getAsJsonArray();
 
                 for (JsonElement fl : flarr) {
                     if (fl.getAsJsonObject().has("bind") && fl.getAsJsonObject().get("bind")
                             .getAsString().
-                                    equalsIgnoreCase(bind)) {
+                            equalsIgnoreCase(bind)) {
                         return fl.getAsJsonObject().get("name").getAsString();
                     }
                 }
@@ -851,10 +850,10 @@ public class FormAttributeParser {
             is.close();
             fileContents = new String(buffer, "UTF-8");
         } catch (IOException ex) {
-            Timber.e(  ex);
+            Timber.e(ex);
             return null;
         }
-        //Timber.d("File", fileContents);
+        //Timber.d("File %s", fileContents);
         return fileContents;
     }
 }
