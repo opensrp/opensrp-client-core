@@ -7,7 +7,6 @@ import static org.smartregister.AllConstants.SYNC_STATUS;
 import static org.smartregister.AllConstants.VERSION_PARAM;
 import static org.smartregister.domain.SyncStatus.SYNCED;
 import static org.smartregister.util.EasyMap.create;
-import static java.text.MessageFormat.format;
 
 import com.google.gson.Gson;
 
@@ -56,7 +55,7 @@ public class FormSubmissionService {
                     updateFTSsearch(submission);
 
                 } catch (Exception e) {
-                    Timber.e(e, format("Form submission processing failed, with instanceId: %s", submission.instanceId()));
+                    Timber.e(e, "Form submission processing failed, with instanceId: %s", submission.instanceId());
                 }
             }
             formDataRepository
