@@ -472,7 +472,8 @@ public class AllConstants {
         public static final String ENCRYPT_SHARED_PREFERENCES = "encrypt.shared.preferences";
         public static final String ALLOW_OFFLINE_LOGIN_WITH_INVALID_TOKEN = "allow.offline.login.with.invalid.token";
         public static final String IGNORE_LOCATION_DELETION = "ignore.location.deletion";
-        public static final String ENABLE_SEARCH_BUTTON ="enable.search.button";
+        public static final String ENABLE_SEARCH_BUTTON = "enable.search.button";
+        public static final String DISABLE_PROFILE_IMAGES_FEATURE = "feature.profile.images.disabled";
     }
 
     public interface FORCED_LOGOUT {
