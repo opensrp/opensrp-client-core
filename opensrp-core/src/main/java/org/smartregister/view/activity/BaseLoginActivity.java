@@ -12,7 +12,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,6 +37,8 @@ import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.util.Locale;
+
+import timber.log.Timber;
 
 /**
  * Created by manu on 01/11/2018.
@@ -208,7 +209,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
     @Override
     public void hideKeyboard() {
-        Log.i(getClass().getName(), "Hiding Keyboard " + DateTime.now().toString());
+        Timber.i(getClass().getName(), "Hiding Keyboard %s", DateTime.now().toString());
         Utils.hideKeyboard(this);
     }
 

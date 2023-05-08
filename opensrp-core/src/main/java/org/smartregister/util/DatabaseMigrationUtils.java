@@ -87,7 +87,7 @@ public class DatabaseMigrationUtils {
         String searchSql = "create virtual table "
                 + CommonFtsObject.searchTableName(originalTableName) + TABLE_PREFIX
                 + " using fts4 (" + joinedSearchColumns + ");";
-        Log.d(TAG, "Create query is\n---------------------------\n" + searchSql);
+        Timber.d("Create query is\n---------------------------\n%s", searchSql);
 
         database.execSQL(searchSql);
 
@@ -103,7 +103,7 @@ public class DatabaseMigrationUtils {
             if (!newlyAddedFields.contains(curColumn)) {
                 oldFields.add(curColumn);
             } else {
-                Log.d(TAG, "Skipping field " + curColumn + " from the select query");
+                Timber.d("Skipping field %s from the select query", curColumn);
             }
         }
 
@@ -113,19 +113,19 @@ public class DatabaseMigrationUtils {
                 + " select " + StringUtils.join(oldFields, ", ") + " from "
                 + CommonFtsObject.searchTableName(originalTableName);
 
-        Log.d(TAG, "Insert query is\n---------------------------\n" + insertQuery);
+        Timber.d("Insert query is\n---------------------------\n%s", insertQuery);
         database.execSQL(insertQuery);
 
         // Run the drop query
         String dropQuery = "drop table " + CommonFtsObject.searchTableName(originalTableName);
-        Log.d(TAG, "Drop query is\n---------------------------\n" + dropQuery);
+        Timber.d("Drop query is\n---------------------------\n%s", dropQuery);
         database.execSQL(dropQuery);
 
         // Run rename query
         String renameQuery = "alter table "
                 + CommonFtsObject.searchTableName(originalTableName) + TABLE_PREFIX
                 + " rename to " + CommonFtsObject.searchTableName(originalTableName);
-        Log.d(TAG, "Rename query is\n---------------------------\n" + renameQuery);
+        Timber.d("Rename query is\n---------------------------\n%s", renameQuery);
         database.execSQL(renameQuery);
 
     }
@@ -146,7 +146,7 @@ public class DatabaseMigrationUtils {
                     + " SELECT " + StringUtils.join(table.columns(), ", ") + " FROM "
                     + TABLE_PREFIX + table.name();
 
-            Log.d(TAG, "Insert query is\n---------------------------\n" + insertQuery);
+            Timber.d("Insert query is\n---------------------------\n%s", insertQuery);
 
             database.execSQL(insertQuery);
 
@@ -174,7 +174,7 @@ public class DatabaseMigrationUtils {
                     + " SELECT " + StringUtils.join(columns, ", ") + " FROM "
                     + TABLE_PREFIX + table;
 
-            Log.d(TAG, "Insert query is\n---------------------------\n" + insertQuery);
+            Timber.d("Insert query is\n---------------------------\n%s", insertQuery);
 
             database.execSQL(insertQuery);
 

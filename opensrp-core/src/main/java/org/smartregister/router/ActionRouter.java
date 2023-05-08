@@ -4,7 +4,7 @@ import org.ei.drishti.dto.Action;
 import org.smartregister.domain.AlertActionRoute;
 import org.smartregister.domain.MotherActionRoute;
 
-import static org.smartregister.util.Log.logWarn;
+import timber.log.Timber;
 
 public class ActionRouter {
     public void directAlertAction(Action action) {
@@ -15,7 +15,7 @@ public class ActionRouter {
                 return;
             }
         }
-        logWarn("Unknown type in Alert action: " + action);
+        Timber.w("Unknown type in Alert action: %s", action);
     }
 
     public void directMotherAction(Action action) {
@@ -26,6 +26,6 @@ public class ActionRouter {
                 return;
             }
         }
-        logWarn("Unknown type in Mother action: " + action);
+        Timber.w("Unknown type in Mother action: %s", action);
     }
 }

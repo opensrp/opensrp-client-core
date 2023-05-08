@@ -1,6 +1,6 @@
 package org.smartregister.commonregistry;
 
-import android.util.Log;
+import static java.util.Collections.sort;
 
 import com.google.gson.Gson;
 
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static java.util.Collections.sort;
+import timber.log.Timber;
 
 /**
  * Created by Raihan Ahmed on 4/15/15.
@@ -180,7 +180,7 @@ public class CommonPersonObjectController {
                 if (filtermap != null) {
                     for (CommonPersonObject personinlist : p) {
                         boolean filter = false;
-                        Log.v("is filtermap ", "" + filtermap.size());
+                        Timber.v("is filtermap %s", filtermap.size());
                         for (int k = 0; k < filtermap.size(); k++) {
                             filter = filtermap.get(k).filtermapLogic(personinlist);
                         }
@@ -198,12 +198,12 @@ public class CommonPersonObjectController {
                 } else if (filterkey == null) {
 
                     for (CommonPersonObject personinlist : p) {
-                        Log.v("is filtermap ", "wrong place");
+                        Timber.v("is filtermap wrong place");
                         if (!isnull(personinlist)) {
                             CommonPersonObjectClient pClient = new CommonPersonObjectClient(
                                     personinlist.getCaseId(), personinlist.getDetails(),
                                     personinlist.getDetails().get(nameString));
-//                    pClient.entityID = personinlist.getCaseId();
+//                            pClient.entityID = personinlist.getCaseId();
                             pClient.setColumnmaps(personinlist.getColumnmaps());
                             pClients.add(pClient);
                         }
@@ -307,7 +307,7 @@ public class CommonPersonObjectController {
                         if (filtermap != null) {
                             for (CommonPersonObject personinlist : p) {
                                 boolean filter = false;
-                                Log.v("is filtermap ", "" + filtermap.size());
+                                Timber.v("is filtermap %s", filtermap.size());
                                 for (int k = 0; k < filtermap.size(); k++) {
                                     filter = filtermap.get(k).filtermapLogic(personinlist);
                                 }

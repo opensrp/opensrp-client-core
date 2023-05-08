@@ -1,9 +1,9 @@
 package org.smartregister.repository.helper;
 
-import android.util.Log;
-
 import net.sqlcipher.DatabaseErrorHandler;
 import net.sqlcipher.database.SQLiteDatabase;
+
+import timber.log.Timber;
 
 /**
  * Created by ndegwamartin on 18/07/2020.
@@ -19,17 +19,16 @@ public class OpenSRPDatabaseErrorHandler implements DatabaseErrorHandler {
      *              is detected.
      */
     public void onCorruption(SQLiteDatabase dbObj) {
-        Log.e(TAG, "Corruption reported by sqlite on database, db file path: " + dbObj.getPath());
+        Timber.e("Corruption reported by sqlite on database, db file path: %s", dbObj.getPath());
 
         if (dbObj.isOpen()) {
-            Log.e(TAG, "Database object for corrupted database is already open, closing");
+            Timber.e("Database object for corrupted database is already open, closing");
 
             try {
                 dbObj.close();
             } catch (Exception e) {
-                Log.e(TAG, "Exception closing Database object for corrupted database, ignored", e);
+                Timber.e(e, "Exception closing Database object for corrupted database, ignored");
             }
         }
-
     }
 }

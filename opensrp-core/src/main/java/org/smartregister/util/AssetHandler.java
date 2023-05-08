@@ -29,7 +29,7 @@ public class AssetHandler {
             Timber.e(ex);
             return null;
         }
-        //Log.d("File", fileContents);
+        //Timber.d("File %s", fileContents);
         return fileContents;
     }
 

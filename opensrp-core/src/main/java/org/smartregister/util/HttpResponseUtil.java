@@ -13,7 +13,8 @@ import java.text.ParseException;
 import java.util.zip.GZIPInputStream;
 
 import static java.text.MessageFormat.format;
-import static org.smartregister.util.Log.logError;
+
+import timber.log.Timber;
 
 public class HttpResponseUtil {
     public static InputStream getResponseStream(HttpResponse response) throws IOException, ParseException {
@@ -37,8 +38,7 @@ public class HttpResponseUtil {
             }
             return AssetHandler.jsonStringToJava(responseString, LoginResponseData.class);
         } catch (Exception e) {
-            logError(format("Cannot read data from response due to exception: {0}. Stack "
-                    + "trace: {1}", e.getMessage(), ExceptionUtils.getStackTrace(e)));
+            Timber.e(e, "Cannot read data from response due to exception");
         }
         return null;
     }
@@ -50,8 +50,7 @@ public class HttpResponseUtil {
             }
             return AssetHandler.jsonStringToJava(responseString, LoginResponseData.class);
         } catch (Exception e) {
-            logError(format("Cannot read data from response due to exception: {0}. Stack "
-                    + "trace: {1}", e.getMessage(), ExceptionUtils.getStackTrace(e)));
+            Timber.e(e, "Cannot read data from response due to exception");
         }
         return null;
     }

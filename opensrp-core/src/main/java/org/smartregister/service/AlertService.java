@@ -7,10 +7,11 @@ import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.domain.Alert;
 import org.smartregister.domain.AlertStatus;
 import org.smartregister.repository.AlertRepository;
-import org.smartregister.util.Log;
 
 import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
 
 public class AlertService {
     private AlertRepository repository;
@@ -112,7 +113,7 @@ public class AlertService {
                 }
             }
         } catch (Exception e) {
-            Log.logError(android.util.Log.getStackTraceString(e));
+            Timber.e(e);
         }
 
     }
@@ -142,7 +143,7 @@ public class AlertService {
 
             }
         } catch (Exception e) {
-            Log.logError(android.util.Log.getStackTraceString(e));
+            Timber.e(e);
         }
     }
 

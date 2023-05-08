@@ -1,5 +1,7 @@
 package org.smartregister.service;
 
+import static java.text.MessageFormat.format;
+
 import android.content.res.AssetManager;
 import android.webkit.JavascriptInterface;
 
@@ -8,8 +10,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static java.text.MessageFormat.format;
-import static org.smartregister.util.Log.logError;
+import timber.log.Timber;
 
 public class ZiggyFileLoader {
     private String ziggyDirectoryPath;
@@ -42,8 +43,7 @@ public class ZiggyFileLoader {
             FormPathService fps = new FormPathService(assetManager);
             return fps.getForms(fileName, "UTF-8");
         } catch (IOException e) {
-            logError(format("Error while loading app data file: {0}, with exception: {1}", fileName,
-                    e));
+            Timber.e(e, format("Error while loading app data file: %s", fileName));
         }
         return null;
     }

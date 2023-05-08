@@ -6,7 +6,7 @@ import android.os.Build;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import static org.smartregister.util.Log.logVerbose;
+import timber.log.Timber;
 
 public class LockingBackgroundTask {
     private static final ReentrantLock lock = new ReentrantLock();
@@ -21,7 +21,7 @@ public class LockingBackgroundTask {
             @Override
             protected T doInBackground(Void... params) {
                 if (!lock.tryLock()) {
-                    logVerbose("Going away. Something else is holding the lock.");
+                    Timber.v("Going away. Something else is holding the lock.");
                     cancel(true);
                     return null;
                 }

@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -29,6 +28,8 @@ import org.smartregister.view.viewpager.OpenSRPViewPager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterActivity {
 
@@ -122,21 +123,22 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
 
             } else {
                 for (int i = 0; i < alertlist_for_client.size(); i++) {
-//           psrfdue.setText(alertlist_for_client.get(i).expiryDate());
-                    Log.v("printing alertlist", alertlist_for_client.get(i).status().value());
+//                    psrfdue.setText(alertlist_for_client.get(i).expiryDate());
+                    Timber.v("printing alertlist %s", alertlist_for_client.get(i).status().value());
                     alertstate = alertlist_for_client.get(i).status().value();
 
                 }
             }
             return alertstate;
         } catch (Exception e) {
+            Timber.e(e);
             return "";
         }
     }
 
     @Override
     public void startFormActivity(String formName, String entityId, String metaData) {
-        Log.v("fieldoverride", metaData);
+        Timber.v("fieldoverride %s", metaData);
         try {
             int formIndex = FormUtils.getIndexForFormName(formName, formNames) + 1; // add the offset
             if (entityId != null || metaData != null) {

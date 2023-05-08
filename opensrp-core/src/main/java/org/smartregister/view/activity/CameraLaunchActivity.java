@@ -1,5 +1,12 @@
 package org.smartregister.view.activity;
 
+import static android.os.Environment.DIRECTORY_PICTURES;
+import static android.os.Environment.getExternalStoragePublicDirectory;
+import static org.smartregister.AllConstants.CHILD_TYPE;
+import static org.smartregister.AllConstants.ENTITY_ID;
+import static org.smartregister.AllConstants.WOMAN_TYPE;
+import static org.smartregister.event.Event.ON_PHOTO_CAPTURED;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,7 +16,6 @@ import android.provider.MediaStore;
 import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.event.CapturedPhotoInformation;
-import org.smartregister.util.Log;
 import org.smartregister.util.Utils;
 
 import java.io.File;
@@ -17,12 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
-import static android.os.Environment.DIRECTORY_PICTURES;
-import static android.os.Environment.getExternalStoragePublicDirectory;
-import static org.smartregister.AllConstants.CHILD_TYPE;
-import static org.smartregister.AllConstants.ENTITY_ID;
-import static org.smartregister.AllConstants.WOMAN_TYPE;
-import static org.smartregister.event.Event.ON_PHOTO_CAPTURED;
+import timber.log.Timber;
 
 public class CameraLaunchActivity extends SecuredActivity {
     private static final int TAKE_PHOTO_REQUEST_CODE = 111;
@@ -49,7 +50,7 @@ public class CameraLaunchActivity extends SecuredActivity {
         try {
             imageFile = createImageFile();
         } catch (IOException e) {
-            Log.logError("Could not create temp file for storing image. Not taking photo. " + e);
+            Timber.e(e, "Could not create temp file for storing image. Not taking photo.");
             return;
         }
         takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
@@ -118,7 +119,7 @@ public class CameraLaunchActivity extends SecuredActivity {
             out.flush();
             out.close();
         } catch (Exception e) {
-            Log.logError("Could not save resized image. " + e);
+            Timber.e(e, "Could not save resized image");
         }
     }
 }
