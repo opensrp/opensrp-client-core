@@ -1,11 +1,15 @@
 package org.smartregister.repository;
 
 import android.content.Context;
+
 import androidx.annotation.VisibleForTesting;
+
+import net.sqlcipher.DatabaseErrorHandler;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteDatabaseHook;
 import net.sqlcipher.database.SQLiteException;
 import net.sqlcipher.database.SQLiteOpenHelper;
+
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
@@ -15,6 +19,7 @@ import org.smartregister.repository.helper.OpenSRPDatabaseErrorHandler;
 import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -22,6 +27,7 @@ import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+
 import timber.log.Timber;
 
 public class Repository extends SQLiteOpenHelper {
@@ -54,9 +60,9 @@ public class Repository extends SQLiteOpenHelper {
         }
     };
 
-    public Repository(Context context, Session session, DrishtiRepository... repositories) {
-        super(context, (session != null ? session.repositoryName() : AllConstants.DATABASE_NAME),
-                null, 1, hook);
+    public Repository(Context context, Session session, DatabaseErrorHandler errorHandler, DrishtiRepository... repositories) {
+        super(context, (session != null ? session.repositoryName() : AllConstants.DATABASE_NAME), null, 1, hook, errorHandler);
+
         this.repositories = repositories;
         this.context = context;
         this.session = session;
@@ -72,14 +78,14 @@ public class Repository extends SQLiteOpenHelper {
     }
 
     public Repository(Context context, Session session, CommonFtsObject commonFtsObject,
-                      DrishtiRepository... repositories) {
-        this(context, session, repositories);
+                      DatabaseErrorHandler errorHandler, DrishtiRepository... repositories) {
+        this(context, session, errorHandler, repositories);
         this.commonFtsObject = commonFtsObject;
     }
 
     public Repository(Context context, String dbName, int version, Session session,
-                      CommonFtsObject commonFtsObject, DrishtiRepository... repositories) {
-        super(context, dbName, null, version, hook);
+                      CommonFtsObject commonFtsObject, DatabaseErrorHandler errorHandler, DrishtiRepository... repositories) {
+        super(context, dbName, null, version, hook, errorHandler);
         this.dbName = dbName;
         this.repositories = repositories;
         this.context = context;
