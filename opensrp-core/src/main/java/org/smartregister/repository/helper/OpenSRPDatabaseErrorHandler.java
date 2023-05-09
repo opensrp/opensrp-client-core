@@ -3,14 +3,17 @@ package org.smartregister.repository.helper;
 import net.sqlcipher.DatabaseErrorHandler;
 import net.sqlcipher.database.SQLiteDatabase;
 
+
+import org.smartregister.util.OpenSRPImageLoader;
+
+import java.io.File;
+
 import timber.log.Timber;
 
 /**
  * Created by ndegwamartin on 18/07/2020.
  */
 public class OpenSRPDatabaseErrorHandler implements DatabaseErrorHandler {
-
-    private final String TAG = getClass().getSimpleName();
 
     /**
      * defines the default method to be invoked when database corruption is detected.
@@ -30,5 +33,20 @@ public class OpenSRPDatabaseErrorHandler implements DatabaseErrorHandler {
                 Timber.e(e, "Exception closing Database object for corrupted database, ignored");
             }
         }
+
+        copyDB(dbObj.getPath());
+    }
+
+    protected void copyDB(String sourcePath) {
+        File sourceFile = new File(sourcePath);
+        String destinationPath = getDestinationPath(sourcePath);
+        File destinationFile = new File(destinationPath);
+        boolean isSuccessful = OpenSRPImageLoader.copyFile(sourceFile, destinationFile);
+
+        Timber.d("Database Copy %s", isSuccessful);
+    }
+
+    protected String getDestinationPath(String sourcePath) {
+        return sourcePath.substring(0, sourcePath.lastIndexOf("/")) + "/drishti_" + System.currentTimeMillis() + ".db";
     }
 }

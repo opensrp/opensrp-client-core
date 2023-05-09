@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDex;
 
+import net.sqlcipher.DatabaseErrorHandler;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONObject;
@@ -17,6 +18,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
+import org.smartregister.repository.helper.OpenSRPDatabaseErrorHandler;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.P2PClassifier;
 import org.smartregister.util.BitmapImageCache;
@@ -113,9 +115,13 @@ public abstract class DrishtiApplication extends Application {
         ArrayList<DrishtiRepository> drishtiRepositoryList = CoreLibrary.getInstance().context().sharedRepositories();
         DrishtiRepository[] drishtiRepositoryArray = drishtiRepositoryList.toArray(new DrishtiRepository[drishtiRepositoryList.size()]);
         if (repository == null) {
-            repository = new Repository(getInstance().getApplicationContext(), null, drishtiRepositoryArray);
+            repository = new Repository(getInstance().getApplicationContext(), null, getDBErrorHandler(), drishtiRepositoryArray);
         }
         return repository;
+    }
+
+    protected DatabaseErrorHandler getDBErrorHandler() {
+        return new OpenSRPDatabaseErrorHandler();
     }
 
     public CredentialsHelper credentialsProvider() {
