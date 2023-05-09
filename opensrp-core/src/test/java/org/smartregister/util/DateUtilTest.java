@@ -107,4 +107,10 @@ public class DateUtilTest extends BaseUnitTest {
         Assert.assertEquals(2, DateUtil.dayDifference(new LocalDate("2019-10-01"), new LocalDate("2019-10-03")));
         Assert.assertEquals(1, DateUtil.weekDifference(new LocalDate("2019-09-26"), new LocalDate("2019-10-03")));
     }
+
+    @Test
+    public void testSetDefaultDateFormatShouldSSetTheDefaultDateFormatOfDateUtil() {
+        DateUtil.setDefaultDateFormat("yyyy/MM/dd");
+        Assert.assertEquals("yyyy/MM/dd", DateUtil.DEFAULT_DATE_FORMAT);
+    }
 }
