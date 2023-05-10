@@ -236,4 +236,12 @@ public abstract class SyncConfiguration {
     public boolean skipUnsyncedTasksOnFetchFromServer(){
         return false;
     }
+
+    /*
+     * Override this method to make the app aware
+     * is P2P sync is enabled or disabled for it
+     */
+    public boolean isP2PEnabled() {
+        return true;
+    }
 }

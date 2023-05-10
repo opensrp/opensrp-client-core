@@ -15,6 +15,7 @@ import org.smartregister.domain.Event;
 import org.smartregister.domain.Response;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
