@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDex;
 
+import net.sqlcipher.DatabaseErrorHandler;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONObject;
@@ -115,7 +116,7 @@ public abstract class DrishtiApplication extends Application {
         DrishtiRepository[] drishtiRepositoryArray = drishtiRepositoryList.toArray(new DrishtiRepository[drishtiRepositoryList.size()]);
         if (repository == null) {
             repository = new Repository(getInstance().getApplicationContext(), null,
-                    new OpenSRPDatabaseErrorHandler(), drishtiRepositoryArray);
+                    getDBErrorHandler(), drishtiRepositoryArray);
         }
         return repository;
     }
@@ -171,6 +172,10 @@ public abstract class DrishtiApplication extends Application {
 
     public Context getContext() {
         return context;
+    }
+
+    protected DatabaseErrorHandler getDBErrorHandler() {
+        return new OpenSRPDatabaseErrorHandler();
     }
 
 }
