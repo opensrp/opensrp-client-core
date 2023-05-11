@@ -18,8 +18,6 @@ public class OpenSRPDatabaseErrorHandler implements DatabaseErrorHandler {
      * is detected.
      */
     public void onCorruption(SQLiteDatabase dbObj) {
-        // NOTE: Unlike the AOSP, this version does NOT attempt to delete any attached databases.
-        // TBD: Are we really certain that the attached databases would really be corrupt?
         Timber.e("Corruption reported by sqlite on database, deleting: %s", dbObj.getPath());
 
         if (dbObj.isOpen()) {
