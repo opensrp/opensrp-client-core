@@ -3,6 +3,8 @@ package org.smartregister.repository.helper;
 import net.sqlcipher.DatabaseErrorHandler;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import java.io.File;
+
 import timber.log.Timber;
 
 /**
@@ -10,25 +12,42 @@ import timber.log.Timber;
  */
 public class OpenSRPDatabaseErrorHandler implements DatabaseErrorHandler {
 
-    private final String TAG = getClass().getSimpleName();
-
     /**
      * defines the default method to be invoked when database corruption is detected.
-     *
      * @param dbObj the {@link SQLiteDatabase} object representing the database on which corruption
-     *              is detected.
+     * is detected.
      */
     public void onCorruption(SQLiteDatabase dbObj) {
-        Timber.e("Corruption reported by sqlite on database, db file path: %s", dbObj.getPath());
+        // NOTE: Unlike the AOSP, this version does NOT attempt to delete any attached databases.
+        // TBD: Are we really certain that the attached databases would really be corrupt?
+        Timber.e("Corruption reported by sqlite on database, deleting: %s", dbObj.getPath());
 
         if (dbObj.isOpen()) {
-            Timber.e("Database object for corrupted database is already open, closing");
+            Timber.e( "Database object for corrupted database is already open, closing");
 
             try {
                 dbObj.close();
             } catch (Exception e) {
+                /* ignored */
                 Timber.e(e, "Exception closing Database object for corrupted database, ignored");
             }
+        }
+
+        deleteDatabaseFile(dbObj.getPath());
+    }
+
+    private void deleteDatabaseFile(String fileName) {
+        if (fileName.equalsIgnoreCase(":memory:") || fileName.trim().length() == 0) {
+            Timber.e("Cannot delete database. Provided filename is not valid: %s", fileName);
+            return;
+        }
+        Timber.e( "deleting the database file: %s", fileName);
+        try {
+            //noinspection ResultOfMethodCallIgnored
+            new File(fileName).delete();
+        } catch (Exception e) {
+            /* print warning and ignore exception */
+            Timber.w(e, "delete failed");
         }
     }
 }
