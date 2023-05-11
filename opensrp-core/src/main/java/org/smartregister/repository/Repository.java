@@ -56,6 +56,10 @@ public class Repository extends SQLiteOpenHelper {
         }
     };
 
+    public Repository(Context context, Session session, DrishtiRepository... repositories) {
+        this(context, session, new OpenSRPDatabaseErrorHandler(), repositories);
+    }
+
     public Repository(Context context, Session session, DatabaseErrorHandler databaseErrorHandler,
                       DrishtiRepository... repositories) {
         super(context, (session != null ? session.repositoryName() : AllConstants.DATABASE_NAME),
@@ -74,10 +78,20 @@ public class Repository extends SQLiteOpenHelper {
         }
     }
 
+    public Repository(Context context, Session session, CommonFtsObject commonFtsObject, DrishtiRepository... repositories) {
+        this(context, session, commonFtsObject, new OpenSRPDatabaseErrorHandler(), repositories);
+    }
+
+
     public Repository(Context context, Session session, CommonFtsObject commonFtsObject, DatabaseErrorHandler databaseErrorHandler,
                       DrishtiRepository... repositories) {
         this(context, session, databaseErrorHandler, repositories);
         this.commonFtsObject = commonFtsObject;
+    }
+
+    public Repository(Context context, String dbName, int version, Session session,
+                      CommonFtsObject commonFtsObject, DrishtiRepository... repositories) {
+        this(context, dbName, version, session, commonFtsObject, new OpenSRPDatabaseErrorHandler(), repositories);
     }
 
     public Repository(Context context, String dbName, int version, Session session,

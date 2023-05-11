@@ -18,7 +18,6 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
-import org.smartregister.repository.helper.OpenSRPDatabaseErrorHandler;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.P2PClassifier;
 import org.smartregister.util.BitmapImageCache;
@@ -115,8 +114,7 @@ public abstract class DrishtiApplication extends Application {
         ArrayList<DrishtiRepository> drishtiRepositoryList = CoreLibrary.getInstance().context().sharedRepositories();
         DrishtiRepository[] drishtiRepositoryArray = drishtiRepositoryList.toArray(new DrishtiRepository[drishtiRepositoryList.size()]);
         if (repository == null) {
-            repository = new Repository(getInstance().getApplicationContext(), null,
-                    getDBErrorHandler(), drishtiRepositoryArray);
+            repository = new Repository(getInstance().getApplicationContext(), null, drishtiRepositoryArray);
         }
         return repository;
     }
@@ -172,10 +170,6 @@ public abstract class DrishtiApplication extends Application {
 
     public Context getContext() {
         return context;
-    }
-
-    protected DatabaseErrorHandler getDBErrorHandler() {
-        return new OpenSRPDatabaseErrorHandler();
     }
 
 }
