@@ -18,7 +18,6 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
-import org.smartregister.repository.helper.OpenSRPDatabaseErrorHandler;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.P2PClassifier;
 import org.smartregister.util.CrashLyticsTree;
@@ -72,13 +71,12 @@ public abstract class DrishtiApplication extends Application {
     public void onCreate() {
         try {
             super.onCreate();
-
             initializeCrashLyticsTree();
 
             mInstance = this;
             SQLiteDatabase.loadLibs(this);
         } catch (UnsatisfiedLinkError e) {
-            logError("Error on onCreate: " + e);
+            Timber.e(e, "Error on onCreate");
         }
     }
 
@@ -105,8 +103,7 @@ public abstract class DrishtiApplication extends Application {
         ArrayList<DrishtiRepository> drishtiRepositoryList = CoreLibrary.getInstance().context().sharedRepositories();
         DrishtiRepository[] drishtiRepositoryArray = drishtiRepositoryList.toArray(new DrishtiRepository[drishtiRepositoryList.size()]);
         if (repository == null) {
-            repository = new Repository(getInstance().getApplicationContext(), null,
-                    new OpenSRPDatabaseErrorHandler(), drishtiRepositoryArray);
+            repository = new Repository(getInstance().getApplicationContext(), null, drishtiRepositoryArray);
         }
         return repository;
     }
