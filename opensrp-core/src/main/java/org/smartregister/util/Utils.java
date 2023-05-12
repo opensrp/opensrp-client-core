@@ -37,7 +37,6 @@ import android.os.Environment;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
@@ -66,6 +65,7 @@ import org.joda.time.Years;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.SyncConfiguration;
 import org.smartregister.SyncFilter;
 import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.commonregistry.CommonPersonObject;
@@ -1022,5 +1022,10 @@ public class Utils {
 
     public String getName() {
         return getPrefferedName();
+    }
+
+    public static boolean isP2PEnabled() {
+        SyncConfiguration configuration = CoreLibrary.getInstance().getSyncConfiguration();
+        return configuration == null || configuration.isP2PEnabled();
     }
 }

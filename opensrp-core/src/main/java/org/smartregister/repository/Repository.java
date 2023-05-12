@@ -2,6 +2,8 @@ package org.smartregister.repository;
 
 import android.content.Context;
 import androidx.annotation.VisibleForTesting;
+
+import net.sqlcipher.DatabaseErrorHandler;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteDatabaseHook;
 import net.sqlcipher.database.SQLiteException;
@@ -55,8 +57,13 @@ public class Repository extends SQLiteOpenHelper {
     };
 
     public Repository(Context context, Session session, DrishtiRepository... repositories) {
+        this(context, session, new OpenSRPDatabaseErrorHandler(), repositories);
+    }
+
+    public Repository(Context context, Session session, DatabaseErrorHandler databaseErrorHandler,
+                      DrishtiRepository... repositories) {
         super(context, (session != null ? session.repositoryName() : AllConstants.DATABASE_NAME),
-                null, 1, hook);
+                null, 1, hook, databaseErrorHandler);
         this.repositories = repositories;
         this.context = context;
         this.session = session;
@@ -71,15 +78,26 @@ public class Repository extends SQLiteOpenHelper {
         }
     }
 
-    public Repository(Context context, Session session, CommonFtsObject commonFtsObject,
+    public Repository(Context context, Session session, CommonFtsObject commonFtsObject, DrishtiRepository... repositories) {
+        this(context, session, commonFtsObject, new OpenSRPDatabaseErrorHandler(), repositories);
+    }
+
+
+    public Repository(Context context, Session session, CommonFtsObject commonFtsObject, DatabaseErrorHandler databaseErrorHandler,
                       DrishtiRepository... repositories) {
-        this(context, session, repositories);
+        this(context, session, databaseErrorHandler, repositories);
         this.commonFtsObject = commonFtsObject;
     }
 
     public Repository(Context context, String dbName, int version, Session session,
                       CommonFtsObject commonFtsObject, DrishtiRepository... repositories) {
-        super(context, dbName, null, version, hook);
+        this(context, dbName, version, session, commonFtsObject, new OpenSRPDatabaseErrorHandler(), repositories);
+    }
+
+    public Repository(Context context, String dbName, int version, Session session,
+                      CommonFtsObject commonFtsObject, DatabaseErrorHandler databaseErrorHandler,
+                      DrishtiRepository... repositories) {
+        super(context, dbName, null, version, hook, databaseErrorHandler);
         this.dbName = dbName;
         this.repositories = repositories;
         this.context = context;

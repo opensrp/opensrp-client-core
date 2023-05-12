@@ -1,6 +1,3 @@
-
-
-
 package org.smartregister.repository;
 
 import static org.smartregister.AllConstants.ROWID;
@@ -194,7 +191,7 @@ public class EventClientRepository extends BaseRepository {
                 db.execSQL("DROP INDEX " + cursor.getString(0));
             }
         } catch (Exception e) {
-            Timber.e(EventClientRepository.class.getName(), "SQLException", e);
+            Timber.e(e, "SQLException");
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -1228,7 +1225,11 @@ public class EventClientRepository extends BaseRepository {
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     String id = cursor.getString(0);
-                    ids.add(id);
+
+                    if (StringUtils.isNotBlank(id))
+                        ids.add(id);
+                    else
+                        Timber.e("Unvalidated Event FormSubmissionId is empty/NULL");
 
                     cursor.moveToNext();
                 }
@@ -1268,7 +1269,11 @@ public class EventClientRepository extends BaseRepository {
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     String id = cursor.getString(0);
-                    ids.add(id);
+
+                    if (StringUtils.isNotBlank(id))
+                        ids.add(id);
+                    else
+                        Timber.e("Unvalidated Client BaseEntityId is empty/NULL");
 
                     cursor.moveToNext();
                 }
@@ -1313,7 +1318,8 @@ public class EventClientRepository extends BaseRepository {
                 ContentValues values = new ContentValues();
                 values.put(client_column.baseEntityId.name(), beid);
                 values.put(client_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
-                values.put(ROWID, maxRowId++);
+                if (CoreLibrary.getInstance().context().hasForeignEvents())
+                    values.put(ROWID, maxRowId++);
 
                 getWritableDatabase().update(clientTable.name(),
                         values,
@@ -1337,7 +1343,8 @@ public class EventClientRepository extends BaseRepository {
                 ContentValues values = new ContentValues();
                 values.put(event_column.baseEntityId.name(), beid);
                 values.put(event_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
-                values.put(ROWID, maxRowId++);
+                if (CoreLibrary.getInstance().context().hasForeignEvents())
+                    values.put(ROWID, maxRowId++);
 
                 getWritableDatabase().update(eventTable.name(),
                         values,
@@ -1971,7 +1978,8 @@ public class EventClientRepository extends BaseRepository {
             getClientRelationShip(baseEntityId, jsonObject);
             long affected;
             if (checkIfExists(clientTable, baseEntityId)) {
-                values.put(ROWID, getMaxRowId(clientTable) + 1);
+                if (Utils.isP2PEnabled())
+                    values.put(ROWID, getMaxRowId(clientTable) + 1);
 
                 affected = getWritableDatabase().update(clientTable.name(),
                         values,
@@ -2025,8 +2033,8 @@ public class EventClientRepository extends BaseRepository {
                         jsonObject.getString(event_column
                                 .formSubmissionId
                                 .name()))) {
-
-                    values.put(ROWID, getMaxRowId(eventTable) + 1);
+                    if (Utils.isP2PEnabled())
+                        values.put(ROWID, getMaxRowId(eventTable) + 1);
                     affected = getWritableDatabase().update(eventTable.name(),
                             values,
                             event_column.formSubmissionId.name() + "=?",
@@ -2041,7 +2049,7 @@ public class EventClientRepository extends BaseRepository {
 
                 }
             } else {
-// a case here would be if an event comes from openmrs
+                // a case here would be if an event comes from openmrs
                 affected = getWritableDatabase().insert(eventTable.name(), null, values);
             }
 
@@ -2064,7 +2072,8 @@ public class EventClientRepository extends BaseRepository {
 
             ContentValues values = new ContentValues();
             values.put(event_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
-            values.put(ROWID, getMaxRowId(eventTable) + 1);
+            if (Utils.isP2PEnabled())
+                values.put(ROWID, getMaxRowId(eventTable) + 1);
 
             getWritableDatabase().update(eventTable.name(),
                     values,
@@ -2081,7 +2090,8 @@ public class EventClientRepository extends BaseRepository {
 
             ContentValues values = new ContentValues();
             values.put(event_column.syncStatus.name(), BaseRepository.TYPE_Synced);
-            values.put(ROWID, getMaxRowId(eventTable) + 1);
+            if (Utils.isP2PEnabled())
+                values.put(ROWID, getMaxRowId(eventTable) + 1);
 
             getWritableDatabase().update(eventTable.name(),
                     values,
@@ -2099,7 +2109,8 @@ public class EventClientRepository extends BaseRepository {
             ContentValues values = new ContentValues();
             values.put(client_column.baseEntityId.name(), baseEntityId);
             values.put(client_column.syncStatus.name(), BaseRepository.TYPE_Synced);
-            values.put(ROWID, getMaxRowId(clientTable) + 1);
+            if (Utils.isP2PEnabled())
+                values.put(ROWID, getMaxRowId(clientTable) + 1);
 
             getWritableDatabase().update(clientTable.name(),
                     values,
@@ -2113,41 +2124,51 @@ public class EventClientRepository extends BaseRepository {
 
     public void markEventValidationStatus(String formSubmissionId, boolean valid) {
         try {
-            ContentValues values = new ContentValues();
-            values.put(event_column.formSubmissionId.name(), formSubmissionId);
-            values.put(event_column.validationStatus.name(), valid ? TYPE_Valid : TYPE_InValid);
-            if (!valid) {
-                values.put(event_column.syncStatus.name(), TYPE_Unsynced);
+            if (StringUtils.isNotBlank(formSubmissionId)) {
+                ContentValues values = new ContentValues();
+                values.put(event_column.formSubmissionId.name(), formSubmissionId);
+                values.put(event_column.validationStatus.name(), valid ? TYPE_Valid : TYPE_InValid);
+                if (!valid) {
+                    values.put(event_column.syncStatus.name(), TYPE_Unsynced);
+                }
+                if (Utils.isP2PEnabled())
+                    values.put(ROWID, getMaxRowId(eventTable) + 1);
+
+                getWritableDatabase().update(
+                        eventTable.name(),
+                        values,
+                        event_column.formSubmissionId.name() + " = ?",
+                        new String[]{formSubmissionId}
+                );
+            } else {
+                Timber.e("markEventValidationStatus: Event formSubmissionId is empty/NULL");
             }
-            values.put(ROWID, getMaxRowId(eventTable) + 1);
-
-            getWritableDatabase().update(eventTable.name(),
-                    values,
-                    event_column.formSubmissionId.name() + " = ?",
-                    new String[]{formSubmissionId});
-
         } catch (Exception e) {
             Timber.e(e);
         }
     }
 
-
     public void markClientValidationStatus(String baseEntityId, boolean valid) {
         try {
-            ContentValues values = new ContentValues();
-            values.put(client_column.baseEntityId.name(), baseEntityId);
-            values.put(client_column.validationStatus.name(), valid ? TYPE_Valid : TYPE_InValid);
-            if (!valid) {
-                values.put(client_column.syncStatus.name(), TYPE_Unsynced);
+            if (StringUtils.isNotBlank(baseEntityId)) {
+                ContentValues values = new ContentValues();
+                values.put(client_column.baseEntityId.name(), baseEntityId);
+                values.put(client_column.validationStatus.name(), valid ? TYPE_Valid : TYPE_InValid);
+                if (!valid) {
+                    values.put(client_column.syncStatus.name(), TYPE_Unsynced);
+                }
+                if (Utils.isP2PEnabled())
+                    values.put(ROWID, getMaxRowId(clientTable) + 1);
+
+                getWritableDatabase().update(
+                        clientTable.name(),
+                        values,
+                        client_column.baseEntityId.name() + " = ?",
+                        new String[]{baseEntityId}
+                );
+            } else {
+                Timber.e("markClientValidationStatus: Client baseEntityId is empty/NULL");
             }
-
-            values.put(ROWID, getMaxRowId(clientTable) + 1);
-
-            getWritableDatabase().update(clientTable.name(),
-                    values,
-                    client_column.baseEntityId.name() + " = ?",
-                    new String[]{baseEntityId});
-
         } catch (Exception e) {
             Timber.e(e);
         }
@@ -2155,14 +2176,20 @@ public class EventClientRepository extends BaseRepository {
 
     public void markEventAsTaskUnprocessed(String formSubmissionId) {
         try {
-            ContentValues values = new ContentValues();
-            values.put(client_column.syncStatus.name(), TYPE_Task_Unprocessed);
-            values.put(ROWID, getMaxRowId(eventTable) + 1);
+            if (StringUtils.isNotBlank(formSubmissionId)) {
+                ContentValues values = new ContentValues();
+                values.put(client_column.syncStatus.name(), TYPE_Task_Unprocessed);
 
-            getWritableDatabase().update(eventTable.name(),
-                    values,
-                    event_column.formSubmissionId.name() + " = ?",
-                    new String[]{formSubmissionId});
+                if (Utils.isP2PEnabled())
+                    values.put(ROWID, getMaxRowId(eventTable) + 1);
+
+                getWritableDatabase().update(eventTable.name(),
+                        values,
+                        event_column.formSubmissionId.name() + " = ?",
+                        new String[]{formSubmissionId});
+            } else {
+                Timber.e("markEventAsTaskUnprocessed: Event formSubmissionId is empty/NULL");
+            }
         } catch (Exception e) {
             Timber.e(e);
         }

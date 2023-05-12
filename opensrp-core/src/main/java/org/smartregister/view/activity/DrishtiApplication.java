@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDex;
 
+import net.sqlcipher.DatabaseErrorHandler;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONObject;
