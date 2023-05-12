@@ -1,46 +1,30 @@
 package org.smartregister.sync;
 
+import android.os.AsyncTask;
+
 import org.smartregister.repository.AllSettings;
-import org.smartregister.view.BackgroundAction;
-import org.smartregister.view.LockingBackgroundTask;
-import org.smartregister.view.ProgressIndicator;
 
 import timber.log.Timber;
 
 /**
  * Created by Dimas Ciputra on 3/24/15.
  */
-public class SaveUserInfoTask {
-
-    private LockingBackgroundTask lockingBackgroundTask;
-    private AllSettings allSettings;
+public class SaveUserInfoTask extends AsyncTask<String, Void, String> {
+    private final AllSettings allSettings;
 
     public SaveUserInfoTask(AllSettings allSettings) {
         this.allSettings = allSettings;
-        lockingBackgroundTask = new LockingBackgroundTask(new ProgressIndicator() {
-            @Override
-            public void setVisible() {
-            }
-
-            @Override
-            public void setInvisible() {
-                Timber.i("Successfully saved User information");
-            }
-        });
     }
 
-    public void save(final String userInfo) {
-        lockingBackgroundTask.doActionInBackground(new BackgroundAction<Object>() {
-            @Override
-            public Object actionToDoInBackgroundThread() {
-                allSettings.saveUserInformation(userInfo);
-                return userInfo;
-            }
+    @Override
+    protected String doInBackground(String... strings) {
+        allSettings.saveUserInformation(strings[0]);
+        return strings[0];
+    }
 
-            @Override
-            public void postExecuteInUIThread(Object result) {
-
-            }
-        });
+    @Override
+    protected void onPostExecute(String s) {
+        Timber.i("SaveUserInfoTask executed successfully");
+        super.onPostExecute(s);
     }
 }
