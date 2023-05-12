@@ -527,12 +527,12 @@ public class UserService {
 
     public void saveAnmLocation(LocationTree anmLocation) {
         String amnLocationString = AssetHandler.javaToJsonString(anmLocation);
-        saveANMLocationTask.save(amnLocationString);
+        saveANMLocationTask.execute(amnLocationString);
     }
 
     public void saveAnmTeam(TeamMember anmTeam) {
         String anmTeamString = AssetHandler.javaToJsonString(anmTeam);
-        saveANMTeamTask.save(anmTeamString);
+        saveANMTeamTask.execute(anmTeamString);
     }
 
     public void saveJurisdictions(List<String> jurisdictions) {
@@ -579,7 +579,7 @@ public class UserService {
         }
 
         String userInfoString = AssetHandler.javaToJsonString(user);
-        saveUserInfoTask.save(userInfoString);
+        saveUserInfoTask.execute(userInfoString);
     }
 
     /**

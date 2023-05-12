@@ -1047,8 +1047,4 @@ public class Utils {
     }
         return  value;
     }
-
-    public static int getDatabaseVersion() {
-        return DrishtiApplication.getInstance().getRepository().getReadableDatabase().getVersion();
-    }
 }
