@@ -1,5 +1,27 @@
 package org.smartregister.sync.helper;
 
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.JURISDICTION_IDS;
+import static org.smartregister.AllConstants.LocationConstants.DISPLAY;
+import static org.smartregister.AllConstants.LocationConstants.LOCATION;
+import static org.smartregister.AllConstants.LocationConstants.LOCATIONS;
+import static org.smartregister.AllConstants.LocationConstants.SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS;
+import static org.smartregister.AllConstants.LocationConstants.TEAM;
+import static org.smartregister.AllConstants.LocationConstants.UUID;
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.LOCATION_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.STRUCTURE;
+import static org.smartregister.AllConstants.RETURN_COUNT;
+import static org.smartregister.AllConstants.TYPE;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
+
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -45,28 +67,6 @@ import java.util.Set;
 
 import timber.log.Timber;
 
-import static org.smartregister.AllConstants.COUNT;
-import static org.smartregister.AllConstants.JURISDICTION_IDS;
-import static org.smartregister.AllConstants.LocationConstants.DISPLAY;
-import static org.smartregister.AllConstants.LocationConstants.LOCATION;
-import static org.smartregister.AllConstants.LocationConstants.LOCATIONS;
-import static org.smartregister.AllConstants.LocationConstants.SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS;
-import static org.smartregister.AllConstants.LocationConstants.TEAM;
-import static org.smartregister.AllConstants.LocationConstants.UUID;
-import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
-import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
-import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.LOCATION_SYNC;
-import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.STRUCTURE;
-import static org.smartregister.AllConstants.RETURN_COUNT;
-import static org.smartregister.AllConstants.TYPE;
-import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
-import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
-import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
-
 public class LocationServiceHelper extends BaseHelper {
 
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
@@ -75,6 +75,7 @@ public class LocationServiceHelper extends BaseHelper {
     public static final String OPENMRS_LOCATION_BY_TEAM_IDS = "/location/by-team-ids";
     public static final String LOCATION_HIERARCHY_URL = "/rest/location/hierarchy/";
     public static final String ALL_LOCATIONS_URL = "/rest/location/getAll";
+    public static final String LOCATIONS_COUNT = "/rest/location/countAll";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
@@ -439,7 +440,14 @@ public class LocationServiceHelper extends BaseHelper {
     }
 
     public void fetchAllLocations() {
-        fetchAllLocations(RECORD_COUNT);
+        int deviceCount = locationRepository.getLocationsCount();
+        int serverCount = fetchLocationCount();
+
+        Timber.d("Server locations count: %d; Device locations count: %d", serverCount, deviceCount);
+
+        if (serverCount > deviceCount) {
+            fetchAllLocations(RECORD_COUNT);
+        }
     }
 
     public void fetchAllLocations(int recordCount) {
@@ -487,6 +495,32 @@ public class LocationServiceHelper extends BaseHelper {
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
+    }
+
+    private int fetchLocationCount() {
+        HTTPAgent httpAgent = getHttpAgent();
+        if (httpAgent == null) {
+            throw new IllegalArgumentException(ALL_LOCATIONS_URL + " http agent is null");
+        }
+
+        String baseUrl = getFormattedBaseUrl();
+        String urlParams = "?serverVersion=0&is_jurisdiction=true";
+        Response<String> resp = httpAgent.fetch(MessageFormat.format("{0}{1}{2}", baseUrl, LOCATIONS_COUNT, urlParams));
+
+        if (resp.isFailure()) {
+            Timber.e("Failed to fetch locations count: %s", resp.payload());
+        }
+
+        JSONObject serverCountData = null;
+        int count = 0;
+        try {
+            serverCountData = new JSONObject(resp.payload());
+            serverCountData.optInt("count", 0);
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+
+        return count;
     }
 
     @Nullable
