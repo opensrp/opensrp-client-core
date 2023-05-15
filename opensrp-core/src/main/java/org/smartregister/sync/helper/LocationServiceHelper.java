@@ -85,6 +85,7 @@ public class LocationServiceHelper extends BaseHelper {
     private static final String PARENT_ID = "parent_id";
     private static final String LIMIT = "limit";
     private static final int RECORD_COUNT = 2000;
+    public static final String LOCATION_LAST_SERVER_VERSION = "LOCATION_LAST_SERVER_VERSION";
 
     public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
@@ -440,14 +441,7 @@ public class LocationServiceHelper extends BaseHelper {
     }
 
     public void fetchAllLocations() {
-        int deviceCount = locationRepository.getLocationsCount();
-        int serverCount = fetchLocationCount();
-
-        Timber.d("Server locations count: %d; Device locations count: %d", serverCount, deviceCount);
-
-        if (serverCount > deviceCount) {
-            fetchAllLocations(RECORD_COUNT);
-        }
+        fetchAllLocations(RECORD_COUNT);
     }
 
     public void fetchAllLocations(int recordCount) {
@@ -459,8 +453,11 @@ public class LocationServiceHelper extends BaseHelper {
 
             String baseUrl = getFormattedBaseUrl();
 
+            String serverVersion = CoreLibrary.getInstance().context().allSharedPreferences().getPreference(LOCATION_LAST_SERVER_VERSION);
+            long maxServerVersion = Long.parseLong(StringUtils.isNotBlank(serverVersion) ? serverVersion : "0");
+
             String urlParams = "?" + IS_JURISDICTION + "=" + true;
-            urlParams += "&" + AllConstants.SERVER_VERSION + "=" + 0;
+            urlParams += "&" + AllConstants.SERVER_VERSION + "=" + (maxServerVersion > 0 ? maxServerVersion + 1 : maxServerVersion);
             urlParams += "&" + LIMIT + "=" + recordCount;
 
             Response<String> resp = httpAgent.fetch(MessageFormat.format("{0}{1}{2}", baseUrl, ALL_LOCATIONS_URL, urlParams));
@@ -488,39 +485,17 @@ public class LocationServiceHelper extends BaseHelper {
 
                         locationTagRepository.addOrUpdate(locationTag);
                     }
+
+                    maxServerVersion = Math.max(maxServerVersion, location.getServerVersion());
                 } catch (Exception e) {
                     Timber.e(e, "EXCEPTION %s", e.toString());
                 }
             }
+
+            CoreLibrary.getInstance().context().allSharedPreferences().savePreference(LOCATION_LAST_SERVER_VERSION, String.valueOf(maxServerVersion));
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
-    }
-
-    private int fetchLocationCount() {
-        HTTPAgent httpAgent = getHttpAgent();
-        if (httpAgent == null) {
-            throw new IllegalArgumentException(ALL_LOCATIONS_URL + " http agent is null");
-        }
-
-        String baseUrl = getFormattedBaseUrl();
-        String urlParams = "?serverVersion=0&is_jurisdiction=true";
-        Response<String> resp = httpAgent.fetch(MessageFormat.format("{0}{1}{2}", baseUrl, LOCATIONS_COUNT, urlParams));
-
-        if (resp.isFailure()) {
-            Timber.e("Failed to fetch locations count: %s", resp.payload());
-        }
-
-        JSONObject serverCountData = null;
-        int count = 0;
-        try {
-            serverCountData = new JSONObject(resp.payload());
-            serverCountData.optInt("count", 0);
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
-
-        return count;
     }
 
     @Nullable
