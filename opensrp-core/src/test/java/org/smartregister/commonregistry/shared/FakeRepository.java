@@ -2,6 +2,8 @@ package org.smartregister.commonregistry.shared;
 
 import android.content.Context;
 
+import net.sqlcipher.DatabaseErrorHandler;
+
 import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
@@ -14,16 +16,16 @@ import java.lang.reflect.Field;
  */
 
 public class FakeRepository extends Repository {
-    public FakeRepository(Context context, Session session, DrishtiRepository... repositories) {
-        super(context, session, repositories);
+    public FakeRepository(Context context, Session session, DatabaseErrorHandler errorHandler, DrishtiRepository... repositories) {
+        super(context, session, errorHandler, repositories);
     }
 
-    public FakeRepository(Context context, Session session, CommonFtsObject commonFtsObject, DrishtiRepository... repositories) {
-        super(context, session, commonFtsObject, repositories);
+    public FakeRepository(Context context, Session session, CommonFtsObject commonFtsObject, DatabaseErrorHandler errorHandler, DrishtiRepository... repositories) {
+        super(context, session, commonFtsObject, errorHandler, repositories);
     }
 
-    public FakeRepository(Context context, String dbName, int version, Session session, CommonFtsObject commonFtsObject, DrishtiRepository... repositories) {
-        super(context, dbName, version, session, commonFtsObject, repositories);
+    public FakeRepository(Context context, String dbName, int version, Session session, CommonFtsObject commonFtsObject, DatabaseErrorHandler errorHandler, DrishtiRepository... repositories) {
+        super(context, dbName, version, session, commonFtsObject, errorHandler, repositories);
     }
 
     public void setRepositories(DrishtiRepository... repositoriestoAssign) throws Exception {
