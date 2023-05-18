@@ -35,7 +35,7 @@ public class OpenSRPDatabaseErrorHandler implements DatabaseErrorHandler {
     }
 
     private void deleteDatabaseFile(String fileName) {
-        if (fileName.equalsIgnoreCase(":memory:") || fileName.trim().length() == 0) {
+        if (fileName == null || fileName.equalsIgnoreCase(":memory:") || fileName.trim().length() == 0) {
             Timber.e("Cannot delete database. Provided filename is not valid: %s", fileName);
             return;
         }

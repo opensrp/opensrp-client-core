@@ -34,7 +34,7 @@ public class OpenSRPDatabaseErrorHandlerTest extends BaseUnitTest {
 
     @Test
     public void testOnCorruptionShouldDeleteCurrentDBFile() throws IOException {
-        SQLiteDatabase database = Mockito.mock(SQLiteDatabase.class);
+        SQLiteDatabase database = Mockito.mock(SQLiteDatabase.class, Mockito.CALLS_REAL_METHODS);
         Mockito.doReturn(true).when(database).isOpen();
 
         String dbPath  = "src/test/assets/drishti.db";
