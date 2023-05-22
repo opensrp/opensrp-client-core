@@ -1228,7 +1228,7 @@ public class EventClientRepository extends BaseRepository {
                     if (StringUtils.isNotBlank(id))
                         ids.add(id);
                     else
-                        Timber.e("Unvalidated Event FormSubmissionId is empty/NULL: %s", cursor.getString(0));
+                        Timber.e("Unvalidated Event FormSubmissionId is empty/NULL");
 
                     cursor.moveToNext();
                 }
@@ -1272,7 +1272,7 @@ public class EventClientRepository extends BaseRepository {
                     if (StringUtils.isNotBlank(id))
                         ids.add(id);
                     else
-                        Timber.e("Unvalidated Client BaseEntityId is empty/NULL: %s", cursor.getString(0));
+                        Timber.e("Unvalidated Client BaseEntityId is empty/NULL");
 
                     cursor.moveToNext();
                 }
