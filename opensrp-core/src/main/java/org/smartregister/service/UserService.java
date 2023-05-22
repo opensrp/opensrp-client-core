@@ -86,23 +86,16 @@ public class UserService {
     private HTTPAgent httpAgent;
     private Session session;
     private DristhiConfiguration configuration;
-    private SaveANMLocationTask saveANMLocationTask;
-    private SaveANMTeamTask saveANMTeamTask;
-    private SaveUserInfoTask saveUserInfoTask;
     private KeyStore keyStore;
 
     public UserService(AllSettings allSettingsArg, AllSharedPreferences
             allSharedPreferencesArg, HTTPAgent httpAgentArg, Session sessionArg,
-                       DristhiConfiguration configurationArg, SaveANMLocationTask
-                               saveANMLocationTaskArg, SaveUserInfoTask saveUserInfoTaskArg, SaveANMTeamTask saveANMTeamTaskArg) {
+                       DristhiConfiguration configurationArg) {
         allSettings = allSettingsArg;
         allSharedPreferences = allSharedPreferencesArg;
         httpAgent = httpAgentArg;
         session = sessionArg;
         configuration = configurationArg;
-        saveANMLocationTask = saveANMLocationTaskArg;
-        saveUserInfoTask = saveUserInfoTaskArg;
-        saveANMTeamTask = saveANMTeamTaskArg;
         initKeyStore();
     }
 
@@ -527,12 +520,12 @@ public class UserService {
 
     public void saveAnmLocation(LocationTree anmLocation) {
         String amnLocationString = AssetHandler.javaToJsonString(anmLocation);
-        saveANMLocationTask.execute(amnLocationString);
+        new SaveANMLocationTask(allSettings).execute(amnLocationString);
     }
 
     public void saveAnmTeam(TeamMember anmTeam) {
         String anmTeamString = AssetHandler.javaToJsonString(anmTeam);
-        saveANMTeamTask.execute(anmTeamString);
+        new SaveANMTeamTask(allSettings).execute(anmTeamString);
     }
 
     public void saveJurisdictions(List<String> jurisdictions) {
@@ -579,7 +572,7 @@ public class UserService {
         }
 
         String userInfoString = AssetHandler.javaToJsonString(user);
-        saveUserInfoTask.execute(userInfoString);
+        new SaveUserInfoTask(allSettings).execute(userInfoString);
     }
 
     /**
