@@ -25,6 +25,7 @@ import org.smartregister.R;
 import org.smartregister.account.AccountHelper;
 import org.smartregister.domain.Setting;
 import org.smartregister.repository.AllSettings;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 
 import java.io.IOException;
@@ -38,6 +39,10 @@ import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSI
 import static org.smartregister.AllConstants.JSON.KEY;
 import static org.smartregister.AllConstants.JSON.VALUE;
 import static org.smartregister.AllConstants.SETTINGS;
+import static org.smartregister.sync.helper.LocationServiceHelper.LOCATION_LAST_SYNC_DATE;
+import static org.smartregister.sync.helper.LocationServiceHelper.STRUCTURES_LAST_SYNC_DATE;
+import static org.smartregister.sync.helper.PlanIntentServiceHelper.PLAN_LAST_SYNC_DATE;
+import static org.smartregister.sync.helper.TaskServiceHelper.TASK_LAST_SYNC_DATE;
 import static org.smartregister.util.Utils.getVersionCode;
 import static org.smartregister.util.Utils.isEmptyCollection;
 
@@ -195,5 +200,14 @@ public class SyncUtils {
             Timber.e(e);
         }
         return minAllowedAppVersion;
+    }
+
+    public static void resetSync(AllSharedPreferences allSharedPreferences) {
+        allSharedPreferences.saveForceRemoteLogin(true, allSharedPreferences.fetchRegisteredANM());
+        allSharedPreferences.savePreference(LOCATION_LAST_SYNC_DATE, "0");
+        allSharedPreferences.savePreference(STRUCTURES_LAST_SYNC_DATE, "0");
+        allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, "0");
+        allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, "0");
+        allSharedPreferences.saveLastSyncDate(0);
     }
 }
