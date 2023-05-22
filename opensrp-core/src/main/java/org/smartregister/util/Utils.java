@@ -37,7 +37,6 @@ import android.os.Environment;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
@@ -66,6 +65,7 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.SyncConfiguration;
 import org.smartregister.SyncFilter;
 import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.commonregistry.CommonPersonObject;
@@ -577,6 +577,10 @@ public class Utils {
         return packageInfo.versionCode;
     }
 
+    public static int getDatabaseVersion() {
+        return DrishtiApplication.getInstance().getRepository().getReadableDatabase().getVersion();
+    }
+
     public static String getBuildDate(Boolean isShortMonth) {
         String simpleDateFormat;
         if (isShortMonth) {
@@ -593,7 +597,7 @@ public class Utils {
                 return userInfo.team.team.uuid;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Timber.e(e, "Error");
         }
 
         return null;
@@ -658,7 +662,6 @@ public class Utils {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, -age);
         cal.set(Calendar.DAY_OF_MONTH, 1);
-
 
         cal.set(Calendar.MONTH, 0);
 
@@ -1026,6 +1029,11 @@ public class Utils {
         return getPrefferedName();
     }
 
+    public static boolean isP2PEnabled() {
+        SyncConfiguration configuration = CoreLibrary.getInstance().getSyncConfiguration();
+        return configuration == null || configuration.isP2PEnabled();
+    }
+
     public static String extractTranslatableValue(String value) {
         if (value.startsWith("{") && value.endsWith("}")) {
             try {
@@ -1038,9 +1046,5 @@ public class Utils {
         }
     }
         return  value;
-    }
-
-    public static int getDatabaseVersion() {
-        return DrishtiApplication.getInstance().getRepository().getReadableDatabase().getVersion();
     }
 }

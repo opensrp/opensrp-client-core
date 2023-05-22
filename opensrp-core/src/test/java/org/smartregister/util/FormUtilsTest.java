@@ -1,8 +1,12 @@
 package org.smartregister.util;
 
+
+import static java.util.Arrays.asList;
+
 import android.content.res.AssetManager;
 import android.util.Xml;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,13 +20,26 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+
 import androidx.test.core.app.ApplicationProvider;
+
+import com.google.gson.Gson;
+
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
+import org.smartregister.clientandeventmodel.Client;
+import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.clientandeventmodel.SubFormData;
 import org.smartregister.domain.ANM;
 import org.smartregister.domain.SyncStatus;
+import org.smartregister.domain.form.FormData;
+import org.smartregister.domain.form.FormField;
+import org.smartregister.domain.form.FormInstance;
+import org.smartregister.domain.form.FormSubmission;
+import org.smartregister.domain.form.SubForm;
+import org.smartregister.domain.form.TestNodeClass;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.service.ANMService;
@@ -33,7 +50,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * Created by kaderchowdhury on 14/11/17.
@@ -110,6 +131,7 @@ public class FormUtilsTest extends BaseUnitTest {
     @Test
     public void assertgenerateXMLInputForFormWithEntityId() throws Exception {
         formUtils = new FormUtils(context_);
+        ReflectionHelpers.setField(formUtils, "theAppContext", context);
         Mockito.when(context_.getAssets()).thenReturn(assetManager);
 
         Mockito.when(assetManager.open(formDefinition)).thenAnswer(new Answer<InputStream>() {
@@ -196,6 +218,53 @@ public class FormUtilsTest extends BaseUnitTest {
                 , ReflectionHelpers.ClassParameter.from(String.class, "last_name")
                 , ReflectionHelpers.ClassParameter.from(JSONArray.class, jsonArray));
         Assert.assertEquals("Doe", resultJson.getString("value"));
+    }
+
+    @Test
+    public void testPrintEventShouldPrintCompleteEventData() {
+        MockedStatic<Timber> timber = Mockito.mockStatic(Timber.class);
+        Event event = new Event("baseEntityId", "eventId", "birthRegEventType", new DateTime().toDate(), "client", "anm", "location-id", "form-submission-id");
+        Assert.assertNotNull(timber);
+        Assert.assertNotNull(event);
+        ReflectionHelpers.callInstanceMethod(formUtils, "printEvent", ReflectionHelpers.ClassParameter.from(Event.class, event));
+        timber.verify(
+                () -> Timber.d(Mockito.anyString()),
+                Mockito.times(3)
+        );
+        timber.close();
+
+    }
+
+    @Test
+    public void testPrintClientShouldPrintCompleteClientData() {
+        MockedStatic<Timber> timber = Mockito.mockStatic(Timber.class);
+        Client client = new Client("baseEntityId", "firstName", "middleName", "lastName", new DateTime().toDate(),
+                new DateTime().toDate(), false, false, "gender");
+        Assert.assertNotNull(timber);
+        Assert.assertNotNull(client);
+        ReflectionHelpers.callInstanceMethod(formUtils, "printClient", ReflectionHelpers.ClassParameter.from(Client.class, client));
+        timber.verify(
+                () -> Timber.d(Mockito.anyString()),
+                Mockito.times(3)
+        );
+        timber.close();
+    }
+
+    @Test
+    public void testGetSubFormListShouldReturnCorrectSubform() {
+        SubForm subForm = new SubForm("sub form name");
+        subForm.setFields(Collections.singletonList(new FormField("first_name", "Ephraim Kigamba", "source")));
+        FormInstance formInstance = new FormInstance(new FormData("entity", "default", asList(new FormField("field1", "value1", "source1"), new FormField("field2", "value2", "source2")),
+                Collections.singletonList(subForm)), "1");
+        FormSubmission formSubmission = new FormSubmission("1", "2", "FORM", new Gson().toJson(formInstance), "1.0", SyncStatus.PENDING, "1");
+        List<SubFormData> subForms =  ReflectionHelpers.callInstanceMethod(formUtils, "getSubFormList", ReflectionHelpers.ClassParameter.from(FormSubmission.class, formSubmission));
+        Assert.assertEquals(1, subForms.size());
+        Assert.assertEquals("sub form name", subForms.get(0).getName());
+    }
+
+    @Test
+    public void testHasChildElementShouldReturnTrueIfChildIsElementNode() {
+        Assert.assertTrue(FormUtils.hasChildElements(new TestNodeClass()));
     }
 
 }

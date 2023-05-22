@@ -110,7 +110,7 @@ public class UserServiceTest extends BaseUnitTest {
         userService.saveUserInfo(user);
 
         String userInfoString = AssetHandler.javaToJsonString(user);
-        verify(saveUserInfoTask).save(userInfoString);
+        verify(saveUserInfoTask).execute(userInfoString);
     }
 
     @Test
@@ -123,7 +123,7 @@ public class UserServiceTest extends BaseUnitTest {
         userService.saveAnmLocation(locationTree);
 
         String locationString = AssetHandler.javaToJsonString(locationTree);
-        verify(saveANMLocationTask).save(locationString);
+        verify(saveANMLocationTask).execute(locationString);
     }
 
     @Test

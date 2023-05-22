@@ -2,6 +2,7 @@ package org.smartregister.repository;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -661,6 +662,16 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
         eventClientRepository.markEventValidationStatus(formSubmissionId, isValid);
         verify(sqliteDatabase).update(EventClientRepository.Table.event.name(), expectedContentValues, whereClause, new String[]{formSubmissionId});
+    }
+
+    @Test
+    public void testMarkEventValidationStatusShouldNotExecuteWhenIdIsNull() {
+        String formSubmissionId = null;
+
+        ContentValues expectedContentValues = new ContentValues();
+        String whereClause = EventClientRepository.event_column.formSubmissionId.name() + " = ?";
+        eventClientRepository.markEventValidationStatus(formSubmissionId, true);
+        verify(sqliteDatabase, never()).update(EventClientRepository.Table.event.name(), expectedContentValues, whereClause, new String[]{formSubmissionId});
     }
 
     @Test

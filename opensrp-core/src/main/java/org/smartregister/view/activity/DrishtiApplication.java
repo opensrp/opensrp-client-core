@@ -71,13 +71,12 @@ public abstract class DrishtiApplication extends Application {
     public void onCreate() {
         try {
             super.onCreate();
-
             initializeCrashLyticsTree();
 
             mInstance = this;
             SQLiteDatabase.loadLibs(this);
         } catch (UnsatisfiedLinkError e) {
-            logError("Error on onCreate: " + e);
+            Timber.e(e, "Error on onCreate");
         }
     }
 
