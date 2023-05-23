@@ -519,13 +519,21 @@ public class UserService {
     }
 
     public void saveAnmLocation(LocationTree anmLocation) {
-        String amnLocationString = AssetHandler.javaToJsonString(anmLocation);
-        new SaveANMLocationTask(allSettings).execute(amnLocationString);
+        String anmLocationString = AssetHandler.javaToJsonString(anmLocation);
+        executeSaveAnmLocationTask(allSettings, anmLocationString);
+    }
+
+    protected void executeSaveAnmLocationTask(AllSettings allSettings, String anmLocationString) {
+        new SaveANMLocationTask(allSettings).execute(anmLocationString);
     }
 
     public void saveAnmTeam(TeamMember anmTeam) {
         String anmTeamString = AssetHandler.javaToJsonString(anmTeam);
-        new SaveANMTeamTask(allSettings).execute(anmTeamString);
+        executeSaveANMTeamTask(allSettings, anmTeamString);
+    }
+
+    protected void executeSaveANMTeamTask(AllSettings allSettings, String anmLocationString) {
+        new SaveANMTeamTask(allSettings).execute(anmLocationString);
     }
 
     public void saveJurisdictions(List<String> jurisdictions) {
@@ -572,6 +580,10 @@ public class UserService {
         }
 
         String userInfoString = AssetHandler.javaToJsonString(user);
+        executeSaveUserInfoTask(allSettings, userInfoString);
+    }
+
+    protected void executeSaveUserInfoTask(AllSettings allSettings, String userInfoString) {
         new SaveUserInfoTask(allSettings).execute(userInfoString);
     }
 
