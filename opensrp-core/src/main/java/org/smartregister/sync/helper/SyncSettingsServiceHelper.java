@@ -58,6 +58,8 @@ public class SyncSettingsServiceHelper {
 
         } catch (JSONException e) {
             Timber.e(e);
+        } catch (NullPointerException e) {
+            Timber.e(e);
         }
 
         JSONArray settings = getSettings();
