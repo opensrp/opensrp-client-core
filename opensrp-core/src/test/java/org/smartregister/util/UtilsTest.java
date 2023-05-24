@@ -23,7 +23,9 @@ import static org.smartregister.util.Utils.getUserDefaultTeamId;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -69,6 +71,9 @@ import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -763,5 +768,35 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     public void testTryParseLongShouldParseShoouldReturnDefaultValueOnException() {
         assertEquals(0L, (Long) Utils.tryParseLong("xyz", 0), 0);
     }
+
+    @Test
+    public void testGetAssetFileInputStream() throws IOException {
+        Context mockContext = Mockito.mock(Context.class);
+        AssetManager mockAssetManager = Mockito.mock(AssetManager.class);
+        InputStream mockInputStream = Mockito.mock(InputStream.class);
+        Mockito.when(mockContext.getAssets()).thenReturn(mockAssetManager);
+
+        Mockito.when(mockAssetManager.open(Mockito.eq("file_path"))).thenReturn(mockInputStream);
+        InputStream result = Utils.getAssetFileInputStream(mockContext, "file_path");
+        Assert.assertEquals(mockInputStream, result);
+    }
+
+    @Test
+    public void testDeleteRoomDb() {
+        Context mockContext = Mockito.mock(Context.class);
+        ApplicationInfo mockApplicationInfo = Mockito.mock(ApplicationInfo.class);
+
+        File mockDatabasesFolder = Mockito.mock(File.class);
+        File mockDb = Mockito.mock(File.class);
+        mockApplicationInfo.dataDir = "testPath";
+
+        Mockito.when(mockContext.getApplicationInfo()).thenReturn(mockApplicationInfo);
+        Mockito.when(mockDatabasesFolder.getAbsolutePath()).thenReturn("/data/data/com.example.app/databases");
+
+        boolean result = Utils.deleteRoomDb(mockContext, "databaseName");
+        Assert.assertFalse(result);
+    }
+
+
 }
 
