@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -13,8 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.LocationTag;
-import org.smartregister.domain.PhysicalLocation;
-import org.smartregister.pathevaluator.dao.LocationDao;
 import org.smartregister.util.PropertiesConverter;
 
 import java.util.ArrayList;
@@ -301,5 +300,4 @@ public class LocationRepository extends BaseRepository {
 
         return getLocationsByIds(locationIds);
     }
-
 }

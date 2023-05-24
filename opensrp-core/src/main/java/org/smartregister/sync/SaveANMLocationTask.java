@@ -1,43 +1,32 @@
 package org.smartregister.sync;
 
+import android.os.AsyncTask;
+
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.repository.AllSettings;
-import org.smartregister.view.BackgroundAction;
-import org.smartregister.view.LockingBackgroundTask;
-import org.smartregister.view.ProgressIndicator;
 
 import timber.log.Timber;
 
-public class SaveANMLocationTask {
-    private final LockingBackgroundTask task;
-    private AllSettings allSettings;
+public class SaveANMLocationTask extends AsyncTask<String, Void, String> {
+    private final AllSettings allSettings;
 
     public SaveANMLocationTask(AllSettings allSettings) {
         this.allSettings = allSettings;
-        task = new LockingBackgroundTask(new ProgressIndicator() {
-            @Override
-            public void setVisible() {
-            }
-
-            @Override
-            public void setInvisible() {
-                Timber.i("Successfully saved ANM TeamLocation information");
-            }
-        });
     }
 
-    public void save(final String anmLocation) {
-        task.doActionInBackground(new BackgroundAction<String>() {
-            @Override
-            public String actionToDoInBackgroundThread() {
-                if (StringUtils.isNotBlank(anmLocation))
-                    allSettings.saveANMLocation(anmLocation);
-                return anmLocation;
-            }
+    @Override
+    protected String doInBackground(String... anmLocation) {
+        if (StringUtils.isNotBlank(anmLocation[0])) {
+            allSettings.saveANMLocation(anmLocation[0]);
+        } else {
+            Timber.e("Unable to save ANM Location. String is NULL or EMPTY");
+        }
+        return anmLocation[0];
+    }
 
-            @Override
-            public void postExecuteInUIThread(String result) {
-            }
-        });
+    @Override
+    protected void onPostExecute(String anmLocation) {
+        Timber.i("Successfully executed SaveANMLocationTask for: %s", anmLocation);
+        super.onPostExecute(anmLocation);
     }
 }

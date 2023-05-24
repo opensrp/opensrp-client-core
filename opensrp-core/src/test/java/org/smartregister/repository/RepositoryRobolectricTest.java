@@ -2,6 +2,7 @@ package org.smartregister.repository;
 
 import android.content.Context;
 
+import net.sqlcipher.DatabaseErrorHandler;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.junit.Assert;
@@ -17,11 +18,12 @@ import org.smartregister.util.Session;
 
 import java.io.File;
 
+import org.smartregister.repository.helper.OpenSRPDatabaseErrorHandler;
+
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 28-07-2020.
  */
 public class RepositoryRobolectricTest extends BaseRobolectricUnitTest {
-
 
     @Test
     public void constructor1ShouldCallUpdateMasterRepository() {
@@ -36,8 +38,7 @@ public class RepositoryRobolectricTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(Mockito.mock(File.class)).when(context).getDatabasePath("drishti.db");
 
         // Execute the method under test
-        Repository repository = new Repository(context, session, drishtiRepository1, drishtiRepository2);
-
+        Repository repository = new Repository(context, session, getDBErrorHandler(), drishtiRepository1, drishtiRepository2);
 
         // Verify
         Mockito.verify(drishtiRepository1).updateMasterRepository(repository);
@@ -54,8 +55,7 @@ public class RepositoryRobolectricTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(Mockito.mock(File.class)).when(context).getDatabasePath("drishti.db");
 
         // Execute the method under test
-        Repository repository = new Repository(context, AllConstants.DATABASE_NAME, 1, Mockito.mock(Session.class), Mockito.mock(CommonFtsObject.class), drishtiRepository1, drishtiRepository2);
-
+        Repository repository = new Repository(context, AllConstants.DATABASE_NAME, 1, Mockito.mock(Session.class), Mockito.mock(CommonFtsObject.class), getDBErrorHandler(), drishtiRepository1, drishtiRepository2);
 
         // Verify
         Mockito.verify(drishtiRepository1).updateMasterRepository(repository);
@@ -140,5 +140,9 @@ public class RepositoryRobolectricTest extends BaseRobolectricUnitTest {
 
         Mockito.doReturn(true).when(repository).isDatabaseWritable(password);
         Assert.assertTrue(repository.canUseThisPassword(password));
+    }
+
+    protected DatabaseErrorHandler getDBErrorHandler() {
+        return new OpenSRPDatabaseErrorHandler();
     }
 }

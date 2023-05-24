@@ -208,9 +208,6 @@ public class Context {
     private VitaminAHandler vitaminAHandler;
     private ECEditHandler ecEditHandler;
     private ANCInvestigationsHandler ancInvestigationsHandler;
-    private SaveANMLocationTask saveANMLocationTask;
-    private SaveUserInfoTask saveUserInfoTask;
-    private SaveANMTeamTask saveANMTeamTask;
     private ANMController anmController;
     private ANMLocationController anmLocationController;
     private CommonFtsObject commonFtsObject;
@@ -750,31 +747,9 @@ public class Context {
     public UserService userService() {
         if (userService == null) {
             userService = new UserService(allSettings(), allSharedPreferences(),
-                    httpAgent(), session(), configuration(), saveANMLocationTask(),
-                    saveUserInfoTask(), saveANMTeamTask());
+                    httpAgent(), session(), configuration());
         }
         return userService;
-    }
-
-    private SaveANMLocationTask saveANMLocationTask() {
-        if (saveANMLocationTask == null) {
-            saveANMLocationTask = new SaveANMLocationTask(allSettings());
-        }
-        return saveANMLocationTask;
-    }
-
-    private SaveUserInfoTask saveUserInfoTask() {
-        if (saveUserInfoTask == null) {
-            saveUserInfoTask = new SaveUserInfoTask(allSettings());
-        }
-        return saveUserInfoTask;
-    }
-
-    private SaveANMTeamTask saveANMTeamTask() {
-        if (saveANMTeamTask == null) {
-            saveANMTeamTask = new SaveANMTeamTask(allSettings());
-        }
-        return saveANMTeamTask;
     }
 
     public AlertService alertService() {
