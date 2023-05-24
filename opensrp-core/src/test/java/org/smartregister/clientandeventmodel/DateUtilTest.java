@@ -1,6 +1,6 @@
 package org.smartregister.clientandeventmodel;
 
-import android.content.res.AssetManager;
+
 
 import org.junit.Assert;
 
