@@ -36,6 +36,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -227,4 +228,24 @@ public class FormUtilsTest extends BaseUnitTest {
         assertEquals("[]", result4.toString());
     }
 
+    @Test
+    public void testGetFieldsArrayForSubFormDefinition() throws Exception {
+
+        JSONArray fieldsArray2 = new JSONArray("[{\"name\": \"field1\"}, {\"name\": \"field2\", \"source\": \"source2\"}]");
+        String bindPath2 = "example";
+        JSONObject fieldsDefinition2 = new JSONObject();
+        fieldsDefinition2.put("fields", fieldsArray2);
+        fieldsDefinition2.put("bind_type", bindPath2);
+        JSONArray result2 = formUtils.getFieldsArrayForSubFormDefinition(fieldsDefinition2);
+        assertNotNull(result2);
+        assertEquals(2, result2.length());
+
+        JSONObject item1 = result2.getJSONObject(0);
+        assertEquals("field1", item1.getString("name"));
+        assertEquals(bindPath2 + ".field1", item1.getString("source"));
+
+        JSONObject item2 = result2.getJSONObject(1);
+        assertEquals("field2", item2.getString("name"));
+        assertEquals(bindPath2 + ".source2", item2.getString("source"));
+    }
 }
