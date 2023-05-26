@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -27,6 +28,8 @@ import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.service.ANMService;
 import org.smartregister.util.mock.XmlSerializerMock;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,6 +41,9 @@ import java.util.HashMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.smartregister.util.JsonFormUtils.generateRandomUUIDString;
 
 /**
  * Created by kaderchowdhury on 14/11/17.
@@ -213,7 +219,7 @@ public class FormUtilsTest extends BaseUnitTest {
         String[] path2 = {"key1", "key3"};
         JSONObject jsonObject2 = new JSONObject("{\"key1\": {\"key2\": \"value\"}}");
         Object result2 = formUtils.getObjectAtPath(path2, jsonObject2);
-        Assert.assertNull(result2);
+        assertNull(result2);
 
 
         String[] path3 = {"key1", "key4","key5"};
@@ -247,5 +253,53 @@ public class FormUtilsTest extends BaseUnitTest {
         JSONObject item2 = result2.getJSONObject(1);
         assertEquals("field2", item2.getString("name"));
         assertEquals(bindPath2 + ".source2", item2.getString("source"));
+    }
+
+    @Test
+    public void testHasChildElements() {
+        Node element = Mockito.mock(Node.class);
+        NodeList children = Mockito.mock(NodeList.class);
+        Mockito.when(element.getChildNodes()).thenReturn(children);
+        Mockito.when(children.getLength()).thenReturn(0);
+        boolean result1 = formUtils.hasChildElements(element);
+        assertFalse(result1);
+
+
+
+        Mockito.when(children.getLength()).thenReturn(1);
+        Mockito.when(children.item(ArgumentMatchers.anyInt())).thenReturn(element);
+        Mockito.when(element.getNodeType()).thenReturn(Node.TEXT_NODE);
+        boolean result3 = formUtils.hasChildElements(element);
+        assertFalse(result3);
+    }
+
+    @Test
+    public void testGetValueForPath() throws Exception {
+
+
+        String[] path2 = {"key1", "key2"};
+        JSONObject jsonObject2 = new JSONObject();
+        String result2 = formUtils.getValueForPath(path2, jsonObject2);
+        assertNull(result2);
+
+        JSONObject innerObject3 = new JSONObject("{\"content\": \"value\"}");
+        JSONArray innerArray3 = new JSONArray("[\"value\"]");
+        JSONObject jsonObject3 = new JSONObject();
+        jsonObject3.put("key1", innerObject3);
+        jsonObject3.put("key2", innerArray3);
+        jsonObject3.put("key3", "value3");
+
+        String[] path3 = {"key1", "content"};
+        String result3 = formUtils.getValueForPath(path3, jsonObject3);
+        assertEquals("value", result3);
+
+        String[] path4 = {"key2"};
+        String result4 = formUtils.getValueForPath(path4, jsonObject3);
+        assertEquals("value", result4);
+
+        String[] path5 = {"key3"};
+        String result5 = formUtils.getValueForPath(path5, jsonObject3);
+        assertEquals("value3", result5);
+
     }
 }
