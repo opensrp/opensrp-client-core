@@ -198,4 +198,30 @@ public class FormUtilsTest extends BaseUnitTest {
         Assert.assertEquals("Doe", resultJson.getString("value"));
     }
 
+    @Test
+    public void testGetObjectAtPath() throws Exception {
+
+        String[] path1 = {"key1", "key2"};
+        JSONObject jsonObject1 = new JSONObject("{\"key1\": {\"key2\": \"value\"}}");
+        Object result1 = formUtils.getObjectAtPath(path1, jsonObject1);
+        Assert.assertEquals("value", result1);
+
+        String[] path2 = {"key1", "key3"};
+        JSONObject jsonObject2 = new JSONObject("{\"key1\": {\"key2\": \"value\"}}");
+        Object result2 = formUtils.getObjectAtPath(path2, jsonObject2);
+        Assert.assertNull(result2);
+
+
+        String[] path3 = {"key1", "key4","key5"};
+        JSONObject jsonObject3 = new JSONObject("{\"key1\": {\"key4\": [{\"key5\": \"value\"}]}}");
+        Object result3 = formUtils.getObjectAtPath(path3, jsonObject3);
+        Assert.assertEquals("value", result3);
+
+
+        String[] path4 = {"key1", "key4"};
+        JSONObject jsonObject4 = new JSONObject("{\"key1\": {\"key4\": []}}");
+        Object result4 = formUtils.getObjectAtPath(path4, jsonObject4);
+        Assert.assertEquals("[]", result4.toString());
+    }
+
 }
