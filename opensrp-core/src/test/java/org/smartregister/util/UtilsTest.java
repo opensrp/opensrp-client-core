@@ -778,7 +778,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
         Mockito.when(mockAssetManager.open(Mockito.eq("file_path"))).thenReturn(mockInputStream);
         InputStream result = Utils.getAssetFileInputStream(mockContext, "file_path");
-        Assert.assertEquals(mockInputStream, result);
+        assertEquals(mockInputStream, result);
     }
 
     @Test
