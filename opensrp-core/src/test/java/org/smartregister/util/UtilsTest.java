@@ -771,9 +771,9 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testGetAssetFileInputStream() throws IOException {
-        Context mockContext = Mockito.mock(Context.class);
-        AssetManager mockAssetManager = Mockito.mock(AssetManager.class);
-        InputStream mockInputStream = Mockito.mock(InputStream.class);
+        Context mockContext = mock(Context.class);
+        AssetManager mockAssetManager = mock(AssetManager.class);
+        InputStream mockInputStream = mock(InputStream.class);
         Mockito.when(mockContext.getAssets()).thenReturn(mockAssetManager);
 
         Mockito.when(mockAssetManager.open(Mockito.eq("file_path"))).thenReturn(mockInputStream);
@@ -783,18 +783,17 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testDeleteRoomDb() {
-        Context mockContext = Mockito.mock(Context.class);
-        ApplicationInfo mockApplicationInfo = Mockito.mock(ApplicationInfo.class);
+        Context mockContext = mock(Context.class);
+        ApplicationInfo mockApplicationInfo =mock(ApplicationInfo.class);
 
-        File mockDatabasesFolder = Mockito.mock(File.class);
-        File mockDb = Mockito.mock(File.class);
+        File mockDatabasesFolder = mock(File.class);
         mockApplicationInfo.dataDir = "testPath";
 
         Mockito.when(mockContext.getApplicationInfo()).thenReturn(mockApplicationInfo);
         Mockito.when(mockDatabasesFolder.getAbsolutePath()).thenReturn("/data/data/com.example.app/databases");
 
         boolean result = Utils.deleteRoomDb(mockContext, "databaseName");
-        Assert.assertFalse(result);
+        assertFalse(result);
     }
 
 
