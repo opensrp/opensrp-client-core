@@ -35,6 +35,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 /**
  * Created by kaderchowdhury on 14/11/17.
  */
@@ -144,25 +147,25 @@ public class FormUtilsTest extends BaseUnitTest {
             xmlMockedStatic.when(Xml::newSerializer).thenReturn(xmlSerializer);
         }
 
-        Assert.assertNotNull(formUtils.generateXMLInputForFormWithEntityId("baseEntityId", FORMNAME, null));
+        assertNotNull(formUtils.generateXMLInputForFormWithEntityId("baseEntityId", FORMNAME, null));
     }
 
     @Test
     public void assertWithEntityIdReturnsFormSubmissionBuilder() {
         FormSubmissionBuilder builder = new FormSubmissionBuilder();
-        Assert.assertNotNull(builder.withEntityId("baseEntityId"));
+        assertNotNull(builder.withEntityId("baseEntityId"));
     }
 
     @Test
     public void assertWithSyncStatusReturnsFormSubmissionBuilder() {
         FormSubmissionBuilder builder = new FormSubmissionBuilder();
         SyncStatus syncStatus = null;
-        Assert.assertNotNull(builder.withSyncStatus(syncStatus));
+        assertNotNull(builder.withSyncStatus(syncStatus));
     }
 
     @Test
     public void assertConstructorInitializationNotNull() throws Exception {
-        Assert.assertNotNull(new FormUtils(context_));
+        assertNotNull(new FormUtils(context_));
     }
 
     public String getStringFromStream(InputStream is) throws Exception {
@@ -179,13 +182,13 @@ public class FormUtilsTest extends BaseUnitTest {
     public void getFormJsonShouldReturnCorrectFormWithSameLength() throws IOException {
         Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(context_).getResources();
         Mockito.doReturn(ApplicationProvider.getApplicationContext().getApplicationContext()).when(context_).getApplicationContext();
-        Assert.assertEquals(10011, formUtils.getFormJson("test_basic_form").toString().length());
+        assertEquals(10011, formUtils.getFormJson("test_basic_form").toString().length());
     }
 
     @Test
     public void getIndexForFormNameShouldReturnCorrectIndex() {
         String[] formNames = new String[]{"Birth Reg", "Immunisation Reg", "Death Form"};
-        Assert.assertEquals(1, formUtils.getIndexForFormName("Immunisation Reg", formNames));
+        assertEquals(1, formUtils.getIndexForFormName("Immunisation Reg", formNames));
     }
 
     @Test
@@ -195,7 +198,7 @@ public class FormUtilsTest extends BaseUnitTest {
         JSONObject resultJson = ReflectionHelpers.callInstanceMethod(formUtils, "getJsonFieldFromArray"
                 , ReflectionHelpers.ClassParameter.from(String.class, "last_name")
                 , ReflectionHelpers.ClassParameter.from(JSONArray.class, jsonArray));
-        Assert.assertEquals("Doe", resultJson.getString("value"));
+        assertEquals("Doe", resultJson.getString("value"));
     }
 
     @Test
@@ -204,7 +207,7 @@ public class FormUtilsTest extends BaseUnitTest {
         String[] path1 = {"key1", "key2"};
         JSONObject jsonObject1 = new JSONObject("{\"key1\": {\"key2\": \"value\"}}");
         Object result1 = formUtils.getObjectAtPath(path1, jsonObject1);
-        Assert.assertEquals("value", result1);
+        assertEquals("value", result1);
 
         String[] path2 = {"key1", "key3"};
         JSONObject jsonObject2 = new JSONObject("{\"key1\": {\"key2\": \"value\"}}");
@@ -215,13 +218,13 @@ public class FormUtilsTest extends BaseUnitTest {
         String[] path3 = {"key1", "key4","key5"};
         JSONObject jsonObject3 = new JSONObject("{\"key1\": {\"key4\": [{\"key5\": \"value\"}]}}");
         Object result3 = formUtils.getObjectAtPath(path3, jsonObject3);
-        Assert.assertEquals("value", result3);
+        assertEquals("value", result3);
 
 
         String[] path4 = {"key1", "key4"};
         JSONObject jsonObject4 = new JSONObject("{\"key1\": {\"key4\": []}}");
         Object result4 = formUtils.getObjectAtPath(path4, jsonObject4);
-        Assert.assertEquals("[]", result4.toString());
+        assertEquals("[]", result4.toString());
     }
 
 }
