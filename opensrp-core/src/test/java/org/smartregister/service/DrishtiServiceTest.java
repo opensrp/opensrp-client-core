@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
@@ -23,6 +22,8 @@ import org.smartregister.util.ActionBuilder;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public class DrishtiServiceTest extends BaseUnitTest {
     @Mock
@@ -69,7 +70,7 @@ public class DrishtiServiceTest extends BaseUnitTest {
 
         Response<List<Action>> actions = drishtiService.fetchNewActions("anm1", "0");
 
-        Assert.assertTrue(actions.payload().isEmpty());
+        assertTrue(actions.payload().isEmpty());
     }
 
     @Test
@@ -78,7 +79,7 @@ public class DrishtiServiceTest extends BaseUnitTest {
 
         Response<List<Action>> actions = drishtiService.fetchNewActions("anm1", "0");
 
-        Assert.assertTrue(actions.payload().isEmpty());
+        assertTrue(actions.payload().isEmpty());
         Assert.assertEquals(ResponseStatus.failure, actions.status());
     }
 
@@ -102,7 +103,7 @@ public class DrishtiServiceTest extends BaseUnitTest {
 
         Response<List<Action>> actions = drishtiService.fetchNewActions("anm1", "0");
 
-        Assert.assertTrue(actions.payload().isEmpty());
+        assertTrue(actions.payload().isEmpty());
         Assert.assertEquals(ResponseStatus.failure, actions.status());
     }
 
@@ -116,5 +117,6 @@ public class DrishtiServiceTest extends BaseUnitTest {
                 .thenReturn(connectivityManager);
         Mockito.when(connectivityManager.getActiveNetworkInfo()).thenReturn(networkInfo);
         DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(context);
+        assertTrue(networkInfo.isConnected());
     }
 }
