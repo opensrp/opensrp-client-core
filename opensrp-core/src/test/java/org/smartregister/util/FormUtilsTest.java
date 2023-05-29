@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -42,8 +41,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.smartregister.util.JsonFormUtils.generateRandomUUIDString;
 
 /**
  * Created by kaderchowdhury on 14/11/17.
@@ -301,5 +298,45 @@ public class FormUtilsTest extends BaseUnitTest {
         String result5 = formUtils.getValueForPath(path5, jsonObject3);
         assertEquals("value3", result5);
 
+    }
+
+    @Test
+    public void testGetSubForms() throws Exception {
+        JSONArray subFormDataArray = new JSONArray();
+        String entity_id = "123";
+        JSONObject subFormDefinition = new JSONObject();
+        JSONObject overrides = new JSONObject();
+        subFormDefinition.put("fields",new JSONArray());
+        subFormDefinition.put("bind_type","/bind/type");
+
+        JSONArray result = ReflectionHelpers.callInstanceMethod(formUtils, "getSubForms"
+                , ReflectionHelpers.ClassParameter.from(JSONArray.class, subFormDataArray)
+                , ReflectionHelpers.ClassParameter.from(String.class, entity_id)
+                , ReflectionHelpers.ClassParameter.from(JSONObject.class, subFormDefinition)
+                , ReflectionHelpers.ClassParameter.from(JSONObject.class, overrides));
+
+        assertNotNull(result);
+        assertEquals(1, result.length());
+    }
+
+    @Test
+    public void testRetrieveSubformDefinitionForBindPath() throws Exception {
+        // Create sample input data
+        JSONArray subForms = new JSONArray();
+        JSONObject subForm1 = new JSONObject();
+        subForm1.put("default_bind_path", "path/to/SubForm1");
+        JSONObject subForm2 = new JSONObject();
+        subForm2.put("default_bind_path", "path/to/SubForm2");
+        subForms.put(subForm1);
+        subForms.put(subForm2);
+        String fieldName = "SubForm1";
+
+
+        JSONObject result = ReflectionHelpers.callInstanceMethod(formUtils, "retriveSubformDefinitionForBindPath"
+                , ReflectionHelpers.ClassParameter.from(JSONArray.class, subForms)
+                , ReflectionHelpers.ClassParameter.from(String.class, fieldName));
+
+        assertNotNull(result);
+        assertEquals("path/to/SubForm1", result.getString("default_bind_path"));
     }
 }
