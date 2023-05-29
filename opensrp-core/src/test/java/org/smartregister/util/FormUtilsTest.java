@@ -36,11 +36,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by kaderchowdhury on 14/11/17.
@@ -338,5 +340,28 @@ public class FormUtilsTest extends BaseUnitTest {
 
         assertNotNull(result);
         assertEquals("path/to/SubForm1", result.getString("default_bind_path"));
+    }
+
+    @Test
+    public void testGetSubFormNames() throws Exception {
+        // Create sample input data
+        JSONObject formDefinition = new JSONObject();
+        JSONObject form = new JSONObject();
+        JSONArray subForms = new JSONArray();
+        JSONObject subForm1 = new JSONObject();
+        subForm1.put("default_bind_path", "path/to/SubForm1");
+        JSONObject subForm2 = new JSONObject();
+        subForm2.put("default_bind_path", "path/to/SubForm2");
+        subForms.put(subForm1);
+        subForms.put(subForm2);
+        form.put("sub_forms", subForms);
+        formDefinition.put("form", form);
+
+        List<String> result = ReflectionHelpers.callInstanceMethod(formUtils, "getSubFormNames"
+                , ReflectionHelpers.ClassParameter.from(JSONObject.class, formDefinition));
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.contains("SubForm1"));
+        assertTrue(result.contains("SubForm2"));
     }
 }
