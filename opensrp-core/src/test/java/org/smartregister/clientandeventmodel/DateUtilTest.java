@@ -1,5 +1,7 @@
 package org.smartregister.clientandeventmodel;
 
+
+
 import org.junit.Assert;
 
 import org.joda.time.LocalDate;
@@ -42,6 +44,8 @@ public class DateUtilTest extends BaseUnitTest {
         Assert.assertNotNull(DateUtil.toDate(new Date(0l)));
         Assert.assertNotNull(DateUtil.fromDate(new Date(0l)));
         Assert.assertNotNull(DateUtil.getDateFromString("1985-07-24T00:00:00.000Z"));
+        Assert.assertNull(DateUtil.toDate("test date"));
+        Assert.assertNotNull(DateUtil.today());
     }
 
 }

@@ -1,5 +1,9 @@
 package org.smartregister.service;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import org.apache.commons.io.IOUtils;
 import org.ei.drishti.dto.Action;
 import org.ei.drishti.dto.AlertStatus;
@@ -10,14 +14,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
+import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.util.ActionBuilder;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public class DrishtiServiceTest extends BaseUnitTest {
     @Mock
@@ -64,7 +70,7 @@ public class DrishtiServiceTest extends BaseUnitTest {
 
         Response<List<Action>> actions = drishtiService.fetchNewActions("anm1", "0");
 
-        Assert.assertTrue(actions.payload().isEmpty());
+        assertTrue(actions.payload().isEmpty());
     }
 
     @Test
@@ -73,7 +79,7 @@ public class DrishtiServiceTest extends BaseUnitTest {
 
         Response<List<Action>> actions = drishtiService.fetchNewActions("anm1", "0");
 
-        Assert.assertTrue(actions.payload().isEmpty());
+        assertTrue(actions.payload().isEmpty());
         Assert.assertEquals(ResponseStatus.failure, actions.status());
     }
 
@@ -97,7 +103,20 @@ public class DrishtiServiceTest extends BaseUnitTest {
 
         Response<List<Action>> actions = drishtiService.fetchNewActions("anm1", "0");
 
-        Assert.assertTrue(actions.payload().isEmpty());
+        assertTrue(actions.payload().isEmpty());
         Assert.assertEquals(ResponseStatus.failure, actions.status());
+    }
+
+    @Test
+    public void testStartOnlyIfConnectedToNetwork() {
+        Context context = Mockito.mock(Context.class);
+        ConnectivityManager connectivityManager = Mockito.mock(ConnectivityManager.class);
+        NetworkInfo networkInfo = Mockito.mock(NetworkInfo.class);
+        Mockito.when(networkInfo.isConnected()).thenReturn(true);
+        Mockito.when(context.getSystemService(Context.CONNECTIVITY_SERVICE))
+                .thenReturn(connectivityManager);
+        Mockito.when(connectivityManager.getActiveNetworkInfo()).thenReturn(networkInfo);
+        DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(context);
+        assertTrue(networkInfo.isConnected());
     }
 }

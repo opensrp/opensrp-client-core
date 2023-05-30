@@ -7,9 +7,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -27,6 +27,8 @@ import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.service.ANMService;
 import org.smartregister.util.mock.XmlSerializerMock;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +36,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by kaderchowdhury on 14/11/17.
@@ -144,25 +153,25 @@ public class FormUtilsTest extends BaseUnitTest {
             xmlMockedStatic.when(Xml::newSerializer).thenReturn(xmlSerializer);
         }
 
-        Assert.assertNotNull(formUtils.generateXMLInputForFormWithEntityId("baseEntityId", FORMNAME, null));
+        assertNotNull(formUtils.generateXMLInputForFormWithEntityId("baseEntityId", FORMNAME, null));
     }
 
     @Test
     public void assertWithEntityIdReturnsFormSubmissionBuilder() {
         FormSubmissionBuilder builder = new FormSubmissionBuilder();
-        Assert.assertNotNull(builder.withEntityId("baseEntityId"));
+        assertNotNull(builder.withEntityId("baseEntityId"));
     }
 
     @Test
     public void assertWithSyncStatusReturnsFormSubmissionBuilder() {
         FormSubmissionBuilder builder = new FormSubmissionBuilder();
         SyncStatus syncStatus = null;
-        Assert.assertNotNull(builder.withSyncStatus(syncStatus));
+        assertNotNull(builder.withSyncStatus(syncStatus));
     }
 
     @Test
     public void assertConstructorInitializationNotNull() throws Exception {
-        Assert.assertNotNull(new FormUtils(context_));
+        assertNotNull(new FormUtils(context_));
     }
 
     public String getStringFromStream(InputStream is) throws Exception {
@@ -179,13 +188,13 @@ public class FormUtilsTest extends BaseUnitTest {
     public void getFormJsonShouldReturnCorrectFormWithSameLength() throws IOException {
         Mockito.doReturn(ApplicationProvider.getApplicationContext().getResources()).when(context_).getResources();
         Mockito.doReturn(ApplicationProvider.getApplicationContext().getApplicationContext()).when(context_).getApplicationContext();
-        Assert.assertEquals(10011, formUtils.getFormJson("test_basic_form").toString().length());
+        assertEquals(10011, formUtils.getFormJson("test_basic_form").toString().length());
     }
 
     @Test
     public void getIndexForFormNameShouldReturnCorrectIndex() {
         String[] formNames = new String[]{"Birth Reg", "Immunisation Reg", "Death Form"};
-        Assert.assertEquals(1, formUtils.getIndexForFormName("Immunisation Reg", formNames));
+        assertEquals(1, formUtils.getIndexForFormName("Immunisation Reg", formNames));
     }
 
     @Test
@@ -195,7 +204,164 @@ public class FormUtilsTest extends BaseUnitTest {
         JSONObject resultJson = ReflectionHelpers.callInstanceMethod(formUtils, "getJsonFieldFromArray"
                 , ReflectionHelpers.ClassParameter.from(String.class, "last_name")
                 , ReflectionHelpers.ClassParameter.from(JSONArray.class, jsonArray));
-        Assert.assertEquals("Doe", resultJson.getString("value"));
+        assertEquals("Doe", resultJson.getString("value"));
     }
 
+    @Test
+    public void testGetObjectAtPath() throws Exception {
+
+        String[] path1 = {"key1", "key2"};
+        JSONObject jsonObject1 = new JSONObject("{\"key1\": {\"key2\": \"value\"}}");
+        Object result1 = formUtils.getObjectAtPath(path1, jsonObject1);
+        assertEquals("value", result1);
+
+        String[] path2 = {"key1", "key3"};
+        JSONObject jsonObject2 = new JSONObject("{\"key1\": {\"key2\": \"value\"}}");
+        Object result2 = formUtils.getObjectAtPath(path2, jsonObject2);
+        assertNull(result2);
+
+
+        String[] path3 = {"key1", "key4","key5"};
+        JSONObject jsonObject3 = new JSONObject("{\"key1\": {\"key4\": [{\"key5\": \"value\"}]}}");
+        Object result3 = formUtils.getObjectAtPath(path3, jsonObject3);
+        assertEquals("value", result3);
+
+
+        String[] path4 = {"key1", "key4"};
+        JSONObject jsonObject4 = new JSONObject("{\"key1\": {\"key4\": []}}");
+        Object result4 = formUtils.getObjectAtPath(path4, jsonObject4);
+        assertEquals("[]", result4.toString());
+    }
+
+    @Test
+    public void testGetFieldsArrayForSubFormDefinition() throws Exception {
+
+        JSONArray fieldsArray2 = new JSONArray("[{\"name\": \"field1\"}, {\"name\": \"field2\", \"source\": \"source2\"}]");
+        String bindPath2 = "example";
+        JSONObject fieldsDefinition2 = new JSONObject();
+        fieldsDefinition2.put("fields", fieldsArray2);
+        fieldsDefinition2.put("bind_type", bindPath2);
+        JSONArray result2 = formUtils.getFieldsArrayForSubFormDefinition(fieldsDefinition2);
+        assertNotNull(result2);
+        assertEquals(2, result2.length());
+
+        JSONObject item1 = result2.getJSONObject(0);
+        assertEquals("field1", item1.getString("name"));
+        assertEquals(bindPath2 + ".field1", item1.getString("source"));
+
+        JSONObject item2 = result2.getJSONObject(1);
+        assertEquals("field2", item2.getString("name"));
+        assertEquals(bindPath2 + ".source2", item2.getString("source"));
+    }
+
+    @Test
+    public void testHasChildElements() {
+        Node element = Mockito.mock(Node.class);
+        NodeList children = Mockito.mock(NodeList.class);
+        Mockito.when(element.getChildNodes()).thenReturn(children);
+        Mockito.when(children.getLength()).thenReturn(0);
+        boolean result1 = formUtils.hasChildElements(element);
+        assertFalse(result1);
+
+
+
+        Mockito.when(children.getLength()).thenReturn(1);
+        Mockito.when(children.item(ArgumentMatchers.anyInt())).thenReturn(element);
+        Mockito.when(element.getNodeType()).thenReturn(Node.TEXT_NODE);
+        boolean result3 = formUtils.hasChildElements(element);
+        assertFalse(result3);
+    }
+
+    @Test
+    public void testGetValueForPath() throws Exception {
+
+
+        String[] path2 = {"key1", "key2"};
+        JSONObject jsonObject2 = new JSONObject();
+        String result2 = formUtils.getValueForPath(path2, jsonObject2);
+        assertNull(result2);
+
+        JSONObject innerObject3 = new JSONObject("{\"content\": \"value\"}");
+        JSONArray innerArray3 = new JSONArray("[\"value\"]");
+        JSONObject jsonObject3 = new JSONObject();
+        jsonObject3.put("key1", innerObject3);
+        jsonObject3.put("key2", innerArray3);
+        jsonObject3.put("key3", "value3");
+
+        String[] path3 = {"key1", "content"};
+        String result3 = formUtils.getValueForPath(path3, jsonObject3);
+        assertEquals("value", result3);
+
+        String[] path4 = {"key2"};
+        String result4 = formUtils.getValueForPath(path4, jsonObject3);
+        assertEquals("value", result4);
+
+        String[] path5 = {"key3"};
+        String result5 = formUtils.getValueForPath(path5, jsonObject3);
+        assertEquals("value3", result5);
+
+    }
+
+    @Test
+    public void testGetSubForms() throws Exception {
+        JSONArray subFormDataArray = new JSONArray();
+        String entity_id = "123";
+        JSONObject subFormDefinition = new JSONObject();
+        JSONObject overrides = new JSONObject();
+        subFormDefinition.put("fields",new JSONArray());
+        subFormDefinition.put("bind_type","/bind/type");
+
+        JSONArray result = ReflectionHelpers.callInstanceMethod(formUtils, "getSubForms"
+                , ReflectionHelpers.ClassParameter.from(JSONArray.class, subFormDataArray)
+                , ReflectionHelpers.ClassParameter.from(String.class, entity_id)
+                , ReflectionHelpers.ClassParameter.from(JSONObject.class, subFormDefinition)
+                , ReflectionHelpers.ClassParameter.from(JSONObject.class, overrides));
+
+        assertNotNull(result);
+        assertEquals(1, result.length());
+    }
+
+    @Test
+    public void testRetrieveSubformDefinitionForBindPath() throws Exception {
+        // Create sample input data
+        JSONArray subForms = new JSONArray();
+        JSONObject subForm1 = new JSONObject();
+        subForm1.put("default_bind_path", "path/to/SubForm1");
+        JSONObject subForm2 = new JSONObject();
+        subForm2.put("default_bind_path", "path/to/SubForm2");
+        subForms.put(subForm1);
+        subForms.put(subForm2);
+        String fieldName = "SubForm1";
+
+
+        JSONObject result = ReflectionHelpers.callInstanceMethod(formUtils, "retriveSubformDefinitionForBindPath"
+                , ReflectionHelpers.ClassParameter.from(JSONArray.class, subForms)
+                , ReflectionHelpers.ClassParameter.from(String.class, fieldName));
+
+        assertNotNull(result);
+        assertEquals("path/to/SubForm1", result.getString("default_bind_path"));
+    }
+
+    @Test
+    public void testGetSubFormNames() throws Exception {
+        // Create sample input data
+        JSONObject formDefinition = new JSONObject();
+        JSONObject form = new JSONObject();
+        JSONArray subForms = new JSONArray();
+        JSONObject subForm1 = new JSONObject();
+        subForm1.put("default_bind_path", "path/to/SubForm1");
+        JSONObject subForm2 = new JSONObject();
+        subForm2.put("default_bind_path", "path/to/SubForm2");
+        subForms.put(subForm1);
+        subForms.put(subForm2);
+        form.put("sub_forms", subForms);
+        formDefinition.put("form", form);
+
+        List<String> result = ReflectionHelpers.callInstanceMethod(formUtils, "getSubFormNames"
+                , ReflectionHelpers.ClassParameter.from(JSONObject.class, formDefinition));
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.contains("SubForm1"));
+        assertTrue(result.contains("SubForm2"));
+    }
 }
