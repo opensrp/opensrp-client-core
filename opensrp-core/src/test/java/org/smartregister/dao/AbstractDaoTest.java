@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @PrepareForTest(DrishtiApplication.class)
@@ -46,7 +47,7 @@ public class AbstractDaoTest extends BaseUnitTest {
     @Test
     public void testGetDateFormat() {
         // validate the date date format returned is of type 'yyyy-MM-dd'
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         Date now = new Date();
         Assert.assertEquals(sdf.format(now), AbstractDao.getDobDateFormat().format(now));
     }
@@ -54,7 +55,7 @@ public class AbstractDaoTest extends BaseUnitTest {
     @Test
     public void testGetNativeFormsDateFormat() {
         // validate the date date format returned is of type 'yyyy-MM-dd'
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         Date now = new Date();
         Assert.assertEquals(sdf.format(now), AbstractDao.getNativeFormsDateFormat().format(now));
     }

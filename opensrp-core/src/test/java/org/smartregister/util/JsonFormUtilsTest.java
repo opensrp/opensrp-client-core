@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -635,7 +636,7 @@ public class JsonFormUtilsTest {
     public void formatDateReturnsinRequiredFormat() throws Exception {
         Date date = new Date();
         String dateInFormat = dd_MM_yyyy.format(date);
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
         String dateinFMT = fmt.format(dd_MM_yyyy.parse(dateInFormat));
         String returnedDateinString = (JsonFormUtils.formatDate(dateInFormat));
         Assert.assertEquals(dateinFMT, returnedDateinString);
@@ -643,7 +644,7 @@ public class JsonFormUtilsTest {
 
     @Test
     public void formatDateReturnsDate() throws Exception {
-        SimpleDateFormat yyyy_MM_dd = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat yyyy_MM_dd = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         Date date = dd_MM_yyyy.parse("22-05-1988");
         String dateInFormat = dd_MM_yyyy.format(date);
         String dateInFormat2 = yyyy_MM_dd.format(date);

@@ -1,5 +1,12 @@
 package org.smartregister.clientandeventmodel.populateform;
 
+import static org.smartregister.clientandeventmodel.FormEntityConstants.FieldType.person;
+import static org.smartregister.clientandeventmodel.FormEntityConstants.FieldType.person_address;
+import static org.smartregister.clientandeventmodel.FormEntityConstants.FieldType.person_attribute;
+import static org.smartregister.clientandeventmodel.FormEntityConstants.FieldType.person_identifier;
+import static org.smartregister.clientandeventmodel.FormEntityConstants.Person;
+import static org.smartregister.util.JsonFormUtils.gson;
+
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -29,19 +36,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import timber.log.Timber;
-
-import static org.smartregister.clientandeventmodel.FormEntityConstants.FieldType.person;
-import static org.smartregister.clientandeventmodel.FormEntityConstants.FieldType.person_address;
-import static org.smartregister.clientandeventmodel.FormEntityConstants.FieldType.person_attribute;
-import static org.smartregister.clientandeventmodel.FormEntityConstants.FieldType.person_identifier;
-import static org.smartregister.clientandeventmodel.FormEntityConstants.Person;
-import static org.smartregister.util.JsonFormUtils.gson;
 
 /**
  * Created by samuelgithengi on 1/19/18.
@@ -56,7 +57,7 @@ public class PopulateEnketoFormUtils {
 
     private EventClientRepository eventClientRepository;
 
-    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
     private String assetsPath = "www/form/";
 

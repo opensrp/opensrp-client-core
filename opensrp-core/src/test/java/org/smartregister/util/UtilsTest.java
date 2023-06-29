@@ -54,6 +54,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import edu.emory.mathcs.backport.java.util.Collections;
@@ -97,7 +98,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Test
     public void assertToDateReturnsDate() throws Exception {
-        SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         Date date = DB_DF.parse("2017-10-20");
         org.junit.Assert.assertNotNull(Utils.toDate("2017-10-20", true));
         assertNull(Utils.toDate("20171020", true));
@@ -455,8 +456,8 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     @Test
     public void testGetBuildDateShouldGetCorrectBuildDate() {
         Date date = new Date(CoreLibrary.getBuildTimeStamp());
-        assertEquals(new SimpleDateFormat("dd MMM yyyy", getDefaultLocale()).format(date), Utils.getBuildDate(true));
-        assertEquals(new SimpleDateFormat("dd MMMM yyyy", getDefaultLocale()).format(date), Utils.getBuildDate(false));
+        assertEquals(new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH).format(date), Utils.getBuildDate(true));
+        assertEquals(new SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH).format(date), Utils.getBuildDate(false));
     }
 
     @Test
@@ -652,7 +653,7 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     @Ignore
     @Test
     public void getDurationShouldReturnValidDurationString() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH);
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(1, Calendar.DAY_OF_MONTH);

@@ -11,6 +11,7 @@ import org.smartregister.util.PropertiesConverter;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -47,7 +48,7 @@ public class LocationTest {
         assertEquals("3734", structure.getProperties().getParentId());
         assertNull(structure.getProperties().getName());
         assertEquals(5, structure.getProperties().getGeographicLevel());
-        assertEquals("2017-01-10", new SimpleDateFormat("yyyy-MM-dd").format(structure.getProperties().getEffectiveStartDate()));
+        assertEquals("2017-01-10", new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(structure.getProperties().getEffectiveStartDate()));
         assertNull(structure.getProperties().getEffectiveEndDate());
         assertEquals(0, structure.getProperties().getVersion());
 
