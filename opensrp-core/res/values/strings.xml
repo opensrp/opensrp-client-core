@@ -477,4 +477,8 @@
     <string name="synced_vaccine_events">Unsynced vaccine events:</string>
     <string name="unsynced_weight_events">Unsynced weight events:</string>
     <string name="unsynced_height_events">Unsynced height events:</string>
+    <string name="unprocessed_events">Unprocessed Events:</string>
+    <string name="app_install_date">App Install Date:</string>
+    <string name="app_updated_date">App Updated Date:</string>
+    <string name="last_sync_date">Last Sync Server Version:</string>
 </resources>

@@ -589,6 +589,7 @@ public class AllConstants {
         String VALID_CLIENTS = "validClients";
         String INVALID_CLIENTS = "INValidClients";
         String TASK_UNPROCESSED_EVENTS = "taskUnprocessedEvents";
+        String UNPROCESSED_EVENTS = "unprocessedEvents";
         String NULL_EVENT_SYNC_STATUS = "nullEventSyncStatus";
         String USER_NAME = "user";
         String USER_TEAM = "user_team";
@@ -596,9 +597,12 @@ public class AllConstants {
         String APP_VERSION_NAME = "app_ver_name";
         String APP_VERSION_CODE = "app_ver_code";
         String APP_BUILD_DATE = "app_build_date";
+        String APP_INSTALL_DATE = "app_install_date";
+        String APP_UPDATED_DATE = "app_updated_date";
         String UNSYNCED_VACCINE_EVENTS = "unsynced_vaccine_events";
         String UNSYNCED_WEIGHT_EVENTS = "unsynced_weight_events";
         String UNSYNCED_HEIGHT_EVENTS = "unsynced_height_events";
+        String LAST_SYNC_DATE = "last_sync_date";
     }
 
     public interface DeviceInfo {

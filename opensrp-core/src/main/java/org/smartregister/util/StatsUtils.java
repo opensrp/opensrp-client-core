@@ -7,14 +7,18 @@ import static org.smartregister.AllConstants.DeviceInfo.MANUFACTURER;
 import static org.smartregister.AllConstants.DeviceInfo.MODEL;
 import static org.smartregister.AllConstants.DeviceInfo.OS_VERSION;
 import static org.smartregister.AllConstants.SyncInfo.APP_BUILD_DATE;
+import static org.smartregister.AllConstants.SyncInfo.APP_INSTALL_DATE;
+import static org.smartregister.AllConstants.SyncInfo.APP_UPDATED_DATE;
 import static org.smartregister.AllConstants.SyncInfo.APP_VERSION_CODE;
 import static org.smartregister.AllConstants.SyncInfo.APP_VERSION_NAME;
 import static org.smartregister.AllConstants.SyncInfo.INVALID_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.INVALID_EVENTS;
+import static org.smartregister.AllConstants.SyncInfo.LAST_SYNC_DATE;
 import static org.smartregister.AllConstants.SyncInfo.NULL_EVENT_SYNC_STATUS;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.TASK_UNPROCESSED_EVENTS;
+import static org.smartregister.AllConstants.SyncInfo.UNPROCESSED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_HEIGHT_EVENTS;
@@ -73,10 +77,12 @@ public class StatsUtils {
             syncInfoMap.put(VALID_CLIENTS, "-");
             syncInfoMap.put(INVALID_CLIENTS, "-");
             syncInfoMap.put(TASK_UNPROCESSED_EVENTS, "-");
+            syncInfoMap.put(UNPROCESSED_EVENTS, "-");
             syncInfoMap.put(NULL_EVENT_SYNC_STATUS, "-");
             syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, "-");
             syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, "-");
             syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, "-");
+            syncInfoMap.put(LAST_SYNC_DATE, "-");
 
             String eventSyncSql = "select count(*), syncStatus from event group by syncStatus";
             String clientSyncSql = "select count(*), syncStatus from client group by syncStatus";
@@ -148,6 +154,8 @@ public class StatsUtils {
             syncInfoMap.put(UNSYNCED_EVENTS, String.valueOf(cursor.getInt(0)));
         } else if (BaseRepository.TYPE_Task_Unprocessed.equals(syncStatus)) {
             syncInfoMap.put(TASK_UNPROCESSED_EVENTS, String.valueOf(cursor.getInt(0)));
+        } else if (BaseRepository.TYPE_Unprocessed.equals(syncStatus)) {
+            syncInfoMap.put(UNPROCESSED_EVENTS, String.valueOf(cursor.getInt(0)));
         } else if (syncStatus == null) {
             syncInfoMap.put(NULL_EVENT_SYNC_STATUS, String.valueOf(cursor.getInt(0)));
         }
@@ -185,9 +193,11 @@ public class StatsUtils {
         String userName = sharedPreferences.fetchRegisteredANM();
         String userTeam = sharedPreferences.fetchDefaultTeam(sharedPreferences.fetchRegisteredANM());
         String userLocality = sharedPreferences.fetchCurrentLocality();
+        String lastSyncDate = sharedPreferences.fetchLastSyncDate(0).toString();
         syncInfoMap.put(USER_NAME, StringUtils.isNotBlank(userName) ? userName : "-");
         syncInfoMap.put(USER_TEAM, StringUtils.isNotBlank(userTeam) ? userTeam : "-");
         syncInfoMap.put(USER_LOCALITY, StringUtils.isNotBlank(userLocality) ? userLocality : "-");
+        syncInfoMap.put(LAST_SYNC_DATE, StringUtils.isNotBlank(lastSyncDate) ? lastSyncDate : "-");
     }
 
     private void populateBuildInfo() {
@@ -216,6 +226,8 @@ public class StatsUtils {
             syncInfoMap.put(MANUFACTURER, Build.MANUFACTURER);
             syncInfoMap.put(MODEL, Build.MODEL);
             syncInfoMap.put(APP_BUILD_DATE, Utils.getBuildDate(true));
+            syncInfoMap.put(APP_INSTALL_DATE, Utils.getAppInstallDate());
+            syncInfoMap.put(APP_UPDATED_DATE, Utils.getAppUpdatedDate());
 
             String osName = Build.VERSION_CODES.class.getFields()[android.os.Build.VERSION.SDK_INT].getName();
             syncInfoMap.put(OS_VERSION, osName);
