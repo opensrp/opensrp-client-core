@@ -251,7 +251,8 @@ public class SyncIntentService extends BaseSyncIntentService {
             jsonObject = new JSONObject((String) resp.payload());
             eCount = fetchNumberOfEvents(jsonObject);
             Timber.e("processFetchedEvents() -> Parse Network Event Count: %s", eCount);
-            Timber.e("processFetchedEvents() -> jsonObject: %s", jsonObject);
+//            Timber.e("processFetchedEvents() -> jsonObject: %s", jsonObject);
+            logJSONObject(jsonObject);
         }
 
         if (eCount == 0) {
@@ -285,6 +286,25 @@ public class SyncIntentService extends BaseSyncIntentService {
             sendSyncProgressBroadcast(eCount);
             fetchRetry(0, true);
 
+        }
+    }
+
+    private void logJSONObject(JSONObject jsonObject) {
+        try {
+            JSONArray events = jsonObject.has("events") ? jsonObject.getJSONArray("events") : new JSONArray();
+            JSONArray clients = jsonObject.has("clients") ? jsonObject.getJSONArray("clients") : new JSONArray();
+
+            for (int i = 0; i < events.length(); i++) {
+                JSONObject eventVal = events.getJSONObject(i);
+                Timber.e("%s -> jsonObject ->  event at index %s: %s", "processFetchedEvents()", i, eventVal);
+            }
+
+            for (int i = 0; i < clients.length(); i++) {
+                JSONObject clientVal = clients.getJSONObject(i);
+                Timber.e("%s -> jsonObject ->  client at index %s: %s", "processFetchedEvents()", i, clientVal);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
         }
     }
 
@@ -331,7 +351,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
 
         for (int i = 0; i < syncUtils.getNumOfSyncAttempts(); i++) {
-            Timber.e("pushECToServer->  Attempt iteration: " + i);
+            Timber.e("pushECToServer->  Attempt iteration: %s", i);
             Map<String, Object> pendingEventsClients = db.getUnSyncedEvents(getEventBatchSize());
 
             if (pendingEventsClients.isEmpty()) {
@@ -346,12 +366,12 @@ public class SyncIntentService extends BaseSyncIntentService {
                     request.put(AllConstants.KEY.CLIENTS, value);
 
                     if (value instanceof List) {
-                        Timber.e("pushECToServer->  pendingEventsClients Client count: " + ((List) value).size());
+                        Timber.e("pushECToServer->  pendingEventsClients Client count: %s", ((List) value).size());
                         eventsUploadedCount += ((List) value).size();
                     }
                 }
                 if (pendingEventsClients.containsKey(AllConstants.KEY.EVENTS)) {
-                    Timber.e("pushECToServer->  pendingEventsClients Event count: " + ((List) pendingEventsClients.get(AllConstants.KEY.EVENTS)).size());
+                    Timber.e("pushECToServer->  pendingEventsClients Event count: %s", ((List) pendingEventsClients.get(AllConstants.KEY.EVENTS)).size());
                     request.put(AllConstants.KEY.EVENTS, pendingEventsClients.get(AllConstants.KEY.EVENTS));
                 }
             } catch (JSONException e) {
@@ -360,7 +380,11 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             isEmptyToAdd = false;
             String jsonPayload = request.toString();
-            Timber.e("pushECToServer->  jsonPayload: %s", jsonPayload);
+            try {
+                logJSONObject(jsonPayload);
+            } catch (Exception e) {
+                Timber.e(e);
+            }
             startEventTrace(PUSH, eventsUploadedCount);
             Response<String> response = httpAgent.post(
                     MessageFormat.format("{0}/{1}",
@@ -407,6 +431,26 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
 
         return isSuccessfulPushSync;
+    }
+
+    private void logJSONObject(String jsonPayload) {
+        try {
+            JSONObject jsonObject = new JSONObject(jsonPayload);
+            JSONArray events = jsonObject.has("events") ? new JSONArray(jsonObject.getString("events")) : new JSONArray();
+            JSONArray clients = jsonObject.has("clients") ? new JSONArray(jsonObject.getString("clients")) : new JSONArray();
+
+            for (int i = 0; i < events.length(); i++) {
+                JSONObject eventVal = events.getJSONObject(i);
+                Timber.e("%s -> jsonObject ->  event at index %s: %s", "pushECToServer", i, eventVal);
+            }
+
+            for (int i = 0; i < clients.length(); i++) {
+                JSONObject clientVal = clients.getJSONObject(i);
+                Timber.e("%s -> jsonObject ->  client at index %s: %s", "pushECToServer", i, clientVal);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
     }
 
     private Set<String> getFailed(String recordType, JSONObject failedEventClients) {
