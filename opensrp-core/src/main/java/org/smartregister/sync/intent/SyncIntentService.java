@@ -371,8 +371,13 @@ public class SyncIntentService extends BaseSyncIntentService {
                     }
                 }
                 if (pendingEventsClients.containsKey(AllConstants.KEY.EVENTS)) {
-                    Timber.e("pushECToServer->  pendingEventsClients Event count: %s", ((List) pendingEventsClients.get(AllConstants.KEY.EVENTS)).size());
-                    request.put(AllConstants.KEY.EVENTS, pendingEventsClients.get(AllConstants.KEY.EVENTS));
+                    Object events = pendingEventsClients.get(AllConstants.KEY.EVENTS);
+                    request.put(AllConstants.KEY.EVENTS, events);
+
+                    if (events instanceof List) {
+                        Timber.e("pushECToServer->  pendingEventsClients Events count: %s", ((List<?>) events).size());
+                        eventsUploadedCount += ((List<?>) events).size();
+                    }
                 }
             } catch (JSONException e) {
                 Timber.e(e);
@@ -407,8 +412,12 @@ public class SyncIntentService extends BaseSyncIntentService {
                         failedClients = getFailed(FAILED_CLIENTS, failedEventClients);
                         failedEvents = getFailed(FAILED_EVENTS, failedEventClients);
 
-                        Timber.e("pushECToServer->  Failed Events: %s", failedEvents.size());
-                        Timber.e("pushECToServer->  Failed Clients: %s", failedClients.size());
+                        if (failedEvents != null) {
+                            Timber.e("pushECToServer->  Failed Events: %s", failedEvents.size());
+                        }
+                        if (failedClients != null) {
+                            Timber.e("pushECToServer->  Failed Clients: %s", failedClients.size());
+                        }
                     } catch (JSONException e) {
                         Timber.e(e);
                     }
