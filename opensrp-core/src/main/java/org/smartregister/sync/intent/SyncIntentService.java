@@ -118,7 +118,6 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     protected void doSync() {
-        Timber.e("doSync() -> Sync Started");
         if (!NetworkUtils.isNetworkAvailable()) {
             complete(FetchStatus.noConnection);
             return;
@@ -140,14 +139,11 @@ public class SyncIntentService extends BaseSyncIntentService {
                     return;
                 }
             } else {
-                Timber.e("doSync() -> pullECFromServer() called");
                 pullECFromServer();
             }
         } catch (Exception e) {
             Timber.e(e);
             complete(FetchStatus.fetchedFailed);
-        } finally {
-            Timber.e("doSync() -> Sync Finished");
         }
     }
 
@@ -168,10 +164,8 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             Long lastSyncDatetime = ecSyncUpdater.getLastSyncTimeStamp();
             Timber.i("LAST SYNC DT %s", new DateTime(lastSyncDatetime));
-            Timber.e("fetchRetry() -> lastSyncDatetime: %s", lastSyncDatetime);
 
             if (httpAgent == null) {
-                Timber.e("fetchRetry() -> httpAgent is NULL");
                 complete(FetchStatus.fetchedFailed);
                 return;
             }
@@ -250,22 +244,17 @@ public class SyncIntentService extends BaseSyncIntentService {
         } else {
             jsonObject = new JSONObject((String) resp.payload());
             eCount = fetchNumberOfEvents(jsonObject);
-            Timber.e("processFetchedEvents() -> Parse Network Event Count: %s", eCount);
-//            Timber.e("processFetchedEvents() -> jsonObject: %s", jsonObject);
-            logJSONObject(jsonObject);
+            Timber.i("Parse Network Event Count: %s", eCount);
         }
 
         if (eCount == 0) {
             complete(FetchStatus.nothingFetched);
-            Timber.e("processFetchedEvents() -> Nothing is fetched");
             sendSyncProgressBroadcast(eCount); // Complete progress update
         } else if (eCount < 0) {
-            Timber.e("processFetchedEvents() -> Fetch failed");
             fetchFailed(count);
         } else {
             final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
             long lastServerVersion = serverVersionPair.second - 1;
-            Timber.e("processFetchedEvents() -> Min server version: " + serverVersionPair.first + " Max server version: " + serverVersionPair.second);
             if (eCount < getEventPullLimit()) {
                 lastServerVersion = serverVersionPair.second;
             }
@@ -289,32 +278,11 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
     }
 
-    private void logJSONObject(JSONObject jsonObject) {
-        try {
-            JSONArray events = jsonObject.has("events") ? jsonObject.getJSONArray("events") : new JSONArray();
-            JSONArray clients = jsonObject.has("clients") ? jsonObject.getJSONArray("clients") : new JSONArray();
-
-            for (int i = 0; i < events.length(); i++) {
-                JSONObject eventVal = events.getJSONObject(i);
-                Timber.e("%s -> jsonObject ->  event at index %s: %s", "processFetchedEvents()", i, eventVal);
-            }
-
-            for (int i = 0; i < clients.length(); i++) {
-                JSONObject clientVal = clients.getJSONObject(i);
-                Timber.e("%s -> jsonObject ->  client at index %s: %s", "processFetchedEvents()", i, clientVal);
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        }
-    }
-
     public void fetchFailed(int count) {
         if (count < CoreLibrary.getInstance().getSyncConfiguration().getSyncMaxRetries()) {
             int newCount = count + 1;
-            Timber.e("fetchFailed() -> Retry new count" + newCount);
             fetchRetry(newCount, false);
         } else {
-            Timber.e("fetchFailed() -> Fetch failed");
             complete(FetchStatus.fetchedFailed);
         }
     }
@@ -332,7 +300,6 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     // PUSH TO SERVER
     private boolean pushToServer() {
-        Timber.e("pushToServer() -> PUSH TO SERVER");
         return pushECToServer(CoreLibrary.getInstance().context().getEventClientRepository()) &&
                 (!CoreLibrary.getInstance().context().hasForeignEvents() || pushECToServer(CoreLibrary.getInstance().context().getForeignEventClientRepository()));
     }
@@ -343,7 +310,6 @@ public class SyncIntentService extends BaseSyncIntentService {
         // push foreign events to server
         int totalEventCount = db.getUnSyncedEventsCount();
         int eventsUploadedCount = 0;
-        Timber.e("pushECToServer->  Total events count: %s", totalEventCount);
 
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
@@ -351,11 +317,10 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
 
         for (int i = 0; i < syncUtils.getNumOfSyncAttempts(); i++) {
-            Timber.e("pushECToServer->  Attempt iteration: %s", i);
             Map<String, Object> pendingEventsClients = db.getUnSyncedEvents(getEventBatchSize());
 
             if (pendingEventsClients.isEmpty()) {
-                Timber.e("pushECToServer->  No pending clients");
+                Timber.i("pushECToServer->  No pending clients");
                 break;
             }
             // create request body
@@ -366,7 +331,6 @@ public class SyncIntentService extends BaseSyncIntentService {
                     request.put(AllConstants.KEY.CLIENTS, value);
 
                     if (value instanceof List) {
-                        Timber.e("pushECToServer->  pendingEventsClients Client count: %s", ((List) value).size());
                         eventsUploadedCount += ((List) value).size();
                     }
                 }
@@ -375,7 +339,6 @@ public class SyncIntentService extends BaseSyncIntentService {
                     request.put(AllConstants.KEY.EVENTS, events);
 
                     if (events instanceof List) {
-                        Timber.e("pushECToServer->  pendingEventsClients Events count: %s", ((List<?>) events).size());
                         eventsUploadedCount += ((List<?>) events).size();
                     }
                 }
@@ -385,17 +348,13 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             isEmptyToAdd = false;
             String jsonPayload = request.toString();
-            try {
-                logJSONObject(jsonPayload);
-            } catch (Exception e) {
-                Timber.e(e);
-            }
             startEventTrace(PUSH, eventsUploadedCount);
             Response<String> response = httpAgent.post(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
                             ADD_URL),
                     jsonPayload);
+
             if (response.isFailure()) {
                 Timber.e("Events sync failed.");
                 isSuccessfulPushSync = false;
@@ -405,31 +364,22 @@ public class SyncIntentService extends BaseSyncIntentService {
                 Set<String> failedEvents = null;
 
                 String responseData = response.payload();
-                Timber.e("pushECToServer->  responseData: %s", response.payload());
                 if (StringUtils.isNotEmpty(responseData)) {
                     try {
+                        Timber.e("pushECToServer->  Failed to sync: %s for payload: %s", response.payload(), jsonPayload);
                         JSONObject failedEventClients = new JSONObject(responseData);
                         failedClients = getFailed(FAILED_CLIENTS, failedEventClients);
                         failedEvents = getFailed(FAILED_EVENTS, failedEventClients);
-
-                        if (failedEvents != null) {
-                            Timber.e("pushECToServer->  Failed Events: %s", failedEvents.size());
-                        }
-                        if (failedClients != null) {
-                            Timber.e("pushECToServer->  Failed Clients: %s", failedClients.size());
-                        }
                     } catch (JSONException e) {
                         Timber.e(e);
                     }
                 }
 
                 db.markEventsAsSynced(pendingEventsClients, failedEvents, failedClients);
-                Timber.e("pushECToServer->  pendingEventsClients are marked as synced");
 
                 Timber.i("Events synced successfully.");
 
                 stopTrace(eventSyncTrace);
-                Timber.e("pushECToServer->  eventsUploadedCount: %s", eventsUploadedCount);
                 updateProgress(eventsUploadedCount, Math.max(1, totalEventCount));
 
                 if ((totalEventCount - eventsUploadedCount) > 0)
@@ -440,26 +390,6 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
 
         return isSuccessfulPushSync;
-    }
-
-    private void logJSONObject(String jsonPayload) {
-        try {
-            JSONObject jsonObject = new JSONObject(jsonPayload);
-            JSONArray events = jsonObject.has("events") ? new JSONArray(jsonObject.getString("events")) : new JSONArray();
-            JSONArray clients = jsonObject.has("clients") ? new JSONArray(jsonObject.getString("clients")) : new JSONArray();
-
-            for (int i = 0; i < events.length(); i++) {
-                JSONObject eventVal = events.getJSONObject(i);
-                Timber.e("%s -> jsonObject ->  event at index %s: %s", "pushECToServer", i, eventVal);
-            }
-
-            for (int i = 0; i < clients.length(); i++) {
-                JSONObject clientVal = clients.getJSONObject(i);
-                Timber.e("%s -> jsonObject ->  client at index %s: %s", "pushECToServer", i, clientVal);
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        }
     }
 
     private Set<String> getFailed(String recordType, JSONObject failedEventClients) {
@@ -497,7 +427,6 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     private void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus) {
-        Timber.e("sendSyncStatusBroadcastMessage() ->  FetchStatus: %s", fetchStatus.name());
         Intent intent = new Intent();
         intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
@@ -524,7 +453,6 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     protected void updateProgress(@IntRange(from = 0) int progress, @IntRange(from = 1) int total) {
-        Timber.e("pushECToServer() ->  updateProgress()-> progress: %s, total: %s", progress, total);
         FetchStatus uploadProgressStatus = FetchStatus.fetchProgress;
         uploadProgressStatus.setDisplayValue(String.format(getString(R.string.sync_upload_progress_float), (progress * 100) / total));
         sendSyncStatusBroadcastMessage(uploadProgressStatus);
