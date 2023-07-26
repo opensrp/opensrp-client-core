@@ -9,7 +9,7 @@ import static org.smartregister.AllConstants.SyncInfo.APP_INSTALL_DATE;
 import static org.smartregister.AllConstants.SyncInfo.APP_UPDATED_DATE;
 import static org.smartregister.AllConstants.SyncInfo.APP_VERSION_CODE;
 import static org.smartregister.AllConstants.SyncInfo.APP_VERSION_NAME;
-import static org.smartregister.AllConstants.SyncInfo.LAST_SYNC_DATE;
+import static org.smartregister.AllConstants.SyncInfo.LAST_SYNCED_SERVER_VERSION;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.TASK_UNPROCESSED_EVENTS;
@@ -168,7 +168,7 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
 
         tvTeam.setText(syncInfoMap.get(USER_TEAM));
         tvLocality.setText(syncInfoMap.get(USER_LOCALITY));
-        tvLastSyncDate.setText(syncInfoMap.get(LAST_SYNC_DATE));
+        tvLastSyncDate.setText(syncInfoMap.get(LAST_SYNCED_SERVER_VERSION));
 
         tvManufacturer.setText(syncInfoMap.get(MANUFACTURER));
         tvDevice.setText(syncInfoMap.get(MODEL));

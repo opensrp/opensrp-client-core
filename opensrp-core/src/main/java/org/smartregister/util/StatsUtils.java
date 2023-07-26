@@ -13,7 +13,7 @@ import static org.smartregister.AllConstants.SyncInfo.APP_VERSION_CODE;
 import static org.smartregister.AllConstants.SyncInfo.APP_VERSION_NAME;
 import static org.smartregister.AllConstants.SyncInfo.INVALID_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.INVALID_EVENTS;
-import static org.smartregister.AllConstants.SyncInfo.LAST_SYNC_DATE;
+import static org.smartregister.AllConstants.SyncInfo.LAST_SYNCED_SERVER_VERSION;
 import static org.smartregister.AllConstants.SyncInfo.NULL_EVENT_SYNC_STATUS;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_EVENTS;
@@ -82,7 +82,7 @@ public class StatsUtils {
             syncInfoMap.put(UNSYNCED_VACCINE_EVENTS, "-");
             syncInfoMap.put(UNSYNCED_WEIGHT_EVENTS, "-");
             syncInfoMap.put(UNSYNCED_HEIGHT_EVENTS, "-");
-            syncInfoMap.put(LAST_SYNC_DATE, "-");
+            syncInfoMap.put(LAST_SYNCED_SERVER_VERSION, "-");
 
             String eventSyncSql = "select count(*), syncStatus from event group by syncStatus";
             String clientSyncSql = "select count(*), syncStatus from client group by syncStatus";
@@ -197,7 +197,7 @@ public class StatsUtils {
         syncInfoMap.put(USER_NAME, StringUtils.isNotBlank(userName) ? userName : "-");
         syncInfoMap.put(USER_TEAM, StringUtils.isNotBlank(userTeam) ? userTeam : "-");
         syncInfoMap.put(USER_LOCALITY, StringUtils.isNotBlank(userLocality) ? userLocality : "-");
-        syncInfoMap.put(LAST_SYNC_DATE, StringUtils.isNotBlank(lastSyncDate) ? lastSyncDate : "-");
+        syncInfoMap.put(LAST_SYNCED_SERVER_VERSION, StringUtils.isNotBlank(lastSyncDate) ? lastSyncDate : "-");
     }
 
     private void populateBuildInfo() {

@@ -602,7 +602,7 @@ public class AllConstants {
         String UNSYNCED_VACCINE_EVENTS = "unsynced_vaccine_events";
         String UNSYNCED_WEIGHT_EVENTS = "unsynced_weight_events";
         String UNSYNCED_HEIGHT_EVENTS = "unsynced_height_events";
-        String LAST_SYNC_DATE = "last_sync_date";
+        String LAST_SYNCED_SERVER_VERSION = "last_sync_server_version";
     }
 
     public interface DeviceInfo {
