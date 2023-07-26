@@ -320,6 +320,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             Map<String, Object> pendingEventsClients = db.getUnSyncedEvents(getEventBatchSize());
 
             if (pendingEventsClients.isEmpty()) {
+                Timber.i("pushECToServer->  No pending clients");
                 break;
             }
             // create request body
@@ -334,7 +335,12 @@ public class SyncIntentService extends BaseSyncIntentService {
                     }
                 }
                 if (pendingEventsClients.containsKey(AllConstants.KEY.EVENTS)) {
-                    request.put(AllConstants.KEY.EVENTS, pendingEventsClients.get(AllConstants.KEY.EVENTS));
+                    Object events = pendingEventsClients.get(AllConstants.KEY.EVENTS);
+                    request.put(AllConstants.KEY.EVENTS, events);
+
+                    if (events instanceof List) {
+                        eventsUploadedCount += ((List<?>) events).size();
+                    }
                 }
             } catch (JSONException e) {
                 Timber.e(e);
@@ -360,6 +366,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 String responseData = response.payload();
                 if (StringUtils.isNotEmpty(responseData)) {
                     try {
+                        Timber.e("pushECToServer->  Failed to sync: %s for payload: %s", response.payload(), jsonPayload);
                         JSONObject failedEventClients = new JSONObject(responseData);
                         failedClients = getFailed(FAILED_CLIENTS, failedEventClients);
                         failedEvents = getFailed(FAILED_EVENTS, failedEventClients);
@@ -373,7 +380,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 Timber.i("Events synced successfully.");
 
                 stopTrace(eventSyncTrace);
-                updateProgress(eventsUploadedCount, totalEventCount);
+                updateProgress(eventsUploadedCount, Math.max(1, totalEventCount));
 
                 if ((totalEventCount - eventsUploadedCount) > 0)
                     pushECToServer(db);

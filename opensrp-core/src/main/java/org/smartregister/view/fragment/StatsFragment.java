@@ -5,11 +5,15 @@ import static org.smartregister.AllConstants.DeviceInfo.MANUFACTURER;
 import static org.smartregister.AllConstants.DeviceInfo.MODEL;
 import static org.smartregister.AllConstants.DeviceInfo.OS_VERSION;
 import static org.smartregister.AllConstants.SyncInfo.APP_BUILD_DATE;
+import static org.smartregister.AllConstants.SyncInfo.APP_INSTALL_DATE;
+import static org.smartregister.AllConstants.SyncInfo.APP_UPDATED_DATE;
 import static org.smartregister.AllConstants.SyncInfo.APP_VERSION_CODE;
 import static org.smartregister.AllConstants.SyncInfo.APP_VERSION_NAME;
+import static org.smartregister.AllConstants.SyncInfo.LAST_SYNCED_SERVER_VERSION;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.SYNCED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.TASK_UNPROCESSED_EVENTS;
+import static org.smartregister.AllConstants.SyncInfo.UNPROCESSED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_CLIENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_EVENTS;
 import static org.smartregister.AllConstants.SyncInfo.UNSYNCED_HEIGHT_EVENTS;
@@ -48,6 +52,7 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
 
     private TextView tvSyncedEvents;
     private TextView tvUnSyncedEvents;
+    private TextView tvUnProcessedEvents;
     private TextView tvSyncedClient;
     private TextView tvUnSyncedClients;
     private TextView tvValidatedEvents;
@@ -63,10 +68,13 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
     private TextView tvDevice;
     private TextView tvOS;
     private TextView tvBuildDate;
+    private TextView tvAppInstallDate;
+    private TextView tvAppUpdatedDate;
     private TextView tvCurrentDate;
     private TextView tvUnsyncedVaccineEvents;
     private TextView tvUnsyncedWeightEvents;
     private TextView tvUnsyncedHeightEvents;
+    private TextView tvLastSyncDate;
 
     public static StatsFragment newInstance(Bundle bundle) {
         StatsFragment fragment = new StatsFragment();
@@ -95,6 +103,7 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
 
         tvSyncedEvents = view.findViewById(R.id.synced_events);
         tvUnSyncedEvents = view.findViewById(R.id.unsynced_events);
+        tvUnProcessedEvents = view.findViewById(R.id.unprocessed_events);
         tvSyncedClient = view.findViewById(R.id.synced_clients);
         tvUnSyncedClients = view.findViewById(R.id.unsynced_clients);
         tvValidatedEvents = view.findViewById(R.id.validated_events);
@@ -110,10 +119,13 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvDevice = view.findViewById(R.id.device_value);
         tvOS = view.findViewById(R.id.os_value);
         tvBuildDate = view.findViewById(R.id.build_date_value);
+        tvAppInstallDate = view.findViewById(R.id.app_install_date_value);
+        tvAppUpdatedDate = view.findViewById(R.id.app_update_date_value);
         tvCurrentDate = view.findViewById(R.id.date_value);
         tvUnsyncedVaccineEvents = view.findViewById(R.id.synced_vaccine_events);
         tvUnsyncedHeightEvents = view.findViewById(R.id.synced_height_events);
         tvUnsyncedWeightEvents = view.findViewById(R.id.synced_weight_events);
+        tvLastSyncDate = view.findViewById(R.id.last_sync_date);
 
         Button btnRefreshStats = view.findViewById(R.id.refresh_button);
         btnRefreshStats.setOnClickListener(v -> presenter.fetchSyncInfo());
@@ -127,6 +139,7 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
 
         tvSyncedEvents.setText(syncInfoMap.get(SYNCED_EVENTS));
         tvUnSyncedEvents.setText(syncInfoMap.get(UNSYNCED_EVENTS));
+        tvUnProcessedEvents.setText(syncInfoMap.get(UNPROCESSED_EVENTS));
         tvTaskUnprocessedEvents.setText(syncInfoMap.get(TASK_UNPROCESSED_EVENTS));
 
         tvSyncedClient.setText(syncInfoMap.get(SYNCED_CLIENTS));
@@ -150,9 +163,12 @@ public class StatsFragment extends Fragment implements StatsFragmentContract.Vie
         tvAppVersionCode.setText(syncInfoMap.get(APP_VERSION_CODE));
         tvDBVersion.setText(syncInfoMap.get(DB_VERSION));
         tvBuildDate.setText(syncInfoMap.get(APP_BUILD_DATE));
+        tvAppInstallDate.setText(syncInfoMap.get(APP_INSTALL_DATE));
+        tvAppUpdatedDate.setText(syncInfoMap.get(APP_UPDATED_DATE));
 
         tvTeam.setText(syncInfoMap.get(USER_TEAM));
         tvLocality.setText(syncInfoMap.get(USER_LOCALITY));
+        tvLastSyncDate.setText(syncInfoMap.get(LAST_SYNCED_SERVER_VERSION));
 
         tvManufacturer.setText(syncInfoMap.get(MANUFACTURER));
         tvDevice.setText(syncInfoMap.get(MODEL));

@@ -88,6 +88,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1027,5 +1028,27 @@ public class Utils {
     public static boolean isP2PEnabled() {
         SyncConfiguration configuration = CoreLibrary.getInstance().getSyncConfiguration();
         return configuration == null || configuration.isP2PEnabled();
+    }
+
+    public static String getAppInstallDate() {
+        try {
+            Context context = CoreLibrary.getInstance().context().applicationContext();
+            Date date = new Date(context.getPackageManager().getPackageInfo(context.getPackageName(), 0).firstInstallTime);
+            return DateFormat.getDateTimeInstance().format(date);
+        } catch (Exception e) {
+            Timber.e(e);
+            return "Unknown";
+        }
+    }
+
+    public static String getAppUpdatedDate() {
+        try {
+            Context context = CoreLibrary.getInstance().context().applicationContext();
+            Date date = new Date(context.getPackageManager().getPackageInfo(context.getPackageName(), 0).lastUpdateTime);
+            return DateFormat.getDateTimeInstance().format(date);
+        } catch (Exception e) {
+            Timber.e(e);
+            return "Unknown";
+        }
     }
 }

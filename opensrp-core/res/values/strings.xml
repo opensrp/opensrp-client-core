@@ -446,35 +446,44 @@
     <string name="view_sync_stats">Show Sync Stats</string>
     <string name="export_db_notification">Exporting Database…</string>
     <string name="database_download_success">Database download successful</string>
-    <string name="synced_events">Synced events:</string>
-    <string name="unsynced_events">Unsynced events:</string>
-    <string name="synced_clients">Synced clients:</string>
-    <string name="unsynced_clients">Unsynced clients:</string>
-    <string name="validated_events">Validated events:</string>
-    <string name="validated_clients">Validated clients:</string>
-    <string name="task_unprocessed_events">Task unprocessed events:</string>
-    <string name="refresh">Refresh</string>
-    <string name="return_to_register">Return</string>
-    <string name="summary_forms">Other Forms</string>
-    <string name="permission_write_external_storage_rationale">Write access to the device internal storage is required for database download.</string>
+    <string name="sync">Sync</string>
 
+    <string name="sync_statistics">Sync Statistics</string>
+    <string name="synced_events">Synced Events:</string>
+    <string name="unsynced_events">Unsynced Events:</string>
+    <string name="unprocessed_events">Unprocessed Events:</string>
+    <string name="task_unprocessed_events">Task Unprocessed Events:</string>
+    <string name="synced_clients">Synced Clients:</string>
+    <string name="unsynced_clients">Unsynced Clients:</string>
+    <string name="validated_events">Validated Events:</string>
+    <string name="validated_clients">Validated Clients:</string>
+    <string name="unsynced_vaccine_events">Unsynced Vaccine Events:</string>
+    <string name="unsynced_weight_events">Unsynced Weight Events:</string>
+    <string name="unsynced_height_events">Unsynced Height Events:</string>
+    <string name="last_synced_server_version">Last Synced Server Version:</string>
+
+    <string name="user_info">User Info</string>
+    <string name="user">User:</string>
+    <string name="team">Team:</string>
+    <string name="locality">Locality:</string>
+
+    <string name="app_info">App Info</string>
     <string name="app_version_name">App Version Name:</string>
     <string name="app_version_code">App Version Code:</string>
     <string name="database_version">Database Version:</string>
-    <string name="team">Team:</string>
-    <string name="locality">Locality:</string>
-    <string name="sync">Sync</string>
-    <string name="app_info">App Info</string>
+    <string name="build_date">Build Date:</string>
+    <string name="app_install_date">App First Install Date:</string>
+    <string name="app_updated_date">App Last Update Date:</string>
+
     <string name="device_info">Device Info</string>
     <string name="manufacturer">Manufacturer:</string>
     <string name="device">Device:</string>
     <string name="os_version">OS Version:</string>
-    <string name="sync_statistics">Sync Statistics</string>
-    <string name="user_info">User Info</string>
-    <string name="build_date">Build Date:</string>
     <string name="date">Date:</string>
-    <string name="user">User:</string>
-    <string name="synced_vaccine_events">Unsynced vaccine events:</string>
-    <string name="unsynced_weight_events">Unsynced weight events:</string>
-    <string name="unsynced_height_events">Unsynced height events:</string>
+    <!-- /Sync Statistics View -->
+
+    <string name="refresh">Refresh</string>
+    <string name="return_to_register">Return</string>
+    <string name="summary_forms">Other Forms</string>
+    <string name="permission_write_external_storage_rationale">Write access to the device internal storage is required for database download.</string>
 </resources>
