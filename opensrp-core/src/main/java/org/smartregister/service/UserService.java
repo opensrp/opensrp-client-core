@@ -86,23 +86,16 @@ public class UserService {
     private HTTPAgent httpAgent;
     private Session session;
     private DristhiConfiguration configuration;
-    private SaveANMLocationTask saveANMLocationTask;
-    private SaveANMTeamTask saveANMTeamTask;
-    private SaveUserInfoTask saveUserInfoTask;
     private KeyStore keyStore;
 
     public UserService(AllSettings allSettingsArg, AllSharedPreferences
             allSharedPreferencesArg, HTTPAgent httpAgentArg, Session sessionArg,
-                       DristhiConfiguration configurationArg, SaveANMLocationTask
-                               saveANMLocationTaskArg, SaveUserInfoTask saveUserInfoTaskArg, SaveANMTeamTask saveANMTeamTaskArg) {
+                       DristhiConfiguration configurationArg) {
         allSettings = allSettingsArg;
         allSharedPreferences = allSharedPreferencesArg;
         httpAgent = httpAgentArg;
         session = sessionArg;
         configuration = configurationArg;
-        saveANMLocationTask = saveANMLocationTaskArg;
-        saveUserInfoTask = saveUserInfoTaskArg;
-        saveANMTeamTask = saveANMTeamTaskArg;
         initKeyStore();
     }
 
@@ -526,13 +519,21 @@ public class UserService {
     }
 
     public void saveAnmLocation(LocationTree anmLocation) {
-        String amnLocationString = AssetHandler.javaToJsonString(anmLocation);
-        saveANMLocationTask.save(amnLocationString);
+        String anmLocationString = AssetHandler.javaToJsonString(anmLocation);
+        executeSaveAnmLocationTask(allSettings, anmLocationString);
+    }
+
+    protected void executeSaveAnmLocationTask(AllSettings allSettings, String anmLocationString) {
+        new SaveANMLocationTask(allSettings).execute(anmLocationString);
     }
 
     public void saveAnmTeam(TeamMember anmTeam) {
         String anmTeamString = AssetHandler.javaToJsonString(anmTeam);
-        saveANMTeamTask.save(anmTeamString);
+        executeSaveANMTeamTask(allSettings, anmTeamString);
+    }
+
+    protected void executeSaveANMTeamTask(AllSettings allSettings, String anmLocationString) {
+        new SaveANMTeamTask(allSettings).execute(anmLocationString);
     }
 
     public void saveJurisdictions(List<String> jurisdictions) {
@@ -579,7 +580,11 @@ public class UserService {
         }
 
         String userInfoString = AssetHandler.javaToJsonString(user);
-        saveUserInfoTask.save(userInfoString);
+        executeSaveUserInfoTask(allSettings, userInfoString);
+    }
+
+    protected void executeSaveUserInfoTask(AllSettings allSettings, String userInfoString) {
+        new SaveUserInfoTask(allSettings).execute(userInfoString);
     }
 
     /**
