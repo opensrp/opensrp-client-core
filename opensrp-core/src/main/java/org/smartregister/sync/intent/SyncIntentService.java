@@ -115,7 +115,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         doSync();
     }
 
-    private void doSync() {
+    protected void doSync() {
         if (!NetworkUtils.isNetworkAvailable()) {
             complete(FetchStatus.noConnection);
             return;
