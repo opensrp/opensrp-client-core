@@ -4,6 +4,8 @@ import androidx.test.core.app.ApplicationProvider;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -95,4 +97,25 @@ public class DateUtilTest extends BaseUnitTest {
         Assert.assertEquals(2, DateUtil.dayDifference(new LocalDate("2019-10-01"), new LocalDate("2019-10-03")));
         Assert.assertEquals(1, DateUtil.weekDifference(new LocalDate("2019-09-26"), new LocalDate("2019-10-03")));
     }
+
+    @Test
+    public void testSetDefaultDateFormatShouldSSetTheDefaultDateFormatOfDateUtil() {
+        DateUtil.setDefaultDateFormat("yyyy/MM/dd");
+        Assert.assertEquals("yyyy/MM/dd", DateUtil.DEFAULT_DATE_FORMAT);
+    }
+
+
+    @Test
+    public void testFormatFromISOString() {
+        String localDateTime = LocalDateTime.parse("22-09-23").toString(ISODateTimeFormat.dateTime());
+        String date = DateUtil.formatFromISOString(localDateTime, "dd/MM/YY");
+        Assert.assertEquals("23/09/22", date);
+    }
+
+    @Test
+    public void testGetTimeFromMillis() {
+        LocalDate date = DateUtil.getDateFromMillis(1691654548L);
+        Assert.assertEquals("1970-01-20", date.toString());
+    }
 }
+
