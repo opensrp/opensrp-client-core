@@ -126,6 +126,20 @@ public class HTTPAgent {
 
         return urlConnection;
     }
+    private HttpURLConnection initializeHttp(String requestURLPath, String  jwtToken) throws IOException {
+        URL url = new URL(requestURLPath);
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        if (urlConnection instanceof HttpsURLConnection) {
+            OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
+            ((HttpsURLConnection) urlConnection).setSSLSocketFactory(opensrpSSLHelper.getSSLSocketFactory());
+        }
+        urlConnection.setConnectTimeout(getConnectTimeout());
+        urlConnection.setReadTimeout(getReadTimeout());
+        final String authentication = "Bearer " + jwtToken;
+        urlConnection.setRequestProperty("Authorization", authentication);
+
+        return urlConnection;
+    }
     public Response<String> fetch(String requestURLPath) {
         HttpURLConnection urlConnection;
         try {
@@ -206,7 +220,35 @@ public class HTTPAgent {
             return new Response<>(ResponseStatus.failure, null);
         }
     }
+    public Response<String> postWithHeaderAndJwtToken(String postURLPath, String jsonPayload, HashMap<String,String> headerList,String jwtToken) {
+        HttpURLConnection urlConnection;
+        try {
+            urlConnection = initializeHttp(postURLPath, jwtToken);
+            if(headerList!=null){
 
+                for(String headers: headerList.keySet()){
+                    urlConnection.setRequestProperty(headers,headerList.get(headers));
+                }
+            }
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+
+            OutputStream os = urlConnection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(jsonPayload);
+            writer.flush();
+            writer.close();
+            os.close();
+
+            urlConnection.connect();
+
+            return handleResponse(urlConnection);
+
+        } catch (IOException ex) {
+            Timber.e(ex,  "EXCEPTION: %s", ex.toString());
+            return new Response<>(ResponseStatus.failure, null);
+        }
+    }
     public Response<String> post(String postURLPath, String jsonPayload) {
         HttpURLConnection urlConnection;
         try {
