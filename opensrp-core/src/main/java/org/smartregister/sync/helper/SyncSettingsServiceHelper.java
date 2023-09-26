@@ -15,7 +15,7 @@ import org.smartregister.domain.Setting;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.sync.intent.BaseSyncIntentService;
+import org.smartregister.sync.RequestParamsBuilder;
 import org.smartregister.sync.intent.SettingsSyncIntentService;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
@@ -97,7 +97,7 @@ public class SyncSettingsServiceHelper {
         JSONArray completeExtraSettings = new JSONArray();
         if (getInstance().getSyncConfiguration() != null && getInstance().getSyncConfiguration().hasExtraSettingsSync()) {
             String syncParams = getInstance().getSyncConfiguration().getExtraStringSettingsParameters();
-            BaseSyncIntentService.RequestParamsBuilder builder = new BaseSyncIntentService.RequestParamsBuilder().addParam(AllConstants.SERVER_VERSION, "0").addParam(AllConstants.RESOLVE, getInstance().getSyncConfiguration().resolveSettings());
+            RequestParamsBuilder builder = new RequestParamsBuilder().addParam(AllConstants.SERVER_VERSION, "0").addParam(AllConstants.RESOLVE, getInstance().getSyncConfiguration().resolveSettings());
             String url = SettingsSyncIntentService.SETTINGS_URL + "?" + syncParams + "&" + builder.toString();
             JSONArray extraSettings = pullSettings(url, accessToken);
             if (extraSettings != null) {

@@ -8,6 +8,7 @@ import org.smartregister.sync.helper.PlanIntentServiceHelper;
 /**
  * Created by Vincent Karuri on 08/05/2019
  */
+@Deprecated
 public class PlanIntentService extends BaseSyncIntentService {
 
     private static final String TAG = "PlanIntentService";

@@ -236,10 +236,15 @@ dependencies {
     compileOnly 'com.google.firebase:firebase-crashlytics'
     compileOnly 'com.google.firebase:firebase-perf'
 
-    def work_version = "2.7.1"
-    implementation "androidx.work:work-runtime:$work_version"
-
     // Add the dependency for the Performance Monitoring library
+
+    // WorkManager
+    def work_version = "2.7.1"
+    api "androidx.work:work-runtime:$work_version"
+    implementation "androidx.work:work-gcm:$work_version"
+    implementation "androidx.work:work-multiprocess:$work_version"
+    implementation "com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava"
+    testImplementation "androidx.work:work-testing:$work_version"
 
     //Mockito
     def mockitoVersion = '4.6.1'

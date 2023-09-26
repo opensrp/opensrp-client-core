@@ -21,6 +21,7 @@ import java.util.List;
 
 import timber.log.Timber;
 
+@Deprecated
 public class PullUniqueIdsIntentService extends BaseSyncIntentService {
     public static final String ID_URL = "/uniqueids/get";
     public static final String IDENTIFIERS = "identifiers";

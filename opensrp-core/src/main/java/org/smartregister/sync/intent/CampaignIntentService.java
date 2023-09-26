@@ -28,6 +28,7 @@ import timber.log.Timber;
 
 import static org.smartregister.AllConstants.CAMPAIGNS;
 
+@Deprecated
 public class CampaignIntentService extends BaseSyncIntentService {
     public static final String CAMPAIGN_URL = "/rest/campaign/";
     private static final String TAG = "CampaignIntentService";

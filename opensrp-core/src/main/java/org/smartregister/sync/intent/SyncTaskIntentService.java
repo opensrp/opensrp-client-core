@@ -4,6 +4,7 @@ import android.content.Intent;
 
 import org.smartregister.sync.helper.TaskServiceHelper;
 
+@Deprecated
 public class SyncTaskIntentService extends BaseSyncIntentService {
     private static final String TAG = "SyncTaskIntentService";
     private TaskServiceHelper taskServiceHelper;

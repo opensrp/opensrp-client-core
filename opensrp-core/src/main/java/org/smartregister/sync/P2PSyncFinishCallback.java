@@ -2,9 +2,12 @@ package org.smartregister.sync;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.work.Data;
 
-import org.smartregister.job.P2pServiceJob;
+import org.smartregister.CoreLibrary;
 import org.smartregister.p2p.callback.SyncFinishedCallback;
+import org.smartregister.sync.wm.worker.P2pProcessRecordsWorker;
+import org.smartregister.sync.wm.workerrequest.WorkRequest;
 
 import java.util.HashMap;
 
@@ -25,6 +28,6 @@ public class P2PSyncFinishCallback implements SyncFinishedCallback {
     }
 
     private void scheduleProcessJob(){
-        P2pServiceJob.scheduleJobImmediately(P2pServiceJob.TAG);
+        WorkRequest.runImmediately(CoreLibrary.getInstance().context().applicationContext(), P2pProcessRecordsWorker.class, P2pProcessRecordsWorker.TAG, Data.EMPTY);
     }
 }

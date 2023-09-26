@@ -41,6 +41,7 @@ import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.sync.RequestParamsBuilder;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.sync.helper.ValidateAssignmentHelper;
 import org.smartregister.util.NetworkUtils;
@@ -57,6 +58,7 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+@Deprecated
 public class SyncIntentService extends BaseSyncIntentService {
     public static final String SYNC_URL = "/rest/event/sync";
     protected static final int EVENT_PULL_LIMIT = 250;
@@ -170,7 +172,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             startEventTrace(FETCH, 0);
 
-            BaseSyncIntentService.RequestParamsBuilder syncParamBuilder = new BaseSyncIntentService.RequestParamsBuilder().
+            RequestParamsBuilder syncParamBuilder = new RequestParamsBuilder().
                     configureSyncFilter(configs.getSyncFilterParam().value(), configs.getSyncFilterValue()).addServerVersion(lastSyncDatetime).addEventPullLimit(getEventPullLimit());
 
             Response resp = getUrlResponse(baseUrl + SYNC_URL, syncParamBuilder, configs, returnCount);
@@ -216,7 +218,7 @@ public class SyncIntentService extends BaseSyncIntentService {
      * @param configs              the Sync Configuration object with various configurations
      * @param returnCount          a boolean flag, whether to return the total count of records as part of the response (field - total_records)
      */
-    protected Response getUrlResponse(@NonNull String baseURL, @NonNull BaseSyncIntentService.RequestParamsBuilder requestParamsBuilder, @NonNull SyncConfiguration configs, boolean returnCount) {
+    protected Response getUrlResponse(@NonNull String baseURL, @NonNull RequestParamsBuilder requestParamsBuilder, @NonNull SyncConfiguration configs, boolean returnCount) {
         Response response;
         String requestUrl = baseURL;
 

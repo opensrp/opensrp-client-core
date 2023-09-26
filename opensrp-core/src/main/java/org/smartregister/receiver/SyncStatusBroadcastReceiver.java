@@ -8,15 +8,18 @@ import android.os.Bundle;
 
 import org.joda.time.DateTime;
 import org.smartregister.domain.FetchStatus;
-import org.smartregister.job.ExtendedSyncServiceJob;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.DrishtiSyncScheduler;
+import org.smartregister.sync.wm.worker.ExtendedSyncWorker;
+import org.smartregister.sync.wm.workerrequest.WorkRequest;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.smartregister.util.Log.logError;
+
+import androidx.work.Data;
 
 /**
  * Created by keyman on 26/06/2018.
@@ -89,7 +92,7 @@ public class SyncStatusBroadcastReceiver extends BroadcastReceiver {
                     boolean isComplete = data.getBoolean(EXTRA_COMPLETE_STATUS);
                     if (isComplete) {
                         complete(fetchStatus, context);
-                        startExtendedSync();
+                        startExtendedSync(context);
                     } else {
                         inProgress(fetchStatus);
                     }
@@ -136,8 +139,8 @@ public class SyncStatusBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
-    protected void startExtendedSync() {
-        ExtendedSyncServiceJob.scheduleJobImmediately(ExtendedSyncServiceJob.TAG);
+    protected void startExtendedSync(Context context) {
+        WorkRequest.runImmediately(context, ExtendedSyncWorker.class, ExtendedSyncWorker.TAG, Data.EMPTY);
     }
 
     public interface SyncStatusListener {

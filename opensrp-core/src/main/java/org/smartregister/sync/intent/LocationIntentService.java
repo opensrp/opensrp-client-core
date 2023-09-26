@@ -11,6 +11,7 @@ import org.smartregister.sync.helper.LocationServiceHelper;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.PropertiesConverter;
 
+@Deprecated
 public class LocationIntentService extends BaseSyncIntentService {
     private static final String TAG = "LocationIntentService";
     public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")

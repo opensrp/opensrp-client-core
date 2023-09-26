@@ -18,6 +18,7 @@ import static org.smartregister.util.Log.logError;
 /**
  * Created by Raihan Ahmed on 10/14/15.
  */
+@Deprecated
 public class ImageUploadSyncService extends IntentService {
     private static final String TAG = ImageUploadSyncService.class.getCanonicalName();
     private ImageRepository imageRepo;

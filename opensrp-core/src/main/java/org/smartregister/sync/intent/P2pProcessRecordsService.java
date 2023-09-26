@@ -1,13 +1,14 @@
 package org.smartregister.sync.intent;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.db.EventClient;
+import org.smartregister.domain.db.EventClientQueryResult;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.util.Utils;
@@ -21,10 +22,11 @@ import timber.log.Timber;
  * Created by Ephraim Kigamba - ekigamba@ona.io on 10/05/2019
  */
 
+@Deprecated
 public class P2pProcessRecordsService extends BaseSyncIntentService {
 
     /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
+     * Creates an IntentService.  Invoked by your subclass's construcztor.
      *
      * @param name Used to name the worker thread, important only for debugging.
      */
@@ -57,12 +59,12 @@ public class P2pProcessRecordsService extends BaseSyncIntentService {
                         DrishtiApplication.getInstance().getClientProcessor().processClient(eventClientList);
                         int tableMaxRowId = eventClientRepository.getMaxRowId(EventClientRepository.Table.event);
 
-                        if (tableMaxRowId == eventClientQueryResult.maxRowId) {
+                        if (tableMaxRowId == eventClientQueryResult.getMaxRowId()) {
                             eventsMaxRowId = -1;
                             allSharedPreferences.resetLastPeerToPeerSyncProcessedEvent();
                         } else {
-                            eventsMaxRowId = eventClientQueryResult.maxRowId;
-                            allSharedPreferences.setLastPeerToPeerSyncProcessedEvent(eventClientQueryResult.maxRowId);
+                            eventsMaxRowId = eventClientQueryResult.getMaxRowId();
+                            allSharedPreferences.setLastPeerToPeerSyncProcessedEvent(eventClientQueryResult.getMaxRowId());
                         }
 
                         // Profile images do not have a foreign key to the clients and can therefore be saved during the sync.
@@ -85,33 +87,6 @@ public class P2pProcessRecordsService extends BaseSyncIntentService {
     @VisibleForTesting
     protected void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus) {
         CoreLibrary.getInstance().context().applicationContext().sendBroadcast(Utils.completeSync(fetchStatus));
-    }
-
-    public static class EventClientQueryResult {
-
-        private List<EventClient> eventClientList;
-        private int maxRowId;
-
-        public EventClientQueryResult(int maxRowId, @NonNull List<EventClient> eventClients) {
-            this.maxRowId = maxRowId;
-            this.eventClientList = eventClients;
-        }
-
-        public List<EventClient> getEventClientList() {
-            return eventClientList;
-        }
-
-        public void setEventClientList(List<EventClient> eventClientList) {
-            this.eventClientList = eventClientList;
-        }
-
-        public int getMaxRowId() {
-            return maxRowId;
-        }
-
-        public void setMaxRowId(int maxRowId) {
-            this.maxRowId = maxRowId;
-        }
     }
 
     @Override

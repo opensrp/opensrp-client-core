@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 import androidx.annotation.VisibleForTesting;
+import androidx.work.Data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -25,15 +26,16 @@ import org.smartregister.account.AccountHelper;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.event.Listener;
-import org.smartregister.job.P2pServiceJob;
-import org.smartregister.job.PullUniqueIdsServiceJob;
-import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.login.task.LocalLoginTask;
 import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.multitenant.ResetAppHelper;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.ServerSettingsHelper;
+import org.smartregister.sync.wm.worker.P2pProcessRecordsWorker;
+import org.smartregister.sync.wm.worker.PullUniqueIdsWorker;
+import org.smartregister.sync.wm.worker.SettingsSyncWorker;
+import org.smartregister.sync.wm.workerrequest.WorkRequest;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.view.activity.ChangePasswordActivity;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -105,7 +107,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
             remoteLogin(userName, password, CoreLibrary.getInstance().getAccountAuthenticatorXml());
         }
 
-        Timber.i("Login result finished " + DateTime.now());
+        Timber.i("Login result finished %s", DateTime.now());
     }
 
     private void localLogin(WeakReference<BaseLoginContract.View> view, String userName, char[] password) {
@@ -141,11 +143,11 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         CoreLibrary.getInstance().initP2pLibrary(userName);
 
         new Thread(() -> {
-            Timber.i("Starting DrishtiSyncScheduler " + DateTime.now().toString());
+            Timber.i("Starting DrishtiSyncScheduler %s", DateTime.now().toString());
 
             scheduleJobsImmediately();
 
-            Timber.i("Started DrishtiSyncScheduler " + DateTime.now().toString());
+            Timber.i("Started DrishtiSyncScheduler %s", DateTime.now().toString());
 
             CoreLibrary.getInstance().context().getUniqueIdRepository().releaseReservedIds();
         }).start();
@@ -291,15 +293,16 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
      * Call super if you override this method.
      */
     protected void scheduleJobsImmediately() {
+        Context applicationContext = getLoginView().getActivityContext().getApplicationContext();
         P2POptions p2POptions = CoreLibrary.getInstance().getP2POptions();
         if (p2POptions != null && p2POptions.isEnableP2PLibrary()) {
             // Finish processing any unprocessed sync records here
-            P2pServiceJob.scheduleJobImmediately(P2pServiceJob.TAG);
+            WorkRequest.runImmediately(applicationContext, P2pProcessRecordsWorker.class, P2pProcessRecordsWorker.TAG, Data.EMPTY);
         }
 
         if (NetworkUtils.isNetworkAvailable()) {
-            PullUniqueIdsServiceJob.scheduleJobImmediately(PullUniqueIdsServiceJob.TAG);
-            SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
+            WorkRequest.runImmediately(applicationContext, PullUniqueIdsWorker.class, PullUniqueIdsWorker.TAG, Data.EMPTY);
+            WorkRequest.runImmediately(applicationContext, SettingsSyncWorker.class, SettingsSyncWorker.TAG, Data.EMPTY);
         }
     }
 
@@ -307,11 +310,10 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         int minutes = MINIMUM_JOB_FLEX_VALUE;
 
         if (value > MINIMUM_JOB_FLEX_VALUE) {
-
             minutes = (int) Math.ceil(value / 3);
         }
 
-        return minutes < MINIMUM_JOB_FLEX_VALUE ? MINIMUM_JOB_FLEX_VALUE : minutes;
+        return Math.max(minutes, MINIMUM_JOB_FLEX_VALUE);
     }
 
     //Always call super.processServerSettings( ) if you ever Override this
