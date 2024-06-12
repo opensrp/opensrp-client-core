@@ -24,3 +24,4 @@ opensrp-path/fabric.properties
 opensrp-path/reports/
 opensrp-core/reports/
 opensrp-core/jacoco.exec
+robolectric-deps/

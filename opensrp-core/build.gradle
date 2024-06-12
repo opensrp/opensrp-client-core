@@ -24,6 +24,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'maven-publish'
+apply plugin: 'kotlin-android'
 
 jacoco {
     toolVersion = "0.8.8"
@@ -87,12 +88,14 @@ android {
         targetSdkVersion androidTargetSdkVersion
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
-        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
         buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
         buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
         buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
     }
+/*
+
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -102,8 +105,12 @@ android {
             jniLibs.srcDirs 'src/main/native'
             resources.srcDir 'resources'
         }
+        test {
+            java.srcDir 'tests'
+        }
         androidTest.setRoot('src/androidTest')
     }
+*/
 
     aaptOptions {
         noCompress 'apk'
@@ -120,6 +127,7 @@ android {
             includeAndroidResources = true
         }
     }
+
 }
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -130,13 +138,23 @@ tasks.withType(Test) {
     jacoco.excludes = ['jdk.internal.*']
     testLogging {
         // Enables easier debugging of tests in Github Actions CI
-        events TestLogEvent.FAILED
+        events TestLogEvent.FAILED, TestLogEvent.SKIPPED, TestLogEvent.PASSED
         exceptionFormat TestExceptionFormat.FULL
         showExceptions true
         showCauses true
         showStackTraces true
     }
     maxHeapSize = "4g"
+
+    test {
+        beforeTest { testDescriptor ->
+            println "${testDescriptor.className} > ${testDescriptor.name} STARTED"
+        }
+        afterTest { testDescriptor ->
+            println "${testDescriptor.className} > ${testDescriptor.name} ENDED"
+
+        }
+    }
 }
 
 def filesToCopy = copySpec {
@@ -270,6 +288,8 @@ dependencies {
     // Add the dependency for the Performance Monitoring library
     testImplementation 'com.google.firebase:firebase-perf'
 
+    testImplementation(project(":opensrp-core"))
+
     // PowerMock
     def powerMockVersion = '2.0.9'
     testImplementation "org.powermock:powermock-core:$powerMockVersion"
@@ -320,5 +340,5 @@ coveralls {
     sourceDirs = ["$project.projectDir/src/main/java"]
 }
 
+
 apply from: '../maven.gradle'
-apply plugin: 'kotlin-android'
