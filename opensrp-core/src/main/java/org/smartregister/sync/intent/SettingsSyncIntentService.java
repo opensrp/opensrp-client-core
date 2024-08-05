@@ -1,5 +1,6 @@
 package org.smartregister.sync.intent;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.util.Log;
 
@@ -8,11 +9,15 @@ import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.job.SyncServiceJob;
+import org.smartregister.job.SyncSettingsServiceWorker;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
 
 import timber.log.Timber;
 
 import static org.smartregister.util.Log.logError;
+
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 /**
  * Created by ndegwamartin on 14/09/2018.
@@ -34,7 +39,9 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
     protected void onHandleIntent(Intent intent) {
         boolean isSuccessfulSync = processSettings(intent);
         if (isSuccessfulSync) {
-            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
+            // Schedule the sync job using WorkManager
+            OneTimeWorkRequest syncWorkRequest = new OneTimeWorkRequest.Builder(SyncSettingsServiceWorker.class).build();
+            WorkManager.getInstance(this).enqueue(syncWorkRequest);
         }
     }
 

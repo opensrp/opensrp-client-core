@@ -54,6 +54,8 @@ import timber.log.Timber;
 public class ClientProcessorForJava {
 
     public static final String JSON_ARRAY = "json_array";
+
+    public static final String demo = "field";
     protected static final String VALUES_KEY = "values";
     protected static final String detailsUpdated = "detailsUpdated";
     protected static ClientProcessorForJava instance;
