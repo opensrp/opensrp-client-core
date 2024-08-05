@@ -242,7 +242,9 @@ public class HTTPAgentTest {
             HashMap<String, String> map = new HashMap<>();
             map.put("title", "OpenSRP Testing Tuesdays");
             JSONObject jObject = new JSONObject(map);
-            Response<String> resp = httpAgent.post("http://www.mocky.io/v2/5e54d9333100006300eb33a8", jObject.toString());
+            // json response set at https://run.mocky.io/v3/960722e4-028d-44af-ae55-019fcbca09f1
+            // is {"title":"OpenSRP Testing Tuesdays"}
+            Response<String> resp = httpAgent.post("https://run.mocky.io/v3/960722e4-028d-44af-ae55-019fcbca09f1", jObject.toString());
             Assert.assertEquals(ResponseStatus.success, resp.status());
         }
     }
@@ -251,7 +253,34 @@ public class HTTPAgentTest {
     public void testUrlCanBeAccessWithGivenCredentials() {
         try (MockedStatic<Base64> base64MockedStatic = Mockito.mockStatic(Base64.class)) {
             base64MockedStatic.when(() -> Base64.encodeToString(ArgumentMatchers.any(byte[].class), ArgumentMatchers.eq(Base64.NO_WRAP))).thenReturn("");
-            LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("http://www.mocky.io/v2/5e54de89310000d559eb33d9", "", "".toCharArray());
+            // response set at https://run.mocky.io/v3/a158b7c7-f625-4c04-bade-0fc585819016
+            //            {
+            //                "user": {
+            //                "username": "username-value",
+            //                        "preferredName": "preferred-name-value",
+            //                        "baseEntityId": "base-entity-id"
+            //            },
+            //                "time": {
+            //                "time": "2024-08-05 12:00:00",
+            //                        "timeZone": "UTC"
+            //            },
+            //                "locations": {
+            //                "locationDetails": "some-location-details"
+            //            },
+            //                "team": {
+            //                "team": {
+            //                    "location": {
+            //                        "uuid": "location-uuid-value"
+            //                    },
+            //                    "uuid": "team-uuid-value",
+            //                            "teamName": "team-name-value"
+            //                }
+            //            },
+            //                "jurisdictions": ["jurisdiction1", "jurisdiction2"],
+            //                "jurisdictionIds": ["jurisdiction-id1", "jurisdiction-id2"]
+            //            }
+
+            LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("https://run.mocky.io/v3/a158b7c7-f625-4c04-bade-0fc585819016", "", "".toCharArray());
             Assert.assertEquals(LoginResponse.SUCCESS.message(), resp.message());
         }
     }
@@ -266,7 +295,9 @@ public class HTTPAgentTest {
     public void testUrlCanBeAccessWithGivenCredentialsGivenEmptyResp() {
         try (MockedStatic<Base64> base64MockedStatic = Mockito.mockStatic(Base64.class)) {
             base64MockedStatic.when(() -> Base64.encodeToString(ArgumentMatchers.any(byte[].class), ArgumentMatchers.eq(Base64.NO_WRAP))).thenReturn("");
-            LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("http://mockbin.org/bin/e42f7256-18b2-40b9-a20c-40fdc564d06f", "", "".toCharArray());
+            // plain/text response set at https://run.mocky.io/v3/a358697f-3afb-4d73-9bf2-694aa2864fcf is
+            // Login successful.
+            LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("https://run.mocky.io/v3/a358697f-3afb-4d73-9bf2-694aa2864fcf", "", "".toCharArray());
             Assert.assertEquals(LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE.message(), resp.message());
         }
     }
@@ -296,7 +327,7 @@ public class HTTPAgentTest {
             ProfileImage profileImage2 = new ProfileImage();
             profileImage2.setFilepath("test");
 
-            String resp = httpAgent.httpImagePost("http://www.mocky.io/v2/5e54de89310000d559eb33d9?mocky-delay=60000ms", profileImage2);
+            String resp = httpAgent.httpImagePost("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=60000ms", profileImage2);
             Assert.assertEquals("", resp);
         }
     }

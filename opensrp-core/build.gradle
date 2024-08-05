@@ -278,6 +278,8 @@ dependencies {
     testImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
 
     testImplementation 'org.skyscreamer:jsonassert:1.5.1'
+    implementation 'androidx.work:work-runtime:2.7.1'
+    testImplementation "androidx.work:work-testing:2.8.1"
 }
 
 task clearJar(type: Delete) {

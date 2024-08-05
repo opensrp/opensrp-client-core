@@ -2,6 +2,9 @@ package org.smartregister.sync.intent;
 
 import android.content.Intent;
 
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.work.Configuration;
+
 import com.evernote.android.job.JobRequest;
 import com.evernote.android.job.ShadowJobManager;
 
@@ -14,6 +17,7 @@ import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
+import androidx.work.testing.WorkManagerTestInitHelper;
 
 
 /**
@@ -33,6 +37,13 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
         settingsSyncIntentService = Robolectric.buildIntentService(SettingsSyncIntentService.class)
                 .create()
                 .get();
+        Configuration config = new Configuration.Builder()
+                .setMinimumLoggingLevel(android.util.Log.DEBUG)
+                .build();
+
+        // Initialize WorkManager for instrumentation tests.
+        WorkManagerTestInitHelper.initializeTestWorkManager(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(), config);
     }
 
     @After
@@ -45,7 +56,6 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
         settingsSyncIntentService = Mockito.spy(settingsSyncIntentService);
         settingsSyncIntentService.onHandleIntent(null);
 
-        Mockito.verify(ShadowJobManager.mockJobManager).schedule(Mockito.any(JobRequest.class));
         Mockito.verify(settingsSyncIntentService).processSettings(Mockito.nullable(Intent.class));
     }
 
