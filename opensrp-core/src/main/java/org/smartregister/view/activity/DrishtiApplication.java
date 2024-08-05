@@ -8,8 +8,6 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDex;
-import androidx.work.Configuration;
-import androidx.work.WorkManager;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -75,10 +73,6 @@ public abstract class DrishtiApplication extends Application {
             super.onCreate();
 
             initializeCrashLyticsTree();
-            Configuration configuration = new Configuration.Builder()
-                    .setMinimumLoggingLevel(android.util.Log.INFO)
-                    .build();
-            WorkManager.initialize(this, configuration);
             mInstance = this;
             SQLiteDatabase.loadLibs(this);
         } catch (UnsatisfiedLinkError e) {

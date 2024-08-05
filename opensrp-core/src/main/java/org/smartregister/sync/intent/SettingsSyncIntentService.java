@@ -1,14 +1,11 @@
 package org.smartregister.sync.intent;
 
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.job.SyncServiceJob;
 import org.smartregister.job.SyncSettingsServiceWorker;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
 
