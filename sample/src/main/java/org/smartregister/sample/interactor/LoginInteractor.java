@@ -1,11 +1,16 @@
 package org.smartregister.sample.interactor;
 
+import static org.smartregister.job.SyncSettingsServiceWorker.*;
+
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
+import org.smartregister.domain.Setting;
 import org.smartregister.job.DuplicateCleanerWorker;
+import org.smartregister.job.SyncSettingsServiceWorker;
 import org.smartregister.login.interactor.BaseLoginInteractor;
+import org.smartregister.sync.intent.SettingsSyncIntentService;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.util.concurrent.TimeUnit;
@@ -25,5 +30,7 @@ public class LoginInteractor extends BaseLoginInteractor {
         WorkRequest  cleanZeirIdsWorkRequest = new PeriodicWorkRequest.Builder(DuplicateCleanerWorker.class, 15, TimeUnit.MINUTES)
                 .build();
         WorkManager.getInstance(this.getApplicationContext()).enqueue(cleanZeirIdsWorkRequest);
+
+        enqueuePeriodicSettingsSyncIntentService(getApplicationContext());
     }
 }

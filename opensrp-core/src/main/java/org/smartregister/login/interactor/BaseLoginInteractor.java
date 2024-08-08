@@ -28,12 +28,14 @@ import org.smartregister.event.Listener;
 import org.smartregister.job.P2pServiceJob;
 import org.smartregister.job.PullUniqueIdsServiceJob;
 import org.smartregister.job.SyncSettingsServiceJob;
+import org.smartregister.job.SyncSettingsServiceWorker;
 import org.smartregister.login.task.LocalLoginTask;
 import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.multitenant.ResetAppHelper;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.ServerSettingsHelper;
+import org.smartregister.sync.intent.SettingsSyncIntentService;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.view.activity.ChangePasswordActivity;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -299,7 +301,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
         if (NetworkUtils.isNetworkAvailable()) {
             PullUniqueIdsServiceJob.scheduleJobImmediately(PullUniqueIdsServiceJob.TAG);
-            SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
+            SyncSettingsServiceWorker.enqueueOnetimeSettingsSyncIntentService(getApplicationContext());
         }
     }
 

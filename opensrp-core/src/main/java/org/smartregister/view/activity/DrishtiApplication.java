@@ -73,7 +73,6 @@ public abstract class DrishtiApplication extends Application {
             super.onCreate();
 
             initializeCrashLyticsTree();
-
             mInstance = this;
             SQLiteDatabase.loadLibs(this);
         } catch (UnsatisfiedLinkError e) {
