@@ -364,7 +364,8 @@ public class ClientProcessorForJava {
 
                 String entityId = contentValues.getAsString(CommonRepository.BASE_ENTITY_ID_COLUMN);
                 String clientType = client.getClientType() != null ? client.getClientType() : (client.getRelationships() != null ? AllConstants.ECClientType.CHILD : null);
-                updateFTSsearch(tableName, clientType, entityId, contentValues);
+                if (!CoreLibrary.getInstance().context().getAppProperties().isTrue(AllConstants.PROPERTY.DISABLE_PROFILE_IMAGES_FEATURE))
+                    updateFTSsearch(tableName, clientType, entityId, contentValues);
                 Long timestamp = getEventDate(event.getEventDate());
                 addContentValuesToDetailsTable(contentValues, timestamp);
                 updateClientDetailsTable(event, client);
