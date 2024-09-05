@@ -84,7 +84,7 @@ public class ClientProcessorForJava {
     }
 
     public synchronized void processClient(List<EventClient> eventClientList, boolean localSubmission) throws Exception {
-
+        long startProcessingClient = System.currentTimeMillis();
         final String EC_CLIENT_CLASSIFICATION = "ec_client_classification.json";
         ClientClassification clientClassification = assetJsonToJava(EC_CLIENT_CLASSIFICATION, ClientClassification.class);
         if (clientClassification == null) {
@@ -92,6 +92,8 @@ public class ClientProcessorForJava {
         }
 
         if (!eventClientList.isEmpty()) {
+            long startLooping = System.currentTimeMillis();
+            Timber.d("number of eventClientList %s, ", eventClientList.size());
             for (EventClient eventClient : eventClientList) {
                 // Iterate through the events
                 Client client = eventClient.getClient();
@@ -101,20 +103,28 @@ public class ClientProcessorForJava {
 
                     if (processorMap.containsKey(eventType)) {
                         try {
+                            long startMiniProcessor = System.currentTimeMillis();
                             processEventUsingMiniProcessor(clientClassification, eventClient, eventType);
+                            Timber.d("processEventUsingMiniProcessor took, %s ", System.currentTimeMillis()-startMiniProcessor);
                         } catch (Exception ex) {
                             Timber.e(ex);
                         }
                     } else {
+                        long startProcessEvent = System.currentTimeMillis();
                         processEvent(event, client, clientClassification);
+                        Timber.d("processEvent Inside processClient method took, %s ", System.currentTimeMillis() - startProcessEvent);
                     }
                 }
 
                 if (localSubmission && CoreLibrary.getInstance().getSyncConfiguration().runPlanEvaluationOnClientProcessing()) {
+                    long startProcessPlan = System.currentTimeMillis();
                     processPlanEvaluation(eventClient);
+                    Timber.d("process planEvaluation inside processClient took, %s ", System.currentTimeMillis()-startProcessingClient);
                 }
             }
+            Timber.d("looping through eventClientList took %s, ", System.currentTimeMillis() - startLooping);
         }
+        Timber.d("processing client took, %s", System.currentTimeMillis()-startProcessingClient);
     }
 
     /**
@@ -182,7 +192,9 @@ public class ClientProcessorForJava {
             }
 
             for (ClassificationRule clientClass : clientClasses) {
+                long start = System.currentTimeMillis();
                 processClientClass(clientClass, event, client);
+                Timber.d("process client class took, %s", System.currentTimeMillis()-start);
             }
 
             // Incase the details have not been updated
@@ -214,10 +226,13 @@ public class ClientProcessorForJava {
 
             Rule rule = clientClass.rule;
             List<org.smartregister.domain.jsonmapping.Field> fields = rule.fields;
-
+            long startProcessingFields = System.currentTimeMillis();
             for (org.smartregister.domain.jsonmapping.Field field : fields) {
+                long start = System.currentTimeMillis();
                 processField(field, event, client);
+                Timber.d("processing %s field took %s, ", field.field, System.currentTimeMillis() - start);
             }
+            Timber.i("processing %s fields for %s took %s, ", rule.fields.size(), rule.type, System.currentTimeMillis() - startProcessingFields);
             return true;
         } catch (Exception e) {
             Timber.e(e);
@@ -277,8 +292,12 @@ public class ClientProcessorForJava {
                                     .disjoint(responseValues, docSegmentResponseValues))) {
                                 // this is the event obs we're interested in put it in the respective
                                 // bucket specified by type variable
+                                long processCaseStart = System.currentTimeMillis();
                                 processCaseModel(event, client, createsCase);
+                                long processCaseEnd = System.currentTimeMillis();
+                                Timber.w("==processCaseModel if dataSegment is instance of list took %s, ",  processCaseEnd - processCaseStart);
                                 closeCase(client, closesCase);
+                                Timber.w("==closeCase took if dataSegment is instance of list took %s, ", System.currentTimeMillis() - processCaseEnd);
                             }
 
                         }
@@ -291,8 +310,12 @@ public class ClientProcessorForJava {
                             if (objectValue != null && objectValue instanceof String) {
                                 String docSegmentFieldValue = objectValue.toString();
                                 if (docSegmentFieldValue.equalsIgnoreCase(fieldValue)) {
+                                    long startProcessCaseModel = System.currentTimeMillis();
                                     processCaseModel(event, client, createsCase);
+                                    long endCaseModelProcessing = System.currentTimeMillis();
+                                    Timber.w("**processCaseModel if dataSegment is a map took, %s ",endCaseModelProcessing - startProcessCaseModel);
                                     closeCase(client, closesCase);
+                                    Timber.w("**closecase if dataSegment is a map, %s ", System.currentTimeMillis() - endCaseModelProcessing);
                                 }
                             }
                         }
@@ -304,8 +327,12 @@ public class ClientProcessorForJava {
                 Object value = getValue(event, fieldName);
                 String docSegmentFieldValue = value != null ? value.toString() : "";
                 if (docSegmentFieldValue.equalsIgnoreCase(fieldValue)) {
+                    long startProcessCaseModel = System.currentTimeMillis();
                     processCaseModel(event, client, createsCase);
+                    long endProccessCaseModel = System.currentTimeMillis();
+                    Timber.w("&&&&processCaseModel if dataSegment is null, took %s ", endProccessCaseModel-startProcessCaseModel);
                     closeCase(client, closesCase);
+                    Timber.w("&&&&&&closeCase if dataSegment is null, took %s ", System.currentTimeMillis() - endProccessCaseModel);
                 }
             }
             return true;
@@ -351,24 +378,35 @@ public class ClientProcessorForJava {
                 //Add the base_entity_id
                 contentValues.put(CommonRepository.BASE_ENTITY_ID_COLUMN, baseEntityId);
                 contentValues.put(CommonRepository.IS_CLOSED_COLUMN, 0);
-
+                long iterateOverColumns = System.currentTimeMillis();
                 for (Column colObject : columns) {
                     processCaseModel(event, client, colObject, contentValues);
                 }
+                Timber.w("processingCaseModel for %s columns took, %s", columns.size(), System.currentTimeMillis() - iterateOverColumns);
 
                 // Modify openmrs generated identifier, Remove hyphen if it exists
                 updateIdentifier(contentValues);
 
                 // save the values to db
+                long execInsertStart = System.currentTimeMillis();
                 executeInsertStatement(contentValues, tableName);
+                Timber.i("executeInsertStatement took %s, ", System.currentTimeMillis()-execInsertStart);
 
                 String entityId = contentValues.getAsString(CommonRepository.BASE_ENTITY_ID_COLUMN);
                 String clientType = client.getClientType() != null ? client.getClientType() : (client.getRelationships() != null ? AllConstants.ECClientType.CHILD : null);
-                if (!CoreLibrary.getInstance().context().getAppProperties().isTrue(AllConstants.PROPERTY.DISABLE_PROFILE_IMAGES_FEATURE))
+                if (!CoreLibrary.getInstance().context().getAppProperties().isTrue(AllConstants.PROPERTY.DISABLE_PROFILE_IMAGES_FEATURE)) {
+                    long ftsstart = System.currentTimeMillis();
                     updateFTSsearch(tableName, clientType, entityId, contentValues);
+                    Timber.w("Fts search update took %s, ", System.currentTimeMillis() - ftsstart);
+                }
                 Long timestamp = getEventDate(event.getEventDate());
+                long addContent = System.currentTimeMillis();
                 addContentValuesToDetailsTable(contentValues, timestamp);
+                long endAdd = System.currentTimeMillis();
+                Timber.i("addContentValuesToDetailsTable took %s, ", endAdd - addContent);
                 updateClientDetailsTable(event, client);
+                Timber.i("updateClientDetailsTable took %s, ", System.currentTimeMillis() - endAdd);
+
             }
 
             return true;
@@ -632,6 +670,7 @@ public class ClientProcessorForJava {
     public void updateClientDetailsTable(Event event, Client client) {
         try {
             Timber.d("Started updateClientDetailsTable");
+            long updateClientDetailsStart   = System.currentTimeMillis();
 
             if (CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable()) {
                 String baseEntityId = client.getBaseEntityId();
@@ -649,10 +688,11 @@ public class ClientProcessorForJava {
                 Map<String, String> obs = getObsFromEvent(event);
                 saveClientDetails(baseEntityId, obs, timestamp);
             }
-
+            Timber.i("Updating client details took, %s ", System.currentTimeMillis()-updateClientDetailsStart);
             event.addDetails(detailsUpdated, Boolean.TRUE.toString());
 
             Timber.d("Finished updateClientDetailsTable");
+
             // save the other misc, client info date of birth...
         } catch (Exception e) {
             Timber.e(e);

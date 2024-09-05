@@ -34,7 +34,9 @@ public class DetailsRepository extends DrishtiRepository {
 
     public void add(String baseEntityId, String key, String value, Long timestamp) {
         SQLiteDatabase database = masterRepository().getWritableDatabase();
+//        long start = System.currentTimeMillis();
         Boolean exists = getIdForDetailsIfExists(baseEntityId, key, value);
+//        Timber.d("check if details exist's took %s, ", System.currentTimeMillis() - start);
         if (exists == null) { // Value has not changed, no need to update
             return;
         }
@@ -46,12 +48,16 @@ public class DetailsRepository extends DrishtiRepository {
         values.put(EVENT_DATE_COLUMN, timestamp);
 
         if (exists) {
+            long startUpdate = System.currentTimeMillis();
             int updated = database.update(TABLE_NAME, values,
                     BASE_ENTITY_ID_COLUMN + " = ? AND " + KEY_COLUMN + " MATCH ? ",
                     new String[]{baseEntityId, key});
+//            Timber.d("updating details for %S took %s, ",  TABLE_NAME, System.currentTimeMillis() - startUpdate);
             //Log.i(getClass().getName(), "Detail Row Updated: " + String.valueOf(updated));
         } else {
+            long insertStart = System.currentTimeMillis();
             long rowId = database.insert(TABLE_NAME, null, values);
+//            Timber.d("insert into details %s table took %s, ", TABLE_NAME,  System.currentTimeMillis() - insertStart);
             //Log.i(getClass().getName(), "Details Row Inserted : " + String.valueOf(rowId));
         }
     }
