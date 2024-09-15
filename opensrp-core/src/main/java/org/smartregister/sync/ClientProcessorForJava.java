@@ -4,6 +4,7 @@ import static org.smartregister.event.Event.FORM_SUBMITTED;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.provider.SyncStateContract;
 
 import androidx.annotation.NonNull;
 
@@ -390,7 +391,7 @@ public class ClientProcessorForJava {
                 // save the values to db
                 long execInsertStart = System.currentTimeMillis();
                 executeInsertStatement(contentValues, tableName);
-                Timber.i("executeInsertStatement took %s, ", System.currentTimeMillis()-execInsertStart);
+                Timber.i("executeInsertStatement took, %s ", System.currentTimeMillis()-execInsertStart);
 
                 String entityId = contentValues.getAsString(CommonRepository.BASE_ENTITY_ID_COLUMN);
                 String clientType = client.getClientType() != null ? client.getClientType() : (client.getRelationships() != null ? AllConstants.ECClientType.CHILD : null);
@@ -647,12 +648,13 @@ public class ClientProcessorForJava {
             return;
 
         try {
-            String baseEntityId = values.getAsString("base_entity_id");
+            Map<String, String> valsMap = new HashMap<>();
 
             for (String key : values.keySet()) {
                 String value = values.getAsString(key);
-                saveClientDetails(baseEntityId, key, value, eventDate);
+                valsMap.put(key, value);
             }
+            batchSaveClientDetails(valsMap, eventDate);
         } catch (Exception e) {
             Timber.e(e);
         }
@@ -677,16 +679,19 @@ public class ClientProcessorForJava {
                 Long timestamp = getEventDate(event.getEventDate());
 
                 Map<String, String> genderInfo = getGender(client);
-                saveClientDetails(baseEntityId, genderInfo, timestamp);
 
                 Map<String, String> addressInfo = getClientAddressAsMap(client);
-                saveClientDetails(baseEntityId, addressInfo, timestamp);
 
                 Map<String, String> attributes = getClientAttributes(client);
-                saveClientDetails(baseEntityId, attributes, timestamp);
 
                 Map<String, String> obs = getObsFromEvent(event);
-                saveClientDetails(baseEntityId, obs, timestamp);
+                Map<String, String> clientDetails = new HashMap<>();
+                clientDetails.putAll(genderInfo);
+                clientDetails.putAll(addressInfo);
+                clientDetails.putAll(attributes);
+                clientDetails.putAll(obs);
+                clientDetails.put("base_entity_id", baseEntityId);
+                batchSaveClientDetails(clientDetails, timestamp);
             }
             Timber.i("Updating client details took, %s ", System.currentTimeMillis()-updateClientDetailsStart);
             event.addDetails(detailsUpdated, Boolean.TRUE.toString());
@@ -782,6 +787,12 @@ public class ClientProcessorForJava {
         DetailsRepository detailsRepository = org.smartregister.CoreLibrary.getInstance().context().
                 detailsRepository();
         detailsRepository.add(baseEntityId, key, value, timestamp);
+    }
+
+    private void batchSaveClientDetails(Map<String, String> values, Long timestamp) {
+        DetailsRepository detailsRepository = org.smartregister.CoreLibrary.getInstance().context().
+                detailsRepository();
+        detailsRepository.batchInsertDetails(values, timestamp);
     }
 
 

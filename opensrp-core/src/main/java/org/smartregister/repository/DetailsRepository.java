@@ -9,6 +9,7 @@ import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import timber.log.Timber;
@@ -47,21 +48,53 @@ public class DetailsRepository extends DrishtiRepository {
         values.put(VALUE_COLUMN, value);
         values.put(EVENT_DATE_COLUMN, timestamp);
 
-        if (exists) {
-            long startUpdate = System.currentTimeMillis();
-            int updated = database.update(TABLE_NAME, values,
-                    BASE_ENTITY_ID_COLUMN + " = ? AND " + KEY_COLUMN + " MATCH ? ",
-                    new String[]{baseEntityId, key});
+            if (exists) {
+                long startUpdate = System.currentTimeMillis();
+                int updated = database.update(TABLE_NAME, values,
+                        BASE_ENTITY_ID_COLUMN + " = ? AND " + KEY_COLUMN + " MATCH ? ",
+                        new String[]{baseEntityId, key});
 //            Timber.d("updating details for %S took %s, ",  TABLE_NAME, System.currentTimeMillis() - startUpdate);
-            //Log.i(getClass().getName(), "Detail Row Updated: " + String.valueOf(updated));
-        } else {
-            long insertStart = System.currentTimeMillis();
-            long rowId = database.insert(TABLE_NAME, null, values);
+                //Log.i(getClass().getName(), "Detail Row Updated: " + String.valueOf(updated));
+            } else {
+                long insertStart = System.currentTimeMillis();
+                long rowId = database.insert(TABLE_NAME, null, values);
 //            Timber.d("insert into details %s table took %s, ", TABLE_NAME,  System.currentTimeMillis() - insertStart);
             //Log.i(getClass().getName(), "Details Row Inserted : " + String.valueOf(rowId));
         }
     }
 
+    public void batchInsertDetails(Map<String, String> values, long timestamp){
+        SQLiteDatabase database = null;
+        try {
+            database = masterRepository().getReadableDatabase();
+            String baseEntityId = values.get(BASE_ENTITY_ID_COLUMN);
+
+            for (String key : values.keySet()) {
+                String val = values.get(key);
+                Boolean exists = getIdForDetailsIfExists(baseEntityId, key, val);
+                if (exists == null) { // Value has not changed, no need to update
+                    continue;
+                }
+                ContentValues insertValues = new ContentValues();
+                insertValues.put(BASE_ENTITY_ID_COLUMN, baseEntityId);
+                insertValues.put(KEY_COLUMN, key);
+                insertValues.put(VALUE_COLUMN, val);
+                insertValues.put(EVENT_DATE_COLUMN, timestamp);
+                if (exists) {
+                    long startUpdate = System.currentTimeMillis();
+                    int updated = database.update(TABLE_NAME, insertValues,
+                            BASE_ENTITY_ID_COLUMN + " = ? AND " + KEY_COLUMN + " MATCH ? ",
+                            new String[]{baseEntityId, key});
+
+                } else {
+                    long rowId = database.insert(TABLE_NAME, null, insertValues);
+                }
+
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+    }
     private Boolean getIdForDetailsIfExists(String baseEntityId, String key, String value) {
         Cursor mCursor = null;
         try {

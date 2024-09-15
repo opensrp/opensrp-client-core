@@ -267,8 +267,6 @@ public class HTTPAgent {
             if (inputStream != null)
                 responseString = IOUtils.toString(inputStream);
             if (statusCode == HttpURLConnection.HTTP_OK) {
-
-                Timber.d("response String: %s using request url %s", responseString, url);
                 LoginResponseData responseData = getResponseBody(responseString);
                 loginResponse = retrieveResponse(responseData);
             } else if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
@@ -354,8 +352,6 @@ public class HTTPAgent {
             responseString = IOUtils.toString(inputStream);
 
             totalRecords = urlConnection.getHeaderField(AllConstants.SyncProgressConstants.TOTAL_RECORDS);
-
-            Timber.d("response string: %s using url %s", responseString, urlConnection.getURL());
 
         } catch (MalformedURLException exception) {
             Timber.e(exception, "%s %s", MALFORMED_URL, exception.toString());
