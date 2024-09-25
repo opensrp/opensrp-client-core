@@ -404,9 +404,9 @@ public class ClientProcessorForJava {
                 long addContent = System.currentTimeMillis();
                 addContentValuesToDetailsTable(contentValues, timestamp);
                 long endAdd = System.currentTimeMillis();
-                Timber.i("addContentValuesToDetailsTable took %s, ", endAdd - addContent);
+                Timber.i("addContentValuesToDetailsTable took, %s", endAdd - addContent);
                 updateClientDetailsTable(event, client);
-                Timber.i("updateClientDetailsTable took %s, ", System.currentTimeMillis() - endAdd);
+                Timber.i("updateClientDetailsTable took, %s", System.currentTimeMillis() - endAdd);
 
             }
 

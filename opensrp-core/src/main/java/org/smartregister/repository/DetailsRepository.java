@@ -4,12 +4,12 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteStatement;
 
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import timber.log.Timber;
@@ -34,7 +34,7 @@ public class DetailsRepository extends DrishtiRepository {
     }
 
     public void add(String baseEntityId, String key, String value, Long timestamp) {
-        SQLiteDatabase database = masterRepository().getWritableDatabase();
+        SQLiteDatabase  database = masterRepository().getReadableDatabase();
 //        long start = System.currentTimeMillis();
         Boolean exists = getIdForDetailsIfExists(baseEntityId, key, value);
 //        Timber.d("check if details exist's took %s, ", System.currentTimeMillis() - start);
@@ -63,38 +63,71 @@ public class DetailsRepository extends DrishtiRepository {
         }
     }
 
-    public void batchInsertDetails(Map<String, String> values, long timestamp){
+    public void batchInsertDetails(Map<String, String> values, long timestamp) {
         SQLiteDatabase database = null;
+        SQLiteStatement insertStatement = null;
+        SQLiteStatement updateStatement = null;
+
         try {
-            database = masterRepository().getReadableDatabase();
+            database = masterRepository().getWritableDatabase();
+
+            // Prepare the SQL for inserts and updates
+            String insertSQL = "INSERT INTO " + TABLE_NAME + " (" +
+                    BASE_ENTITY_ID_COLUMN + ", " + KEY_COLUMN + ", " + VALUE_COLUMN + ", " + EVENT_DATE_COLUMN +
+                    ") VALUES (?, ?, ?, ?)";
+
+            String updateSQL = "UPDATE " + TABLE_NAME + " SET " + VALUE_COLUMN + " = ?, " +
+                    EVENT_DATE_COLUMN + " = ? WHERE " + BASE_ENTITY_ID_COLUMN + " = ? AND " + KEY_COLUMN + " = ?";
+
+            insertStatement = database.compileStatement(insertSQL);
+            updateStatement = database.compileStatement(updateSQL);
+
             String baseEntityId = values.get(BASE_ENTITY_ID_COLUMN);
 
             for (String key : values.keySet()) {
                 String val = values.get(key);
+                if(val == null ) continue;
                 Boolean exists = getIdForDetailsIfExists(baseEntityId, key, val);
+
                 if (exists == null) { // Value has not changed, no need to update
                     continue;
                 }
-                ContentValues insertValues = new ContentValues();
-                insertValues.put(BASE_ENTITY_ID_COLUMN, baseEntityId);
-                insertValues.put(KEY_COLUMN, key);
-                insertValues.put(VALUE_COLUMN, val);
-                insertValues.put(EVENT_DATE_COLUMN, timestamp);
+
                 if (exists) {
-                    long startUpdate = System.currentTimeMillis();
-                    int updated = database.update(TABLE_NAME, insertValues,
-                            BASE_ENTITY_ID_COLUMN + " = ? AND " + KEY_COLUMN + " MATCH ? ",
-                            new String[]{baseEntityId, key});
+                    // Bind values for update
+                    updateStatement.bindString(1, val); // Bind VALUE_COLUMN
+                    updateStatement.bindLong(2, timestamp); // Bind EVENT_DATE_COLUMN
+                    updateStatement.bindString(3, baseEntityId); // Bind BASE_ENTITY_ID_COLUMN
+                    updateStatement.bindString(4, key); // Bind KEY_COLUMN
 
+                    // Execute the update
+                    updateStatement.execute();
+                    updateStatement.clearBindings();
                 } else {
-                    long rowId = database.insert(TABLE_NAME, null, insertValues);
-                }
+                    // Bind values for insert
+                    insertStatement.bindString(1, baseEntityId); // Bind BASE_ENTITY_ID_COLUMN
+                    insertStatement.bindString(2, key); // Bind KEY_COLUMN
+                    insertStatement.bindString(3, val); // Bind VALUE_COLUMN
+                    insertStatement.bindLong(4, timestamp); // Bind EVENT_DATE_COLUMN
 
+                    // Execute the insert
+                    insertStatement.executeInsert();
+                    insertStatement.clearBindings();
+                }
             }
         } catch (Exception e) {
             Timber.e(e);
+        } finally {
+            // Close the prepared statements
+            if (insertStatement != null) {
+                insertStatement.close();
+            }
+            if (updateStatement != null) {
+                updateStatement.close();
+            }
         }
     }
+
     private Boolean getIdForDetailsIfExists(String baseEntityId, String key, String value) {
         Cursor mCursor = null;
         try {
