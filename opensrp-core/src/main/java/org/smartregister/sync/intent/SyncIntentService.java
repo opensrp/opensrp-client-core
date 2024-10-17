@@ -272,8 +272,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
             }
             sendSyncProgressBroadcast(eCount);
-            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
-
+            fetchRetry(0, true);
 
         }
     }

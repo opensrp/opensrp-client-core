@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.SyncConfiguration;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.converters.ClientConverter;
@@ -66,9 +67,13 @@ public class ClientProcessorForJava {
 
     private AppExecutors appExecutors;
 
+    private Boolean updatesDetailsTable;
+
+
     public ClientProcessorForJava(Context context) {
         mContext = context;
         appExecutors = new AppExecutors();
+        updatesDetailsTable = CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable();
     }
 
     public static ClientProcessorForJava getInstance(Context context) {
@@ -644,7 +649,7 @@ public class ClientProcessorForJava {
      * @param eventDate
      */
     protected void addContentValuesToDetailsTable(ContentValues values, Long eventDate) {
-        if (!CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable())
+        if (!updatesDetailsTable)
             return;
 
         try {
@@ -674,26 +679,24 @@ public class ClientProcessorForJava {
             Timber.d("Started updateClientDetailsTable");
             long updateClientDetailsStart   = System.currentTimeMillis();
 
-            if (CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable()) {
+            if (updatesDetailsTable) {
                 String baseEntityId = client.getBaseEntityId();
                 Long timestamp = getEventDate(event.getEventDate());
 
-                Map<String, String> genderInfo = getGender(client);
-
-                Map<String, String> addressInfo = getClientAddressAsMap(client);
-
-                Map<String, String> attributes = getClientAttributes(client);
-
-                Map<String, String> obs = getObsFromEvent(event);
-                Map<String, String> clientDetails = new HashMap<>();
-                clientDetails.putAll(genderInfo);
-                clientDetails.putAll(addressInfo);
-                clientDetails.putAll(attributes);
-                clientDetails.putAll(obs);
+                // Retrieve necessary client information in a single step
+                Map<String, String> clientDetails = new HashMap<>(getGender(client));
+                clientDetails.putAll(getClientAddressAsMap(client));
+                clientDetails.putAll(getClientAttributes(client));
+                clientDetails.putAll(getObsFromEvent(event));
                 clientDetails.put("base_entity_id", baseEntityId);
+
+                // Save client details in a batch process
                 batchSaveClientDetails(clientDetails, timestamp);
+
+                // Clear the map to free memory
+                clientDetails.clear();
             }
-            Timber.i("Updating client details took, %s ", System.currentTimeMillis()-updateClientDetailsStart);
+            Timber.i("Updating client details took, %d ", System.currentTimeMillis()-updateClientDetailsStart);
             event.addDetails(detailsUpdated, Boolean.TRUE.toString());
 
             Timber.d("Finished updateClientDetailsTable");
@@ -850,9 +853,7 @@ public class ClientProcessorForJava {
                 Address address = addressList.get(0);
                 Map<String, String> addressFieldMap = address.getAddressFields();
                 if (addressFieldMap != null) {
-                    for (Map.Entry<String, String> entry : addressFieldMap.entrySet()) {
-                        addressMap.put(entry.getKey(), entry.getValue());
-                    }
+                    addressMap.putAll(addressFieldMap);
                 }
 
                 List<Field> fields = getFields(address.getClass());

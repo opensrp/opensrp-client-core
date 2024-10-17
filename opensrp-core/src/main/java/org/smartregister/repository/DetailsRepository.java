@@ -70,6 +70,8 @@ public class DetailsRepository extends DrishtiRepository {
 
         try {
             database = masterRepository().getWritableDatabase();
+            // Start transaction
+            database.beginTransaction();
 
             // Prepare the SQL for inserts and updates
             String insertSQL = "INSERT INTO " + TABLE_NAME + " (" +
@@ -83,6 +85,7 @@ public class DetailsRepository extends DrishtiRepository {
             updateStatement = database.compileStatement(updateSQL);
 
             String baseEntityId = values.get(BASE_ENTITY_ID_COLUMN);
+
 
             for (String key : values.keySet()) {
                 String val = values.get(key);
@@ -115,9 +118,14 @@ public class DetailsRepository extends DrishtiRepository {
                     insertStatement.clearBindings();
                 }
             }
+            database.setTransactionSuccessful();
         } catch (Exception e) {
             Timber.e(e);
         } finally {
+            // End the transaction
+            if (database != null) {
+                database.endTransaction();
+            }
             // Close the prepared statements
             if (insertStatement != null) {
                 insertStatement.close();
