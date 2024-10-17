@@ -352,6 +352,7 @@ public class AllConstants {
         public static final String IGNORE_LOCATION_DELETION = "ignore.location.deletion";
         public static final String ENABLE_SEARCH_BUTTON = "enable.search.button";
         public static final String DISABLE_PROFILE_IMAGES_FEATURE = "feature.profile.images.disabled";
+        public static final String DISABLE_FTS_SEARCH_DISABLE="disable.fts.search";
     }
 
     public static class HTTP_REQUEST_HEADERS {
