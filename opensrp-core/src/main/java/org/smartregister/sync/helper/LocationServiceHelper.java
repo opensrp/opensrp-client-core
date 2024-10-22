@@ -472,13 +472,14 @@ public class LocationServiceHelper extends BaseHelper {
                     location.setSyncStatus(BaseRepository.TYPE_Synced);
 
                     locationRepository.addOrUpdate(location);
+                    if(location.getLocationTags() != null){
+                        for (LocationTag tag : location.getLocationTags()) {
+                            LocationTag locationTag = new LocationTag();
+                            locationTag.setLocationId(location.getId());
+                            locationTag.setName(tag.getName());
 
-                    for (LocationTag tag : location.getLocationTags()) {
-                        LocationTag locationTag = new LocationTag();
-                        locationTag.setLocationId(location.getId());
-                        locationTag.setName(tag.getName());
-
-                        locationTagRepository.addOrUpdate(locationTag);
+                            locationTagRepository.addOrUpdate(locationTag);
+                        }
                     }
                 } catch (Exception e) {
                     Timber.e(e, "EXCEPTION %s", e.toString());
